@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignIdFor(tb_variant::class)->constrained();
             $table->foreignIdFor(tb_category::class)->constrained();
             $table->foreignIdFor(tb_brand::class)->constrained();
-            $table->foreignIdFor(tb_comment::class)->constrained();
             $table->foreignIdFor(tb_discount::class)->constrained();
             $table->string('name')->unique();
             $table->decimal('price');
