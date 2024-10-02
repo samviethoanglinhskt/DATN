@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class tb_role extends Model
 {
     use HasFactory;
+
+    protected $table;
+
+    protected $fillable = [
+        'name'
+    ];
+
+    public function account(){
+        return $this->hasMany(tb_account::class);
+    }
 }

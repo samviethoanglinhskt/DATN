@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class tb_brand extends Model
 {
     use HasFactory;
+
+    protected $table;
+
+    protected $fillable = [
+        'name'
+    ];
+
+    public function product(){
+        return $this->hasMany(tb_product::class);
+    }
 }
