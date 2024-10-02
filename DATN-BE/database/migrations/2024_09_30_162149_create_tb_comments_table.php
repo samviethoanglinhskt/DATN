@@ -14,9 +14,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tb_comments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(tb_account::class)->constrained();
-            $table->foreignIdFor(tb_product::class)->constrained();
+            $table->foreignIdFor(tb_account::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(tb_product::class)->constrained()->onDelete('cascade');
+            $table->primary(['tb_account_id', 'tb_product_id']); //khóa chính tổng hợp
             $table->text('content');
             $table->dateTime('post_date');
             $table->timestamps();

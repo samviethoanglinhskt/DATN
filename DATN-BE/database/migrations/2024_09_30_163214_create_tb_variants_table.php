@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('tb_variants', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(tb_product::class)->constrained();
             $table->string('sku');
             $table->string('name');
             $table->decimal('price');
