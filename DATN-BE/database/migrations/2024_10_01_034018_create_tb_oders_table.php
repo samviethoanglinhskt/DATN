@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('total_amount');
             $table->string('oder_status');
             $table->string('name');
-            $table->integer('phone');
+            $table->string('phone');
             $table->string('address');
             $table->string('email');
             $table->timestamps();

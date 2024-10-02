@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class TbRoleSeeder extends Seeder
 {
@@ -12,6 +13,11 @@ class TbRoleSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        DB::table('tb_roles')->insert([
+            ['name' => 'admin'],
+            ['name' => 'user'],
+            ['name' => 'khách'],
+            ['name' => 'nhân viên']
+        ]);
     }
 }
