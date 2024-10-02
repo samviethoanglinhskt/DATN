@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(tb_role::class)->constrained();
             $table->string('user_name');
             $table->string('password');
-            $table->integer(column: 'phone');
+            $table->string(column: 'phone');
             $table->string('email');
             $table->timestamps();
         });
