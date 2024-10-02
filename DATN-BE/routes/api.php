@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DiscountController;
@@ -29,3 +30,4 @@ Route::resource('category', controller: CategoryController::class);
 Route::resource('discount', DiscountController::class);
 Route::resource('logobanner', LogoBannerController::class);
 Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
+Route::get('/brand', [BrandController::class,'index'])->name('brand');
