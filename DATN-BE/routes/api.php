@@ -33,3 +33,4 @@ Route::resource('logobanner', LogoBannerController::class);
 Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
 Route::get('/brand', [BrandController::class,'index'])->name('brand');
 Route::post('/register', [AccountController::class, 'register'])->name('register');
+Route::post('/login', [AccountController::class, 'login']);
