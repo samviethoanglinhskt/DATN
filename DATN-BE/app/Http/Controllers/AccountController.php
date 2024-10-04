@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RuleLogin;
 use App\Http\Requests\RuleRegister;
 use App\Models\tb_account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AccountController extends Controller
 {
@@ -25,6 +27,36 @@ class AccountController extends Controller
         //
     }
 
+    public function login(RuleLogin $request){
+        try {
+            // Tìm tài khoản theo email
+            $account = tb_account::where('email', $request->email)->first();
+    
+            // Kiểm tra xem tài khoản có tồn tại và mật khẩu có khớp không
+            if (!$account || !Hash::check($request->password, $account->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thông tin đăng nhập không chính xác.',
+                ], 401); // 401 Unauthorized
+            }
+    
+            // Nếu đăng nhập thành công, trả về phản hồi thành công
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng nhập thành công!',
+                'data' => [
+                    'account' => $account,
+                    // Có thể thêm thông tin khác nếu cần
+                ]
+            ], 200); // 200 OK
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500); // 500 Internal Server Error
+        }
+    }
     public function register(RuleRegister $request){
         try {
             // Tạo người dùng mới
