@@ -22,11 +22,11 @@ class tb_product extends Model
     ];
 
     public function category(){
-        return $this->belongsTo(tb_category::class);
+        return $this->belongsTo(tb_category::class, 'tb_category_id');
     }
 
     public function brand(){
-        return $this->belongsTo(tb_brand::class);
+        return $this->belongsTo(tb_brand::class, 'tb_brand_id');
     }
 
     public function variant(){
