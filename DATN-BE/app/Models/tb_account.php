@@ -20,7 +20,7 @@ class tb_account extends Model
     ];
 
     public function role(){
-        return $this->belongsTo(tb_role::class);
+        return $this->belongsTo(tb_role::class, 'tb_role_id');
     }
 
     public function oder(){
