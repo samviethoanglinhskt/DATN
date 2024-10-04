@@ -12,14 +12,29 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = tb_product::with('variant')->get(); //lấy sản phẩm và biến thể
-        return response()->json($products);
+        try {
+            $products = tb_product::with('variant', 'category', 'brand')->get(); // lấy sản phẩm và biến thể
+
+            return response()->json([
+                'success' => true,
+                'data' => $products
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-    
+
     public function getLatestProduct()  // lấy sản phẩm mới nhất
     {
         try {
-            $product = tb_product::orderBy('id', 'desc')->limit(5)->get();
+            $product = tb_product::with('variant', 'category', 'brand')
+                ->orderBy('id', 'desc')
+                ->limit(5)
+                ->get();
 
             // Nếu không tìm thấy sản phẩm
             if (!$product) {
