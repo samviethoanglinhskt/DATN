@@ -24,7 +24,7 @@ const Header: React.FC = () => {
                   </ul>
                 </li>
                 <li>
-                  <a href="product.html">Shop</a>
+                  <a href="#">Shop</a>
                 </li>
                 <li className="label1" data-label1="hot">
                   <a href="shoping-cart.html">Features</a>
