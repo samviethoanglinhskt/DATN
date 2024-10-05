@@ -1,7 +1,15 @@
 <?php
 
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\LogoBannerController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +25,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::resource('product', ProductController::class);
+Route::resource('category', controller: CategoryController::class);
+Route::resource('discount', DiscountController::class);
+Route::resource('logobanner', LogoBannerController::class);
+Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
+Route::get('/brand', [BrandController::class,'index'])->name('brand');
+Route::post('/register', [AccountController::class, 'register'])->name('register');
+Route::post('/login', [AccountController::class, 'login']);
