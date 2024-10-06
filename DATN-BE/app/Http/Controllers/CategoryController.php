@@ -53,7 +53,26 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // $category = tb_category::query()-> where('id',$id)->first();
+        // if (!$category){
+        //     $res=[
+        //         'status'=> false,
+        //         'message'=>'Khong co sinh vien nay',
+        //     ];
+        //     return response()->json($res,404);
+        // }
+        // $category ->update([
+        //     'name' => $request->ten,
+        //     'major_id' => $request->maNganh,
+        //     'email' => $request->email,
+        //     'dob' => $request->ngaySinh,
+        // ]);
+        // $res=[
+        //     'status'=> true,
+        //     'message'=>'Chi tiet sinh vien',
+        //     'data'=> new StudentResoure($category)
+        // ];
+        // return response()->json($res,200);
     }
 
     /**
