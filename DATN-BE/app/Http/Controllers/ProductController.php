@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\tb_product;
+use App\Models\tb_variant;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -13,7 +18,7 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $products = tb_product::with('variant', 'category', 'brand')->get(); // lấy sản phẩm và biến thể
+            $products = tb_product::with('variant', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
             return response()->json([
                 'success' => true,
@@ -73,15 +78,44 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // DB::beginTransaction(); // Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
+
+        // try {
+        //     // Tạo sản phẩm với các trường cụ thể từ request
+        //     $product = tb_product::create($request->all());
+    
+        //     // Kiểm tra và tạo biến thể nếu có dữ liệu variant được gửi kèm
+        //     if ($request->has('variant')) {
+        //         $variantData = $request->variant;
+        //         $variantData['tb_product_id'] = $product->id; // Gắn product_id từ sản phẩm vừa tạo
+        //         tb_variant::create($variantData); // Tạo variant tương ứng
+        //     }
+    
+        //     // Tải lại sản phẩm kèm theo thông tin của category, brand, và variant (nếu có)
+        //     $product->load('category', 'brand', 'variant');
+    
+        //     DB::commit(); // Hoàn tất transaction
+    
+        //     return response()->json($product, 201); // Trả về sản phẩm vừa được tạo
+        // } catch (Exception $e) {
+        //     DB::rollBack(); // Rollback nếu có lỗi xảy ra
+        //     return response()->json(['error' => 'Không thể tạo sản phẩm', 'message' => $e->getMessage()], 500);
+        // }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id) // hiển thị sản phẩm theo id
     {
-        //
+        try {
+            $product = tb_product::with(['category', 'brand', 'variant'])->findOrFail($id);
+            return response()->json($product);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể lấy sản phẩm'], 500);
+        }
     }
 
     /**
@@ -105,6 +139,20 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // try {
+        //     $product = tb_product::query()->findOrFail($id);
+    
+        //     // Xóa tất cả các biến thể liên quan
+        //     $product->variant()->delete(); // Quan hệ variants() cần được khai báo trong model Product
+    
+        //     // Xóa sản phẩm
+        //     $product->delete();
+    
+        //     return response()->json(null, 204);
+        // } catch (ModelNotFoundException $e) {
+        //     return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
+        // } catch (Exception $e) {
+        //     return response()->json(['error' => 'Lỗi xóa sản phẩm'], 500);
+        // }
     }
 }
