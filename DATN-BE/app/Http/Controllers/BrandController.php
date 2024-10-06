@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\tb_brand;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
@@ -29,7 +31,15 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category = tb_brand::query()->create($request->all());
+        try {
+            return response()->json([
+                'message' => 'Tạo mới thương hiệu thành công',
+                'data' => $category
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể tạo thương hiệu'], 500);
+        }
     }
 
     /**
@@ -37,7 +47,17 @@ class BrandController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $category = tb_brand::query()->findOrFail($id);
+            return response()->json([
+                'message' => 'Thương hiệu ' . $id,
+                'data' => $category
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Thương hiệu không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể lấy thương hiệu'], 500);
+        }
     }
 
     /**
@@ -53,7 +73,22 @@ class BrandController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $category = tb_brand::query()->findOrFail($id);
+
+            $category->update([
+                'name' => $request->name,
+            ]);
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $category
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Thương hiệu không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể cập nhật Thương hiệu'], 500);
+        }
     }
 
     /**
@@ -61,6 +96,18 @@ class BrandController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $category = tb_brand::findOrFail($id);
+            $category->delete();
+
+            return response()->json([
+                'message' => 'Xóa thành công',
+                'data' => null
+            ], 204);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Thương hiệu không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể xóa thương hiệu'], 500);
+        }
     }
 }
