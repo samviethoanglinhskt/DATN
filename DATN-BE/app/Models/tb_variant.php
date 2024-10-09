@@ -22,6 +22,6 @@ class tb_variant extends Model
     ];
 
     public function images() {
-        return $this->hasMany(tb_image::class, 'variant_id');
+        return $this->hasMany(tb_image::class);
     }
 }

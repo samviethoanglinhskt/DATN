@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\tb_size>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\tb_image>
  */
-class TbSizeFactory extends Factory
+class tb_imageFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class TbSizeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            //
         ];
     }
 }

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class tb_accountFactory extends Factory
 {
-    protected $model = tb_account::class;
 
     public function definition()
     {
