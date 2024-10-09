@@ -15,14 +15,13 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {
-        
-    }
+    public function index(){
 
-    public function getListProduct()
+    }
+     public function getListProduct()
     {
         try {
-            $products = tb_product::with('color','size', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
+            $products = tb_product::with('color', 'size', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
             return response()->json([
                 'success' => true,
@@ -40,7 +39,8 @@ class ProductController extends Controller
     public function getLatestProduct()  // lấy sản phẩm mới nhất
     {
         try {
-            $product = tb_product::with('color','size', 'category', 'brand')
+
+            $product = tb_product::with('color', 'size', 'category', 'brand')
                 ->orderBy('id', 'desc')
                 ->limit(5)
                 ->get();
@@ -87,19 +87,19 @@ class ProductController extends Controller
         // try {
         //     // Tạo sản phẩm với các trường cụ thể từ request
         //     $product = tb_product::create($request->all());
-    
+
         //     // Kiểm tra và tạo biến thể nếu có dữ liệu variant được gửi kèm
         //     if ($request->has('variant')) {
         //         $variantData = $request->variant;
         //         $variantData['tb_product_id'] = $product->id; // Gắn product_id từ sản phẩm vừa tạo
         //         tb_variant::create($variantData); // Tạo variant tương ứng
         //     }
-    
+
         //     // Tải lại sản phẩm kèm theo thông tin của category, brand, và variant (nếu có)
         //     $product->load('category', 'brand', 'variant');
-    
+
         //     DB::commit(); // Hoàn tất transaction
-    
+
         //     return response()->json($product, 201); // Trả về sản phẩm vừa được tạo
         // } catch (Exception $e) {
         //     DB::rollBack(); // Rollback nếu có lỗi xảy ra
@@ -145,13 +145,13 @@ class ProductController extends Controller
     {
         // try {
         //     $product = tb_product::query()->findOrFail($id);
-    
+
         //     // Xóa tất cả các biến thể liên quan
         //     $product->variant()->delete(); // Quan hệ variants() cần được khai báo trong model Product
-    
+
         //     // Xóa sản phẩm
         //     $product->delete();
-    
+
         //     return response()->json(null, 204);
         // } catch (ModelNotFoundException $e) {
         //     return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);

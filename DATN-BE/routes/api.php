@@ -33,6 +33,7 @@ Route::resource('discount', DiscountController::class);
 Route::resource('logobanner', LogoBannerController::class);
 Route::resource('brand', BrandController::class);
 Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
+Route::get('/product-list', [ProductController::class, 'getListProduct'])->name('product_list');
 
 Route::post('/register', [AccountController::class, 'register'])->name('register');
 Route::post('/login', [AccountController::class, 'login']);
