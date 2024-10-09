@@ -18,6 +18,6 @@ class tb_image extends Model
     ];
 
     public function variant(){
-        return $this->belongsTo(tb_variant::class);
+        return $this->belongsTo(tb_variant::class,'tb_variant_id');
     }
 }

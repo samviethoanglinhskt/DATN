@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\tb_color>
  */
-class TbColorFactory extends Factory
+class tb_colorFactory extends Factory
 {
     /**
      * Define the model's default state.
