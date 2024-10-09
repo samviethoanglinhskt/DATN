@@ -15,8 +15,6 @@ class tb_product extends Model
         'tb_category_id',
         'tb_brand_id',
         'name',
-        'price',
-        'image',
         'status',
         'description'
     ];
@@ -30,7 +28,7 @@ class tb_product extends Model
     }
 
     public function variant(){
-        return $this->hasOne(tb_variant::class);
+        return $this->belongsToMany(tb_variant::class);
     }
 
     public function account()
