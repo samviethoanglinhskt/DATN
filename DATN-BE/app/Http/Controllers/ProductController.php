@@ -20,20 +20,20 @@ class ProductController extends Controller
     }
      public function getListProduct()
     {
-        // try {
-        //     $products = tb_product::with('color', 'size', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
+         try {
+             $products = tb_product::with('color', 'size', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
-        //     return response()->json([
-        //         'success' => true,
-        //         'data' => $products
-        //     ], 200);
-        // } catch (\Exception $e) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Đã xảy ra lỗi!',
-        //         'error' => $e->getMessage()
-        //     ], 500);
-        // }
+             return response()->json([
+                 'success' => true,
+                 'data' => $products
+             ], 200);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Đã xảy ra lỗi!',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
     }
 
     public function getLatestProduct()  // lấy sản phẩm mới nhất
