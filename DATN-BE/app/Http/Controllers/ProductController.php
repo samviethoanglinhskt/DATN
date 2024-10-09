@@ -20,6 +20,7 @@ class ProductController extends Controller
     }
      public function getListProduct()
     {
+
         try {
             $products = tb_product::with('color', 'size', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
@@ -34,39 +35,40 @@ class ProductController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+
     }
 
-    public function getLatestProduct()  // lấy sản phẩm mới nhất
-    {
-        try {
+    // public function getLatestProduct()  // lấy sản phẩm mới nhất
+    // {
+    //     try {
 
-            $product = tb_product::with('color', 'size', 'category', 'brand')
-                ->orderBy('id', 'desc')
-                ->limit(5)
-                ->get();
+    //         $product = tb_product::with('color', 'size', 'category', 'brand')
+    //             ->orderBy('id', 'desc')
+    //             ->limit(5)
+    //             ->get();
 
-            // Nếu không tìm thấy sản phẩm
-            if (!$product) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm.'
-                ], 404);
-            }
+    //         // Nếu không tìm thấy sản phẩm
+    //         if (!$product) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Không tìm thấy sản phẩm.'
+    //             ], 404);
+    //         }
 
-            // Trả về sản phẩm mới nhất
-            return response()->json([
-                'success' => true,
-                'data' => $product
-            ], 200);
-        } catch (\Exception $e) {
-            // Trả về lỗi nếu có
-            return response()->json([
-                'success' => false,
-                'message' => 'Đã xảy ra lỗi!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+    //         // Trả về sản phẩm mới nhất
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $product
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         // Trả về lỗi nếu có
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Đã xảy ra lỗi!',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
 
     /**
