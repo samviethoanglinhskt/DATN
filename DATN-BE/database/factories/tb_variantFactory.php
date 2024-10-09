@@ -1,7 +1,9 @@
 <?php
 
 namespace Database\Factories;
+use App\Models\tb_color;
 use App\Models\tb_product;
+use App\Models\tb_size;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,11 +20,10 @@ class tb_variantFactory extends Factory
     {
         return [
             'tb_product_id' => tb_product::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ danh mục
+            'tb_color_id' => tb_color::inRandomOrder()->first()->id, 
+            'tb_size_id' => tb_size::inRandomOrder()->first()->id, 
             'sku' => $this->faker->regexify('[A-Z0-9]{8}'), // Tạo chuỗi ngẫu nhiên gồm 8 ký tự bao gồm chữ cái viết hoa và số.
-            'name' => fake()->name(),
             'price' => $this->faker->randomFloat(2, 1000, 10000),
-            'color' => fake()->colorName(),
-            'image' => '',
             'quantity' =>rand(1,10), // randum số lượng từ 1 đến 10
             'status'=> $this->faker->randomElement(array: ['Còn', 'Hết', 'Đang Cập Nhật']),
             
