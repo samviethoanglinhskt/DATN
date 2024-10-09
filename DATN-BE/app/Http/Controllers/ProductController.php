@@ -15,10 +15,14 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() {
+        
+    }
+
+    public function getListProduct()
     {
         try {
-            $products = tb_product::with('variant', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
+            $products = tb_product::with('color','size', 'category', 'brand')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
             return response()->json([
                 'success' => true,
@@ -36,7 +40,7 @@ class ProductController extends Controller
     public function getLatestProduct()  // lấy sản phẩm mới nhất
     {
         try {
-            $product = tb_product::with('variant', 'category', 'brand')
+            $product = tb_product::with('color','size', 'category', 'brand')
                 ->orderBy('id', 'desc')
                 ->limit(5)
                 ->get();
