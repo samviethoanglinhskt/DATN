@@ -21,8 +21,6 @@ return new class extends Migration
             $table->foreignIdFor(tb_category::class)->constrained();
             $table->foreignIdFor(tb_brand::class)->constrained();
             $table->string('name')->unique();
-            $table->decimal('price');
-            $table->string('image');
             $table->string('status');
             $table->text('description');
             $table->timestamps();
