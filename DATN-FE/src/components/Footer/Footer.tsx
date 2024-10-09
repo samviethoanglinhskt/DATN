@@ -95,8 +95,8 @@ const Footer: React.FC = () => {
           </div>
 
           <p className="stext-107 cl6 txt-center">
-            Copyright &copy; 
-            {new Date().getFullYear()} All rights reserved | Made with <i className="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" rel="noopener noreferrer">Colorlib</a> &amp; distributed by <a href="https://themes.hoavn.com/" target="_blank" rel="noopener noreferrer">ThemeHoadv</a>
+            Copyright &copy;
+            {new Date().getFullYear()} Imperial Beauty
           </p>
         </div>
       </div>
