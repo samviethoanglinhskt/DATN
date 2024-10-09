@@ -114,14 +114,14 @@ class ProductController extends Controller
      */
     public function show(string $id) // hiển thị sản phẩm theo id
     {
-        try {
-            $product = tb_product::with(['category', 'brand', 'variant'])->findOrFail($id);
-            return response()->json($product);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể lấy sản phẩm'], 500);
-        }
+        // try {
+        //     $product = tb_product::with(['category', 'brand', 'variant'])->findOrFail($id);
+        //     return response()->json($product);
+        // } catch (ModelNotFoundException $e) {
+        //     return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
+        // } catch (Exception $e) {
+        //     return response()->json(['error' => 'Không thể lấy sản phẩm'], 500);
+        // }
     }
 
     /**
