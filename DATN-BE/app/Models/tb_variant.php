@@ -21,11 +21,7 @@ class tb_variant extends Model
         'status'
     ];
 
-    public function product(){
-        return $this->belongsTo(tb_product::class);
-    }
-
-    public function cart(){
-        return $this->belongsTo(tb_cart::class);
+    public function images() {
+        return $this->hasMany(tb_image::class, 'variant_id');
     }
 }
