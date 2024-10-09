@@ -28,11 +28,11 @@ class tb_product extends Model
     }
 
     public function color(){
-        return $this->belongsToMany(tb_color::class, 'tb_variant');
+        return $this->belongsToMany(tb_color::class, 'tb_variants');
     }
 
     public function size(){
-        return $this->belongsToMany(tb_size::class, 'tb_variant');
+        return $this->belongsToMany(tb_size::class, 'tb_variants');
     }
 
     public function account()
