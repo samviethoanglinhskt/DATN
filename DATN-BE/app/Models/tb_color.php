@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class tb_color extends Model
 {
     use HasFactory;
+
+    protected $table;
+
+    protected $fillable = [
+        'name'
+    ];
+
+    public function product(){
+        return $this->belongsToMany(tb_product::class, 'tb_variant');
+    }
 }
