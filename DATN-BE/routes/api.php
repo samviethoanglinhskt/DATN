@@ -37,3 +37,4 @@ Route::get('/product-list', [ProductController::class, 'getListProduct'])->name(
 
 Route::post('/register', [AccountController::class, 'register'])->name('register');
 Route::post('/login', [AccountController::class, 'login']);
+Route::post('/fogot-pass', [AccountController::class, 'forgotPass']);
