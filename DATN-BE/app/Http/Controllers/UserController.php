@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\tb_account;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Http\Requests\RuleLogin;
 use App\Http\Requests\RuleRegister;
-use App\Models\tb_account;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -31,7 +33,8 @@ class UserController extends Controller
        //
     }
 
-    public function login(RuleLogin $request){
+    public function login(RuleLogin $request)
+    {
         try {
             // Tìm tài khoản theo email
             $account = User::where('email', $request->email)->first();
@@ -43,7 +46,7 @@ class UserController extends Controller
                     'message' => 'Thông tin đăng nhập không chính xác.',
                 ], 401); // 401 Unauthorized
             }
-    
+
             // Nếu đăng nhập thành công, trả về phản hồi thành công
             return response()->json([
                 'success' => true,
@@ -61,7 +64,8 @@ class UserController extends Controller
             ], 500); // 500 Internal Server Error
         }
     }
-    public function register(RuleRegister $request){
+    public function register(RuleRegister $request)
+    {
         try {
             // Tạo người dùng mới
             $account = User::create([
@@ -88,6 +92,28 @@ class UserController extends Controller
                 'message' => 'Đã xảy ra lỗi!',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function forgotPass(Request $request)
+    {
+        $request->validate(['email' => 'required']);
+
+        try {
+            $newPassword = Str::random(6);
+            $account = User::where('email', $request->email)->first();
+
+            if (!$account) {
+                return response()->json(['error' => 'người dùng không tồn tại'], 404);
+            }
+            $account->password = Hash::make($newPassword);
+            $account->save();
+            Mail::send('emails.password_reset', ['name' => $account->user_name, 'newPassword' => $newPassword], function ($message) use ($account) {
+                $message->to($account->email)
+                        ->subject('Thông tin mật khẩu mới');
+            });
+        } catch (\Exception $e) {
+            //throw $th;
         }
     }
 
