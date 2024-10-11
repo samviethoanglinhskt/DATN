@@ -7,18 +7,22 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Requests\RuleLogin;
 use App\Http\Requests\RuleRegister;
+use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
-class AccountController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() // list tài khoản
     {
-        //
+        $user = User::all();
+        return response()->json($user);
     }
 
     /**
@@ -26,15 +30,15 @@ class AccountController extends Controller
      */
     public function create()
     {
-        //
+       //
     }
 
     public function login(RuleLogin $request)
     {
         try {
             // Tìm tài khoản theo email
-            $account = tb_account::where('email', $request->email)->first();
-
+            $account = User::where('email', $request->email)->first();
+    
             // Kiểm tra xem tài khoản có tồn tại và mật khẩu có khớp không
             if (!$account || !Hash::check($request->password, $account->password)) {
                 return response()->json([
@@ -64,7 +68,7 @@ class AccountController extends Controller
     {
         try {
             // Tạo người dùng mới
-            $account = tb_account::create([
+            $account = User::create([
                 'tb_role_id' => 2,
                 'user_name' => $request->user_name,
                 'password' => Hash::make($request->password),
@@ -97,7 +101,7 @@ class AccountController extends Controller
 
         try {
             $newPassword = Str::random(6);
-            $account = tb_account::where('email', $request->email)->first();
+            $account = User::where('email', $request->email)->first();
 
             if (!$account) {
                 return response()->json(['error' => 'người dùng không tồn tại'], 404);
@@ -116,9 +120,9 @@ class AccountController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request) 
     {
-        //
+      //
     }
 
     /**
@@ -148,8 +152,20 @@ class AccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id) // xóa tài khoản (thuộc quyền admin)
     {
-        //
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            return response()->json([
+                'message' => 'Xóa thành công',
+                'data' => null
+            ], 204);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể xóa tài khoản'], 500);
+        }
     }
 }

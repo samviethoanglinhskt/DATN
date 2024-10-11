@@ -15,7 +15,7 @@ class tb_role extends Model
         'name'
     ];
 
-    public function account(){
-        return $this->hasMany(tb_account::class);
+    public function users(){
+        return $this->hasMany(User::class);
     }
 }

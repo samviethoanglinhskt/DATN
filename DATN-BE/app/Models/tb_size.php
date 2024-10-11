@@ -15,7 +15,7 @@ class tb_size extends Model
         'name'
     ];
 
-    public function product(){
-        return $this->belongsToMany(tb_product::class, 'tb_variant');
+    public function variants(){
+        return $this->hasMany(tb_variant::class);
     }
 }
