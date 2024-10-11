@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\tb_oder;
+use App\Models\tb_product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tb_discounts', function (Blueprint $table) {
+        Schema::create('tb__oderdetail', function (Blueprint $table) {
             $table->id();
-            $table->string('discount_code');
-            $table->integer('discount_value');
-            $table->string('name');
-            $table->dateTime('start_day');
-            $table->dateTime('end_day');
+            $table->foreignIdFor(tb_oder::class)->constrained();
+            $table->foreignIdFor(tb_product::class)->constrained();  
+            $table->integer('quantity');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tb_discounts');
+        Schema::dropIfExists('tb__oderdetail');
     }
 };

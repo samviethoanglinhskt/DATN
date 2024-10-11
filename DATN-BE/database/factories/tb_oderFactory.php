@@ -4,6 +4,7 @@ namespace Database\Factories;
 use App\Models\tb_account;
 use App\Models\tb_cart;
 use App\Models\tb_discount;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +21,7 @@ class tb_oderFactory extends Factory
     {
         return [
             'tb_cart_id' => tb_cart::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ giỏ hàng
-            'tb_account_id' => tb_account::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ tài khoản
+            'tb_account_id' => User::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ tài khoản
             'tb_discount_id' => tb_discount::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ tài khoản
             'order_date' => fake()->date(),
             'total_amount' => $this->faker->randomFloat(2, 1000, 10000),

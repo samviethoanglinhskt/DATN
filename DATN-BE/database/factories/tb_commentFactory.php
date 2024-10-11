@@ -3,6 +3,7 @@
 namespace Database\Factories;
 use App\Models\tb_account;
 use App\Models\tb_product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class tb_commentFactory extends Factory
     public function definition(): array
     {
         return [
-            'tb_account_id' => tb_account::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ tài khoản
+            'tb_account_id' => User::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ tài khoản
             'tb_product_id' => tb_product::inRandomOrder()->first()->id, // Lấy ngẫu nhiên ID từ sản phẩm
             'content' => fake()->text(50),
             'post_date' => fake()->dateTime()

@@ -28,8 +28,8 @@ class tb_oder extends Model
         return $this->belongsTo(tb_cart::class);
     }
 
-    public function account(){
-        return $this->belongsTo(tb_account::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 
     public function discount(){

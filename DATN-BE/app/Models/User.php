@@ -18,8 +18,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id_role',
         'name',
         'email',
+        'phone',
         'password',
     ];
 
@@ -42,4 +44,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function comments()
+    {
+        return $this->hasMany(tb_comment::class);
+    }
+    public function oders()
+    {
+        return $this->hasMany(tb_oder::class);
+    }
+    public function role()
+    {
+        return $this->belongsTo(tb_role::class);
+    }
+    public function cart()
+    {
+        return $this->hasOne(tb_role::class);
+    }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\tb_category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tb_statistics', function (Blueprint $table) {
+        Schema::create('tb_news', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(tb_category::class)->constrained();
-            $table->date('date');
-            $table->string('statistic_value');
-            $table->string('unit');
-            $table->string('status');
+            $table->string('title');
+            $table->text('content');
+            $table->date('create_day');
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tb_statistics');
+        Schema::dropIfExists('tb_news');
     }
 };

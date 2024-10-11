@@ -9,7 +9,7 @@ class tb_product extends Model
 {
     use HasFactory;
 
-    protected $table;
+    protected $table = 'tb_products';
 
     protected $fillable = [
         'tb_category_id',
@@ -19,30 +19,29 @@ class tb_product extends Model
         'description'
     ];
 
-    public function category(){
-        return $this->belongsTo(tb_category::class, 'tb_category_id');
-    }
-
-    public function brand(){
-        return $this->belongsTo(tb_brand::class, 'tb_brand_id');
-    }
-
-    public function color(){
-        return $this->belongsToMany(tb_color::class, 'tb_variants');
-    }
-
-    public function size(){
-        return $this->belongsToMany(tb_size::class, 'tb_variants');
-    }
-
-    public function account()
+    public function category()
     {
-        return $this->belongsToMany(tb_account::class, 'tb_comments', 'tb_product_id', 'tb_account_id')
-                    ->withPivot('content', 'created_at', 'updated_at');
+        return $this->belongsTo(tb_category::class);
     }
 
-    public function cart(){
+    public function variants()
+    {
+        return $this->hasMany(tb_variant::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(tb_brand::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'tb_comments', 'tb_product_id', 'tb_account_id')
+            ->withPivot('content', 'created_at', 'updated_at');
+    }
+
+    public function cart()
+    {
         return $this->belongsTo(tb_cart::class);
     }
-
 }
