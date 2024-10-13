@@ -139,99 +139,40 @@ class ProductController extends Controller
                 'description' => $request->description
             ]);
 
-            // Lấy tất cả các biến thể hiện tại của sản phẩm
-            tb_variant::query()->where('tb_product_id', $product->id)->get();
-
-            // Cập nhật biến thể
-            $data = [];
+            // Cập nhật từng biến thể
             if (!empty($request->variants)) {
                 foreach ($request->variants as $variantData) {
-                    // Kiểm tra xem biến thể có tồn tại không
-
-                    $variant = tb_variant::query()
-                        ->where('tb_product_id', $product->id)
-                        ->get();
-                    // return response()->json($variant);
-
+                    $variant = $product->variants()->find($variantData['id']); // Tìm biến thể theo ID
                     if ($variant) {
-                        // Cập nhật biến thể đã có
-                        foreach ($variant as $updateVariant) {
-                            $updateVariant->update([
-                                'tb_color_id' => $variantData['tb_color_id'],
-                                'tb_size_id' => $variantData['tb_size_id'],
-                                'sku' => $variantData['sku'],
-                                'price' => $variantData['price'],
-                                'quantity' => $variantData['quantity'],
-                                'status' => $variantData['status']
-                            ]); 
-                        }
-                        return response()->json($updateVariant);
-                        $data[] = [
-                            'variant' => $updateVariant,
-                            'image' => []
-                        ];
-                      
-                    } else {
-                        // Tạo biến thể mới nếu không tìm thấy
-                        $variant = tb_variant::create([
-                            'tb_product_id' => $product->id,
-                            'tb_color_id' => $variantData['tb_color_id'],
+                        $variant->update([
                             'tb_size_id' => $variantData['tb_size_id'],
+                            'tb_color_id' => $variantData['tb_color_id'],
                             'sku' => $variantData['sku'],
                             'price' => $variantData['price'],
                             'quantity' => $variantData['quantity'],
                             'status' => $variantData['status']
                         ]);
-
-                        $data_new = [
-                            'variant' => $variant,
-                            'image' => []
-                        ];
-                    }
-
-                    // Cập nhật ảnh của biến thể
-                    if (!empty($variantData['images'])) {
-                        foreach ($variantData['images'] as $imageData) {
-                            $image = tb_image::query()
-                                ->where('tb_variant_id', $variant->id)
-                                ->get();
-
-                            if ($image) {
-                                // Cập nhật ảnh đã có
-                                $image->update([
-                                    'name_image' => $imageData['name_image'],
-                                    'status' => $imageData['status']
-                                ]);
-                                $data_new[]['image'] = $image;
-                            } else {
-                                // Thêm mới ảnh nếu không có
-                                tb_image::create([
-                                    'tb_variant_id' => $variant->id,
-                                    'name_image' => $imageData['name_image'],
-                                    'status' => $imageData['status']
-                                ]);
-                                $data_new[]['image'] = $image;
-                            }
-                        }
                     }
                 }
             }
-            $data[] = $data_new;
-            // Xóa những biến thể không còn trong danh sách cập nhật
-            // tb_variant::query()
-            //     ->where('tb_product_id', $product->id)
-            //     ->whereNotIn('id', $existingVariantIds)
-            //     ->delete();
 
             return response()->json([
-                'message' => 'Sửa thành công',
-                'product' => $product,
-                'data' => $data
+                'message' => 'Cập nhật thành công',
+                'product' => [
+                'id' => $product->id,
+                'tb_category_id' => $product->tb_category_id,
+                'tb_brand_id' => $product->tb_brand_id,
+                'name' => $product->name,
+                'status' => $product->status,
+                'description' => $product->description,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+                'variants' => $product->variants // tôi phải trả về kiểu dài này thì nó mới có variant
+            ]
             ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
+
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể cập nhật sản phẩm'], 500);
+            return response()->json(['error' => 'Không thể cập nhật sản phẩm: ' . $e->getMessage()], 500);
         }
     }
 
@@ -255,7 +196,14 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $product = tb_product::with('variants', 'colors', 'sizes', 'category', 'brand')->findOrFail($id);
+            return response()->json($product);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể lấy sản phẩm'], 500);
+        }
     }
 
     /**
