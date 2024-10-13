@@ -39,6 +39,16 @@ class tb_product extends Model
         return $this->belongsToMany(User::class, 'tb_comments', 'tb_product_id', 'tb_account_id')
             ->withPivot('content', 'created_at', 'updated_at');
     }
+       public function colors()
+    {
+        return $this->belongsToMany(tb_color::class,'tb_variants');
+    }
+
+    // Một biến thể có một dung tích
+    public function sizes()
+    {
+        return $this->belongsToMany(tb_size::class,'tb_variants');
+    }
 
     public function cart()
     {

@@ -12,9 +12,9 @@ class tb_variant extends Model
     protected $table = 'tb_variants';
 
     protected $fillable = [
+        'tb_product_id',
         'tb_size_id',
         'tb_color_id',
-        'tb_product_id',
         'sku',
         'price',
         'quantity',

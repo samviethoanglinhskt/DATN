@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('tb_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(tb_variant::class)->constrained();
+            $table->foreignIdFor(tb_variant::class)->constrained()->cascadeOnDelete();
             $table->string('name_image');
             $table->string('status')->default('active');
             $table->timestamps();
