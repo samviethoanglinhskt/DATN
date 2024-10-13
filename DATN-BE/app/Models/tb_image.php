@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class tb_image extends Model
 {
     use HasFactory;
+    protected $table = 'tb_images';
 
-    protected $table;
 
     protected $fillable = [
         'tb_variant_id',
