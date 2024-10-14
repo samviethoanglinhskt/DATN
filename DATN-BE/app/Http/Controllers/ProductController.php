@@ -21,7 +21,7 @@ class ProductController extends Controller
     {
 
         try {
-            $products = tb_product::with('variants', 'variants.images','colors','sizes')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
+            $products = tb_product::with('variants', 'variants.images', 'colors', 'sizes')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
             return response()->json([
                 'success' => true,
@@ -124,13 +124,12 @@ class ProductController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id) // sửa sản phẩm,biến thể, ảnh biến thể
     {
         try {
-            // Tìm sản phẩm dựa trên ID
+            // tìm sản phẩm
             $product = tb_product::query()->findOrFail($id);
-
-            // Cập nhật thông tin sản phẩm
+            // sửa sản phẩm
             $product->update([
                 'tb_category_id' => $request->tb_category_id,
                 'tb_brand_id' => $request->tb_brand_id,
@@ -138,41 +137,42 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'description' => $request->description
             ]);
+            // sửa biến thể theo id của sản phẩm
+            $variant = tb_variant::query()->where('tb_product_id', $product->id)->get();
 
-            // Cập nhật từng biến thể
-            if (!empty($request->variants)) {
-                foreach ($request->variants as $variantData) {
-                    $variant = $product->variants()->find($variantData['id']); // Tìm biến thể theo ID
-                    if ($variant) {
-                        $variant->update([
-                            'tb_size_id' => $variantData['tb_size_id'],
-                            'tb_color_id' => $variantData['tb_color_id'],
-                            'sku' => $variantData['sku'],
-                            'price' => $variantData['price'],
-                            'quantity' => $variantData['quantity'],
-                            'status' => $variantData['status']
-                        ]);
+            $data = [];
+            // nếu có biến thể thì sửa
+            if ($variant) {
+                foreach ($variant as $id => $updateVariant) {
+                    $updateVariant->update([
+                        'tb_color_id' => $request->variants[$id]['tb_color_id'],
+                        'tb_size_id' => $request->variants[$id]['tb_size_id'],
+                        'sku' => $request->variants[$id]['sku'],
+                        'price' => $request->variants[$id]['price'],
+                        'quantity' => $request->variants[$id]['quantity'],
+                        'status' => $request->variants[$id]['status']
+                    ]);
+                    // nếu có ảnh thì sửa ảnh
+                    if ($updateVariant->images) {
+                        foreach ($updateVariant->images as $idIamge => $updateImage) {
+                            $updateImage->update([
+                                'name_image' => $request->variants[$id]['images'][$idIamge]['name_image'],
+                                'status' => $request->variants[$id]['images'][$idIamge]['status']
+                            ]);
+                        }
                     }
+                    // hứng dữ liệu vứt ra json
+                    $data[] = $updateVariant;
                 }
             }
-
             return response()->json([
-                'message' => 'Cập nhật thành công',
-                'product' => [
-                'id' => $product->id,
-                'tb_category_id' => $product->tb_category_id,
-                'tb_brand_id' => $product->tb_brand_id,
-                'name' => $product->name,
-                'status' => $product->status,
-                'description' => $product->description,
-                'created_at' => $product->created_at,
-                'updated_at' => $product->updated_at,
-                'variants' => $product->variants // tôi phải trả về kiểu dài này thì nó mới có variant
-            ]
+                'product' => $product,
+                'variant' => $data
             ]);
-
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể cập nhật sản phẩm: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Không thể cập nhật sản phẩm'], 500);
         }
     }
 
