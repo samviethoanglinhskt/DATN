@@ -12,21 +12,21 @@ class tb_cart extends Model
     protected $table;
 
     protected $fillable = [
-        'tb_account_id',
+        'tb_user_id',
         'tb_variant_id',
         'tb_product_id',
         'quantity'
     ];
 
-    public function product(){
+    public function products(){
         return $this->hasMany(tb_product::class);
     }
 
-    public function account(){
-        return $this->hasOne(tb_account::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 
-    public function variant(){
+    public function variants(){
         return $this->hasMany(tb_variant::class);
     }
 

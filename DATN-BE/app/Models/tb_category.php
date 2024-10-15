@@ -15,7 +15,7 @@ class tb_category extends Model
         'name'
     ];
 
-    public function product(){
+    public function products(){
         return $this->hasMany(tb_product::class);
     }
 }

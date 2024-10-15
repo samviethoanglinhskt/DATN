@@ -9,24 +9,34 @@ class tb_variant extends Model
 {
     use HasFactory;
 
-    protected $table;
+    protected $table = 'tb_variants';
 
     protected $fillable = [
         'tb_product_id',
+        'tb_size_id',
+        'tb_color_id',
         'sku',
-        'name',
         'price',
-        'color',
-        'image',
         'quantity',
         'status'
     ];
 
-    public function product(){
+    public function images()
+    {
+        return $this->hasMany(tb_image::class);
+    }
+    public function product()
+    {
         return $this->belongsTo(tb_product::class);
     }
+    public function color()
+    {
+        return $this->belongsTo(tb_color::class);
+    }
 
-    public function cart(){
-        return $this->belongsTo(tb_cart::class);
+    // Một biến thể có một dung tích
+    public function size()
+    {
+        return $this->belongsTo(tb_size::class);
     }
 }

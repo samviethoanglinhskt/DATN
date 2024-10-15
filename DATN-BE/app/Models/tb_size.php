@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class tb_role extends Model
+class tb_size extends Model
 {
     use HasFactory;
 
@@ -15,7 +15,7 @@ class tb_role extends Model
         'name'
     ];
 
-    public function users(){
-        return $this->hasMany(User::class);
+    public function variants(){
+        return $this->hasMany(tb_variant::class);
     }
 }
