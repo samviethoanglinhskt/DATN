@@ -14,11 +14,11 @@ const Cart = () => {
           </div>
         </div>
 
-        <div className="header-cart-content flex-w js-pscroll">
+        <div className="header-cart-content flex-w js-pscroll">src/assets/
           <ul className="header-cart-wrapitem w-full">
             <li className="header-cart-item flex-w flex-t m-b-12">
               <div className="header-cart-item-img">
-                <img src="images/item-cart-01.jpg" alt="IMG" />
+                <img src="src/assets/images/item-cart-01.jpg" alt="IMG" />
               </div>
 
               <div className="header-cart-item-txt p-t-8">
@@ -35,7 +35,7 @@ const Cart = () => {
 
             <li className="header-cart-item flex-w flex-t m-b-12">
               <div className="header-cart-item-img">
-                <img src="images/item-cart-02.jpg" alt="IMG" />
+                <img src="src/assets/images/item-cart-02.jpg" alt="IMG" />
               </div>
 
               <div className="header-cart-item-txt p-t-8">
@@ -52,7 +52,7 @@ const Cart = () => {
 
             <li className="header-cart-item flex-w flex-t m-b-12">
               <div className="header-cart-item-img">
-                <img src="images/item-cart-03.jpg" alt="IMG" />
+                <img src="src/assets/images/item-cart-03.jpg" alt="IMG" />
               </div>
 
               <div className="header-cart-item-txt p-t-8">

@@ -5,7 +5,7 @@ const Slider = () => {
     <section className="section-slide">
       <div className="wrap-slick1">
         <div className="slick1">
-          <div className="item-slick1" style={{ backgroundImage: 'url(images/slide-01.jpg)' }}>
+          <div className="item-slick1" style={{ backgroundImage: 'url(src/assets/images/slide-01.jpg)' }}>
             <div className="container h-full">
               <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                 <div className="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay={0}>
@@ -26,7 +26,7 @@ const Slider = () => {
               </div>
             </div>
           </div>
-          <div className="item-slick1" style={{ backgroundImage: 'url(images/slide-02.jpg)' }}>
+          <div className="item-slick1" style={{ backgroundImage: 'url(src/assets/images/slide-02.jpg)' }}>
             <div className="container h-full">
               <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                 <div className="layer-slick1 animated visible-false" data-appear="rollIn" data-delay={0}>
@@ -47,7 +47,7 @@ const Slider = () => {
               </div>
             </div>
           </div>
-          <div className="item-slick1" style={{ backgroundImage: 'url(images/slide-03.jpg)' }}>
+          <div className="item-slick1" style={{ backgroundImage: 'url(src/assets/images/slide-03.jpg)' }}>
             <div className="container h-full">
               <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                 <div className="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay={0}>

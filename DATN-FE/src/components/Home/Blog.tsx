@@ -14,7 +14,7 @@ const Blog: React.FC = () => {
             <div className="blog-item">
               <div className="hov-img0">
                 <a href="blog-detail.html">
-                  <img src="images/blog-01.jpg" alt="IMG-BLOG" />
+                  <img src="src/assets/images/blog-01.jpg" alt="IMG-BLOG" />
                 </a>
               </div>
               <div className="p-t-15">
@@ -51,7 +51,7 @@ const Blog: React.FC = () => {
             <div className="blog-item">
               <div className="hov-img0">
                 <a href="blog-detail.html">
-                  <img src="images/blog-02.jpg" alt="IMG-BLOG" />
+                  <img src="src/assets/images/blog-02.jpg" alt="IMG-BLOG" />
                 </a>
               </div>
               <div className="p-t-15">
@@ -88,7 +88,7 @@ const Blog: React.FC = () => {
             <div className="blog-item">
               <div className="hov-img0">
                 <a href="blog-detail.html">
-                  <img src="images/blog-03.jpg" alt="IMG-BLOG" />
+                  <img src="src/assets/images/blog-03.jpg" alt="IMG-BLOG" />
                 </a>
               </div>
               <div className="p-t-15">

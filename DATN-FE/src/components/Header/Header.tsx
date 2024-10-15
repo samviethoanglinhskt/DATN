@@ -32,7 +32,7 @@ const Header: React.FC = () => {
           <nav className="limiter-menu-desktop container">
             {/* Logo desktop */}
             <a href="#" className="logo">
-              <img src="images/icons/logo-01.png" alt="IMG-LOGO" />
+              <img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" />
             </a>
 
             {/* Menu desktop */}
@@ -76,7 +76,7 @@ const Header: React.FC = () => {
       <div className="wrap-header-mobile">
         {/* Logo mobile */}
         <div className="logo-mobile">
-          <a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO" /></a>
+          <a href="index.html"><img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" /></a>
         </div>
 
         {/* Icon header */}
