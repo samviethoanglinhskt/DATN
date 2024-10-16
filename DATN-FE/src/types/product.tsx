@@ -1,49 +1,13 @@
-interface Product {
-    success: boolean;
-    data: Datum[];
-}
-
-interface Datum {
+export interface IImage {
     id: number;
-    tb_category_id: number;
-    tb_brand_id: number;
-    name: string;
+    tb_variant_id: number;
+    name_image: string;
     status: string;
-    description: string;
     created_at: string;
     updated_at: string;
-    variants: Variant[];
-    colors: Color[];
-    sizes: Size[];
 }
 
-interface Size {
-    id: number;
-    name: string;
-    created_at: string;
-    updated_at: string;
-    pivot: Pivot2;
-}
-
-interface Pivot2 {
-    tb_product_id: number;
-    tb_size_id: number;
-}
-
-interface Color {
-    id: number;
-    name: string;
-    created_at: string;
-    updated_at: string;
-    pivot: Pivot;
-}
-
-interface Pivot {
-    tb_product_id: number;
-    tb_color_id: number;
-}
-
-interface Variant {
+export interface IVariant {
     id: number;
     tb_product_id: number;
     tb_size_id: number;
@@ -54,14 +18,33 @@ interface Variant {
     status: string;
     created_at: string;
     updated_at: string;
-    images: Image[];
+    images: IImage[];
 }
 
-interface Image {
+export interface IColor {
     id: number;
-    tb_variant_id: number;
-    name_image: string;
-    status: string;
+    name: string;
     created_at: string;
     updated_at: string;
+}
+
+export interface ISize {
+    id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface IProduct {
+    id: number;
+    tb_category_id: number;
+    tb_brand_id: number;
+    name: string;
+    status: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+    variants: IVariant[];
+    colors: IColor[];
+    sizes: ISize[];
 }
