@@ -14,7 +14,7 @@ const Cart = () => {
           </div>
         </div>
 
-        <div className="header-cart-content flex-w js-pscroll">src/assets/
+        <div className="header-cart-content flex-w js-pscroll">
           <ul className="header-cart-wrapitem w-full">
             <li className="header-cart-item flex-w flex-t m-b-12">
               <div className="header-cart-item-img">

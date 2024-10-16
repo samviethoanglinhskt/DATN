@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StoreOverView: React.FC = () => {
+const BestSeller: React.FC = () => {
     return (
         <section className="sec-product bg0 p-t-100 p-b-50">
             <div className="container">
@@ -169,8 +169,7 @@ const StoreOverView: React.FC = () => {
 
             </div>
         </section>
-
     );
 };
 
-export default StoreOverView;
+export default BestSeller;
