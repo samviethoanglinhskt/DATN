@@ -47,7 +47,7 @@ class tb_product extends Model
     // Một biến thể có một dung tích
     public function sizes()
     {
-        return $this->belongsToMany(tb_size::class,'tb_variants');
+        return $this->belongsToMany(tb_size::class,'tb_variants')->withPivot('price');
     }
 
     public function cart()
