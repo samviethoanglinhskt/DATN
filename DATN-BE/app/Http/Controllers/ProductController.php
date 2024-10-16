@@ -21,7 +21,7 @@ class ProductController extends Controller
     {
 
         try {
-            $products = tb_product::with('variants', 'variants.images', 'colors', 'sizes')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
+            $products = tb_product::with('variants.images', 'colors', 'sizes')->get(); // lấy sản phẩm, biến thể, thương hiệu, danh mục
 
             return response()->json([
                 'success' => true,
@@ -40,7 +40,7 @@ class ProductController extends Controller
     {
         try {
 
-            $product = tb_product::with('variants.color', 'variants.size', 'category', 'brand')
+            $product = tb_product::with('variants.images', 'colors', 'sizes')
                 ->orderBy('id', 'desc')
                 ->limit(5)
                 ->get();
