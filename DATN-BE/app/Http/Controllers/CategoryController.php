@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = tb_category::all(); //lấy danh mục
+        $category = tb_category::with('products', 'products.variants.images', 'products.sizes', 'products.colors')->get(); //lấy danh mục
         return response()->json($category);
     }
 
