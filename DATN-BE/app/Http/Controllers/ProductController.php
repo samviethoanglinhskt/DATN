@@ -98,10 +98,11 @@ class ProductController extends Controller
                     'quantity' => $variant['quantity'],
                     'status' => $variant['status'],
                 ]);
-                $data_variants = [
+                $variant_data = [
                     'variant' => $new_variant,
                     'image' => []
                 ];
+
                 // thêm biến thể thì thêm luôn ảnh sản phẩm
                 if (!empty($new_variant)) {
                     foreach ($variant['images'] as $image) {
@@ -110,10 +111,10 @@ class ProductController extends Controller
                             'name_image' => $image['name_image'],
                             'status' => $image['status'],
                         ]);
+                        $variant_data[]['image'] = $tb_image;
                     }
-                    $data_variants[]['image'] = $tb_image;
                 }
-                $data[] = $data_variants;
+                $data[] = $variant_data;
             }
             return response()->json([
                 'message' => 'Tạo sản phẩm thành công',
@@ -182,7 +183,7 @@ class ProductController extends Controller
     public function show(string $id) // hiển thị sản phẩm theo id
     {
         try {
-            $product = tb_product::with('variants.color', 'variants.size', 'category', 'brand')->findOrFail($id);
+            $product = tb_product::with('category', 'brand', 'variants.images', 'colors', 'sizes')->findOrFail($id);
             return response()->json($product);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
@@ -197,7 +198,7 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         try {
-            $product = tb_product::with('variants', 'colors', 'sizes', 'category', 'brand')->findOrFail($id);
+            $product = tb_product::with('category', 'brand', 'variants.images', 'colors', 'sizes')->findOrFail($id);
             return response()->json($product);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);

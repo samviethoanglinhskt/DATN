@@ -3,24 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\tb_image;
-use App\Models\tb_variant;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
-class VariantsController extends Controller
+class ImagesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index() // lấy danh sách biến thể
+    public function index() // hiển thị list ảnh sản phẩm
     {
         try {
-            $variants = tb_variant::with('images')->get();
+            $image = tb_image::query()->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $variants
+                'data' => $image
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -58,11 +57,11 @@ class VariantsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id) // xóa biến thể
+    public function destroy(string $id) // xóa ảnh biến thể sản phẩm
     {
         try {
-            $variant = tb_variant::findOrFail($id);
-            $variant->delete();
+            $image = tb_image::findOrFail($id);
+            $image->delete();
 
             return response()->json(['message' => 'Biến thể đã được xóa thành công'], 204);
         } catch (ModelNotFoundException $e) {
