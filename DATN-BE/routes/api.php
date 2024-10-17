@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -34,7 +35,9 @@ Route::resource('discount', DiscountController::class);
 Route::resource('logobanner', LogoBannerController::class);
 Route::resource('brand', BrandController::class);
 Route::resource('users', UserController::class);
+
 Route::apiResource('variants', VariantsController::class);
+Route::apiResource('image', ImagesController::class);
 Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
 Route::get('/product-list', [ProductController::class, 'getListProduct'])->name('product_list');
 
