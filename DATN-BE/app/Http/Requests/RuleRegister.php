@@ -24,17 +24,17 @@ class RuleRegister extends FormRequest
     public function rules(): array
     {
         return [
-           'user_name' => 'required|string|max:255',
-           'password' => 'required|confirmed|string|min:6',
-            'phone' =>'required|string|size:10',
-            'email' => 'required|email|unique:tb_accounts',
+            'name' => 'required|string|max:255',
+            'password' => 'required|confirmed|string|min:6',
+            'phone' => 'required|string|regex:/^0\d{9}$/',
+            'email' => 'required|email|unique:users',
         ];
     }
 
     public function messages()
     {
         return [
-            'user_name.required' => 'Vui lòng nhập tên.',
+            'name.required' => 'Vui lòng nhập tên.',
             'phone.required' => 'Vui lòng nhập số điện thoại.',
             'phone.string' => 'Số điện thoại không hợp lệ',
             'email.required' => 'Vui lòng nhập email',
