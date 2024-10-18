@@ -30,7 +30,7 @@ class UserController extends Controller
      */
     public function create()
     {
-       //
+        //
     }
 
     public function login(RuleLogin $request)
@@ -38,7 +38,7 @@ class UserController extends Controller
         try {
             // Tìm tài khoản theo email
             $account = User::where('email', $request->email)->first();
-    
+
             // Kiểm tra xem tài khoản có tồn tại và mật khẩu có khớp không
             if (!$account || !Hash::check($request->password, $account->password)) {
                 return response()->json([
@@ -69,8 +69,8 @@ class UserController extends Controller
         try {
             // Tạo người dùng mới
             $account = User::create([
+                'name' => $request->name,
                 'tb_role_id' => 2,
-                'user_name' => $request->user_name,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
                 'email' => $request->email,
@@ -87,6 +87,7 @@ class UserController extends Controller
                 ]
             ], 201); // 201 Created
         } catch (\Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
@@ -110,7 +111,7 @@ class UserController extends Controller
             $account->save();
             Mail::send('emails.password_reset', ['name' => $account->user_name, 'newPassword' => $newPassword], function ($message) use ($account) {
                 $message->to($account->email)
-                        ->subject('Thông tin mật khẩu mới');
+                    ->subject('Thông tin mật khẩu mới');
             });
         } catch (\Exception $e) {
             //throw $th;
@@ -120,9 +121,9 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) 
+    public function store(Request $request)
     {
-      //
+        //
     }
 
     /**
