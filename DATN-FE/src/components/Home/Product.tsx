@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Product = () => {
   return (
     <section className="bg0 p-t-23 p-b-140">
