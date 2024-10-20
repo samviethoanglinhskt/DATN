@@ -4,6 +4,7 @@ import ClientLayout from './layouts/ClientLayout';
 import HomePage from './pages/client/HomePage';
 import Register from './pages/client/Register';
 import Login from './pages/client/Login';
+import ProductList from './components/Home/Product';
 
 const routeConfig = [
   {
@@ -22,6 +23,12 @@ const routeConfig = [
         path: "login",
         element: <Login />,
       },
+      {
+        path: "product",
+        element: <ProductList />,
+      },
+      { path: "/product/:categoryId" ,
+        element: <ProductList />} 
     ],
   }
 ];

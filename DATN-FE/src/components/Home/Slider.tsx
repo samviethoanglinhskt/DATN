@@ -4,12 +4,12 @@ const Slider = () => {
     <section className="section-slide">
       <div className="wrap-slick1">
         <div className="slick1">
-          <div className="item-slick1" style={{ backgroundImage: 'url(src/assets/images/slide-01.jpg)' }}>
+          <div className="item-slick1" style={{ backgroundImage: 'url(https://iweb247.com/uploads/images/thiet-ke-banner-quang-cao-my-pham1.png)' }}>
             <div className="container h-full">
               <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                 <div className="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay={0}>
                   <span className="ltext-101 cl2 respon2">
-                    Women Collection 2018
+                  Chào Mừng Bạn Đã Đến Với Chúng Tôi
                   </span>
                 </div>
                 <div className="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay={800}>
@@ -25,12 +25,12 @@ const Slider = () => {
               </div>
             </div>
           </div>
-          <div className="item-slick1" style={{ backgroundImage: 'url(src/assets/images/slide-02.jpg)' }}>
+          <div className="item-slick1" style={{ backgroundImage: 'url(https://sadesign.vn/wp-content/uploads/2021/02/chinh-sua-anh-my-pham.jpg)' }}>
             <div className="container h-full">
               <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                 <div className="layer-slick1 animated visible-false" data-appear="rollIn" data-delay={0}>
                   <span className="ltext-101 cl2 respon2">
-                    Men New-Season
+                    Cùng Nhau Làm Đẹp Thôi Nào
                   </span>
                 </div>
                 <div className="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay={800}>
@@ -46,12 +46,12 @@ const Slider = () => {
               </div>
             </div>
           </div>
-          <div className="item-slick1" style={{ backgroundImage: 'url(src/assets/images/slide-03.jpg)' }}>
+          <div className="item-slick1" style={{ backgroundImage: 'url(https://png.pngtree.com/thumb_back/fw800/background/20240208/pngtree-beauty-girl-or-women-applying-organic-cosmetics-image_15624058.jpg)' }}>
             <div className="container h-full">
               <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                 <div className="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay={0}>
                   <span className="ltext-101 cl2 respon2">
-                    Men Collection 2018
+                    Thương Hiệu Tạo Nên Tên tuổi
                   </span>
                 </div>
                 <div className="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay={800}>
