@@ -42,7 +42,7 @@ const Product = () => {
               Search
             </div>
           </div>
-          {/* Search product */}
+     
           <div className="dis-none panel-search w-full p-t-10 p-b-15">
             <div className="bor8 dis-flex p-l-15">
               <button className="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
@@ -51,7 +51,7 @@ const Product = () => {
               <input className="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search" />
             </div>
           </div>
-          {/* Filter */}
+      
           <div className="dis-none panel-filter w-full p-t-10">
             <div className="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
               <div className="filter-col1 p-r-15 p-b-27">
