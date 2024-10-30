@@ -6,10 +6,13 @@ use App\Models\tb_image;
 use App\Models\tb_product;
 use App\Models\tb_variant;
 use Exception;
+use GuzzleHttp\Psr7\UploadedFile;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -80,13 +83,11 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) // thêm sản phẩm,biến thể, ảnh sản phẩm
+    public function store(Request $request)
     {
         try {
-
             $product = tb_product::query()->create($request->all());
-
-            // tạo thằng product xong thì thêm luôn biến thể k lỗi
+    
             $data = [];
             foreach ($request->variants ?? [] as $variant) {
                 $new_variant = tb_variant::query()->create([
@@ -102,17 +103,24 @@ class ProductController extends Controller
                     'variant' => $new_variant,
                     'image' => []
                 ];
-
-                // thêm biến thể thì thêm luôn ảnh sản phẩm
+    
                 if (!empty($new_variant)) {
                     foreach ($variant['images'] as $image) {
-                        $tb_image = tb_image::query()->create([
-                            'tb_variant_id' => $new_variant->id,
-                            'name_image' => $image['name_image'],
-                            'status' => $image['status'],
-                        ]);
-                        $variant_data[]['image'] = $tb_image;
-
+                       
+                        // Sử dụng request->file() để lấy file
+                        if (isset($image['name_image']) && $image['name_image']->isValid()) {
+                            // Lưu ảnh vào storage và lấy đường dẫn
+                            $path = $image['name_image']->store('images', 'public');
+                            // return response()->json($path);
+                            // Lưu thông tin ảnh vào CSDL
+                            $tb_image = tb_image::query()->create([
+                                'tb_variant_id' => $new_variant->id,
+                                'status' => $image['status'],
+                                'name_image' => $path,
+                              
+                            ]);
+                            $variant_data['image'][] = $tb_image;
+                        }
                     }
                 }
                 $data[] = $variant_data;
@@ -126,6 +134,7 @@ class ProductController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    
     public function update(Request $request, string $id)
     {
         try {
