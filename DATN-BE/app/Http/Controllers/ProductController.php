@@ -112,6 +112,7 @@ class ProductController extends Controller
                             'status' => $image['status'],
                         ]);
                         $variant_data[]['image'] = $tb_image;
+
                     }
                 }
                 $data[] = $variant_data;
