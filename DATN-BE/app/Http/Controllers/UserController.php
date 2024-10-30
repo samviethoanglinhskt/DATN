@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tb_account;
+use App\Http\Requests\RuleUpdateTaiKhoan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Requests\RuleLogin;
@@ -145,9 +145,32 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(RuleUpdateTaiKhoan $request, string $id)
     {
-        //
+        try {
+            $user = User::query()->findOrFail($id);
+            $user->update([
+                'name' => $request->name,
+                'tb_role_id' => 2,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $user
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
+        } catch (Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
