@@ -84,10 +84,20 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    { 
         try {
-            $product = tb_product::query()->create($request->all());
-    
+            if ($request['image'] && $request['image']->isValid()) {
+                $imagePr = $request['image']->store('products', 'public');
+            }
+            $product = tb_product::query()->create([
+                'tb_category_id' => $request->tb_category_id,
+                'tb_brand_id' => $request->tb_brand_id,
+                'name' => $request->name,
+                'status' => $request->status,
+                'description' => $request->description,
+                'image' => $imagePr,
+            ]);
+
             $data = [];
             foreach ($request->variants ?? [] as $variant) {
                 $new_variant = tb_variant::query()->create([
@@ -103,10 +113,10 @@ class ProductController extends Controller
                     'variant' => $new_variant,
                     'image' => []
                 ];
-    
+
                 if (!empty($new_variant)) {
                     foreach ($variant['images'] as $image) {
-                       
+
                         // Sử dụng request->file() để lấy file
                         if (isset($image['name_image']) && $image['name_image']->isValid()) {
                             // Lưu ảnh vào storage và lấy đường dẫn
@@ -117,7 +127,7 @@ class ProductController extends Controller
                                 'tb_variant_id' => $new_variant->id,
                                 'status' => $image['status'],
                                 'name_image' => $path,
-                              
+
                             ]);
                             $variant_data['image'][] = $tb_image;
                         }
@@ -134,7 +144,7 @@ class ProductController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
+
     public function update(Request $request, string $id)
     {
         try {

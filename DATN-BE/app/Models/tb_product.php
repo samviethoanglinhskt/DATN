@@ -16,7 +16,8 @@ class tb_product extends Model
         'tb_brand_id',
         'name',
         'status',
-        'description'
+        'description',
+        'image'
     ];
 
     public function category()
