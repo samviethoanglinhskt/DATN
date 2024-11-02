@@ -62,6 +62,11 @@ class ImagesController extends Controller
     {
         try {
             $image = tb_image::findOrFail($id);
+
+            if ($image->name_image) {
+                Storage::disk('public')->delete($image->name_image);
+            }
+
             $image->delete();
 
             return response()->json(['message' => 'Biến thể đã được xóa thành công'], 204);

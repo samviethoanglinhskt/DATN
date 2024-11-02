@@ -7,6 +7,7 @@ use App\Models\tb_variant;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VariantsController extends Controller
 {
@@ -61,7 +62,14 @@ class VariantsController extends Controller
     public function destroy(string $id) // xóa biến thể
     {
         try {
-            $variant = tb_variant::findOrFail($id);
+            $variant = tb_variant::with('images')->findOrFail($id);
+            
+            foreach ($variant->images as $image) {
+                if ($image->name_image) {
+                    Storage::disk('public')->delete($image->name_image);
+                }
+            }
+
             $variant->delete();
 
             return response()->json(['message' => 'Biến thể đã được xóa thành công'], 204);
