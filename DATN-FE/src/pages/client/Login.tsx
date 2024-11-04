@@ -28,6 +28,7 @@ const Login = () => {
         try {
             const response = await axiosInstance.post("/api/login", data);
             console.log("Đăng nhập thành công:", response.data);
+            localStorage.setItem("token", response.data.data.token);
             reset();
             setTimeout(() => {
                 navigate("/");
