@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\RuleUpdateTaiKhoan;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
@@ -46,13 +47,14 @@ class UserController extends Controller
                     'message' => 'Thông tin đăng nhập không chính xác.',
                 ], 401); // 401 Unauthorized
             }
-
+            $token = JWTAuth::fromUser($account);
             // Nếu đăng nhập thành công, trả về phản hồi thành công
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng nhập thành công!',
                 'data' => [
                     'account' => $account,
+                    'token'=>$token,
                     // Có thể thêm thông tin khác nếu cần
                 ]
             ], 200); // 200 OK
