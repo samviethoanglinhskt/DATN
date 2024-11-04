@@ -127,6 +127,11 @@
       <path value="$PROJECT_DIR$/DATN-BE/vendor/tijsverkoyen/css-to-inline-styles" />
       <path value="$PROJECT_DIR$/DATN-BE/vendor/graham-campbell/result-type" />
       <path value="$PROJECT_DIR$/DATN-BE/vendor/composer" />
+      <path value="$PROJECT_DIR$/DATN-BE/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/DATN-BE/vendor/lcobucci/clock" />
+      <path value="$PROJECT_DIR$/DATN-BE/vendor/tymon/jwt-auth" />
+      <path value="$PROJECT_DIR$/DATN-BE/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/DATN-BE/vendor/stella-maris/clock" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
