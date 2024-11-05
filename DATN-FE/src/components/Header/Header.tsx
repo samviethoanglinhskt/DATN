@@ -1,6 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
+import { Link } from 'react-router-dom';
+import axiosInstance from 'src/config/axiosInstance';
+import { Category } from 'src/types/product';
 
 const Header: React.FC = () => {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['categorys'],
+    queryFn: async () => {
+      try {
+        const response = await axiosInstance.get('/api/category');
+        return response.data;
+      } catch (error) {
+        throw new Error('Call API thất bại');
+      }
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {error instanceof Error ? error.message : 'Something went wrong'}</div>;
   return (
     <header>
       {/* Header desktop */}
@@ -9,20 +27,17 @@ const Header: React.FC = () => {
         <div className="top-bar">
           <div className="content-topbar flex-sb-m h-full container">
             <div className="left-top-bar">
-              Free shipping for standard order over $100
+              Chào Mừng Bạn Đã Đến Với Trang Web Của Chúng Tôi
             </div>
             <div className="right-top-bar flex-w h-full">
-              <a href="#" className="flex-c-m trans-04 p-lr-25">
-                Help & FAQs
+              <a href="/login" className="flex-c-m trans-04 p-lr-25">
+                Login
               </a>
-              <a href="#" className="flex-c-m trans-04 p-lr-25">
-                My Account
+              <a href="/register" className="flex-c-m trans-04 p-lr-25">
+                Register
               </a>
               <a href="#" className="flex-c-m trans-04 p-lr-25">
                 EN
-              </a>
-              <a href="#" className="flex-c-m trans-04 p-lr-25">
-                USD
               </a>
             </div>
           </div>
@@ -39,14 +54,20 @@ const Header: React.FC = () => {
             <div className="menu-desktop">
               <ul className="main-menu">
                 <li className="active-menu">
-                  <a href="index.html">Home</a>
-                  <ul className="sub-menu">
-                    <li><a href="index.html">Homepage 1</a></li>
-                    <li><a href="home-02.html">Homepage 2</a></li>
-                    <li><a href="home-03.html">Homepage 3</a></li>
+                  <a href="/">Home</a>
+
+                </li>
+                <li>
+                  <a href="/product">Shop</a>
+                  <ul className="sub-menu" >
+                    {data.map((category: Category) => (
+                      <li>
+                        <Link to={`/product/${category.id}`}>{category.name}</Link>
+                      </li>
+                    ))}
                   </ul>
                 </li>
-                <li><a href="product.html">Shop</a></li>
+
                 <li className="label1" data-label1="hot">
                   <a href="shoping-cart.html">Features</a>
                 </li>
@@ -71,15 +92,10 @@ const Header: React.FC = () => {
           </nav>
         </div>
       </div>
-
-      {/* Header Mobile */}
       <div className="wrap-header-mobile">
-        {/* Logo mobile */}
         <div className="logo-mobile">
           <a href="index.html"><img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" /></a>
         </div>
-
-        {/* Icon header */}
         <div className="wrap-icon-header flex-w flex-r-m m-r-15">
           <div className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
             <i className="zmdi zmdi-search"></i>

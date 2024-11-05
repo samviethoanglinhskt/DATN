@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
+import axiosInstance from "../../config/axiosInstance";
 
 const StoreOverView = () => {
   const {
@@ -12,8 +12,12 @@ const StoreOverView = () => {
   } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const response = await instance.get("/api/product-list");
-      return response.data;
+      try {
+        const response = await axiosInstance.get('/api/product-list');
+        return response.data;
+      } catch (error) {
+        throw new Error('Call API thất bại');
+      }
     },
   });
 
@@ -28,16 +32,17 @@ const StoreOverView = () => {
   return (
     <section className="sec-product bg0 p-t-100 p-b-50">
       <div className="container">
-        <h3 className="ltext-105 cl5 txt-center respon1">Best seller</h3>
+        <div className="p-b-32">
+          <h3 className="ltext-105 cl5 txt-center respon1">
+            Sản Phẩm Khuyến Mãi
+          </h3>
+        </div>
+
         <div className="tab01">
           <div className="tab-content p-t-50">
-            <div
-              className="tab-pane fade show active"
-              id="best-seller"
-              role="tabpanel"
-            >
-              <div className="wrap-slick2 d-flex">
-                <div className="slick2">
+            <div className="tab-pane fade show active" id="best-seller" role="tabpanel">
+              <div className="wrap-slick2">
+                <div className="slick2 d-flex">
                   {products.data.map((product: Product) => (
                     <div
                       key={product.id}
@@ -46,17 +51,17 @@ const StoreOverView = () => {
                       <div className="block2">
                         <div className="block2-pic hov-img0">
                           {product.variants[0]?.images[0] && (
-                            <img
-                              src={product.variants[0].images[0].name_image}
-                              alt={product.name}
+                            <img src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
+                              style={{
+                                width: '100%',
+                                height: '350px',
+                                objectFit: 'cover',
+                              }}
                             />
                           )}
-                          <Link
-                            to={`/product/${product.id}`}
-                            className="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04"
-                          >
-                            Quick View
-                          </Link>
+                          <a href="#" className="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                            Mua Ngay
+                          </a>
                         </div>
                         <div className="block2-txt flex-w flex-t p-t-14">
                           <div className="block2-txt-child1 flex-col-l ">
@@ -78,6 +83,12 @@ const StoreOverView = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="flex-c-m flex-w w-full p-t-45">
+          <a href="#" className="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+            Xem Thêm
+          </a>
         </div>
       </div>
     </section>
