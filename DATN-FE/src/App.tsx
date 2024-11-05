@@ -8,6 +8,9 @@ import ProductDetail from "./pages/client/ProductDetail";
 
 import Cart from "./pages/client/Cart";
 import { CartProvider } from "./pages/client/Cartshop";
+import GuestInfoForm from "./pages/client/GuestInfoForm";
+import OrderDetails from "./pages/client/OrderDetails";
+import Payment from "./pages/client/Payment";
 
 const routeConfig = [
   {
@@ -33,6 +36,18 @@ const routeConfig = [
       {
         path: "/cart",
         element: <Cart />,
+      },
+      {
+        path: "/guest-info",
+        element: <GuestInfoForm />,
+      },
+      {
+        path: "/order-details",
+        element: <OrderDetails />,
+      },
+      {
+        path: "/payment",
+        element: <Payment />,
       },
     ],
   },

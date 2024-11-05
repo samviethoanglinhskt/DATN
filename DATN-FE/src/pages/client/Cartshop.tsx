@@ -26,6 +26,7 @@ interface CartContextType {
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  updateCartItemQuantity: (id: string, quantity: number) => void;
 }
 
 // Tạo context cho giỏ hàng
@@ -73,6 +74,14 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       prevItems.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
   };
+  // In Cartshop.tsx (or where `useCart` is defined)
+  const updateCartItemQuantity = (id: string, quantity: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+      )
+    );
+  };
 
   // Hàm xóa toàn bộ giỏ hàng
   const clearCart = () => {
@@ -87,6 +96,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+        updateCartItemQuantity,
       }}
     >
       {children}
