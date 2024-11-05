@@ -6,7 +6,7 @@ const Blog: React.FC = () => {
       <div className="container">
         <div className="p-b-66">
           <h3 className="ltext-105 cl5 txt-center respon1">
-            Our Blogs
+           Bài Viết Về Chúng Tôi
           </h3>
         </div>
         <div className="row">
@@ -14,7 +14,7 @@ const Blog: React.FC = () => {
             <div className="blog-item">
               <div className="hov-img0">
                 <a href="blog-detail.html">
-                  <img src="src/assets/images/blog-01.jpg" alt="IMG-BLOG" />
+                  <img src="https://png.pngtree.com/thumb_back/fh260/background/20210912/pngtree-girl-cosmetics-illustration-image_872088.jpg" alt="IMG-BLOG" />
                 </a>
               </div>
               <div className="p-t-15">
@@ -32,7 +32,7 @@ const Blog: React.FC = () => {
                       on
                     </span>
                     <span className="cl5">
-                      July 22, 2017
+                      July 22, 2024
                     </span>
                   </span>
                 </div>
@@ -51,7 +51,7 @@ const Blog: React.FC = () => {
             <div className="blog-item">
               <div className="hov-img0">
                 <a href="blog-detail.html">
-                  <img src="src/assets/images/blog-02.jpg" alt="IMG-BLOG" />
+                  <img src="https://bizweb.dktcdn.net/100/461/213/files/tang-my-pham-cho-ban-gai-6.jpg?v=1694751671773" alt="IMG-BLOG" />
                 </a>
               </div>
               <div className="p-t-15">
@@ -69,7 +69,7 @@ const Blog: React.FC = () => {
                       on
                     </span>
                     <span className="cl5">
-                      July 18, 2017
+                      July 18, 2024
                     </span>
                   </span>
                 </div>
@@ -88,7 +88,7 @@ const Blog: React.FC = () => {
             <div className="blog-item">
               <div className="hov-img0">
                 <a href="blog-detail.html">
-                  <img src="src/assets/images/blog-03.jpg" alt="IMG-BLOG" />
+                  <img src="https://studiochupanhdep.com/Upload/Images/Album/beauty-my-pham-003.jpg" alt="IMG-BLOG" />
                 </a>
               </div>
               <div className="p-t-15">
@@ -106,7 +106,7 @@ const Blog: React.FC = () => {
                       on
                     </span>
                     <span className="cl5">
-                      July 2, 2017
+                      July 2, 2024
                     </span>
                   </span>
                 </div>
