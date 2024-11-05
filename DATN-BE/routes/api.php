@@ -9,6 +9,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariantsController;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ Route::resource('discount', DiscountController::class);
 Route::resource('logobanner', LogoBannerController::class);
 Route::resource('brand', BrandController::class);
 Route::resource('users', UserController::class);
+Route::resource('size', SizeController::class);
 
 Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
