@@ -85,6 +85,40 @@ class CartController extends Controller
         }
     }
 
+    public function upQuantityCart(Request $request){
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+
+            $product = tb_product::find($request->tb_product_id);
+            //tìm giỏ hàng
+            $cart = tb_cart::where('user_id', $user->id)
+                        ->where('tb_product_id', $product->id)
+                        ->first();
+            // Cập nhật số lượng
+            $cart->quantity += $request->quantity;
+            $cart->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Số lượng sản phẩm đã được cập nhật!',
+                'data' => $cart,
+            ], 200); // 200 OK
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function delOneCart(Request $request){
         try {
             $user = JWTAuth::parseToken()->authenticate();
