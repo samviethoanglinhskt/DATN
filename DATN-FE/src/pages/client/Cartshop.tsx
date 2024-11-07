@@ -5,7 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-
+import instance from "../../config/axiosInstance";
 // Định nghĩa kiểu dữ liệu cho một sản phẩm trong giỏ hàng
 interface CartItem {
   id: string;
@@ -27,6 +27,7 @@ interface CartContextType {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   updateCartItemQuantity: (id: string, quantity: number) => void;
+  upCartItemQuantity: (id: string, quantity: number) => void;
 }
 
 // Tạo context cho giỏ hàng
@@ -63,9 +64,31 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     });
   };
 
-  // Hàm xóa sản phẩm khỏi giỏ hàng
-  const removeFromCart = (id: string) => {
+  const removeFromCart = async (id: string) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await instance.post(
+        "api/cart/del-one-cart",
+        {
+          tb_product_id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Sản phẩm đã được gỡ khỏi giỏ hàng!");
+      } else {
+        alert("Có lỗi xảy ra khi gỡ sản phẩm khỏi giỏ hàng.");
+      }
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
   };
 
   // Hàm cập nhật số lượng của một sản phẩm trong giỏ hàng
@@ -75,17 +98,90 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     );
   };
   // In Cartshop.tsx (or where `useCart` is defined)
-  const updateCartItemQuantity = (id: string, quantity: number) => {
+  const updateCartItemQuantity = async (id: string, quantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
       )
     );
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await instance.post(
+        "api/cart/update-quantity-cart",
+        {
+          tb_product_id: id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Sản phẩm đã được thay đổi trong giỏ hàng!");
+      } else {
+        alert("Có lỗi xảy ra khi thay đổi sản phẩm trong giỏ hàng.");
+      }
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
+  };
+
+  const upCartItemQuantity = async (id: string, quantity: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+      )
+    );
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await instance.post(
+        "api/cart/up-quantity-cart",
+        {
+          tb_product_id: id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Sản phẩm đã được thay đổi số lượng trong giỏ hàng!");
+      } else {
+        alert("Có lỗi xảy ra khi thay đổi sản phẩm trong giỏ hàng.");
+      }
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
   };
 
   // Hàm xóa toàn bộ giỏ hàng
-  const clearCart = () => {
+  const clearCart = async () => {
     setCartItems([]);
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await instance.delete("api/cart/del-all-cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        alert("Tất cả sản phẩm đã được xóa!");
+      } else {
+        alert("Có lỗi xảy ra khi thay đổi sản phẩm trong giỏ hàng.");
+      }
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
   };
 
   return (
@@ -97,6 +193,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         updateQuantity,
         clearCart,
         updateCartItemQuantity,
+        upCartItemQuantity,
       }}
     >
       {children}
