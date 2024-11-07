@@ -1,16 +1,20 @@
 import React from "react";
 import { useCart } from "./Cartshop";
 import { List, Button, Typography, Divider, Space } from "antd";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const Cart = () => {
-  const { cartItems, removeFromCart, clearCart, updateCartItemQuantity } =
-    useCart();
-  const navigate = useNavigate(); // Initialize navigate
+  const {
+    cartItems,
+    removeFromCart,
+    clearCart,
+    updateCartItemQuantity,
+    upCartItemQuantity,
+  } = useCart();
+  const navigate = useNavigate();
 
-  // Calculate total price
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -58,9 +62,7 @@ const Cart = () => {
                 </Button>,
                 <Text>{item.quantity}</Text>,
                 <Button
-                  onClick={() =>
-                    updateCartItemQuantity(item.id, item.quantity + 1)
-                  }
+                  onClick={() => upCartItemQuantity(item.id, item.quantity + 1)}
                 >
                   +
                 </Button>,

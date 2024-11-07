@@ -39,15 +39,42 @@ const ProductDetail = () => {
       />
     );
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product) {
+      // Add product to local cart
       addToCart({
         id: product.id,
         name: product.name,
         price: product.variants[0]?.price || 0,
         quantity: 1,
       });
-      alert("Sản phẩm đã được thêm vào giỏ hàng!");
+
+      try {
+        const token = localStorage.getItem("jwt_token");
+        const response = await instance.post(
+          "api/add-cart",
+          {
+            tb_product_id: product.id,
+            quantity: 1,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          alert("Sản phẩm đã được thêm vào giỏ hàng!");
+        } else {
+          alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+        }
+      } catch (error) {
+        console.error("Error adding product to cart:", error);
+        alert("Có lỗi xảy ra. Vui lòng thử lại.");
+      }
+    } else {
+      alert("Sản phẩm không tồn tại.");
     }
   };
 
@@ -66,8 +93,8 @@ const ProductDetail = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh", // Full viewport height
-        backgroundColor: "#f0f2f5", // Optional: Background color for better visibility
+        minHeight: "100vh",
+        backgroundColor: "#f0f2f5",
       }}
     >
       <div
@@ -78,7 +105,7 @@ const ProductDetail = () => {
           background: "#fff",
           borderRadius: "8px",
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          textAlign: "center", // Center text inside the box
+          textAlign: "center",
         }}
       >
         <Title level={2}>{product.name}</Title>
