@@ -53,10 +53,12 @@ export type Product = {
   description: string;
   created_at: string;
   updated_at: string;
+  image: string;
   variants: Variant[];
   colors: Color[];
   sizes: Size[];
 };
+
 export interface Category {
   id: number;
   name: string;

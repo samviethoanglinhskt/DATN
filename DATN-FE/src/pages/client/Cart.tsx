@@ -1,6 +1,7 @@
-import { useCart } from "./Cartshop";
 import { List, Button, Typography, Divider, Space } from "antd";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "src/context/Cart";
 
 const { Title, Text } = Typography;
 
@@ -13,6 +14,16 @@ const Cart = () => {
     upCartItemQuantity,
   } = useCart();
   const navigate = useNavigate();
+
+  // Kiểm tra token trong localStorage để xác định người dùng đã đăng nhập hay chưa
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    // Nếu không có token (người dùng chưa đăng nhập), chuyển hướng về trang đăng nhập
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,

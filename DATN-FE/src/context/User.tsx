@@ -28,7 +28,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const response = await axiosInstance.get('/api/user', {
+                    const response = await axiosInstance.get('/api/show-user', {
                         headers: { Authorization: `Bearer ${token}` },
                         withCredentials: true,
                     });
