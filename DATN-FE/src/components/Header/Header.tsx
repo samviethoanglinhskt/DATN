@@ -7,9 +7,11 @@ import axiosInstance from "src/config/axiosInstance";
 import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
 import logo from "src/assets/images/icons/logo-01.png";
+import { useCart } from "src/context/Cart";
 
 const Header: React.FC = () => {
   const { user, setUser } = useUser();
+  const { totalQuantity } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -140,7 +142,7 @@ const Header: React.FC = () => {
                 href="#"
                 onClick={handleCartClick}
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
-                data-notify="2"
+                data-notify={totalQuantity}
               >
                 <i className="zmdi zmdi-shopping-cart"></i>
               </a>
@@ -169,7 +171,7 @@ const Header: React.FC = () => {
           </div>
           <div
             className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
-            data-notify="2"
+            data-notify={totalQuantity}
           >
             <i className="zmdi zmdi-shopping-cart"></i>
           </div>

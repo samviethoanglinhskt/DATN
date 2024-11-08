@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 
 // Định nghĩa kiểu dữ liệu cho một sản phẩm trong giỏ hàng
 export interface CartItem {
+    tb_product_id: number;
     id: string;
     name: string;
     price: number;
@@ -16,10 +17,10 @@ export interface CartProviderProps {
 // Định nghĩa kiểu dữ liệu cho CartContext
 export interface CartContextType {
     cartItems: CartItem[];
+    totalQuantity: number;
     addToCart: (item: CartItem) => void;
-    removeFromCart: (id: string) => void;
-    updateQuantity: (id: string, quantity: number) => void;
+    removeFromCart: (id: number) => void;
     clearCart: () => void;
-    updateCartItemQuantity: (id: string, quantity: number) => void;
-    upCartItemQuantity: (id: string, quantity: number) => void;
+    reduceCartItemQuantity: (id: number, quantity: number) => void;
+    upCartItemQuantity: (id: number, quantity: number) => void;
 }
