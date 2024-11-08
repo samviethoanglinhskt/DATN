@@ -18,13 +18,12 @@ const NewProduct = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error instanceof Error ? error.message : 'Something went wrong'}</div>;
-  console.log(products.data);
   return (
     <section className="sec-product bg0 p-t-100 p-b-50">
       <div className="container">
         <div className="p-b-32">
           <h3 className="ltext-105 cl5 txt-center respon1">
-          Sản Phẩm Mới Nhất
+            Sản Phẩm Mới Nhất
           </h3>
         </div>
 
@@ -39,12 +38,12 @@ const NewProduct = () => {
                         <div className="block2-pic hov-img0">
                           {product.variants[0]?.images[0] && (
                             <img src="https://media.istockphoto.com/id/1296705483/vi/anh/c%C3%A1c-s%E1%BA%A3n-ph%E1%BA%A9m-trang-%C4%91i%E1%BB%83m-%C4%91%C6%B0%E1%BB%A3c-l%C4%83ng-k%C3%ADnh-tr%C3%AAn-b%E1%BB%A5c-tr%E1%BA%AFng-tr%C3%AAn-n%E1%BB%81n-m%C3%A0u-h%E1%BB%93ng-pastel.jpg?s=2048x2048&w=is&k=20&c=-zYuWfs-ia_UXZxZ9TNfI1LI1d0Kj3TVwm00xD9x0Jg="
-                            style={{
-                              width: '100%',
-                              height: '350px', 
-                              objectFit: 'cover',
-                            }}
-                             />
+                              style={{
+                                width: '100%',
+                                height: '350px',
+                                objectFit: 'cover',
+                              }}
+                            />
                           )}
                           <a href="#" className="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
                             Mua Ngay
@@ -77,7 +76,7 @@ const NewProduct = () => {
 
         <div className="flex-c-m flex-w w-full p-t-45">
           <a href="#" className="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-           Xêm Thêm
+            Xêm Thêm
           </a>
         </div>
       </div>

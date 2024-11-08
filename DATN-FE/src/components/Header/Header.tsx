@@ -1,10 +1,24 @@
+import { Grid, IconButton, Typography } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
+// import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
 
 const Header: React.FC = () => {
+  // const { user, setUser } = useUser();
+  const navigate = useNavigate()
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    // setUser(null);
+    navigate("/login")
+    window.location.reload();
+  };
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
     queryFn: async () => {
@@ -34,17 +48,34 @@ const Header: React.FC = () => {
             <div className="left-top-bar">
               Chào Mừng Bạn Đã Đến Với Trang Web Của Chúng Tôi
             </div>
-            <div className="right-top-bar flex-w h-full">
-              <a href="/login" className="flex-c-m trans-04 p-lr-25">
-                Login
-              </a>
-              <a href="/register" className="flex-c-m trans-04 p-lr-25">
-                Register
-              </a>
-              <a href="#" className="flex-c-m trans-04 p-lr-25">
-                EN
-              </a>
-            </div>
+            {user ? (
+              <div className="right-top-bar flex-w h-full">
+                <Grid container alignItems="center" spacing={2}>
+                  {/* <Grid item>
+                    <Typography color="white">Hi, {user.name}</Typography>
+                  </Grid> */}
+                  <Grid item>
+                    <IconButton sx={{ color: "white" }}>
+                      <AccountCircleIcon />
+                    </IconButton>
+                  </Grid>
+                  <Grid item>
+                    <Typography color="white" onClick={handleLogout}>
+                      Đăng xuất
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </div>
+            ) : (
+              <div className="right-top-bar flex-w h-full">
+                <a href="/login" className="flex-c-m trans-04 p-lr-25">
+                  Login
+                </a>
+                <a href="/register" className="flex-c-m trans-04 p-lr-25">
+                  Register
+                </a>
+              </div>
+            )}
           </div>
         </div>
 
@@ -94,12 +125,13 @@ const Header: React.FC = () => {
               <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                 <i className="zmdi zmdi-search"></i>
               </div>
-              <div
+              <a
+                href="/cart"
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
                 data-notify="2"
               >
                 <i className="zmdi zmdi-shopping-cart"></i>
-              </div>
+              </a>
               <a
                 href="#"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"

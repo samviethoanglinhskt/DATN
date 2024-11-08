@@ -1,4 +1,3 @@
-import React from "react";
 import { useCart } from "./Cartshop";
 import { List, Button, Typography, Divider, Space } from "antd";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -17,7 +16,7 @@ const Cart = () => {
   );
 
   if (cartItems.length === 0) {
-    return <Text type="secondary">Giỏ hàng của bạn đang trống.</Text>;
+    return <Text type="secondary" style={{ fontSize: "30px", margin: "100px" }}>Giỏ hàng của bạn đang trống.</Text>;
   }
 
   return (
