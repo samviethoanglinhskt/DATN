@@ -9,7 +9,7 @@ class tb_size extends Model
 {
     use HasFactory;
 
-    protected $table;
+    protected $table = 'tb_sizes';
 
     protected $fillable = [
         'name'

@@ -1,10 +1,26 @@
+import { Grid, IconButton, Typography } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
+import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
+import logo from "src/assets/images/icons/logo-01.png";
+import { useCart } from "src/context/Cart";
 
 const Header: React.FC = () => {
+  const { user, setUser } = useUser();
+  const { totalQuantity } = useCart();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/login");
+    window.location.reload();
+  };
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
     queryFn: async () => {
@@ -12,10 +28,20 @@ const Header: React.FC = () => {
         const response = await axiosInstance.get("/api/category");
         return response.data;
       } catch (error) {
+        console.log(error);
         throw new Error("Call API thất bại");
       }
     },
   });
+
+  const handleCartClick = () => {
+    if (!user) {
+      alert("Bạn phải đăng nhập để vào giỏ hàng");
+      // navigate("/login");
+    } else {
+      navigate("/cart");
+    }
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (isError)
@@ -24,6 +50,7 @@ const Header: React.FC = () => {
         Error: {error instanceof Error ? error.message : "Something went wrong"}
       </div>
     );
+
   return (
     <header>
       {/* Header desktop */}
@@ -34,25 +61,42 @@ const Header: React.FC = () => {
             <div className="left-top-bar">
               Chào Mừng Bạn Đã Đến Với Trang Web Của Chúng Tôi
             </div>
-            <div className="right-top-bar flex-w h-full">
-              <a href="/login" className="flex-c-m trans-04 p-lr-25">
-                Login
-              </a>
-              <a href="/register" className="flex-c-m trans-04 p-lr-25">
-                Register
-              </a>
-              <a href="#" className="flex-c-m trans-04 p-lr-25">
-                EN
-              </a>
-            </div>
+            {user ? (
+              <div className="right-top-bar flex-w h-full">
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item>
+                    <Typography color="white">Hi, {user.data.name}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <IconButton sx={{ color: "white" }}>
+                      <AccountCircleIcon />
+                    </IconButton>
+                  </Grid>
+                  <Grid item>
+                    <Typography color="white" onClick={handleLogout}>
+                      Đăng xuất
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </div>
+            ) : (
+              <div className="right-top-bar flex-w h-full">
+                <a href="/login" className="flex-c-m trans-04 p-lr-25">
+                  Login
+                </a>
+                <a href="/register" className="flex-c-m trans-04 p-lr-25">
+                  Register
+                </a>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="wrap-menu-desktop">
           <nav className="limiter-menu-desktop container">
             {/* Logo desktop */}
-            <a href="#" className="logo">
-              <img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" />
+            <a href="/" className="logo">
+              <img src={logo} alt="IMG-LOGO" />
             </a>
 
             {/* Menu desktop */}
@@ -62,10 +106,10 @@ const Header: React.FC = () => {
                   <a href="/">Home</a>
                 </li>
                 <li>
-                  <a href="/product">Shop</a>
+                  <a href="/product">Category</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
-                      <li>
+                      <li key={category.id}>
                         <Link to={`/product/${category.id}`}>
                           {category.name}
                         </Link>
@@ -94,12 +138,14 @@ const Header: React.FC = () => {
               <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                 <i className="zmdi zmdi-search"></i>
               </div>
-              <div
+              <a
+                href="#"
+                onClick={handleCartClick}
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
-                data-notify="2"
+                data-notify={totalQuantity}
               >
                 <i className="zmdi zmdi-shopping-cart"></i>
-              </div>
+              </a>
               <a
                 href="#"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
@@ -111,9 +157,11 @@ const Header: React.FC = () => {
           </nav>
         </div>
       </div>
+
+      {/* header mobie */}
       <div className="wrap-header-mobile">
         <div className="logo-mobile">
-          <a href="index.html">
+          <a href="/">
             <img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" />
           </a>
         </div>
@@ -123,7 +171,7 @@ const Header: React.FC = () => {
           </div>
           <div
             className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
-            data-notify="2"
+            data-notify={totalQuantity}
           >
             <i className="zmdi zmdi-shopping-cart"></i>
           </div>

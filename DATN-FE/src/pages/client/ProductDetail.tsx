@@ -1,9 +1,9 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import instance from "../../config/axiosInstance";
-import { useCart } from "./Cartshop";
 import { Button, Typography, Image, Alert, Spin } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
+import axiosInstance from "src/config/axiosInstance";
+import { useCart } from "src/context/Cart";
 
 const { Title, Paragraph } = Typography;
 
@@ -20,7 +20,7 @@ const ProductDetail = () => {
   } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
-      const response = await instance.get(`/api/product/${id}`);
+      const response = await axiosInstance.get(`/api/product/${id}`);
       return response.data;
     },
     enabled: !!id,
@@ -40,43 +40,29 @@ const ProductDetail = () => {
     );
 
   const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+      // navigate("/login"); // Điều hướng đến trang đăng nhập
+      return;
+    }
+
     if (product) {
-      // Add product to local cart
+      // Thêm sản phẩm vào giỏ hàng cục bộ
       addToCart({
+        tb_product_id: product.variants[0]?.tb_product_id,
         id: product.id,
         name: product.name,
         price: product.variants[0]?.price || 0,
         quantity: 1,
       });
 
-      try {
-        const token = localStorage.getItem("jwt_token");
-        const response = await instance.post(
-          "api/add-cart",
-          {
-            tb_product_id: product.id,
-            quantity: 1,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
 
-        if (response.status === 200) {
-          alert("Sản phẩm đã được thêm vào giỏ hàng!");
-        } else {
-          alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-        }
-      } catch (error) {
-        console.error("Error adding product to cart:", error);
-        alert("Có lỗi xảy ra. Vui lòng thử lại.");
-      }
     } else {
       alert("Sản phẩm không tồn tại.");
     }
   };
+
 
   const handleBuyNow = () => {
     if (product) {
@@ -110,7 +96,7 @@ const ProductDetail = () => {
       >
         <Title level={2}>{product.name}</Title>
         <Image
-          src={product.variants[0]?.images[0].name_image}
+          src={product.image}
           alt={product.name}
           width={300}
           preview={false}

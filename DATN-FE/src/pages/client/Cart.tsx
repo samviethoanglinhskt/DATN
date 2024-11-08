@@ -1,7 +1,7 @@
-import React from "react";
-import { useCart } from "./Cartshop";
 import { List, Button, Typography, Divider, Space } from "antd";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "src/context/Cart";
 
 const { Title, Text } = Typography;
 
@@ -10,10 +10,20 @@ const Cart = () => {
     cartItems,
     removeFromCart,
     clearCart,
-    updateCartItemQuantity,
+    reduceCartItemQuantity,
     upCartItemQuantity,
   } = useCart();
   const navigate = useNavigate();
+
+  // Kiểm tra token trong localStorage để xác định người dùng đã đăng nhập hay chưa
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    // Nếu không có token (người dùng chưa đăng nhập), chuyển hướng về trang đăng nhập
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -21,7 +31,7 @@ const Cart = () => {
   );
 
   if (cartItems.length === 0) {
-    return <Text type="secondary">Giỏ hàng của bạn đang trống.</Text>;
+    return <Text type="secondary" style={{ fontSize: "30px", margin: "100px" }}>Giỏ hàng của bạn đang trống.</Text>;
   }
 
   return (
@@ -54,7 +64,7 @@ const Cart = () => {
               actions={[
                 <Button
                   onClick={() =>
-                    updateCartItemQuantity(item.id, item.quantity - 1)
+                    reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)
                   }
                   disabled={item.quantity <= 1}
                 >
@@ -62,12 +72,12 @@ const Cart = () => {
                 </Button>,
                 <Text>{item.quantity}</Text>,
                 <Button
-                  onClick={() => upCartItemQuantity(item.id, item.quantity + 1)}
+                  onClick={() => upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
                 >
                   +
                 </Button>,
                 <Button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.tb_product_id)}
                   type="link"
                   danger
                 >

@@ -32,6 +32,7 @@ const Login = () => {
             reset();
             setTimeout(() => {
                 navigate("/");
+                window.location.reload();
             }, 2000);
         } catch (error) {
             console.error("Lỗi đăng nhập:", error);
