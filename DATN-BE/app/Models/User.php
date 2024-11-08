@@ -69,6 +69,6 @@ class User extends Authenticatable implements JWTSubject
     }
     public function cart()
     {
-        return $this->hasOne(tb_role::class);
+        return $this->hasMany(tb_cart::class);
     }
 }
