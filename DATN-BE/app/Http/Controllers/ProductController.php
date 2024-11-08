@@ -125,8 +125,7 @@ class ProductController extends Controller
                             // return response()->json($path);
                             // Lưu thông tin ảnh vào CSDL
                             $tb_image = tb_image::query()->create([
-                                'tb_variant_id' => $new_variant->id,
-                                'status' => $image['status'],
+                                'tb_variant_id' => $new_variant->id,                          
                                 'name_image' => $path,
 
                             ]);
@@ -169,6 +168,7 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'image' => $imagePr
             ]);
+            // return response()->json($product);
             if ($request->variants && is_array($request->variants)) {
                 foreach ($request->variants as $id => $variantData) {
                     if (isset($product->variants[$id])) {
@@ -193,15 +193,9 @@ class ProductController extends Controller
                                     $newImagePath = $variantData['images'][$id_image]['name_image']->store('images', 'public');
                                     // Cập nhật đường dẫn ảnh mới và các thông tin khác
                                     $variantImage->update([
-                                        'name_image' => $newImagePath,
-                                        'status' => $variantData['images'][$id_image]['status'] ?? $variantImage->status
+                                        'name_image' => $newImagePath,                                    
                                     ]);
-                                } else {
-                                    // Nếu không có ảnh mới, chỉ cập nhật `status` nếu có trong request
-                                    if (isset($variantData['images'][$id_image]['status'])) {
-                                        $variantImage->update(['status' => $variantData['images'][$id_image]['status']]);
-                                    }
-                                }
+                                } 
                             }
                         }
                     } else {
@@ -224,8 +218,7 @@ class ProductController extends Controller
 
                                     // Thêm ảnh mới vào biến thể
                                     $variant->images()->create([
-                                        'name_image' => $newImagePath,
-                                        'status' => $imageData['status'] ?? null
+                                        'name_image' => $newImagePath,                                    
                                     ]);
                                 }
                             }
