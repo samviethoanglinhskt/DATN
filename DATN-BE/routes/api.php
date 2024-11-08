@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ColorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ImagesController;
@@ -38,6 +39,7 @@ Route::resource('logobanner', LogoBannerController::class);
 Route::resource('brand', BrandController::class);
 Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
+Route::resource('color', ColorController::class);
 
 Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
@@ -47,9 +49,12 @@ Route::get('/product-list', [ProductController::class, 'getListProduct'])->name(
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
+Route::get('/show-user',[UserController::class, 'showUser'])->name('show_User');
 
 Route::post('/add-cart', [CartController::class,'addToCart'])->name('add_cart');
 Route::get('/cart', [CartController::class, 'listCart'])->name('list_cart');
 Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name('del_all_cart');
 Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantityCart'])->name('update_quantity_cart');
+Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
+

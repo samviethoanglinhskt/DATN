@@ -131,9 +131,28 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function showUser()
     {
-        //
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Hiển thị thông tin người dùng thành công',
+                'data' => $user,
+            ], 200); // 200 OK
+        }catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
