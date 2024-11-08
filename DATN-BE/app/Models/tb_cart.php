@@ -18,7 +18,7 @@ class tb_cart extends Model
     ];
 
     public function products(){
-        return $this->hasMany(tb_product::class, 'tb_product_id');
+        return $this->belongsTo(tb_product::class, 'tb_product_id');
     }
 
     public function user(){

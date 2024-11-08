@@ -53,6 +53,6 @@ class tb_product extends Model
 
     public function cart()
     {
-        return $this->belongsTo(tb_cart::class);
+        return $this->hasMany(tb_cart::class);
     }
 }
