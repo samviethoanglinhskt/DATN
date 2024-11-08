@@ -1,6 +1,5 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-// import { useCart } from "./Cartshop";
 import { Button, Typography, Image, Alert, Spin } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import axiosInstance from "src/config/axiosInstance";
@@ -51,35 +50,14 @@ const ProductDetail = () => {
     if (product) {
       // Thêm sản phẩm vào giỏ hàng cục bộ
       addToCart({
+        tb_product_id: product.variants[0]?.tb_product_id,
         id: product.id,
         name: product.name,
         price: product.variants[0]?.price || 0,
         quantity: 1,
       });
 
-      try {
-        const response = await axiosInstance.post(
-          "api/add-cart",
-          {
-            tb_product_id: product.id,
-            quantity: 1,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
 
-        if (response.status === 200) {
-          alert("Sản phẩm đã được thêm vào giỏ hàng!");
-        } else {
-          alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-        }
-      } catch (error) {
-        console.error("Error adding product to cart:", error);
-        alert("Có lỗi xảy ra. Vui lòng thử lại.");
-      }
     } else {
       alert("Sản phẩm không tồn tại.");
     }

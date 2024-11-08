@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CartController extends Controller
 {
-    public function addToCart(Request $request){
+    public function addToCart(Request $request)
+    {
         $request->validate([
             'tb_product_id' => 'required|exists:tb_products,id',
             'quantity' => 'required|integer|min:1',
@@ -51,7 +52,8 @@ class CartController extends Controller
     }
 
     //cái hàm này là thay đổi lại số lượng(khi bên client nhấn nút trừ số lượng trong giỏ hàng)
-    public function updateQuantityCart(Request $request){
+    public function updateQuantityCart(Request $request)
+    {
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
@@ -64,8 +66,8 @@ class CartController extends Controller
             $product = tb_product::find($request->tb_product_id);
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
-                        ->where('tb_product_id', $product->id)
-                        ->first();
+                ->where('tb_product_id', $product->id)
+                ->first();
             // Cập nhật số lượng
             $cart->quantity -= $request->quantity;
             $cart->save();
@@ -85,7 +87,8 @@ class CartController extends Controller
         }
     }
 
-    public function upQuantityCart(Request $request){
+    public function upQuantityCart(Request $request)
+    {
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
@@ -98,8 +101,8 @@ class CartController extends Controller
             $product = tb_product::find($request->tb_product_id);
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
-                        ->where('tb_product_id', $product->id)
-                        ->first();
+                ->where('tb_product_id', $product->id)
+                ->first();
             // Cập nhật số lượng
             $cart->quantity += $request->quantity;
             $cart->save();
@@ -119,7 +122,8 @@ class CartController extends Controller
         }
     }
 
-    public function delOneCart(Request $request){
+    public function delOneCart(Request $request)
+    {
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
@@ -130,10 +134,23 @@ class CartController extends Controller
             }
 
             $product = tb_product::find($request->tb_product_id);
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sản phẩm không tồn tại',
+                ], 404);
+            }
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
-                        ->where('tb_product_id', $product->id)
-                        ->first();
+                ->where('tb_product_id', $product->id)
+                ->first();
+            if (!$cart) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sản phẩm không tồn tại trong giỏ hàng',
+                ], 404);
+            }
+
             $cart->delete();
 
             return response()->json([
@@ -151,7 +168,8 @@ class CartController extends Controller
         }
     }
 
-    public function delAllCart(){
+    public function delAllCart()
+    {
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
@@ -174,20 +192,21 @@ class CartController extends Controller
     }
 
 
-    public function listCart(){
+    public function listCart()
+    {
         $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Người dùng không tồn tại',
-                ], 404);
-            }
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Người dùng không tồn tại',
+            ], 404);
+        }
         $cart = tb_cart::where('user_id', $user->id)->get();
 
         return response()->json([
             'success' => true,
-                'message' => 'lấy giỏ hàng thành công!',
-                'data' => $cart
+            'message' => 'lấy giỏ hàng thành công!',
+            'data' => $cart
         ]);
     }
 }

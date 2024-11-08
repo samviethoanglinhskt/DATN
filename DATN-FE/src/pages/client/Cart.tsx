@@ -10,7 +10,7 @@ const Cart = () => {
     cartItems,
     removeFromCart,
     clearCart,
-    updateCartItemQuantity,
+    reduceCartItemQuantity,
     upCartItemQuantity,
   } = useCart();
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const Cart = () => {
               actions={[
                 <Button
                   onClick={() =>
-                    updateCartItemQuantity(item.id, item.quantity - 1)
+                    reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)
                   }
                   disabled={item.quantity <= 1}
                 >
@@ -72,12 +72,12 @@ const Cart = () => {
                 </Button>,
                 <Text>{item.quantity}</Text>,
                 <Button
-                  onClick={() => upCartItemQuantity(item.id, item.quantity + 1)}
+                  onClick={() => upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
                 >
                   +
                 </Button>,
                 <Button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.tb_product_id)}
                   type="link"
                   danger
                 >
