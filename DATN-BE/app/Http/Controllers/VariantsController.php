@@ -45,7 +45,7 @@ class VariantsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return response()->json(['data' => 1]);
     }
 
     /**
@@ -63,7 +63,7 @@ class VariantsController extends Controller
     {
         try {
             $variant = tb_variant::with('images')->findOrFail($id);
-            
+
             foreach ($variant->images as $image) {
                 if ($image->name_image) {
                     Storage::disk('public')->delete($image->name_image);

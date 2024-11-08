@@ -71,4 +71,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(tb_cart::class);
     }
+    public function isAdmin()
+    {
+        return $this->tb_role_id == 1;
+    }
 }
