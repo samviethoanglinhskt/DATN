@@ -5,9 +5,7 @@ import HomePage from "./pages/client/HomePage";
 import Register from "./pages/client/Register";
 import Login from "./pages/client/Login";
 import ProductDetail from "./pages/client/ProductDetail";
-
 import Cart from "./pages/client/Cart";
-import { CartProvider } from "./pages/client/Cartshop";
 import GuestInfoForm from "./pages/client/GuestInfoForm";
 import OrderDetails from "./pages/client/OrderDetails";
 import Payment from "./pages/client/Payment";
@@ -57,9 +55,7 @@ function App() {
   const routes = useRoutes(routeConfig);
 
   return (
-    <CartProvider>
-      <main>{routes}</main>
-    </CartProvider>
+    <main>{routes}</main>
   );
 }
 
