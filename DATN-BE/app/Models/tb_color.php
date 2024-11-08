@@ -9,7 +9,7 @@ class tb_color extends Model
 {
     use HasFactory;
 
-    protected $table;
+    protected $table = 'tb_colors';
 
     protected $fillable = [
         'name'
