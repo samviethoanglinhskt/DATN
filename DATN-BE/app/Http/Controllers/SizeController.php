@@ -109,9 +109,9 @@ class SizeController extends Controller
                 'data' => null
             ]);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Thương hiệu không tồn tại'], 404);
+            return response()->json(['error' => 'Dung tích không tồn tại'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể xóa thương hiệu'], 500);
+            return response()->json(['error' => 'Không thể xóa dung tích'], 500);
         }
     }
 }

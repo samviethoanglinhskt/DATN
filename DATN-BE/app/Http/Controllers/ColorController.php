@@ -50,6 +50,17 @@ class ColorController extends Controller
     public function show(string $id)
     {
         //
+        try {
+            $color = tb_color::query()->findOrFail($id);
+            return response()->json([
+                'message' => 'Dung tích ' . $id,
+                'data' => $color
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Màu không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể lấy màu'], 500);
+        }
     }
 
     /**
@@ -66,6 +77,22 @@ class ColorController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        try {
+            $color = tb_color::query()->findOrFail($id);
+
+            $color->update([
+                'name' => $request->name,
+            ]);
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $color
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Màu không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể cập nhật màu'], 500);
+        }
     }
 
     /**
@@ -74,5 +101,18 @@ class ColorController extends Controller
     public function destroy(string $id)
     {
         //
+        try {
+            $color = tb_color::findOrFail($id);
+            $color->delete();
+
+            return response()->json([
+                'message' => 'Xóa thành công',
+                'data' => null
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Màu không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Không thể xóa màu'], 500);
+        }
     }
 }
