@@ -14,6 +14,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariantsController;
+use App\Http\Middleware\CheckAdmin;
+use App\Http\Middleware\CheckEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,8 +31,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('isAdmin')->group(function () {
+    // Middleware
+    Route::apiResource('variants', VariantsController::class);
+    // Không dùng Middleware
+    Route::get('api/variants',[VariantsController::class,'index'])->name('variants.index')->withoutMiddleware('isAdmin');
 });
 Route::resource('product', ProductController::class);
 Route::resource('category', controller: CategoryController::class);
@@ -41,7 +46,7 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 
-Route::apiResource('variants', VariantsController::class);
+//Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
 Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
 Route::get('/product-list', [ProductController::class, 'getListProduct'])->name('product_list');
@@ -53,6 +58,7 @@ Route::get('/show-user',[UserController::class, 'showUser'])->name('show_User');
 
 Route::post('/add-cart', [CartController::class,'addToCart'])->name('add_cart');
 Route::get('/cart', [CartController::class, 'listCart'])->name('list_cart');
+
 Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name('del_all_cart');
 Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
