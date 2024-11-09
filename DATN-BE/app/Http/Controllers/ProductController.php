@@ -246,7 +246,7 @@ class ProductController extends Controller
     public function show(string $id) // hiển thị sản phẩm theo id
     {
         try {
-            $product = tb_product::with('category', 'brand', 'variants.images','variants.color','variants.size')->findOrFail($id);
+            $product = tb_product::with('category', 'brand', 'variants.images','colors','sizes')->findOrFail($id);
             return response()->json($product);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
