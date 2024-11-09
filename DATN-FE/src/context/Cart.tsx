@@ -65,10 +65,38 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 { tb_product_id: item.tb_product_id, quantity: item.quantity },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+
             if (response.status === 200) {
-                setCartItems(response.data);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setTotalQuantity(response.data.reduce((sum: any, item: { quantity: any; }) => sum + item.quantity, 0)); // Update total quantity
+                const newItem = response.data.data;
+
+                setCartItems((prevItems) => {
+                    const existingItemIndex = prevItems.findIndex(
+                        (i) => i.tb_product_id === newItem.tb_product_id
+                    );
+
+                    let updatedItems;
+                    if (existingItemIndex !== -1) {
+                        // Sản phẩm đã tồn tại, cập nhật số lượng
+                        updatedItems = [...prevItems];
+                        updatedItems[existingItemIndex] = {
+                            ...updatedItems[existingItemIndex],
+                            quantity: newItem.quantity,
+                        };
+                    } else {
+                        // Sản phẩm chưa tồn tại, thêm sản phẩm mới
+                        updatedItems = [...prevItems, newItem];
+                    }
+
+                    // Cập nhật tổng số lượng ngay tại đây
+                    const newTotalQuantity = updatedItems.reduce(
+                        (sum, item) => sum + item.quantity,
+                        0
+                    );
+                    setTotalQuantity(newTotalQuantity);
+
+                    return updatedItems;
+                });
+
                 alert("Thêm thành công");
                 navigate("/cart");
             }
@@ -76,6 +104,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             console.error("Error adding item to cart:", error);
         }
     };
+
+
+
 
     const removeFromCart = async (tb_product_id: number) => {
         const token = localStorage.getItem("token");
