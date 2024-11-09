@@ -7,10 +7,9 @@ export interface CartItem {
   id?: number;
   name?: string;
   price?: number;
-  sizes?: string;
-  colors?: string;
+  tb_size_id?: string;
+  tb_color_id?: string;
   sku?: string;
-  variants?: string;
 }
 
 // Định nghĩa kiểu cho các props của CartProvider

@@ -61,7 +61,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     try {
       const response = await axiosInstance.post(
         "api/add-cart",
-        { tb_product_id: item.tb_product_id, quantity: item.quantity },
+        {
+          tb_product_id: item.tb_product_id,
+          quantity: item.quantity,
+          tb_size_id: item.tb_size_id,
+          tb_color_id: item.tb_color_id,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

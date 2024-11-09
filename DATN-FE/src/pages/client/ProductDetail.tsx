@@ -47,8 +47,7 @@ const ProductDetail = () => {
 
     const findSelectedVariant = product.variants?.find(
       (variant: any) =>
-        variant.size?.name === selectedSize &&
-        variant.color?.name === selectedColor
+        variant.size?.id === selectedSize && variant.color?.id === selectedColor
     );
 
     if (!findSelectedVariant) {
@@ -62,10 +61,9 @@ const ProductDetail = () => {
         tb_product_id: findSelectedVariant.tb_product_id,
         id: product.id,
         name: product.name,
-        price: (findSelectedVariant.price || 0) + sizePrice,
         quantity: 1,
-        sizes: selectedSize,
-        colors: selectedColor,
+        tb_size_id: selectedSize,
+        tb_color_id: selectedColor,
         sku: findSelectedVariant.sku || "N/A",
       });
     } else {
@@ -197,7 +195,7 @@ const ProductDetail = () => {
                   color: "#EC4899",
                 }}
               >
-                ${variant?.price + sizePrice}
+                ${sizePrice}
               </span>
             </h1>
             {/* Display SKU here */}
@@ -246,7 +244,7 @@ const ProductDetail = () => {
               >
                 <option value="">Chọn kích thước</option>
                 {product.sizes.map((size: any, index: any) => (
-                  <option key={index} value={size.name}>
+                  <option key={index} value={size.id}>
                     {size.name} - ${size.pivot.price}
                   </option>
                 ))}
@@ -268,7 +266,7 @@ const ProductDetail = () => {
               >
                 <option value="">Chọn màu sắc</option>
                 {product.colors.map((color: any, index: any) => (
-                  <option key={index} value={color.name}>
+                  <option key={index} value={color.id}>
                     {color.name}
                   </option>
                 ))}
