@@ -31,12 +31,12 @@ class tb_variant extends Model
     }
     public function color()
     {
-        return $this->belongsTo(tb_color::class);
+        return $this->belongsTo(tb_color::class,'tb_color_id');
     }
 
     // Một biến thể có một dung tích
     public function size()
     {
-        return $this->belongsTo(tb_size::class);
+        return $this->belongsTo(tb_size::class,'tb_size_id');
     }
 }

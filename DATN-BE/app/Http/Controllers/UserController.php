@@ -75,6 +75,7 @@ class UserController extends Controller
                 'tb_role_id' => 2,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
+                'address' => $request->address,
                 'email' => $request->email,
 
             ]);
@@ -174,6 +175,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'tb_role_id' => 2,
                 'phone' => $request->phone,
+                'address' => $request->address,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
