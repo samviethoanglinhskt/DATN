@@ -63,4 +63,5 @@ Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name
 Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
+Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->name('checkout');
 

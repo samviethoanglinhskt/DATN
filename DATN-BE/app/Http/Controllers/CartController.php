@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\tb_cart;
+use App\Models\tb_oder;
 use App\Models\tb_product;
+use App\Models\tb_variant;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -14,6 +17,7 @@ class CartController extends Controller
     {
         $request->validate([
             'tb_product_id' => 'required|exists:tb_products,id',
+            'tb_variant_id' => 'required|exists:tb_variants,id',
             'quantity' => 'required|integer|min:1',
         ]);
         try {
@@ -26,9 +30,14 @@ class CartController extends Controller
             }
 
             $product = tb_product::findOrFail($request->tb_product_id);
+            $variant = tb_variant::findOrFail($request->tb_variant_id);
             // Thêm sản phẩm vào giỏ hàng
             $cart = tb_cart::firstOrCreate(
-                ['user_id' => $user->id, 'tb_product_id' => $product->id],
+                [
+                    'user_id' => $user->id,
+                    'tb_product_id' => $product->id,
+                    'tb_variant_id' => $variant->id,
+                ],
                 ['quantity' => 0]
             );
 
@@ -144,13 +153,6 @@ class CartController extends Controller
             $cart = tb_cart::where('user_id', $user->id)
                 ->where('tb_product_id', $product->id)
                 ->first();
-            if (!$cart) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Sản phẩm không tồn tại trong giỏ hàng',
-                ], 404);
-            }
-
             $cart->delete();
 
             return response()->json([
@@ -208,5 +210,81 @@ class CartController extends Controller
             'message' => 'lấy giỏ hàng thành công!',
             'data' => $cart
         ]);
+    }
+
+
+    public function checkoutCart(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+
+            // Lấy danh sách product_ids từ yêu cầu
+            $productIds = $request->input('product_ids');
+
+            if (empty($productIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không có sản phẩm nào được chọn để thanh toán',
+                ], 400);
+            }
+
+            // Lấy các sản phẩm từ giỏ hàng của user với các product_ids đã chọn
+            $selectedItems = tb_cart::where('user_id', $user->id)
+                ->whereIn('id', $productIds)
+                ->get();
+
+            if ($selectedItems->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy sản phẩm nào trong giỏ hàng',
+                ], 404);
+            }
+
+            // Tạo một mảng để lưu các đơn hàng đã tạo
+            $orders = [];
+            $totalOrder = 0;
+            foreach ($selectedItems as $item) {
+                $variant = tb_variant::find($item->tb_variant_id);
+                if ($variant) {
+                    $totalAmount = $variant->price * $item->quantity;
+                    $totalOrder += $totalAmount;
+                }
+                $order = tb_oder::create([
+                    'tb_cart_id' => $item->id,
+                    'user_id' => $user->id,
+                    'tb_discount_id' => 1,
+                    'order_date' => now(),
+                    'total_amount' => $totalAmount,
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                    'address' => $user->address,
+                    'email' => $user->email,
+                ]);
+                $orders[] = $order;
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy sản phẩm đã chọn thành công!',
+                'cart-checkout' => $selectedItems,
+                'order' => $orders,
+                'total' => $totalOrder
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi đặt hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại sau.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
