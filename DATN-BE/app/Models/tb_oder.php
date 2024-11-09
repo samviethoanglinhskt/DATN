@@ -13,11 +13,11 @@ class tb_oder extends Model
 
     protected $fillable = [
         'tb_cart_id',
-        'tb_account_id',
+        'user_id',
         'tb_discount_id',
         'order_date',
         'total_amount',
-        'oder_status',
+        'order_status',
         'name',
         'phone',
         'address',

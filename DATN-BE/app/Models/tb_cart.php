@@ -14,13 +14,21 @@ class tb_cart extends Model
     protected $fillable = [
         'user_id',
         'tb_product_id',
-        'quantity'
+        'quantity',
+        'tb_variant_id',
     ];
 
     public function products(){
         return $this->belongsTo(tb_product::class, 'tb_product_id');
     }
+    public function variant()
+    {
+        return $this->belongsTo(tb_variant::class, 'tb_variant_id');
+    }
 
+    /**
+     * Relationship with Size model
+     */
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
