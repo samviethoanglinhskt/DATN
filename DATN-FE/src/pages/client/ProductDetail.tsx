@@ -1,16 +1,18 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Typography, Image, Alert, Spin } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
-
-const { Title, Paragraph } = Typography;
+import { useState } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [sizePrice, setSizePrice] = useState<number>(0);
 
   const {
     data: product,
@@ -26,102 +28,317 @@ const ProductDetail = () => {
     enabled: !!id,
   });
 
-  if (isLoading) return <Spin size="large" />;
-  if (isError)
-    return (
-      <Alert
-        message="Error"
-        description={
-          error instanceof Error ? error.message : "Something went wrong"
-        }
-        type="error"
-        showIcon
-      />
-    );
-
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
-      // navigate("/login"); // Điều hướng đến trang đăng nhập
       return;
     }
 
+    if (!product) {
+      alert("Product data is not available.");
+      return;
+    }
+
+    if (!selectedSize || !selectedColor) {
+      alert("Vui lòng chọn kích thước và màu sắc.");
+      return;
+    }
+
+    const findSelectedVariant = product.variants?.find(
+      (variant: any) =>
+        variant.size?.name === selectedSize &&
+        variant.color?.name === selectedColor
+    );
+
+    if (!findSelectedVariant) {
+      alert("Không tìm thấy sản phẩm với kích thước và màu sắc đã chọn.");
+      return;
+    }
+
+    // Gọi addToCart từ context
     if (product) {
-      // Thêm sản phẩm vào giỏ hàng cục bộ
       addToCart({
-        tb_product_id: product.variants[0]?.tb_product_id,
+        tb_product_id: findSelectedVariant.tb_product_id,
         id: product.id,
         name: product.name,
-        price: product.variants[0]?.price || 0,
+        price: (findSelectedVariant.price || 0) + sizePrice,
         quantity: 1,
+        sizes: selectedSize,
+        colors: selectedColor,
+        sku: findSelectedVariant.sku || "N/A",
       });
-
-
     } else {
-      alert("Sản phẩm không tồn tại.");
+      alert("sản phẩm không tồn tại!");
     }
   };
-
 
   const handleBuyNow = () => {
-    if (product) {
+    if (product && selectedSize && selectedColor) {
       navigate("/guest-info", { state: { products: [product] } });
+    } else {
+      alert("Vui lòng chọn kích thước và màu sắc.");
     }
   };
 
-  return (
-    <div
-      className="product-detail"
-      style={{
-        fontFamily: "Arial, sans-serif",
-        padding: "20px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f0f2f5",
-      }}
-    >
+  if (isLoading) {
+    return (
       <div
         style={{
-          maxWidth: 600,
-          width: "100%",
-          padding: "20px",
-          background: "#fff",
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          textAlign: "center",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#fff",
         }}
       >
-        <Title level={2}>{product.name}</Title>
-        <Image
-          src={product.image}
-          alt={product.name}
-          width={300}
-          preview={false}
-        />
-        <Paragraph strong>Price: ${product.variants[0]?.price}</Paragraph>
-        <Paragraph>{product.description}</Paragraph>
-        <Button
-          type="primary"
-          onClick={handleAddToCart}
-          style={{ marginBottom: "10px" }}
-        >
-          Thêm vào giỏ hàng
-        </Button>
-        <Button
-          type="primary"
-          onClick={handleBuyNow}
-          style={{ marginBottom: "10px", marginLeft: "10px" }}
-        >
-          Mua ngay
-        </Button>
-        <Button type="link" icon={<HomeOutlined />}>
-          <Link to="/">Home</Link>
-        </Button>
+        <div
+          style={{
+            width: "80px",
+            height: "80px",
+            border: "4px solid #f3f3f3",
+            borderTop: "4px solid #EC4899",
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite",
+          }}
+        ></div>
       </div>
-    </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "#FEE2E2",
+            border: "1px solid #FCA5A5",
+            color: "#DC2626",
+            padding: "12px 16px",
+            borderRadius: "4px",
+            position: "relative",
+          }}
+        >
+          <strong style={{ fontWeight: "bold" }}>Error! </strong>
+          <span>
+            {error instanceof Error ? error.message : "Something went wrong"}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Make sure product and variants are available before trying to access them
+  const variant = product?.variants?.[0];
+  const sku = variant ? variant.sku : "N/A"; // Safely access SKU
+
+  return (
+    <main
+      style={{
+        backgroundColor: "#fff",
+        position: "relative",
+        overflow: "hidden",
+        minHeight: "100vh",
+      }}
+    >
+      {/* Product Detail Section */}
+      <div
+        style={{
+          backgroundColor: "#fff",
+          padding: "64px 0",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 24px",
+            display: "flex",
+            gap: "48px",
+          }}
+        >
+          <div
+            style={{
+              flex: "1",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                width: "80px",
+                height: "4px",
+                backgroundColor: "#1F2937",
+                marginBottom: "32px",
+              }}
+            ></div>
+            <h1
+              style={{
+                fontSize: "48px",
+                fontWeight: "900",
+                color: "#1F2937",
+                marginBottom: "16px",
+                textTransform: "uppercase",
+              }}
+            >
+              {product.name}
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "40px",
+                  color: "#EC4899",
+                }}
+              >
+                ${variant?.price + sizePrice}
+              </span>
+            </h1>
+            {/* Display SKU here */}
+            <div
+              style={{
+                fontSize: "18px",
+                color: "#4B5563",
+                marginBottom: "24px",
+              }}
+            >
+              <strong>SKU:</strong> {sku}
+            </div>
+            <p
+              style={{
+                fontSize: "16px",
+                color: "#4B5563",
+                marginBottom: "32px",
+                lineHeight: "1.5",
+              }}
+            >
+              {product.description}
+            </p>
+
+            {/* Size Selection */}
+            <div>
+              <h3>Kích thước:</h3>
+              <select
+                onChange={(e) => {
+                  const selected = e.target.value;
+                  setSelectedSize(selected);
+                  // Tính lại giá kích cỡ khi người dùng chọn size
+                  const selectedSizeData = product.sizes.find(
+                    (size: any) => size.name === selected
+                  );
+                  setSizePrice(
+                    selectedSizeData ? selectedSizeData.pivot.price : 0
+                  );
+                }}
+                value={selectedSize || ""}
+                style={{
+                  padding: "8px 16px",
+                  fontSize: "16px",
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                }}
+              >
+                <option value="">Chọn kích thước</option>
+                {product.sizes.map((size: any, index: any) => (
+                  <option key={index} value={size.name}>
+                    {size.name} - ${size.pivot.price}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Color Selection */}
+            <div>
+              <h3>Màu sắc:</h3>
+              <select
+                onChange={(e) => setSelectedColor(e.target.value)}
+                value={selectedColor || ""}
+                style={{
+                  padding: "8px 16px",
+                  fontSize: "16px",
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                }}
+              >
+                <option value="">Chọn màu sắc</option>
+                {product.colors.map((color: any, index: any) => (
+                  <option key={index} value={color.name}>
+                    {color.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Add to Cart and Buy Now buttons */}
+            <div
+              style={{
+                display: "flex",
+                gap: "16px",
+                marginBottom: "24px",
+              }}
+            >
+              <button
+                onClick={handleAddToCart}
+                style={{
+                  backgroundColor: "#EC4899",
+                  color: "#fff",
+                  padding: "12px 24px",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  cursor: "pointer",
+                  textTransform: "uppercase",
+                  fontWeight: "600",
+                }}
+              >
+                Thêm vào giỏ hàng
+              </button>
+              <button
+                onClick={handleBuyNow}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#EC4899",
+                  padding: "12px 24px",
+                  border: "2px solid #EC4899",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  cursor: "pointer",
+                  textTransform: "uppercase",
+                  fontWeight: "600",
+                }}
+              >
+                Mua ngay
+              </button>
+            </div>
+          </div>
+          <div
+            style={{
+              flex: "1",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={product.imageUrl || ""}
+              alt={product.name}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+                borderRadius: "12px",
+                boxShadow:
+                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </main>
   );
 };
 

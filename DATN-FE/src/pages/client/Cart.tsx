@@ -31,7 +31,11 @@ const Cart = () => {
   );
 
   if (cartItems.length === 0) {
-    return <Text type="secondary" style={{ fontSize: "30px", margin: "100px" }}>Giỏ hàng của bạn đang trống.</Text>;
+    return (
+      <Text type="secondary" style={{ fontSize: "30px", margin: "100px" }}>
+        Giỏ hàng của bạn đang trống.
+      </Text>
+    );
   }
 
   return (
@@ -64,7 +68,10 @@ const Cart = () => {
               actions={[
                 <Button
                   onClick={() =>
-                    reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)
+                    reduceCartItemQuantity(
+                      item.tb_product_id,
+                      item.quantity - 1
+                    )
                   }
                   disabled={item.quantity <= 1}
                 >
@@ -72,7 +79,9 @@ const Cart = () => {
                 </Button>,
                 <Text>{item.quantity}</Text>,
                 <Button
-                  onClick={() => upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
+                  onClick={() =>
+                    upCartItemQuantity(item.tb_product_id, item.quantity + 1)
+                  }
                 >
                   +
                 </Button>,

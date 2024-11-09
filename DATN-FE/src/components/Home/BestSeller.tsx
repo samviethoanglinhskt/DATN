@@ -13,10 +13,10 @@ const StoreOverView = () => {
     queryKey: ["products"],
     queryFn: async () => {
       try {
-        const response = await axiosInstance.get('/api/product-list');
+        const response = await axiosInstance.get("/api/product-list");
         return response.data;
       } catch (error) {
-        throw new Error('Call API thất bại');
+        throw new Error("Call API thất bại");
       }
     },
   });
@@ -40,7 +40,11 @@ const StoreOverView = () => {
 
         <div className="tab01">
           <div className="tab-content p-t-50">
-            <div className="tab-pane fade show active" id="best-seller" role="tabpanel">
+            <div
+              className="tab-pane fade show active"
+              id="best-seller"
+              role="tabpanel"
+            >
               <div className="wrap-slick2">
                 <div className="slick2 d-flex">
                   {products.data.map((product: Product) => (
@@ -51,15 +55,19 @@ const StoreOverView = () => {
                       <div className="block2">
                         <div className="block2-pic hov-img0">
                           {product.variants[0]?.images[0] && (
-                            <img src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
+                            <img
+                              src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
                               style={{
-                                width: '100%',
-                                height: '350px',
-                                objectFit: 'cover',
+                                width: "100%",
+                                height: "350px",
+                                objectFit: "cover",
                               }}
                             />
                           )}
-                          <a href="#" className="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+                          <a
+                            href="#"
+                            className="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                          >
                             Mua Ngay
                           </a>
                         </div>
@@ -86,7 +94,10 @@ const StoreOverView = () => {
         </div>
 
         <div className="flex-c-m flex-w w-full p-t-45">
-          <a href="#" className="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+          <a
+            href="#"
+            className="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
+          >
             Xem Thêm
           </a>
         </div>
