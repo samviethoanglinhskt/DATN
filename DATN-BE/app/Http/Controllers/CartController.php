@@ -17,7 +17,7 @@ class CartController extends Controller
     {
         $request->validate([
             'tb_product_id' => 'required|exists:tb_products,id',
-            'tb_variant_id' => 'required|exists:tb_variants,id',
+            // 'tb_variant_id' => 'required|exists:tb_variants,id',
             'quantity' => 'required|integer|min:1',
         ]);
         try {
@@ -30,7 +30,10 @@ class CartController extends Controller
             }
 
             $product = tb_product::findOrFail($request->tb_product_id);
-            $variant = tb_variant::findOrFail($request->tb_variant_id);
+            $variant = tb_variant::where('tb_product_id', $request->tb_product_id)
+                     ->where('tb_size_id', $request->tb_size_id)
+                     ->where('tb_color_id', $request->tb_color_id)
+                     ->first();
             // Thêm sản phẩm vào giỏ hàng
             $cart = tb_cart::firstOrCreate(
                 [
@@ -203,7 +206,7 @@ class CartController extends Controller
                 'message' => 'Người dùng không tồn tại',
             ], 404);
         }
-        $cart = tb_cart::where('user_id', $user->id)->get();
+        $cart = tb_cart::with('variant')->where('user_id', $user->id)->get();
 
         return response()->json([
             'success' => true,
