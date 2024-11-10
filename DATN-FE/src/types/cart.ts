@@ -7,8 +7,8 @@ export interface CartItem {
   id?: number;
   name?: string;
   price?: number;
-  tb_size_id?: string;
-  tb_color_id?: string;
+  tb_size_id?: number;
+  tb_color_id?: number;
   sku?: string;
 }
 

@@ -10,8 +10,8 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [selectedColor, setSelectedColor] = useState<number | null>(null);
   const [sizePrice, setSizePrice] = useState<number>(0);
 
   const {
@@ -45,26 +45,29 @@ const ProductDetail = () => {
       return;
     }
 
-    const findSelectedVariant = product.variants?.find(
-      (variant: any) =>
-        variant.size?.id === selectedSize && variant.color?.id === selectedColor
-    );
-
-    if (!findSelectedVariant) {
-      alert("Không tìm thấy sản phẩm với kích thước và màu sắc đã chọn.");
-      return;
-    }
+    // const findSelectedVariant = product.variants?.find(
+    //   (variant: any) =>
+    //     variant.tb_product_id === product.id &&
+    //     variant.tb_size_id === selectedSize &&
+    //     variant.tb_color_id === selectedColor
+    // );
+    // console.log(findSelectedVariant);
+    // console.log(JSON.stringify(product.variants, null, 2));
+    // // product.variants.forEach((variant: any) => {
+    // //   console.log("Size ID:", variant.tb_size_id, "Color ID:", variant.tb_color_id);
+    // // });
+    // if (!findSelectedVariant) {
+    //   alert("Không tìm thấy sản phẩm với kích thước và màu sắc đã chọn.");
+    //   return;
+    // }
 
     // Gọi addToCart từ context
     if (product) {
       addToCart({
-        tb_product_id: findSelectedVariant.tb_product_id,
-        id: product.id,
-        name: product.name,
+        tb_product_id: product.id,
         quantity: 1,
         tb_size_id: selectedSize,
         tb_color_id: selectedColor,
-        sku: findSelectedVariant.sku || "N/A",
       });
     } else {
       alert("sản phẩm không tồn tại!");
@@ -226,9 +229,13 @@ const ProductDetail = () => {
                 onChange={(e) => {
                   const selected = e.target.value;
                   setSelectedSize(selected);
+
+                  // Chuyển đổi giá trị sang số
+                  const selectedSizeId = parseInt(selected, 10);
+
                   // Tính lại giá kích cỡ khi người dùng chọn size
                   const selectedSizeData = product.sizes.find(
-                    (size: any) => size.name === selected
+                    (size: any) => size.id === selectedSizeId
                   );
                   setSizePrice(
                     selectedSizeData ? selectedSizeData.pivot.price : 0
@@ -255,7 +262,13 @@ const ProductDetail = () => {
             <div>
               <h3>Màu sắc:</h3>
               <select
-                onChange={(e) => setSelectedColor(e.target.value)}
+                onChange={(e) => {
+                  const selected = e.target.value;
+                  const selectedColorId = parseInt(selected, 10); // Chuyển đổi sang số
+                  // Sử dụng selectedColorId nếu cần
+                  setSelectedColor(selectedColorId);
+                  
+                }}
                 value={selectedColor || ""}
                 style={{
                   padding: "8px 16px",
