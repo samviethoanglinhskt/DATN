@@ -1,6 +1,8 @@
+import LayoutAdmin from "src/pages/admin/LayoutAdmin"
+
 const AdminLayout = () => {
     return (
-        <div>AdminLayout</div>
+        <LayoutAdmin />
     )
 }
 
