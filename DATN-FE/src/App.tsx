@@ -13,6 +13,8 @@ import OrderDetails from "./pages/client/OrderDetails";
 import Payment from "./pages/client/Payment";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
+import CheckoutPage from "./pages/client/Checkout";
+
 
 
 const routeConfig = [
@@ -43,6 +45,10 @@ const routeConfig = [
       {
         path: "cart",
         element: <Cart />,
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />,
       },
       {
         path: "guest-info",
