@@ -14,8 +14,7 @@ import Payment from "./pages/client/Payment";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
-
-
+import { UserProvider } from "./context/User";
 
 const routeConfig = [
   {
@@ -75,8 +74,8 @@ const routeConfig = [
       {
         path: "product",
         element: <AppProduct />,
-      }
-    ]
+      },
+    ],
   },
 ];
 
@@ -84,7 +83,9 @@ function App() {
   const routes = useRoutes(routeConfig);
 
   return (
-    <main>{routes}</main>
+    <UserProvider>
+      <main>{routes}</main>
+    </UserProvider>
   );
 }
 
