@@ -72,6 +72,13 @@ const OrderDetails: React.FC = () => {
               <Typography.Text strong style={{ marginLeft: "auto" }}>
                 Giá: ${product.variants[0]?.price}
               </Typography.Text>
+              <Typography.Text strong style={{ marginLeft: "auto" }}>
+                Kích cỡ:
+                {product.sizes[0]?.name}
+              </Typography.Text>
+              <Typography.Text strong style={{ marginLeft: "auto" }}>
+                Màu sắc: {product.colors[0]?.name}
+              </Typography.Text>
             </List.Item>
           )}
         />

@@ -267,7 +267,6 @@ const ProductDetail = () => {
                   const selectedColorId = parseInt(selected, 10); // Chuyển đổi sang số
                   // Sử dụng selectedColorId nếu cần
                   setSelectedColor(selectedColorId);
-                  
                 }}
                 value={selectedColor || ""}
                 style={{

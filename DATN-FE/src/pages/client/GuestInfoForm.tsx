@@ -72,7 +72,9 @@ const GuestInfoForm: React.FC = () => {
             renderItem={(product) => (
               <List.Item key={product.id}>
                 <Typography.Text>
-                  {product.name} - Giá: ${product.variants[0]?.price}
+                  {product.name} - Giá: ${product.variants[0]?.price} - Kích
+                  thước: ${product.sizes[0]?.name} - Màu sắc: $
+                  {product.colors[0]?.name}
                 </Typography.Text>
               </List.Item>
             )}
