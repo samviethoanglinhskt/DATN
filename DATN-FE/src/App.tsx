@@ -1,14 +1,19 @@
 import { useRoutes } from "react-router-dom";
 import "./App.css";
+import ProductList from "./components/Home/Product";
+import AdminLayout from "./layouts/AdminLayout";
 import ClientLayout from "./layouts/ClientLayout";
-import HomePage from "./pages/client/HomePage";
-import Register from "./pages/client/Register";
-import Login from "./pages/client/Login";
-import ProductDetail from "./pages/client/ProductDetail";
+import AppCategoryyy from "./pages/admin/category/Category";
+import AppProduct from "./pages/admin/product/listProducts";
 import Cart from "./pages/client/Cart";
 import GuestInfoForm from "./pages/client/GuestInfoForm";
+import HomePage from "./pages/client/HomePage";
+import Login from "./pages/client/Login";
 import OrderDetails from "./pages/client/OrderDetails";
 import Payment from "./pages/client/Payment";
+import ProductDetail from "./pages/client/ProductDetail";
+import Register from "./pages/client/Register";
+
 
 const routeConfig = [
   {
@@ -28,26 +33,44 @@ const routeConfig = [
         element: <Login />,
       },
       {
-        path: "/product/:id",
+        path: "product/:id",
         element: <ProductDetail />,
       },
       {
-        path: "/cart",
+        path: "category/:categoryId",
+        element: <ProductList />,
+      },
+      {
+        path: "cart",
         element: <Cart />,
       },
       {
-        path: "/guest-info",
+        path: "guest-info",
         element: <GuestInfoForm />,
       },
       {
-        path: "/order-details",
+        path: "order-details",
         element: <OrderDetails />,
       },
       {
-        path: "/payment",
+        path: "payment",
         element: <Payment />,
       },
     ],
+  },
+  {
+    path: "admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "category",
+        element: <AppCategoryyy />,
+      },
+      {
+        path: "product",
+        element: <AppProduct />,
+      }
+    ]
   },
 ];
 
