@@ -25,7 +25,7 @@ class tb_oder extends Model
     ];
 
     public function cart(){
-        return $this->belongsTo(tb_cart::class);
+        return $this->belongsTo(tb_cart::class, 'tb_cart_id');
     }
 
     public function user(){
