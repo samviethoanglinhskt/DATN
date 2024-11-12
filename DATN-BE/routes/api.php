@@ -7,10 +7,11 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\OderController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\LogoBannerController;
-use App\Http\Controllers\OderController;
+use App\Http\Controllers\Paymentcontroller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
@@ -65,7 +66,11 @@ Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantit
 Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
 Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->name('checkout');
+//vnpay
+Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
+
 //oder
 Route::get('/list-oder-client',[OderController::class,'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin',[OderController::class,'listOderAdmin'])->name('list_oder_admin');
+
 
