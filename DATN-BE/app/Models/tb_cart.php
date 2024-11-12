@@ -33,7 +33,7 @@ class tb_cart extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function oder(){
-        return $this->hasOne(tb_oder::class);
-    }
+    // public function oder(){
+    //     return $this->hasOne(tb_oder::class);
+    // }
 }

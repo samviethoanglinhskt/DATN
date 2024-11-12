@@ -39,4 +39,8 @@ class tb_variant extends Model
     {
         return $this->belongsTo(tb_size::class,'tb_size_id');
     }
+
+    public function oderDetail(){
+        return $this->hasMany(tb_oderdetail::class);
+    }
 }

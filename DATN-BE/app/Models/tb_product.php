@@ -55,4 +55,8 @@ class tb_product extends Model
     {
         return $this->hasMany(tb_cart::class);
     }
+
+    public function oderDetail(){
+        return $this->hasMany(tb_oderdetail::class);
+    }
 }
