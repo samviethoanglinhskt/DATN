@@ -12,7 +12,7 @@ class tb_oder extends Model
     protected $table;
 
     protected $fillable = [
-        'tb_cart_id',
+        'order_code',
         'user_id',
         'tb_discount_id',
         'order_date',
@@ -24,9 +24,9 @@ class tb_oder extends Model
         'email'
     ];
 
-    public function cart(){
-        return $this->belongsTo(tb_cart::class, 'tb_cart_id');
-    }
+    // public function cart(){
+    //     return $this->belongsTo(tb_cart::class, 'tb_cart_id');
+    // }
 
     public function user(){
         return $this->belongsTo(User::class);
@@ -34,5 +34,9 @@ class tb_oder extends Model
 
     public function discount(){
         return $this->belongsTo(tb_discount::class);
+    }
+
+    public function oderDetails(){
+        return $this->hasMany(tb_oderdetail::class);
     }
 }

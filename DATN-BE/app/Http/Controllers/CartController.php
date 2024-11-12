@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\tb_cart;
 use App\Models\tb_oder;
+use App\Models\tb_oderdetail;
 use App\Models\tb_product;
 use App\Models\tb_variant;
 use Illuminate\Http\Request;
@@ -208,7 +209,7 @@ class CartController extends Controller
                 'message' => 'Người dùng không tồn tại',
             ], 404);
         }
-        $cart = tb_cart::with('variant')->where('user_id', $user->id)->get();
+        $cart = tb_cart::with('variant.size', 'variant.color')->where('user_id', $user->id)->get();
 
         return response()->json([
             'success' => true,
@@ -252,38 +253,46 @@ class CartController extends Controller
             }
 
             // Tạo một mảng để lưu các đơn hàng đã tạo
-            $orders = [];
+            $orderDetails = [];
             $totalOrder = 0;
+            $order = tb_oder::create([
+                'user_id' => $user->id,
+                'tb_discount_id' => 1,
+                'order_date' => now(),
+                // 'total_amount' => $totalAmount,
+                'order_status' => 'Chờ xử lý',
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'address' => $user->address,
+                'email' => $user->email,
+            ]);
             foreach ($selectedItems as $item) {
                 $variant = tb_variant::find($item->tb_variant_id);
                 if ($variant) {
                     $totalAmount = $variant->price * $item->quantity;
                     $totalOrder += $totalAmount;
                 }
-                $order = tb_oder::create([
-                    'tb_cart_id' => $item->id,
-                    'user_id' => $user->id,
-                    'tb_discount_id' => 1,
-                    'order_date' => now(),
-                    'total_amount' => $totalAmount,
-                    'order_status' => 'Chờ xử lý',
-                    'name' => $user->name,
-                    'phone' => $user->phone,
-                    'address' => $user->address,
-                    'email' => $user->email,
+                $oderDetail = tb_oderdetail::create([
+                    'tb_oder_id' => $order->id,
+                    'tb_product_id' =>$item->tb_product_id,
+                    'tb_variant_id' =>$item->tb_variant_id,
+                    'quantity' =>$item->quantity,
+                    'price' =>$variant->price
                 ]);
-                $order->order_code = 'ORD-' . $order->id;
-                $order->save();
-                $orders[] = $order;
+
+                $orderDetails[] = $oderDetail;
             }
 
+            $order->order_code = 'ORD-' . $order->id;
+            $order->total_amount = $totalOrder;
+            $order->save();
             // tích hợp vnpay
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
             $vnp_Returnurl = route('vnpay.ipn');
-            $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY 
+            $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
             $vnp_HashSecret = "3LOZH2QK4LS8CW46G9X2ZULCL1SHRNRN"; //Chuỗi bí mật
 
-            $vnp_TxnRef = $order->order_code; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này 
+            $vnp_TxnRef = $order->order_code; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này
             $vnp_OrderInfo = "Thanh toán hóa đơn";
             $vnp_OrderType = "Imperial Beauty";
             $vnp_Amount = $totalOrder * 100;
@@ -330,7 +339,7 @@ class CartController extends Controller
 
             $vnp_Url = $vnp_Url . "?" . $query;
             if (isset($vnp_HashSecret)) {
-                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //  
+                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
 
@@ -338,8 +347,8 @@ class CartController extends Controller
                 'success' => true,
                 'message' => 'Lấy sản phẩm đã chọn thành công!',
                 'cart-checkout' => $selectedItems,
-                'order' => $orders,
-                'total' => $totalOrder,
+                'order' => $order,
+                'orderDetail' => $orderDetails,
                 'vnpay_url' => $vnp_Url
             ]);
         } catch (\Exception $e) {
