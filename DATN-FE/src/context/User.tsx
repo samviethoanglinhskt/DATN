@@ -38,7 +38,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           });
-          console.log("Dữ liệu người dùng:", response.data); // Thêm log để kiểm tra
           setUser(response.data);
         } else {
           setUser(null);

@@ -2,14 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from 'src/context/Cart';
 
-interface CartItem {
-  tb_product_id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-}
-
 const ShoppingCart: React.FC = () => {
   const {
     cartItems,
@@ -65,7 +57,7 @@ const ShoppingCart: React.FC = () => {
 
     try {
       // Lọc ra các sản phẩm đã chọn
-      const selectedProducts = cartItems.filter(item => 
+      const selectedProducts = cartItems.filter(item =>
         selectedItems.includes(item.tb_product_id)
       );
 
@@ -115,7 +107,7 @@ const ShoppingCart: React.FC = () => {
       <nav aria-label="breadcrumb" className="mb-4">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
-            <button 
+            <button
               className="btn btn-link p-0 text-decoration-none"
               onClick={() => navigate("/")}
             >
