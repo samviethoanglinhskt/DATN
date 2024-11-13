@@ -49,6 +49,7 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
+Route::resource('discount', DiscountController::class);
 
 //Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
