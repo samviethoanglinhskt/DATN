@@ -6,12 +6,12 @@ export interface CartItem {
   quantity: number;
   id?: number;
   name?: string;
-  price: number;
+  price?: number;
   tb_size_id?: number;
   tb_color_id?: number;
   sku?: string;
-  size: string;
-  image: string;
+  size?: string;
+  image?: string;
 }
 
 // Định nghĩa kiểu cho các props của CartProvider
@@ -24,6 +24,7 @@ export interface CartContextType {
   cartItems: CartItem[];
   totalQuantity: number;
   addToCart: (item: CartItem) => void;
+  addToBuy: (item: CartItem) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
   reduceCartItemQuantity: (id: number, quantity: number) => void;

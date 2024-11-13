@@ -51,7 +51,7 @@ const LayoutAdmin: React.FC = () => {
             {
               key: "3",
               icon: <UploadOutlined />,
-              label: <NavLink to="cart">Đơn Hàng</NavLink>,
+              label: <NavLink to="order">Đơn Hàng</NavLink>,
             },
           ]}
         />
