@@ -218,7 +218,112 @@ class CartController extends Controller
         ]);
     }
 
+    public function checkoutGuest(Request $request){ // khách vãng lai
 
+        try {
+            $totalOrder = 0;
+            $order = tb_oder::create([
+                'user_id' => 1,
+                'tb_discount_id' => 1,
+                'order_date' => now(),
+                // 'total_amount' => $totalAmount,
+                'order_status' => 'Chờ xử lý',
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'email' => $request->email,
+            ]);
+            $variant = tb_variant::find($request->tb_variant_id);
+            if ($variant) {
+                $totalAmount = $variant->price * $request->quantity;
+                $totalOrder = $totalAmount;
+            }
+            $oderDetail = tb_oderdetail::create([
+                'tb_oder_id' => $order->id,
+                'tb_product_id' =>$request->tb_product_id,
+                'tb_variant_id' =>$request->tb_variant_id,
+                'quantity' =>$request->quantity,
+                'price' =>$variant->price
+            ]);
+
+            $order->order_code = 'ORD-' . $order->id;
+            $order->total_amount = $totalOrder;
+            $order->save();
+
+            // tích hợp vnpay
+            $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+            $vnp_Returnurl = route('vnpay.ipn');
+            $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
+            $vnp_HashSecret = "3LOZH2QK4LS8CW46G9X2ZULCL1SHRNRN"; //Chuỗi bí mật
+
+            $vnp_TxnRef = $order->order_code; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này
+            $vnp_OrderInfo = "Thanh toán hóa đơn";
+            $vnp_OrderType = "Imperial Beauty";
+            $vnp_Amount = $totalOrder * 100;
+            $vnp_Locale = "VN";
+            $vnp_BankCode = "NCB";
+            $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
+
+            $inputData = array(
+                "vnp_Version" => "2.1.0",
+                "vnp_TmnCode" => $vnp_TmnCode,
+                "vnp_Amount" => $vnp_Amount,
+                "vnp_Command" => "pay",
+                "vnp_CreateDate" => date('YmdHis'),
+                "vnp_CurrCode" => "VND",
+                "vnp_IpAddr" => $vnp_IpAddr,
+                "vnp_Locale" => $vnp_Locale,
+                "vnp_OrderInfo" => $vnp_OrderInfo,
+                "vnp_OrderType" => $vnp_OrderType,
+                "vnp_ReturnUrl" => $vnp_Returnurl,
+                "vnp_TxnRef" => $vnp_TxnRef
+            );
+
+            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+                $inputData['vnp_BankCode'] = $vnp_BankCode;
+            }
+            if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
+                $inputData['vnp_Bill_State'] = $vnp_Bill_State;
+            }
+
+            //var_dump($inputData);
+            ksort($inputData);
+            $query = "";
+            $i = 0;
+            $hashdata = "";
+            foreach ($inputData as $key => $value) {
+                if ($i == 1) {
+                    $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                } else {
+                    $hashdata .= urlencode($key) . "=" . urlencode($value);
+                    $i = 1;
+                }
+                $query .= urlencode($key) . "=" . urlencode($value) . '&';
+            }
+
+            $vnp_Url = $vnp_Url . "?" . $query;
+            if (isset($vnp_HashSecret)) {
+                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy sản phẩm đã chọn thành công!',
+                'order' => $order,
+                'orderDetail' => $oderDetail,
+                'vnpay_url' => $vnp_Url
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi đặt hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại sau.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function checkoutCart(Request $request)
     {
         try {
