@@ -18,6 +18,8 @@ const OrderDetails: React.FC = () => {
       guestInfo: {} as GuestInfo,
       products: [],
     };
+  const selectedSize = location.state?.selectedSize;
+  const selectedColor = location.state?.selectedColor;
 
   const [paymentMethod, setPaymentMethod] = useState<string>("cash"); // Default payment method
 
@@ -77,10 +79,14 @@ const OrderDetails: React.FC = () => {
                 Giá: ${product.variants[0]?.price}
               </Typography.Text>
               <Typography.Text strong style={{ marginLeft: "auto" }}>
-                Kích cỡ: {product.sizes[0]?.name}
+                Kích cỡ:{" "}
+                {product.sizes.find((size) => size.id === selectedSize)?.name ||
+                  "Chưa chọn"}
               </Typography.Text>
               <Typography.Text strong style={{ marginLeft: "auto" }}>
-                Màu sắc: {product.colors[0]?.name}
+                Màu sắc:{" "}
+                {product.colors.find((color) => color.id === selectedColor)
+                  ?.name || "Chưa chọn"}
               </Typography.Text>
             </List.Item>
           )}
