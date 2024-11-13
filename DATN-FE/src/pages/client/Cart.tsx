@@ -2,17 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "src/context/Cart";
 
-interface CartItem {
-  tb_product_id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-}
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from 'src/context/Cart';
-
 const ShoppingCart: React.FC = () => {
   const {
     cartItems,
@@ -67,7 +56,6 @@ const ShoppingCart: React.FC = () => {
     try {
       // Lọc ra các sản phẩm đã chọn
       const selectedProducts = cartItems.filter((item) =>
-      const selectedProducts = cartItems.filter(item =>
         selectedItems.includes(item.tb_product_id)
       );
 
@@ -179,9 +167,6 @@ const ShoppingCart: React.FC = () => {
                           <small className="text-muted">
                             ID: {item.tb_product_id}
                           </small>
-                        </div>
-                        <div>
-                          <h6 className="mb-1">{item.size}</h6>
                         </div>
                       </div>
                     </td>
