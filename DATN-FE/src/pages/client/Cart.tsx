@@ -9,6 +9,9 @@ interface CartItem {
   quantity: number;
   image?: string;
 }
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from 'src/context/Cart';
 
 const ShoppingCart: React.FC = () => {
   const {
@@ -64,6 +67,7 @@ const ShoppingCart: React.FC = () => {
     try {
       // Lọc ra các sản phẩm đã chọn
       const selectedProducts = cartItems.filter((item) =>
+      const selectedProducts = cartItems.filter(item =>
         selectedItems.includes(item.tb_product_id)
       );
 

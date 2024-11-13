@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\tb_size;
+
+use App\Models\tb_new;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
-class SizeController extends Controller
+class NewController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +15,8 @@ class SizeController extends Controller
     public function index()
     {
         //
-        $size = tb_size::all();
-        return response()->json($size);
+        $new = tb_new::all();
+        return response()->json($new);
     }
 
     /**
@@ -32,14 +33,20 @@ class SizeController extends Controller
     public function store(Request $request)
     {
         //
-        $size = tb_size::query()->create($request->all());
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'create_day' => 'required|date',
+        ]);
+
         try {
+            $news = tb_new::query()->create($request->all());
             return response()->json([
-                'message' => 'Tạo mới dung tích thành công',
-                'data' => $size
+                'message' => 'Tạo mới bài viết thành công',
+                'data' => $news
             ]);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể tạo dung tích'], 500);
+            return response()->json(['error' => 'Không thể tạo bài viết'], 500);
         }
     }
 
@@ -50,15 +57,15 @@ class SizeController extends Controller
     {
         //
         try {
-            $size = tb_size::query()->findOrFail($id);
+            $news = tb_new::query()->findOrFail($id);
             return response()->json([
-                'message' => 'Dung tích ' . $id,
-                'data' => $size
+                'message' => 'Bài viết ' . $id,
+                'data' => $news
             ]);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Dung tích không tồn tại'], 404);
+            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể lấy dung tích'], 500);
+            return response()->json(['error' => 'Không thể lấy bài viết'], 500);
         }
     }
 
@@ -77,20 +84,21 @@ class SizeController extends Controller
     {
         //
         try {
-            $size = tb_size::query()->findOrFail($id);
-
-            $size->update([
-                'name' => $request->name,
+            $news = tb_new::query()->findOrFail($id);
+            $news->update([
+                'title' => $request->title,
+                'content' => $request->content,
+                'create_day' => $request->create_day,
             ]);
 
             return response()->json([
-                'message' => 'Sửa thành công',
-                'data' => $size
+                'message' => 'Cập nhật thành công',
+                'data' => $news
             ]);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Dung tích không tồn tại'], 404);
+            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể cập nhật dung tích'], 500);
+            return response()->json(['error' => 'Không thể cập nhật bài viết'], 500);
         }
     }
 
@@ -101,17 +109,17 @@ class SizeController extends Controller
     {
         //
         try {
-            $size = tb_size::findOrFail($id);
-            $size->delete();
+            $news = tb_new::query()->findOrFail($id);
+            $news->delete();
 
             return response()->json([
                 'message' => 'Xóa thành công',
                 'data' => null
             ]);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Dung tích không tồn tại'], 404);
+            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể xóa dung tích'], 500);
+            return response()->json(['error' => 'Không thể xóa bài viết'], 500);
         }
     }
 }

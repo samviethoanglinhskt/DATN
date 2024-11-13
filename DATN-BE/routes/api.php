@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NewController;
 use App\Http\Controllers\OderController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ImagesController;
@@ -47,6 +48,7 @@ Route::resource('brand', BrandController::class);
 Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
+Route::resource('new', NewController::class);
 
 //Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
