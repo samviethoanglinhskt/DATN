@@ -1,7 +1,7 @@
-import { Grid, IconButton, Typography } from "@mui/material";
+import { Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useUser } from "src/context/User";
@@ -13,6 +13,17 @@ const Header: React.FC = () => {
   const { user, setUser } = useUser();
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
+
+  // State to manage the open status of the menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget); // Open the menu
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null); // Close the menu
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -68,14 +79,38 @@ const Header: React.FC = () => {
                     <Typography color="white">Hi, {user.data.name}</Typography>
                   </Grid>
                   <Grid item>
-                    <IconButton sx={{ color: "white" }}>
+                    {/* Add hover effect to trigger the menu */}
+                    <IconButton
+                      sx={{
+                        color: "white",
+                      }}
+                      onMouseEnter={handleMenuOpen}
+                    >
                       <AccountCircleIcon />
                     </IconButton>
-                  </Grid>
-                  <Grid item>
-                    <Typography color="white" onClick={handleLogout}>
-                      Đăng xuất
-                    </Typography>
+                    {/* Menu for logout and password reset */}
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleMenuClose}
+                      MenuListProps={{
+                        onMouseLeave: handleMenuClose, // Close menu when mouse leaves
+                      }}
+                    >
+                      <MenuItem
+                        onClick={() => navigate("/forgot-password")}
+                        sx={{ "&:hover": { color: "#717FE0" } }}
+                      >
+                        Quên mật khẩu
+                      </MenuItem>
+                      <MenuItem
+                        onClick={handleLogout}
+                        sx={{ "&:hover": { color: "#717FE0" } }}
+                      >
+                        Đăng xuất
+                      </MenuItem>
+
+                    </Menu>
                   </Grid>
                 </Grid>
               </div>

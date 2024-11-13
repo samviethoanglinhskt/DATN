@@ -10,13 +10,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState(0); // Add state for total quantity
+  const [loading, setLoading] = useState(true); // Loading state added
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartItems = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
-
+      setLoading(true); // Start loading
       try {
         const response = await axiosInstance.get("api/cart", {
           headers: { Authorization: `Bearer ${token}` },
@@ -34,7 +35,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 ...item,
                 name: productData.name,
                 price: productData.variants[0]?.price,
-                
+
               };
             })
           );
@@ -47,6 +48,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       } catch (error) {
         console.error("Error fetching cart items:", error);
         setCartItems([]);
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
     fetchCartItems();
@@ -98,12 +101,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             0
           );
           setTotalQuantity(newTotalQuantity);
-
           return updatedItems;
         });
 
         alert("Thêm thành công");
         navigate("/cart");
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error adding item to cart:", error);
@@ -144,6 +147,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     tb_product_id: number,
     quantity: number
   ) => {
+    if (quantity < 1) return;
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.tb_product_id === tb_product_id
@@ -198,6 +202,13 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const clearCart = async () => {
+    // Hiển thị hộp thoại xác nhận
+    const confirmDelete = window.confirm("Bạn có muốn xóa tất cả sản phẩm trong giỏ hàng không?");
+
+    if (!confirmDelete) {
+      // Nếu người dùng không xác nhận, dừng hành động
+      return;
+    }
     setCartItems([]);
     setTotalQuantity(0); // Reset total quantity
 
@@ -220,6 +231,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       value={{
         cartItems,
         totalQuantity,
+        loading,
         addToCart,
         removeFromCart,
         clearCart,

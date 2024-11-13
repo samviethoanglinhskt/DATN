@@ -4,7 +4,6 @@ import { useCart } from 'src/context/Cart';
 import { useUser } from 'src/context/User';
 
 interface LocationState {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selectedProducts: any[];
   subtotal: number;
   delivery: number;
@@ -17,21 +16,36 @@ const CheckoutPage: React.FC = () => {
   const { clearCart } = useCart();
   const { user } = useUser(); // Get user data from UserContext
 
-  // Khởi tạo các state bằng dữ liệu người dùng
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [address, setAddress] = useState(user?.address || '');
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [addressError, setAddressError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
 
   const state = location.state as LocationState;
   const selectedProducts = state?.selectedProducts || [];
   const subtotal = state?.subtotal || 0;
   const delivery = state?.delivery || 0;
   const total = state?.total || 0;
+
+  useEffect(() => {
+    if (user?.data) {
+      setName(user.data.name || '');
+      setEmail(user.data.email || '');
+      setPhone(user.data.phone || '');
+      setAddress(user.data.address || '');
+      setLoadingUser(false);
+    } else {
+      setLoadingUser(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -43,12 +57,44 @@ const CheckoutPage: React.FC = () => {
   }, [navigate, selectedProducts]);
 
   const validateForm = () => {
+    let isValid = true;
+    if (!name.trim()) {
+      setNameError('Họ tên không được để trống');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email.trim()) {
+      setEmailError('Email không được để trống');
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Email không hợp lệ');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    const phoneRegex = /^0[0-9]{9}$/;
+    if (!phone.trim()) {
+      setPhoneError('Số điện thoại không được để trống');
+      isValid = false;
+    } else if (!phoneRegex.test(phone)) {
+      setPhoneError('Số điện thoại không hợp lệ');
+      isValid = false;
+    } else {
+      setPhoneError('');
+    }
+
     if (!address.trim()) {
       setAddressError('Địa chỉ không được để trống');
-      return false;
+      isValid = false;
+    } else {
+      setAddressError('');
     }
-    setAddressError('');
-    return true;
+
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,8 +144,12 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
+  if (loadingUser) {
+    return <div>Đang tải thông tin người dùng...</div>;
+  }
+
   return (
-    <div className="container py-5">
+    <div className="container py-5 mt-5">
       <nav aria-label="breadcrumb" className="mb-4">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -119,7 +169,6 @@ const CheckoutPage: React.FC = () => {
       <h1 className="h3 mb-4">Thanh Toán</h1>
 
       <div className="row g-4">
-        {/* Left Column - Payment Form */}
         <div className="col-lg-8">
           <div className="card shadow-sm">
             <div className="card-body">
@@ -130,35 +179,38 @@ const CheckoutPage: React.FC = () => {
                   <label className="form-label">Họ tên</label>
                   <input
                     type="text"
-                    className="form-control bg-light"
-                    value={user?.data?.name || ''}
+                    className={`form-control bg-light ${nameError ? 'is-invalid' : ''}`}
+                    value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
+                  {nameError && <div className="invalid-feedback">{nameError}</div>}
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Email</label>
                   <input
-                    type="email"
-                    className="form-control bg-light"
-                    value={user?.data?.email || ''}
+                    type="text"
+                    className={`form-control bg-light ${emailError ? 'is-invalid' : ''}`}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
+                  {emailError && <div className="invalid-feedback">{emailError}</div>}
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Số điện thoại</label>
                   <input
                     type="tel"
-                    className="form-control bg-light"
-                    value={user?.data?.phone || ''}
+                    className={`form-control bg-light ${phoneError ? 'is-invalid' : ''}`}
+                    value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
+                  {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Địa chỉ giao hàng *</label>
                   <textarea
                     className={`form-control ${addressError ? 'is-invalid' : ''}`}
                     rows={3}
-                    value={user?.data?.address || ''}
+                    value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Vui lòng nhập địa chỉ giao hàng chi tiết"
                   />
@@ -175,7 +227,6 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column - Order Summary */}
         <div className="col-lg-4">
           <div className="card shadow-sm">
             <div className="card-body">
@@ -185,26 +236,23 @@ const CheckoutPage: React.FC = () => {
                   <div key={item.tb_product_id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
                     <img src="/api/placeholder/80/80" alt={item.name} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
-                      <h6 className="mb-1">{item.name}</h6>
-                      <div className="text-muted small">Số lượng: {item.quantity}</div>
-                      <div className="text-primary fw-bold">${(item.price * item.quantity).toFixed(2)}</div>
+                      <p className="mb-0">{item.name}</p>
+                      <small>{item.quantity} x {item.price.toFixed(2)} $</small>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="border-top pt-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <span className="text-muted">Tạm tính</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="d-flex justify-content-between mb-2">
-                  <span className="text-muted">Phí vận chuyển</span>
-                  <span>${delivery.toFixed(2)}</span>
-                </div>
-                <div className="d-flex justify-content-between pt-3 border-top mt-3">
-                  <span className="fw-bold">Tổng cộng</span>
-                  <span className="text-primary fw-bold h5 mb-0">${total.toFixed(2)}</span>
-                </div>
+              <div className="d-flex justify-content-between mb-3">
+                <span>Tạm tính</span>
+                <span>{subtotal.toFixed(2)} $</span>
+              </div>
+              <div className="d-flex justify-content-between mb-3">
+                <span>Phí giao hàng</span>
+                <span>{delivery.toFixed(2)} $</span>
+              </div>
+              <div className="d-flex justify-content-between mb-3">
+                <span><strong>Tổng cộng</strong></span>
+                <span><strong>{total.toFixed(2)} $</strong></span>
               </div>
             </div>
           </div>

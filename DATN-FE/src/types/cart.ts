@@ -28,4 +28,5 @@ export interface CartContextType {
   clearCart: () => void;
   reduceCartItemQuantity: (id: number, quantity: number) => void;
   upCartItemQuantity: (id: number, quantity: number) => void;
+  loading: boolean; // Add the loading property here
 }
