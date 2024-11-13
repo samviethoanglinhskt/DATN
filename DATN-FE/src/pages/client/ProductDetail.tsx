@@ -45,23 +45,6 @@ const ProductDetail = () => {
       return;
     }
 
-    // const findSelectedVariant = product.variants?.find(
-    //   (variant: any) =>
-    //     variant.tb_product_id === product.id &&
-    //     variant.tb_size_id === selectedSize &&
-    //     variant.tb_color_id === selectedColor
-    // );
-    // console.log(findSelectedVariant);
-    // console.log(JSON.stringify(product.variants, null, 2));
-    // // product.variants.forEach((variant: any) => {
-    // //   console.log("Size ID:", variant.tb_size_id, "Color ID:", variant.tb_color_id);
-    // // });
-    // if (!findSelectedVariant) {
-    //   alert("Không tìm thấy sản phẩm với kích thước và màu sắc đã chọn.");
-    //   return;
-    // }
-
-    // Gọi addToCart từ context
     if (product) {
       addToCart({
         tb_product_id: product.id,
@@ -227,7 +210,7 @@ const ProductDetail = () => {
               <h3>Kích thước:</h3>
               <select
                 onChange={(e) => {
-                  const selected = e.target.value;
+                  const selected: any = e.target.value;
                   setSelectedSize(selected);
 
                   // Chuyển đổi giá trị sang số
