@@ -59,6 +59,17 @@ const GuestInfoForm: React.FC = () => {
           </Form.Item>
 
           <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email của bạn" },
+              { type: "email", message: "Email không hợp lệ" },
+            ]}
+          >
+            <Input placeholder="Nhập email của bạn" />
+          </Form.Item>
+
+          <Form.Item
             label="Địa chỉ"
             name="address"
             rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}

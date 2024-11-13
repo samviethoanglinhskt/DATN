@@ -69,6 +69,7 @@ Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantit
 Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
 Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->name('checkout');
+Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
 
