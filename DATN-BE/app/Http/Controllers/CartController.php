@@ -16,6 +16,37 @@ use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
+    public function listToGuest(Request $request)  //
+    {
+        $request->validate([
+            'tb_product_id' => 'required|exists:tb_products,id',
+            'tb_size_id' => 'required|exists:tb_sizes,id',
+            'tb_color_id' => 'required|exists:tb_colors,id',
+        ]);
+        try {
+
+            $product = tb_product::findOrFail($request->tb_product_id);
+            $variant = tb_variant::with(['size', 'color'])
+                ->where('tb_product_id', $request->tb_product_id)
+                ->where('tb_size_id', $request->tb_size_id)
+                ->where('tb_color_id', $request->tb_color_id)
+                ->first();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sản phẩm đã được hiển thị!',
+                'product' => $product,
+                'variant' => $variant,
+            ], 200); // 200 OK
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     public function addToCart(Request $request)
     {
         $request->validate([

@@ -62,6 +62,7 @@ Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
 Route::get('/show-user',[UserController::class, 'showUser'])->name('show_User');
 
 Route::post('/add-cart', [CartController::class,'addToCart'])->name('add_cart');
+Route::post('/list-to-guest', [CartController::class,'listToGuest'])->name('list_to_guest');
 Route::get('/cart', [CartController::class, 'listCart'])->name('list_cart');
 
 Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name('del_all_cart');
