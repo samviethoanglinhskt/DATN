@@ -34,6 +34,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 ...item,
                 name: productData.name,
                 price: productData.variants[0]?.price,
+                
               };
             })
           );

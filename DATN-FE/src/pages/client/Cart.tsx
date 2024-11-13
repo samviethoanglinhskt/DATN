@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from 'src/context/Cart';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "src/context/Cart";
 
 interface CartItem {
   tb_product_id: number;
@@ -31,10 +31,8 @@ const ShoppingCart: React.FC = () => {
   }, [navigate]);
 
   const handleSelectItem = (id: number) => {
-    setSelectedItems(prev =>
-      prev.includes(id)
-        ? prev.filter(itemId => itemId !== id)
-        : [...prev, id]
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
     );
   };
 
@@ -42,14 +40,14 @@ const ShoppingCart: React.FC = () => {
     if (selectedItems.length === cartItems.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(cartItems.map(item => item.tb_product_id));
+      setSelectedItems(cartItems.map((item) => item.tb_product_id));
     }
   };
 
   const calculateSelectedTotal = () => {
     return cartItems
-      .filter(item => selectedItems.includes(item.tb_product_id))
-      .reduce((total, item) => total + (item.price * item.quantity), 0);
+      .filter((item) => selectedItems.includes(item.tb_product_id))
+      .reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const calculateSelectedDelivery = () => {
@@ -65,7 +63,7 @@ const ShoppingCart: React.FC = () => {
 
     try {
       // Lọc ra các sản phẩm đã chọn
-      const selectedProducts = cartItems.filter(item => 
+      const selectedProducts = cartItems.filter((item) =>
         selectedItems.includes(item.tb_product_id)
       );
 
@@ -80,11 +78,11 @@ const ShoppingCart: React.FC = () => {
           selectedProducts,
           subtotal,
           delivery,
-          total
-        }
+          total,
+        },
       });
     } catch (error) {
-      console.error('Error during checkout:', error);
+      console.error("Error during checkout:", error);
     } finally {
       setLoading(false);
     }
@@ -97,11 +95,10 @@ const ShoppingCart: React.FC = () => {
         <div className="card shadow-sm">
           <div className="card-body py-5">
             <h3 className="card-title mb-4">Giỏ hàng của bạn đang trống</h3>
-            <p className="text-muted mb-4">Hãy thêm sản phẩm vào giỏ hàng của bạn</p>
-            <button
-              className="btn btn-primary"
-              onClick={() => navigate("/")}
-            >
+            <p className="text-muted mb-4">
+              Hãy thêm sản phẩm vào giỏ hàng của bạn
+            </p>
+            <button className="btn btn-primary" onClick={() => navigate("/")}>
               Tiếp tục mua sắm
             </button>
           </div>
@@ -115,7 +112,7 @@ const ShoppingCart: React.FC = () => {
       <nav aria-label="breadcrumb" className="mb-4">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
-            <button 
+            <button
               className="btn btn-link p-0 text-decoration-none"
               onClick={() => navigate("/")}
             >
@@ -135,7 +132,7 @@ const ShoppingCart: React.FC = () => {
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th style={{ width: '50px' }}>
+                  <th style={{ width: "50px" }}>
                     <input
                       type="checkbox"
                       className="form-check-input"
@@ -167,11 +164,20 @@ const ShoppingCart: React.FC = () => {
                           src={item.image || "/api/placeholder/80/80"}
                           alt={item.name}
                           className="rounded me-3"
-                          style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                          style={{
+                            width: "60px",
+                            height: "60px",
+                            objectFit: "cover",
+                          }}
                         />
                         <div>
                           <h6 className="mb-1">{item.name}</h6>
-                          <small className="text-muted">ID: {item.tb_product_id}</small>
+                          <small className="text-muted">
+                            ID: {item.tb_product_id}
+                          </small>
+                        </div>
+                        <div>
+                          <h6 className="mb-1">{item.size}</h6>
                         </div>
                       </div>
                     </td>
@@ -180,7 +186,12 @@ const ShoppingCart: React.FC = () => {
                       <div className="d-flex justify-content-center align-items-center gap-2">
                         <button
                           className="btn btn-outline-secondary btn-sm"
-                          onClick={() => reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)}
+                          onClick={() =>
+                            reduceCartItemQuantity(
+                              item.tb_product_id,
+                              item.quantity - 1
+                            )
+                          }
                           disabled={item.quantity <= 1}
                         >
                           -
@@ -188,13 +199,18 @@ const ShoppingCart: React.FC = () => {
                         <input
                           type="text"
                           className="form-control form-control-sm text-center"
-                          style={{ width: '50px' }}
+                          style={{ width: "50px" }}
                           value={item.quantity}
                           readOnly
                         />
                         <button
                           className="btn btn-outline-secondary btn-sm"
-                          onClick={() => upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
+                          onClick={() =>
+                            upCartItemQuantity(
+                              item.tb_product_id,
+                              item.quantity + 1
+                            )
+                          }
                         >
                           +
                         </button>
@@ -236,7 +252,10 @@ const ShoppingCart: React.FC = () => {
               <div className="d-flex justify-content-between border-top pt-3">
                 <strong>Tổng cộng</strong>
                 <strong className="text-primary">
-                  ${(calculateSelectedTotal() + calculateSelectedDelivery()).toFixed(2)}
+                  $
+                  {(
+                    calculateSelectedTotal() + calculateSelectedDelivery()
+                  ).toFixed(2)}
                 </strong>
               </div>
 
@@ -248,7 +267,11 @@ const ShoppingCart: React.FC = () => {
                 >
                   {loading ? (
                     <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
                       Đang xử lý...
                     </>
                   ) : (

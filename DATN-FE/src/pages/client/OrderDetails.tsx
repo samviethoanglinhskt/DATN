@@ -7,6 +7,7 @@ interface GuestInfo {
   name: string;
   phone: string;
   address: string;
+  email: string; // Added email property
 }
 
 const OrderDetails: React.FC = () => {
@@ -14,7 +15,7 @@ const OrderDetails: React.FC = () => {
   const navigate = useNavigate();
   const { guestInfo, products }: { guestInfo: GuestInfo; products: Product[] } =
     location.state || {
-      guestInfo: {},
+      guestInfo: {} as GuestInfo,
       products: [],
     };
 
@@ -61,6 +62,9 @@ const OrderDetails: React.FC = () => {
         <Typography.Paragraph>
           <strong>Địa chỉ:</strong> {guestInfo.address}
         </Typography.Paragraph>
+        <Typography.Paragraph>
+          <strong>Email:</strong> {guestInfo.email}
+        </Typography.Paragraph>
 
         <Typography.Title level={4}>Sản phẩm đã đặt</Typography.Title>
         <List
@@ -73,8 +77,7 @@ const OrderDetails: React.FC = () => {
                 Giá: ${product.variants[0]?.price}
               </Typography.Text>
               <Typography.Text strong style={{ marginLeft: "auto" }}>
-                Kích cỡ:
-                {product.sizes[0]?.name}
+                Kích cỡ: {product.sizes[0]?.name}
               </Typography.Text>
               <Typography.Text strong style={{ marginLeft: "auto" }}>
                 Màu sắc: {product.colors[0]?.name}
