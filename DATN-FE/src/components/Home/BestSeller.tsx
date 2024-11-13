@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Product } from "src/types/product";
 import axiosInstance from "../../config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./StoreOverview.css";
+import "src/assets/css/StoreOverview.css";
 
 const StoreOverView = () => {
   const {

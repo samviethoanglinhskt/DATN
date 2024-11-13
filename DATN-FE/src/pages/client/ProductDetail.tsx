@@ -1,6 +1,5 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { HomeOutlined } from "@ant-design/icons";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
 import { useState } from "react";
@@ -52,6 +51,9 @@ const ProductDetail = () => {
         quantity: 1,
         tb_size_id: selectedSize,
         tb_color_id: selectedColor,
+        price: 0,
+        size: "",
+        image: ""
       });
     } else {
       alert("sản phẩm không tồn tại!");

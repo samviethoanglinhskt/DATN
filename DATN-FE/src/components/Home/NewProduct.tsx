@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import instance from '../../config/axiosInstance';
 import { Product } from 'src/types/product';
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./NewProduct.css";
+import "src/assets/css/NewProduct.css";
 
 const NewProduct = () => {
   const INITIAL_VISIBLE_PRODUCTS = 4;
@@ -48,7 +48,7 @@ const NewProduct = () => {
     <section className="py-5 bg-light">
       <div className="container">
         <h3 className="text-center mb-5">Sản Phẩm Mới Nhất</h3>
-        
+
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
           {products.data.slice(0, visibleProducts).map((product: Product) => (
             <div key={product.id} className="col product-item">
@@ -72,7 +72,7 @@ const NewProduct = () => {
                     <i className="far fa-heart"></i>
                   </button>
                 </div>
-                
+
                 <div className="card-body text-center">
                   <h5 className="card-title product-name">
                     {product.name}
@@ -91,7 +91,7 @@ const NewProduct = () => {
 
         {products.data.length > INITIAL_VISIBLE_PRODUCTS && (
           <div className="text-center mt-5">
-            <button 
+            <button
               className={`btn ${isExpanded ? 'btn-outline-danger' : 'btn-outline-dark'} px-4 py-2`}
               onClick={handleToggleProducts}
             >

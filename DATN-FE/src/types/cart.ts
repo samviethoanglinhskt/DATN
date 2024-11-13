@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 // Định nghĩa kiểu dữ liệu cho một sản phẩm trong giỏ hàng
 export interface CartItem {
-  tb_product_id?: number;
+  tb_product_id: number;
   quantity: number;
   id?: number;
   name?: string;
@@ -29,4 +29,5 @@ export interface CartContextType {
   clearCart: () => void;
   reduceCartItemQuantity: (id: number, quantity: number) => void;
   upCartItemQuantity: (id: number, quantity: number) => void;
+  loading: boolean; // Add the loading property here
 }
