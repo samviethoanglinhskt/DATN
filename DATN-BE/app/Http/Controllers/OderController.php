@@ -38,7 +38,9 @@ class OderController extends Controller
                     'message' => 'Người dùng không tồn tại',
                 ], 404);
             }
-            $oder = tb_oder::with('cart')->where('user_id', $user->id)->get();
+            $oder = tb_oder::with('oderDetails', 'oderDetails.product', 'oderDetails.variant',)
+                ->where('user_id', $user->id)
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Hiển thị đơn hàng theo người dùng thành công',
