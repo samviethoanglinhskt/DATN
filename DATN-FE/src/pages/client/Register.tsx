@@ -129,6 +129,20 @@ const Register = () => {
                             />
                         </Grid>
 
+                        <Grid item xs={12} >
+                            <TextField
+                                autoComplete="address"
+                                fullWidth
+                                label="Address"
+                                autoFocus
+                                {...register("address", {
+                                    required: "Required address",
+                                })}
+                                error={!!errors?.address?.message}
+                                helperText={errors?.address?.message}
+                            />
+                        </Grid>
+
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth

@@ -10,6 +10,7 @@ const HomePage = () => {
             <Slider />
             <Banner />
             <BestSeller />
+            <Banner />
             <NewProduct />
             <Blog />
         </div>

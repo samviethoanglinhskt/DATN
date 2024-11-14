@@ -63,6 +63,7 @@ Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
 Route::get('/show-user',[UserController::class, 'showUser'])->name('show_User');
 
 Route::post('/add-cart', [CartController::class,'addToCart'])->name('add_cart');
+Route::post('/list-to-guest', [CartController::class,'listToGuest'])->name('list_to_guest');
 Route::get('/cart', [CartController::class, 'listCart'])->name('list_cart');
 
 Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name('del_all_cart');
@@ -70,6 +71,7 @@ Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantit
 Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
 Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->name('checkout');
+Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
 
