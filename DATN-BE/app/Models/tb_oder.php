@@ -37,6 +37,6 @@ class tb_oder extends Model
     }
 
     public function oderDetails(){
-        return $this->hasMany(tb_oderdetail::class);
+        return $this->hasMany(tb_oderdetail::class,'tb_oder_id');
     }
 }

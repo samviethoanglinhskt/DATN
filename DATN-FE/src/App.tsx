@@ -15,6 +15,7 @@ import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
 import { UserProvider } from "./context/User";
+import Order from "./pages/admin/order/Order";
 
 const routeConfig = [
   {
@@ -74,6 +75,10 @@ const routeConfig = [
       {
         path: "product",
         element: <AppProduct />,
+      },
+      {
+        path: "order",
+        element: <Order />,
       },
     ],
   },

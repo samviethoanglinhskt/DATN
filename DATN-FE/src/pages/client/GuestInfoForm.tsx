@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Form, Input, Button, List, Typography } from "antd";
 import { Product } from "src/types/product";
 
-const GuestInfoForm: React.FC = () => {
+const GuestInfoForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const products: Product[] = location.state?.products || [];
+  const selectedSize = location.state?.selectedSize;
+  const selectedColor = location.state?.selectedColor;
 
   const handleFormSubmit = (values: any) => {
     console.log("Guest Information:", values);
@@ -14,7 +16,9 @@ const GuestInfoForm: React.FC = () => {
     alert("Thông tin của bạn đã được gửi thành công!");
 
     // Navigate to OrderDetails with guest info and products
-    navigate("/order-details", { state: { guestInfo: values, products } });
+    navigate("/order-details", {
+      state: { guestInfo: values, products, selectedSize, selectedColor },
+    });
   };
 
   return (
@@ -59,6 +63,17 @@ const GuestInfoForm: React.FC = () => {
           </Form.Item>
 
           <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email của bạn" },
+              { type: "email", message: "Email không hợp lệ" },
+            ]}
+          >
+            <Input placeholder="Nhập email của bạn" />
+          </Form.Item>
+
+          <Form.Item
             label="Địa chỉ"
             name="address"
             rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
@@ -72,9 +87,12 @@ const GuestInfoForm: React.FC = () => {
             renderItem={(product) => (
               <List.Item key={product.id}>
                 <Typography.Text>
-                  {product.name} - Giá: ${product.variants[0]?.price} - Kích
-                  thước: ${product.sizes[0]?.name} - Màu sắc: $
-                  {product.colors[0]?.name}
+                  {product.name} - Kích thước:{" "}
+                  {product.sizes.find((size) => size.id === selectedSize)
+                    ?.name || "Chưa chọn"}{" "}
+                  - Giá: {product.variants[0]?.price}$ - Màu sắc:{" "}
+                  {product.colors.find((color) => color.id === selectedColor)
+                    ?.name || "Chưa chọn"}
                 </Typography.Text>
               </List.Item>
             )}

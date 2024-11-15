@@ -13,7 +13,7 @@ class tb_discount extends Model
 
     protected $fillable = [
         'discount_code',
-        'discount_value	',
+        'discount_value',
         'name',
         'start_day',
         'end_day'

@@ -1,6 +1,5 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { HomeOutlined } from "@ant-design/icons";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
 import { useState } from "react";
@@ -9,6 +8,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { addToBuy } = useCart();
 
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState<number | null>(null);
@@ -45,25 +45,34 @@ const ProductDetail = () => {
       return;
     }
 
-    // const findSelectedVariant = product.variants?.find(
-    //   (variant: any) =>
-    //     variant.tb_product_id === product.id &&
-    //     variant.tb_size_id === selectedSize &&
-    //     variant.tb_color_id === selectedColor
-    // );
-    // console.log(findSelectedVariant);
-    // console.log(JSON.stringify(product.variants, null, 2));
-    // // product.variants.forEach((variant: any) => {
-    // //   console.log("Size ID:", variant.tb_size_id, "Color ID:", variant.tb_color_id);
-    // // });
-    // if (!findSelectedVariant) {
-    //   alert("Không tìm thấy sản phẩm với kích thước và màu sắc đã chọn.");
-    //   return;
-    // }
-
-    // Gọi addToCart từ context
     if (product) {
       addToCart({
+        tb_product_id: product.id,
+        quantity: 1,
+        tb_size_id: selectedSize,
+        tb_color_id: selectedColor,
+        price: 0,
+        size: "",
+        image: ""
+      });
+    } else {
+      alert("sản phẩm không tồn tại!");
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!product) {
+      alert("Sản phẩm không tồn tại!");
+      return;
+    }
+
+    if (!selectedSize || !selectedColor) {
+      alert("Vui lòng chọn kích thước và màu sắc.");
+      return;
+    }
+
+    if (product) {
+      addToBuy({
         tb_product_id: product.id,
         quantity: 1,
         tb_size_id: selectedSize,
@@ -72,14 +81,10 @@ const ProductDetail = () => {
     } else {
       alert("sản phẩm không tồn tại!");
     }
-  };
 
-  const handleBuyNow = () => {
-    if (product && selectedSize && selectedColor) {
-      navigate("/guest-info", { state: { products: [product] } });
-    } else {
-      alert("Vui lòng chọn kích thước và màu sắc.");
-    }
+    navigate("/guest-info", {
+      state: { products: [product], selectedSize, selectedColor },
+    });
   };
 
   if (isLoading) {
@@ -227,13 +232,10 @@ const ProductDetail = () => {
               <h3>Kích thước:</h3>
               <select
                 onChange={(e) => {
-                  const selected = e.target.value;
-                  setSelectedSize(selected);
+                  const selectedSizeId = parseInt(e.target.value, 10); // Convert to number
+                  setSelectedSize(selectedSizeId);
 
-                  // Chuyển đổi giá trị sang số
-                  const selectedSizeId = parseInt(selected, 10);
-
-                  // Tính lại giá kích cỡ khi người dùng chọn size
+                  // Find the selected size data and update price if it exists
                   const selectedSizeData = product.sizes.find(
                     (size: any) => size.id === selectedSizeId
                   );
@@ -241,7 +243,7 @@ const ProductDetail = () => {
                     selectedSizeData ? selectedSizeData.pivot.price : 0
                   );
                 }}
-                value={selectedSize || ""}
+                value={selectedSize ?? ""} // Use nullish coalescing for fallback to empty string
                 style={{
                   padding: "8px 16px",
                   fontSize: "16px",
@@ -250,8 +252,8 @@ const ProductDetail = () => {
                 }}
               >
                 <option value="">Chọn kích thước</option>
-                {product.sizes.map((size: any, index: any) => (
-                  <option key={index} value={size.id}>
+                {product.sizes.map((size: any) => (
+                  <option key={size.id} value={size.id}>
                     {size.name} - ${size.pivot.price}
                   </option>
                 ))}
