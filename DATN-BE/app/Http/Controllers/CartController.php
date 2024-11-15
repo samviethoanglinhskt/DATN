@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\tb_cart;
+use App\Models\tb_discount;
 use App\Models\tb_oder;
 use App\Models\tb_oderdetail;
 use App\Models\tb_product;
 use App\Models\tb_variant;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -310,7 +312,7 @@ class CartController extends Controller
             $vnp_OrderType = "Imperial Beauty";
             $vnp_Amount = $totalOrder * 100;
             $vnp_Locale = "VN";
-            $vnp_BankCode = "NCB";
+//            $vnp_BankCode = "NCB";
             $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
 
             $inputData = array(
@@ -328,12 +330,12 @@ class CartController extends Controller
                 "vnp_TxnRef" => $vnp_TxnRef
             );
 
-            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
-                $inputData['vnp_BankCode'] = $vnp_BankCode;
-            }
-            if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
-                $inputData['vnp_Bill_State'] = $vnp_Bill_State;
-            }
+//            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+//                $inputData['vnp_BankCode'] = $vnp_BankCode;
+//            }
+//            if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
+//                $inputData['vnp_Bill_State'] = $vnp_Bill_State;
+//            }
 
             //var_dump($inputData);
             ksort($inputData);
@@ -358,7 +360,7 @@ class CartController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Lấy sản phẩm đã chọn thành công!',
+                'message' => 'Lấy sản phẩm thành công!',
                 'order' => $order,
                 'orderDetail' => $oderDetail,
                 'vnpay_url' => $vnp_Url
@@ -386,7 +388,7 @@ class CartController extends Controller
 
             // Lấy danh sách product_ids từ yêu cầu
             $productIds = $request->input('product_ids');
-
+            $discountCode = $request->input('discount_code'); // Lấy mã giảm giá từ yêu cầu
             if (empty($productIds)) {
                 return response()->json([
                     'success' => false,
@@ -409,9 +411,17 @@ class CartController extends Controller
             // Tạo một mảng để lưu các đơn hàng đã tạo
             $orderDetails = [];
             $totalOrder = 0;
+            $tbDiscountId = null; // Khởi tạo giá trị cho tb_discount_id
+            // Áp dụng giảm giá nếu có mã giảm giá
+            if($discountCode) {
+                $discount = tb_discount::where('discount_code', $discountCode)->first();
+                if ($discount) {
+                    $tbDiscountId = $discount->id; // Lưu ID của mã giảm giá
+                }
+            }
             $order = tb_oder::create([
                 'user_id' => $user->id,
-                'tb_discount_id' => 1,
+                'tb_discount_id' => $tbDiscountId,
                 'order_date' => now(),
                 // 'total_amount' => $totalAmount,
                 'order_status' => 'Chờ xử lý',
@@ -436,6 +446,11 @@ class CartController extends Controller
 
                 $orderDetails[] = $oderDetail;
             }
+            // Áp dụng giảm giá theo phần trăm nếu có mã giảm giá
+             if ($tbDiscountId && isset($discount)) {
+                 $discountValue = $discount->discount_value; // Giá trị phần trăm giảm giá
+                 $totalOrder -= $totalOrder * ($discountValue / 100); // Áp dụng giảm giá theo phần trăm
+             }
 
             $order->order_code = 'ORD-' . $order->id;
             $order->total_amount = $totalOrder;
