@@ -1,357 +1,317 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
-import { useState } from "react";
+import { Product, Variant } from "src/types/product";
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
-  const { addToBuy } = useCart();
+  const { id } = useParams<{ id: string }>(); // lấy productId từ URL
+  const { addToCart } = useCart();  // Giả sử bạn có hàm addToCart trong context
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
+  const [quantity, setQuantity] = useState(1);  // Số lượng sản phẩm trong giỏ
 
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [selectedColor, setSelectedColor] = useState<number | null>(null);
-  const [sizePrice, setSizePrice] = useState<number>(0);
+  // Gọi API để lấy thông tin sản phẩm
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/product/${id}`);
+        const productData = response.data;
+        setProduct(productData);
 
-  const {
-    data: product,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["product", id],
-    queryFn: async () => {
-      const response = await axiosInstance.get(`/api/product/${id}`);
-      return response.data;
-    },
-    enabled: !!id,
-  });
+        // Cài đặt giá trị mặc định cho Size hoặc Color nếu có
+        if (productData.sizes && productData.sizes.length > 0) {
+          setSelectedOption(String(productData.sizes[0].id));
+          updateVariant(productData.sizes[0].id, null);
+          setCurrentVariant(productData.variants[0])
+        } else if (productData.colors && productData.colors.length > 0) {
+          setSelectedOption(String(productData.colors[0].id));
+          updateVariant(null, productData.colors[0].id);
+          setCurrentVariant(productData.variants[0])
 
-  const handleAddToCart = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
-      return;
+        } else {
+          // Nếu không có size và color, hiển thị mặc định
+          setCurrentVariant(productData?.variants[0]);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+      }
+    };
+    if (id) {
+      fetchProduct();
     }
+  }, [id]);
 
-    if (!product) {
-      alert("Product data is not available.");
-      return;
-    }
+  const updateVariant = (sizeId: string | null, colorId: string | null) => {
+    if (!product) return;
 
-    if (!selectedSize || !selectedColor) {
-      alert("Vui lòng chọn kích thước và màu sắc.");
-      return;
-    }
-
-    if (product) {
-      addToCart({
-        tb_product_id: product.id,
-        quantity: 1,
-        tb_size_id: selectedSize,
-        tb_color_id: selectedColor,
-        price: 0,
-        size: "",
-        image: ""
-      });
-    } else {
-      alert("sản phẩm không tồn tại!");
-    }
-  };
-
-  const handleBuyNow = async () => {
-    if (!product) {
-      alert("Sản phẩm không tồn tại!");
-      return;
-    }
-
-    if (!selectedSize || !selectedColor) {
-      alert("Vui lòng chọn kích thước và màu sắc.");
-      return;
-    }
-
-    if (product) {
-      addToBuy({
-        tb_product_id: product.id,
-        quantity: 1,
-        tb_size_id: selectedSize,
-        tb_color_id: selectedColor,
-      });
-    } else {
-      alert("sản phẩm không tồn tại!");
-    }
-
-    navigate("/guest-info", {
-      state: { products: [product], selectedSize, selectedColor },
-    });
-  };
-
-  if (isLoading) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fff",
-        }}
-      >
-        <div
-          style={{
-            width: "80px",
-            height: "80px",
-            border: "4px solid #f3f3f3",
-            borderTop: "4px solid #EC4899",
-            borderRadius: "50%",
-            animation: "spin 1s linear infinite",
-          }}
-        ></div>
-      </div>
+    const variant = product.variants.find(
+      (v) =>
+        (sizeId && String(v.tb_size_id) === sizeId) ||
+        (colorId && String(v.tb_color_id) === colorId)
     );
+    setCurrentVariant(variant || null);
+  };
+
+  const handleChangeOption = (event: SelectChangeEvent) => {
+    const newOptionId = event.target.value as string;
+    setSelectedOption(newOptionId);
+
+    if (product?.sizes && product.sizes.length > 0) {
+      updateVariant(newOptionId, null);
+    } else if (product?.colors && product.colors.length > 0) {
+      updateVariant(null, newOptionId);
+    }
+  };
+
+  const handleQuantityChange = (operation: "increase" | "decrease") => {
+    if (currentVariant) {
+      const newQuantity =
+        operation === "increase"
+          ? quantity + 1
+          : operation === "decrease" && quantity > 1
+            ? quantity - 1
+            : quantity;
+      // Kiểm tra số lượng sản phẩm có lớn hơn số lượng còn lại trong variant không
+      if (newQuantity <= currentVariant.quantity) {
+        setQuantity(newQuantity);
+      }
+    }
+  };
+
+  const handleAddToCart = () => {
+
+    if (!currentVariant) {
+      alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
+      return;
+    }
+
+    const cartItem = {
+      tb_product_id: product?.id ?? 0,  // Add tb_product_id to the cart item
+      name: product?.name,
+      sku: currentVariant.sku,
+      price: currentVariant.price,
+      quantity,
+      size: product?.sizes ? product.variants.find(s => String(s.tb_size_id) === selectedOption) : null,
+      color: product?.colors ? product.variants.find(c => String(c.tb_color_id) === selectedOption) : null,
+      variantId: currentVariant.id,  // Lưu biến thể được chọn
+      variant: currentVariant,  // Thêm thuộc tính variant vào đây
+    };
+    // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
+    if (localStorage.getItem('token')) {  // Ví dụ kiểm tra token người dùng
+      addToCart(cartItem);
+    } else {
+      alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    }
   }
 
-  if (isError) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fff",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "#FEE2E2",
-            border: "1px solid #FCA5A5",
-            color: "#DC2626",
-            padding: "12px 16px",
-            borderRadius: "4px",
-            position: "relative",
-          }}
-        >
-          <strong style={{ fontWeight: "bold" }}>Error! </strong>
-          <span>
-            {error instanceof Error ? error.message : "Something went wrong"}
+  if (!product) {
+    return <div>Loading...</div>; // Hiển thị Loading nếu chưa có dữ liệu
+  }
+
+  return (
+    <div>
+      {/* breadcrumb */}
+      <div className="container mt-5">
+        <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+          <a href="/" className="stext-109 cl8 hov-cl1 trans-04">
+            Home
+            <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
+          </a>
+          <span className="stext-109 cl4">
+            Sản phẩm
           </span>
         </div>
       </div>
-    );
-  }
 
-  // Make sure product and variants are available before trying to access them
-  const variant = product?.variants?.[0];
-  const sku = variant ? variant.sku : "N/A"; // Safely access SKU
-
-  return (
-    <main
-      style={{
-        backgroundColor: "#fff",
-        position: "relative",
-        overflow: "hidden",
-        minHeight: "100vh",
-      }}
-    >
-      {/* Product Detail Section */}
-      <div
-        style={{
-          backgroundColor: "#fff",
-          padding: "64px 0",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            padding: "0 24px",
-            display: "flex",
-            gap: "48px",
-          }}
-        >
-          <div
-            style={{
-              flex: "1",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div
-              style={{
-                width: "80px",
-                height: "4px",
-                backgroundColor: "#1F2937",
-                marginBottom: "32px",
-              }}
-            ></div>
-            <h1
-              style={{
-                fontSize: "48px",
-                fontWeight: "900",
-                color: "#1F2937",
-                marginBottom: "16px",
-                textTransform: "uppercase",
-              }}
-            >
-              {product.name}
-              <span
-                style={{
-                  display: "block",
-                  fontSize: "40px",
-                  color: "#EC4899",
-                }}
-              >
-                ${sizePrice}
-              </span>
-            </h1>
-            {/* Display SKU here */}
-            <div
-              style={{
-                fontSize: "18px",
-                color: "#4B5563",
-                marginBottom: "24px",
-              }}
-            >
-              <strong>SKU:</strong> {sku}
+      {/* Product Detail */}
+      <section className="sec-product-detail bg0 p-t-65 p-b-60">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6 col-lg-7 p-b-30">
+              <div className="p-l-25 p-r-30 p-lr-0-lg">
+                <div className="wrap-slick3 flex-sb flex-w">
+                  <div className="wrap-slick3-dots" />
+                  <div className="wrap-slick3-arrows flex-sb-m flex-w" />
+                  <div className="slick3 gallery-lb">
+                    <div className="item-slick3" data-thumb="https://picsum.photos/200/300">
+                      <div className="wrap-pic-w pos-relative">
+                        <img src="https://picsum.photos/200/300" alt="IMG-PRODUCT" height={500} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p
-              style={{
-                fontSize: "16px",
-                color: "#4B5563",
-                marginBottom: "32px",
-                lineHeight: "1.5",
-              }}
-            >
-              {product.description}
-            </p>
+            <div className="col-md-6 col-lg-5 p-b-30">
+              <div className="p-r-50 p-t-5 p-lr-0-lg">
+                <h4 className="mtext-105 cl2 js-name-detail p-b-14">
+                  {product.name}
+                </h4>
+                <div style={{ marginBottom: 10 }}>
+                  <span style={{ fontSize: 13 }}>
+                    Thương hiệu: {product.brand.name} |
+                  </span>
+                  <span style={{ fontSize: 13, margin: "0 5px" }}>
+                    SKU: {currentVariant?.sku || product.variants[0].sku || "N/A"} |
+                  </span>
+                  <span style={{ fontSize: 13 }}>
+                    SL: {currentVariant?.quantity || product.variants[0].quantity || "N/A"}
+                  </span>
+                </div>
+                <span className="mtext-106 cl2">
+                  ${currentVariant ? currentVariant.price.toFixed(2) : product.variants[0].price.toFixed(2)}
+                </span>
+                {/*  */}
+                <div className="p-t-33">
 
-            {/* Size Selection */}
-            <div>
-              <h3>Kích thước:</h3>
-              <select
-                onChange={(e) => {
-                  const selectedSizeId = parseInt(e.target.value, 10); // Convert to number
-                  setSelectedSize(selectedSizeId);
+                  {/* Conditionally Render Size Selector */}
+                  {product.sizes && product.sizes.length > 0 && (
+                    <div className="flex-w flex-r-m p-b-10">
+                      <div className="size-203 flex-c-m respon6">
+                        Size
+                      </div>
+                      <FormControl variant="outlined" sx={{ width: 300, marginRight: "50px" }}>
+                        <InputLabel>Choose an option</InputLabel>
+                        <Select
+                          value={selectedOption || ""}
+                          onChange={handleChangeOption}
+                          label="Size"
+                          sx={{
+                            borderRadius: '2px',
+                            borderColor: '#e6e6e6',
+                            backgroundColor: '#fff',
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#e6e6e6',
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#b3b3b3',
+                            },
+                          }}
+                          MenuProps={{
+                            PaperProps: {
+                              sx: {
+                                '& .MuiMenuItem-root': {
+                                  '&.Mui-selected': {
+                                    backgroundColor: '#6C7AE0',
+                                    color: '#fff',
+                                    '&:hover': {
+                                      backgroundColor: '#6C7AE0',
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          }}
+                        >
+                          {product.sizes.map((size) => (
+                            <MenuItem sx={{ '&:hover': { backgroundColor: '#6C7AE0', color: '#fff', } }} key={size.id} value={String(size.id)}>
+                              {size.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  )}
 
-                  // Find the selected size data and update price if it exists
-                  const selectedSizeData = product.sizes.find(
-                    (size: any) => size.id === selectedSizeId
-                  );
-                  setSizePrice(
-                    selectedSizeData ? selectedSizeData.pivot.price : 0
-                  );
-                }}
-                value={selectedSize ?? ""} // Use nullish coalescing for fallback to empty string
-                style={{
-                  padding: "8px 16px",
-                  fontSize: "16px",
-                  border: "1px solid #ccc",
-                  borderRadius: "8px",
-                }}
-              >
-                <option value="">Chọn kích thước</option>
-                {product.sizes.map((size: any) => (
-                  <option key={size.id} value={size.id}>
-                    {size.name} - ${size.pivot.price}
-                  </option>
-                ))}
-              </select>
+                  {/* Conditionally Render Size Selector */}
+                  {product.colors && product.colors.length > 0 && (
+                    <div className="flex-w flex-r-m p-b-10">
+                      <div className="size-203 flex-c-m respon6">
+                        Color
+                      </div>
+                      <FormControl variant="outlined" sx={{ width: 300, marginRight: "50px" }}>
+                        <InputLabel>Choose an option</InputLabel>
+                        <Select
+                          value={selectedOption || ""}
+                          onChange={handleChangeOption}
+                          label="Color"
+                          sx={{
+                            borderRadius: '2px',
+                            borderColor: '#e6e6e6',
+                            backgroundColor: '#fff',
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#e6e6e6',
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#b3b3b3',
+                            },
+                          }}
+                          MenuProps={{
+                            PaperProps: {
+                              sx: {
+                                '& .MuiMenuItem-root': {
+                                  '&.Mui-selected': {
+                                    backgroundColor: '#6C7AE0',
+                                    color: '#fff',
+                                    '&:hover': {
+                                      backgroundColor: '#6C7AE0',
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          }}
+                        >
+                          {product.colors.map((color) => (
+                            <MenuItem sx={{ '&:hover': { backgroundColor: '#6C7AE0', color: '#fff', } }} key={color.id} value={String(color.id)}>
+                              {color.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  )}
+
+                  <div className="flex-w flex-r-m p-b-10">
+                    <div className="size-204 flex-w flex-m respon6-next">
+                      <div className="wrap-num-product flex-w m-r-20 m-tb-10" style={{ marginLeft: "22px" }}>
+                        <button onClick={() => handleQuantityChange("decrease")} className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                          <i className="fs-16 zmdi zmdi-minus" />
+                        </button>
+                        <input className="mtext-104 cl3 txt-center num-product" type="text" name="num-product" readOnly value={quantity} />
+                        <button onClick={() => handleQuantityChange("increase")} className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                          <i className="fs-16 zmdi zmdi-plus" />
+                        </button>
+                      </div>
+                      <div style={{ display: 'flex', marginTop: "10px" }}>
+                        <button onClick={handleAddToCart} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" style={{ width: "250px", margin: "0 20px 0 -100px" }}>
+                          Add to cart
+                        </button>
+                        <button className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                          Mua ngay
+                        </button>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                {/*  */}
+                <div className="flex-w flex-m p-l-100 p-t-40 respon7">
+                  <div className="flex-m bor9 p-r-10 m-r-11">
+                    <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
+                      <i className="zmdi zmdi-favorite" />
+                    </a>
+                  </div>
+                  <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
+                    <i className="fa fa-facebook" />
+                  </a>
+                  <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
+                    <i className="fa fa-twitter" />
+                  </a>
+                  <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
+                    <i className="fa fa-google-plus" />
+                  </a>
+                </div>
+              </div>
             </div>
-
-            {/* Color Selection */}
-            <div>
-              <h3>Màu sắc:</h3>
-              <select
-                onChange={(e) => {
-                  const selected = e.target.value;
-                  const selectedColorId = parseInt(selected, 10); // Chuyển đổi sang số
-                  // Sử dụng selectedColorId nếu cần
-                  setSelectedColor(selectedColorId);
-                }}
-                value={selectedColor || ""}
-                style={{
-                  padding: "8px 16px",
-                  fontSize: "16px",
-                  border: "1px solid #ccc",
-                  borderRadius: "8px",
-                }}
-              >
-                <option value="">Chọn màu sắc</option>
-                {product.colors.map((color: any, index: any) => (
-                  <option key={index} value={color.id}>
-                    {color.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Add to Cart and Buy Now buttons */}
-            <div
-              style={{
-                display: "flex",
-                gap: "16px",
-                marginBottom: "24px",
-              }}
-            >
-              <button
-                onClick={handleAddToCart}
-                style={{
-                  backgroundColor: "#EC4899",
-                  color: "#fff",
-                  padding: "12px 24px",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "16px",
-                  cursor: "pointer",
-                  textTransform: "uppercase",
-                  fontWeight: "600",
-                }}
-              >
-                Thêm vào giỏ hàng
-              </button>
-              <button
-                onClick={handleBuyNow}
-                style={{
-                  backgroundColor: "transparent",
-                  color: "#EC4899",
-                  padding: "12px 24px",
-                  border: "2px solid #EC4899",
-                  borderRadius: "8px",
-                  fontSize: "16px",
-                  cursor: "pointer",
-                  textTransform: "uppercase",
-                  fontWeight: "600",
-                }}
-              >
-                Mua ngay
-              </button>
-            </div>
-          </div>
-          <div
-            style={{
-              flex: "1",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={product.imageUrl || ""}
-              alt={product.name}
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-                borderRadius: "12px",
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-              }}
-            />
           </div>
         </div>
-      </div>
-    </main>
-  );
-};
+      </section>
+    </div>
+  )
+}
 
-export default ProductDetail;
+export default ProductDetail
