@@ -64,7 +64,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       });
 
       if (response.status === 200) {
-        alert("Thêm thành công");
+        alert("Điều hướng thành công");
         //navigate("/guest-info");
       }
     } catch (error) {
@@ -93,7 +93,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
       if (response.status === 200) {
         const newItem = response.data.data;
-
+        // Kiểm tra xem newItem có tồn tại không và có đầy đủ các thuộc tính không
         setCartItems((prevItems) => {
           const existingItemIndex = prevItems.findIndex(
             (i) => i.tb_product_id === newItem.tb_product_id

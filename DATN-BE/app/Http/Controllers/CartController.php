@@ -53,6 +53,8 @@ class CartController extends Controller
             'tb_product_id' => 'required|exists:tb_products,id',
             // 'tb_variant_id' => 'required|exists:tb_variants,id',
             'quantity' => 'required|integer|min:1',
+            'tb_size_id' => 'nullable|exists:tb_sizes,id',
+            'tb_color_id' => 'nullable|exists:tb_colors,id',
         ]);
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -65,9 +67,24 @@ class CartController extends Controller
 
             $product = tb_product::findOrFail($request->tb_product_id);
             $variant = tb_variant::where('tb_product_id', $request->tb_product_id)
-                ->where('tb_size_id', $request->tb_size_id)
-                ->where('tb_color_id', $request->tb_color_id)
+                ->when($request->filled('tb_size_id'), function ($query) use ($request) {
+                    $query->where('tb_size_id', $request->tb_size_id);
+                })
+                ->when($request->filled('tb_color_id'), function ($query) use ($request) {
+                    $query->where('tb_color_id', $request->tb_color_id);
+                })
                 ->first();
+
+            // Kiểm tra xem variant có tồn tại không
+            if (!$variant) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy variant cho sản phẩm với size và màu đã chọn.',
+                    'tb_product_id' => $request->tb_product_id,
+                    'tb_size_id' => $request->tb_size_id,
+                    'tb_color_id' => $request->tb_color_id,
+                ], 404);
+            }
             // Thêm sản phẩm vào giỏ hàng
             $cart = tb_cart::firstOrCreate(
                 [
@@ -249,7 +266,8 @@ class CartController extends Controller
         ]);
     }
 
-    public function checkoutGuest(Request $request){ // khách vãng lai
+    public function checkoutGuest(Request $request)
+    { // khách vãng lai
 
         try {
             $totalOrder = 0;
@@ -271,10 +289,10 @@ class CartController extends Controller
             }
             $oderDetail = tb_oderdetail::create([
                 'tb_oder_id' => $order->id,
-                'tb_product_id' =>$request->tb_product_id,
-                'tb_variant_id' =>$request->tb_variant_id,
-                'quantity' =>$request->quantity,
-                'price' =>$variant->price
+                'tb_product_id' => $request->tb_product_id,
+                'tb_variant_id' => $request->tb_variant_id,
+                'quantity' => $request->quantity,
+                'price' => $variant->price
             ]);
 
             $order->order_code = 'ORD-' . $order->id;
@@ -334,7 +352,7 @@ class CartController extends Controller
 
             $vnp_Url = $vnp_Url . "?" . $query;
             if (isset($vnp_HashSecret)) {
-                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
 
@@ -410,10 +428,10 @@ class CartController extends Controller
                 }
                 $oderDetail = tb_oderdetail::create([
                     'tb_oder_id' => $order->id,
-                    'tb_product_id' =>$item->tb_product_id,
-                    'tb_variant_id' =>$item->tb_variant_id,
-                    'quantity' =>$item->quantity,
-                    'price' =>$variant->price
+                    'tb_product_id' => $item->tb_product_id,
+                    'tb_variant_id' => $item->tb_variant_id,
+                    'quantity' => $item->quantity,
+                    'price' => $variant->price
                 ]);
 
                 $orderDetails[] = $oderDetail;
@@ -475,7 +493,7 @@ class CartController extends Controller
 
             $vnp_Url = $vnp_Url . "?" . $query;
             if (isset($vnp_HashSecret)) {
-                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
 

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Variant } from "./product";
 
 // Định nghĩa kiểu dữ liệu cho một sản phẩm trong giỏ hàng
 export interface CartItem {
@@ -10,8 +11,9 @@ export interface CartItem {
   tb_size_id?: number;
   tb_color_id?: number;
   sku?: string;
-  size?: string;
   image?: string;
+  variantId: number;
+  variant: Variant;
 }
 
 // Định nghĩa kiểu cho các props của CartProvider
