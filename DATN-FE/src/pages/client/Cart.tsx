@@ -24,7 +24,8 @@ const ShoppingCart: React.FC = () => {
     }
   }, [navigate]);
 
-  const handleSelectItem = (id: number) => {
+  const handleSelectItem = (id: number | undefined) => {
+    if (id === undefined) return; // Thêm kiểm tra undefined
     setSelectedItems((prev) =>
       prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
     );
@@ -58,6 +59,10 @@ const ShoppingCart: React.FC = () => {
     });
   };
 
+  useEffect(() => {
+    console.log("Cart Items: ", cartItems);
+  }, [cartItems]);
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
@@ -85,8 +90,8 @@ const ShoppingCart: React.FC = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-10 col-xl-7 m-lr-auto m-b-50">
-                  <div className="m-l-25 m-r--38 m-lr-0-xl">
-                    <div className="wrap-table-shopping-cart">
+                  <div className="m-r--38 m-lr-0-xl" style={{ marginLeft: "-30px" }}>
+                    <div className="wrap-table-shopping-cart" >
                       <table className="table-shopping-cart">
                         <thead>
                           <tr className="table_head">
@@ -97,6 +102,7 @@ const ShoppingCart: React.FC = () => {
                               />
                             </th>
                             <th style={{ padding: "20px" }}>Product</th>
+                            <th style={{ padding: "20px" }}>Loại</th>
                             <th style={{ padding: "20px" }}>Price</th>
                             <th style={{ padding: "20px" }}>Quantity</th>
                             <th style={{ padding: "20px" }}>Total</th>
@@ -124,8 +130,17 @@ const ShoppingCart: React.FC = () => {
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />
-                                  <div style={{ fontSize: "14px", display: "inline" }}>{item.name}</div>
+                                  <div style={{ fontSize: "13px", display: "inline" }}>{item.name}</div>
                                 </div>
+                                <div style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</div>
+                              </td>
+
+                              <td style={{ padding: "0 20px", fontSize: "13px" }}>
+                                {item.variant.tb_size_id !== null && item.variant.tb_size_id !== undefined
+                                  ? `${item.variant.tb_size_id}`
+                                  : item.variant.tb_color_id !== null && item.variant.tb_color_id !== undefined
+                                    ? `${item.variant.tb_color_id}`
+                                    : ""}
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
@@ -136,8 +151,8 @@ const ShoppingCart: React.FC = () => {
                                 <div className="wrap-num-product flex-w m-l-auto m-r-0">
                                   <button
                                     type="button"
-                                    onClick={() => reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)}
-                                    disabled={item.quantity <= 1}
+                                    onClick={() => item.quantity && reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)}
+                                    disabled={item.quantity === undefined || item.quantity <= 1}
                                     className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
                                   >
                                     <i className="fs-16 zmdi zmdi-minus"></i>
@@ -159,7 +174,7 @@ const ShoppingCart: React.FC = () => {
                                   )}
                                   <button
                                     type="button"
-                                    onClick={() => upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
+                                    onClick={() => item.quantity && upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
                                     className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                                   >
                                     <i className="fs-16 zmdi zmdi-plus"></i>
