@@ -39,7 +39,7 @@ const routeConfig = [
         element: <ProductDetail />,
       },
       {
-        path: "category/:categoryId",
+        path: "category/:id",
         element: <ProductList />,
       },
       {

@@ -1,107 +1,96 @@
-import axiosInstance from "src/config/axiosInstance";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom"; // Import useParams
+import instance from "../../config/axiosInstance";
+
+import "bootstrap/dist/css/bootstrap.min.css";
 import { Product } from "src/types/product";
 
 const ProductList = () => {
-  const { categoryId } = useParams(); // Get the categoryId from the URL params
+  const { id } = useParams<{ id: string }>(); // Lấy ID danh mục từ URL
+  const navigate = useNavigate(); // Khởi tạo hàm điều hướng
 
-  // Fetch products based on the presence of categoryId
-  const { data: products, isLoading, isError, error } = useQuery({
-    queryKey: ['products', categoryId],
+  // Lấy danh sách danh mục
+  const { isLoading: loadingCategories } = useQuery({
+    queryKey: ["categories"],
     queryFn: async () => {
-      try {
-        // If categoryId exists, fetch products for that category
-        // If categoryId is not present, fetch all products
-        const url = categoryId
-          ? `/api/product-list?category=${categoryId}`
-          : `/api/product-list`; // For all products
-
-        const response = await axiosInstance.get(url);
-        return response.data;
-      } catch (error) {
-        throw new Error('Call API thất bại');
-      }
+      const response = await instance.get("http://127.0.0.1:8000/api/category");
+      return response.data;
     },
-    enabled: true,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error: {error instanceof Error ? error.message : 'Something went wrong'}</div>;
+  // Lấy toàn bộ danh sách sản phẩm
+  const { data: allProducts, isLoading: loadingProducts } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const response = await instance.get(
+        "http://127.0.0.1:8000/api/product-list"
+      );
+      console.log("All Products API response:", response.data);
+      return response.data; // Trả về toàn bộ đối tượng API
+    },
+  });
+
+  // Lọc sản phẩm theo tb_category_id
+  const filteredProducts = Array.isArray(allProducts?.data)
+    ? allProducts.data.filter(
+        (product: Product) => product.tb_category_id === Number(id)
+      )
+    : [];
+
+  if (loadingCategories)
+    return <div className="text-center my-5">Loading categories...</div>;
 
   return (
-    <section className="bg0 p-t-23 p-b-140">
-      <div className="container" style={{ margin: '100px' }}>
-        <div className="p-b-10">
-          {/* Dynamically change the heading based on categoryId */}
-          <h3 className="ltext-103 cl5">
-            {categoryId ? `${categoryId}` : "Tất Cả Sản Phẩm"}
-          </h3>
-        </div>
+    <section className="py-5 bg-light">
+      <div className="container">
+        <h3 className="text-center mb-5" style={{ marginTop: "80px" }}>
+          Danh Mục Sản Phẩm
+        </h3>
 
-
-        {products?.data.length === 0 ? (
-          <div className="no-products-message">
-            <h4>không có sản phẩm nảo trong danh mục này.</h4>
-          </div>
-        ) : (
-          <div className="row isotope-grid">
-            <div className="tab01">
-              <div className="tab-content p-t-50">
-                <div className="tab-pane fade show active" id="best-seller" role="tabpanel">
-                  <div className="wrap-slick2">
-                    <div className="slick2 d-flex">
-                      {products?.data.map((product: Product) => (
-                        <div key={product.id} className="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
-                          <div className="block2">
-                            <div className="block2-pic hov-img0">
-                              {product.variants[0]?.images[0] && (
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8kyFx8Cqh7zQJ4qQj6cdSGALFwYeR34klSg&s"
-                                  style={{
-                                    width: '100%',
-                                    height: '350px',
-                                    objectFit: 'cover',
-                                  }}
-                                  alt={product.name}
-                                />
-                              )}
-                              <a href="#" className="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-                                Mua Ngay
-                              </a>
-                            </div>
-                            <div className="block2-txt flex-w flex-t p-t-14">
-                              <div className="block2-txt-child1 flex-col-l">
-                                <a href="product-detail.html" className="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                  {product.name}
-                                </a>
-                                <span className="stext-105 cl3">${product.variants[0]?.price}</span>
-                              </div>
-                              <div className="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" className="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-                                  <img className="icon-heart1 dis-block trans-04" src="src/assets/images/icons/icon-heart-01.png" alt="ICON" />
-                                  <img className="icon-heart2 dis-block trans-04 ab-t-l" src="src/assets/images/icons/icon-heart-02.png" alt="ICON" />
-                                </a>
-                              </div>
-                            </div>
-                          </div>
+        {/* Danh sách sản phẩm */}
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+          {loadingProducts ? (
+            <div className="text-center my-5">Loading products...</div>
+          ) : filteredProducts.length > 0 ? (
+            filteredProducts.map((product: Product) => (
+              <div
+                key={product.id}
+                className="col product-item"
+                onClick={() => navigate(`/product/${product.id}`)} // Chuyển hướng
+                style={{ cursor: "pointer" }} // Đổi con trỏ chuột
+              >
+                <div className="card h-100 product-card border-0">
+                  <div className="position-relative">
+                    {product.variants[0]?.images[0] && (
+                      <div className="product-image-wrapper">
+                        <img
+                          src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
+                          className="card-img-top product-image"
+                          alt={product.name}
+                        />
+                        <div className="product-overlay">
+                          <button className="btn btn-light buy-button">
+                            Mua Ngay
+                          </button>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    <button className="btn wishlist-btn position-absolute top-0 end-0 m-2">
+                      <i className="far fa-heart"></i>
+                    </button>
+                  </div>
+                  <div className="card-body text-center">
+                    <h5 className="card-title product-name">{product.name}</h5>
+                    <p className="product-price fw-bold">
+                      ${product.variants[0]?.price}
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Pagination (this is static, you'll need to implement pagination logic if needed) */}
-        <div className="flex-c-m flex-w w-full p-t-38">
-          <a href="#" className="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1">
-            1
-          </a>
-          <a href="#" className="flex-c-m how-pagination1 trans-04 m-all-7">
-            2
-          </a>
+            ))
+          ) : (
+            <div className="text-center my-5">No products found.</div>
+          )}
         </div>
       </div>
     </section>

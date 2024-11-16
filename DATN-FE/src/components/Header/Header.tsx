@@ -109,7 +109,6 @@ const Header: React.FC = () => {
                       >
                         Đăng xuất
                       </MenuItem>
-
                     </Menu>
                   </Grid>
                 </Grid>
@@ -141,11 +140,11 @@ const Header: React.FC = () => {
                   <a href="/">Home</a>
                 </li>
                 <li>
-                  <a href="/product">Category</a>
+                  <a href="#">Category</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
                       <li key={category.id}>
-                        <Link to={`/product/${category.id}`}>
+                        <Link to={`/category/${category.id}`}>
                           {category.name}
                         </Link>
                       </li>
