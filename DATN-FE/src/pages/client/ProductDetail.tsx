@@ -24,11 +24,11 @@ const ProductDetail = () => {
         // Cài đặt giá trị mặc định cho Size hoặc Color nếu có
         if (productData.sizes && productData.sizes.length > 0) {
           setSelectedOption(String(productData.sizes[0].id));
-          updateVariant(productData.sizes[0].id, null);
+          updateVariant(String(productData.sizes[0].id), null);
           setCurrentVariant(productData.variants[0])
         } else if (productData.colors && productData.colors.length > 0) {
           setSelectedOption(String(productData.colors[0].id));
-          updateVariant(null, productData.colors[0].id);
+          updateVariant(null, String(productData.colors[0].id));
           setCurrentVariant(productData.variants[0])
 
         } else {
@@ -64,6 +64,7 @@ const ProductDetail = () => {
     } else if (product?.colors && product.colors.length > 0) {
       updateVariant(null, newOptionId);
     }
+    console.log("newOptionId:", newOptionId);
   };
 
   const handleQuantityChange = (operation: "increase" | "decrease") => {
@@ -82,7 +83,6 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-
     if (!currentVariant) {
       alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
       return;
@@ -96,15 +96,11 @@ const ProductDetail = () => {
       quantity,
       size: product?.sizes ? product.variants.find(s => String(s.tb_size_id) === selectedOption) : null,
       color: product?.colors ? product.variants.find(c => String(c.tb_color_id) === selectedOption) : null,
-      variantId: currentVariant.id,  // Lưu biến thể được chọn
+      tb_variant_id: currentVariant.id,  // Lưu biến thể được chọn
       variant: currentVariant,  // Thêm thuộc tính variant vào đây
     };
     // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
-    if (localStorage.getItem('token')) {  // Ví dụ kiểm tra token người dùng
-      addToCart(cartItem);
-    } else {
-      alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
-    }
+    addToCart(cartItem);
   }
 
   if (!product) {

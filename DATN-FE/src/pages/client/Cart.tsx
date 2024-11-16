@@ -35,33 +35,36 @@ const ShoppingCart: React.FC = () => {
     if (selectedItems.length === cartItems.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(cartItems.map((item) => item.tb_product_id));
+      setSelectedItems(cartItems.map((item) => item.id).filter((id) => id !== undefined) as number[]);
     }
   };
 
   const calculateSelectedTotal = () => {
     return cartItems
-      .filter((item) => selectedItems.includes(item.tb_product_id))
-      .reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
+      .filter((item) => item.id !== undefined && selectedItems.includes(item.id))
+      .reduce((total, item) => total + (item.variant.price || 0) * (item.quantity || 0), 0);
   };
+
 
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
     const selectedProducts = cartItems.filter((item) =>
-      selectedItems.includes(item.tb_product_id)
+      item.id !== undefined && selectedItems.includes(item.id)
     );
+
     const subtotal = calculateSelectedTotal();
     const total = subtotal;
-
+    // Truyền thêm `cartId` vào navigation
+    const cartId = selectedItems;  // Giả sử tất cả các mục trong giỏ hàng có cùng cart_id
     navigate("/checkout", {
-      state: { selectedProducts, subtotal, total },
+      state: { selectedProducts, subtotal, total, cartId },
     });
   };
 
-  useEffect(() => {
-    console.log("Cart Items: ", cartItems);
-  }, [cartItems]);
+  // useEffect(() => {
+  //   console.log("Cart Items: ", cartItems);
+  // }, [cartItems]);
 
   if (loading) {
     return (
@@ -110,7 +113,7 @@ const ShoppingCart: React.FC = () => {
                         </thead>
                         <tbody>
                           {cartItems.map((item) => (
-                            <tr key={item.tb_product_id} className="table_row">
+                            <tr key={item.id} className="table_row">
                               <td style={{ padding: "0 10px" }}>
                                 <Checkbox
                                   sx={{
@@ -118,8 +121,8 @@ const ShoppingCart: React.FC = () => {
                                       fontSize: 16, // Đặt kích thước của checkbox ở đây (40px)
                                     },
                                   }}
-                                  checked={selectedItems.includes(item.tb_product_id)}
-                                  onChange={() => handleSelectItem(item.tb_product_id)}
+                                  checked={item.id !== undefined && selectedItems.includes(item.id)}
+                                  onChange={() => handleSelectItem(item.id)}
                                 />
                               </td>
 
@@ -137,21 +140,25 @@ const ShoppingCart: React.FC = () => {
 
                               <td style={{ padding: "0 20px", fontSize: "13px" }}>
                                 {item.variant.tb_size_id !== null && item.variant.tb_size_id !== undefined
-                                  ? `${item.variant.tb_size_id}`
+                                  ? `${item.variant.size.name}`
                                   : item.variant.tb_color_id !== null && item.variant.tb_color_id !== undefined
-                                    ? `${item.variant.tb_color_id}`
+                                    ? `${item.variant.color.name}`
                                     : ""}
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.price !== undefined && item.price !== null ? `$${item.price.toFixed(2)}` : "Loading..."}
+                                {item.variant.price !== undefined && item.variant.price !== null ? `$${item.variant.price.toFixed(2)}` : "Loading..."}
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
                                 <div className="wrap-num-product flex-w m-l-auto m-r-0">
                                   <button
                                     type="button"
-                                    onClick={() => item.quantity && reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)}
+                                    onClick={() => {
+                                      if (item.id !== undefined && item.quantity) {
+                                        reduceCartItemQuantity(item.id, item.quantity - 1);
+                                      }
+                                    }}
                                     disabled={item.quantity === undefined || item.quantity <= 1}
                                     className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
                                   >
@@ -174,7 +181,11 @@ const ShoppingCart: React.FC = () => {
                                   )}
                                   <button
                                     type="button"
-                                    onClick={() => item.quantity && upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
+                                    onClick={() => {
+                                      if (item.id !== undefined && item.quantity) {
+                                        upCartItemQuantity(item.id, item.quantity + 1);
+                                      }
+                                    }}
                                     className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                                   >
                                     <i className="fs-16 zmdi zmdi-plus"></i>
@@ -183,13 +194,17 @@ const ShoppingCart: React.FC = () => {
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.price !== undefined && item.quantity !== undefined
-                                  ? `$${(item.price * item.quantity).toFixed(2)}`
+                                {item.variant.price !== undefined && item.quantity !== undefined
+                                  ? `$${(item.variant.price * item.quantity).toFixed(2)}`
                                   : "Loading..."}
                               </td>
 
                               <td >
-                                <IconButton onClick={() => removeFromCart(item.tb_product_id)} aria-label="delete" sx={{ padding: "5px", margin: "20px 20px 0 0" }}>
+                                <IconButton onClick={() => {
+                                  if (item.id !== undefined) {
+                                    removeFromCart(item.id);
+                                  }
+                                }} aria-label="delete" sx={{ padding: "5px", margin: "20px 20px 0 0" }}>
                                   <CancelOutlinedIcon sx={{ color: "red", cursor: "pointer" }} />
                                 </IconButton>
                               </td>
@@ -278,7 +293,7 @@ const ShoppingCart: React.FC = () => {
                             Processing...
                           </>
                         ) : (
-                          `Thanh toán`
+                          `Mua hàng`
                         )}
                       </button>
                     </div>

@@ -15,6 +15,8 @@ export type Image = {
 };
 
 export type Variant = {
+  color: Color;
+  size: Size;
   id: number;
   tb_product_id: number;
   tb_size_id: number;

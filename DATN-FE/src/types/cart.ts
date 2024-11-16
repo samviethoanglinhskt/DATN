@@ -3,16 +3,16 @@ import { Variant } from "./product";
 
 // Định nghĩa kiểu dữ liệu cho một sản phẩm trong giỏ hàng
 export interface CartItem {
+  id?: number;
   tb_product_id: number;
   quantity: number;
-  id?: number;
   name?: string;
   price?: number;
   tb_size_id?: number;
   tb_color_id?: number;
   sku?: string;
   image?: string;
-  variantId: number;
+  tb_variant_id: number;
   variant: Variant;
 }
 
