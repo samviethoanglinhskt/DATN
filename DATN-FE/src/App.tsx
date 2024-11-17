@@ -18,6 +18,8 @@ import { UserProvider } from "./context/User";
 import Order from "./pages/admin/order/Order";
 import ProductSteps from "./pages/admin/product/formProduct";
 import ProductEdit from "./pages/admin/product/editProduct";
+import Blog from "./components/Home/Blog";
+import Contact from "./components/Home/Contact";
 
 const routeConfig = [
   {
@@ -27,6 +29,14 @@ const routeConfig = [
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/blog",
+        element: <Blog />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
       },
       {
         path: "register",
