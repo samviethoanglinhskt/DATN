@@ -1,9 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "src/context/Cart";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { Box, Checkbox, IconButton } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
+import { message } from 'antd';
+import { useCart } from "src/context/Cart";
+
+interface CartVariant {
+  id: number;
+  tb_product_id: number;
+  tb_size_id: number;
+  tb_color_id: number;
+  sku: string;
+  price: number;
+  quantity: number;
+  status: string;
+  size: {
+    id: number;
+    name: string;
+  };
+  color: {
+    id: number;
+    name: string;
+  };
+}
+
+interface CartItem {
+  id: number;
+  user_id: number;
+  tb_product_id: number;
+  tb_variant_id: number;
+  quantity: number;
+  variant: CartVariant;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CartItemState {
+  cartItems: CartItem[];
+  removeFromCart: (id: number) => void;
+  clearCart: () => void;
+  reduceCartItemQuantity: (id: number, quantity: number) => void;
+  upCartItemQuantity: (id: number, quantity: number) => void;
+  loading: boolean;
+}
 
 const ShoppingCart: React.FC = () => {
   const {
@@ -13,9 +53,10 @@ const ShoppingCart: React.FC = () => {
     reduceCartItemQuantity,
     upCartItemQuantity,
     loading,
-  } = useCart();
+  } = useCart() as CartItemState;
+  
   const navigate = useNavigate();
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedVariants, setSelectedVariants] = useState<number[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -24,48 +65,67 @@ const ShoppingCart: React.FC = () => {
     }
   }, [navigate]);
 
-  const handleSelectItem = (id: number) => {
-    setSelectedItems((prev) =>
-      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+  const handleSelectVariant = (variantId: number) => {
+    setSelectedVariants((prev) =>
+      prev.includes(variantId) 
+        ? prev.filter(id => id !== variantId) 
+        : [...prev, variantId]
     );
   };
 
   const handleSelectAll = () => {
-    if (selectedItems.length === cartItems.length) {
-      setSelectedItems([]);
+    if (selectedVariants.length === cartItems.length) {
+      setSelectedVariants([]);
     } else {
-      setSelectedItems(cartItems.map((item) => item.tb_product_id));
+      setSelectedVariants(cartItems.map(item => item.tb_variant_id));
     }
   };
 
   const calculateSelectedTotal = () => {
     return cartItems
-      .filter((item) => selectedItems.includes(item.tb_product_id))
-      .reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
+      .filter((item) => selectedVariants.includes(item.tb_variant_id))
+      .reduce((total, item) => total + item.variant.price * item.quantity, 0);
   };
 
-
   const handleCheckout = () => {
-    if (selectedItems.length === 0) return;
-    const selectedProducts = cartItems.filter((item) =>
-      selectedItems.includes(item.tb_product_id)
-    );
+    if (selectedVariants.length === 0) {
+      message.warning("Vui lòng chọn sản phẩm");
+      return;
+    }
+    
+    const selectedProducts = cartItems
+      .filter((item) => selectedVariants.includes(item.tb_variant_id))
+      .map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        tb_product_id: item.tb_product_id,
+        tb_variant_id: item.tb_variant_id,
+        quantity: item.quantity,
+        price: item.variant.price,
+        variant: item.variant,
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      }));
+
     const subtotal = calculateSelectedTotal();
-    const total = subtotal;
 
     navigate("/checkout", {
-      state: { selectedProducts, subtotal, total },
+      state: { 
+        selectedProducts,
+        selectedVariantIds: selectedVariants,
+        subtotal,
+        total: subtotal
+      },
     });
   };
 
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress /> {/* Spinner */}
+        <CircularProgress />
       </Box>
     );
   }
-
 
   return (
     <div>
@@ -74,10 +134,10 @@ const ShoppingCart: React.FC = () => {
           <div className="container mt-5">
             <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
               <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
-                Home
+                Trang chủ
                 <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
               </button>
-              <span className="stext-109 cl4">Shopping Cart</span>
+              <span className="stext-109 cl4">Giỏ hàng</span>
             </div>
           </div>
 
@@ -92,93 +152,84 @@ const ShoppingCart: React.FC = () => {
                           <tr className="table_head">
                             <th style={{ padding: "0 10px" }}>
                               <Checkbox
-                                checked={selectedItems.length === cartItems.length}
+                                checked={selectedVariants.length === cartItems.length}
                                 onChange={handleSelectAll}
                               />
                             </th>
-                            <th style={{ padding: "20px" }}>Product</th>
-                            <th style={{ padding: "20px" }}>Price</th>
-                            <th style={{ padding: "20px" }}>Quantity</th>
-                            <th style={{ padding: "20px" }}>Total</th>
+                            <th style={{ padding: "20px" }}>Sản phẩm</th>
+                            <th style={{ padding: "20px" }}>Size</th>
+                            <th style={{ padding: "20px" }}>Màu</th>
+                            <th style={{ padding: "20px" }}>Giá</th>
+                            <th style={{ padding: "20px" }}>Số lượng</th>
+                            <th style={{ padding: "20px" }}>Tổng</th>
+                            <th style={{ padding: "20px" }}></th>
                           </tr>
                         </thead>
                         <tbody>
                           {cartItems.map((item) => (
-                            <tr key={item.tb_product_id} className="table_row">
+                            <tr key={item.id} className="table_row">
                               <td style={{ padding: "0 10px" }}>
                                 <Checkbox
-                                  sx={{
-                                    "& .MuiSvgIcon-root": {
-                                      fontSize: 16, // Đặt kích thước của checkbox ở đây (40px)
-                                    },
-                                  }}
-                                  checked={selectedItems.includes(item.tb_product_id)}
-                                  onChange={() => handleSelectItem(item.tb_product_id)}
+                                  checked={selectedVariants.includes(item.tb_variant_id)}
+                                  onChange={() => handleSelectVariant(item.tb_variant_id)}
                                 />
                               </td>
-
                               <td style={{ padding: "0 20px" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <img
-                                    src="https://picsum.photos/300/300"
+                                    src="/api/placeholder/80/80"
+                                    alt="Product"
                                     width={70}
-                                    style={{ display: "flex", marginRight: "10px" }}
+                                    style={{ marginRight: "10px" }}
                                   />
-                                  <div style={{ fontSize: "14px", display: "inline" }}>{item.name}</div>
+                                  <div>Product Name</div>
                                 </div>
                               </td>
-
                               <td style={{ padding: "0 20px" }}>
-                                {item.price !== undefined && item.price !== null ? `$${item.price.toFixed(2)}` : "Loading..."}
+                                {item.variant.size.name}
                               </td>
-
+                              <td style={{ padding: "0 20px" }}>
+                                {item.variant.color.name}
+                              </td>
+                              <td style={{ padding: "0 20px" }}>
+                                ${item.variant.price.toLocaleString()}
+                              </td>
                               <td style={{ padding: "0 20px" }}>
                                 <div className="wrap-num-product flex-w m-l-auto m-r-0">
                                   <button
                                     type="button"
-                                    onClick={() => reduceCartItemQuantity(item.tb_product_id, item.quantity - 1)}
+                                    onClick={() => reduceCartItemQuantity(item.id, item.quantity - 1)}
                                     disabled={item.quantity <= 1}
                                     className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
                                   >
-                                    <i className="fs-16 zmdi zmdi-minus"></i>
+                                    -
                                   </button>
-                                  {item.quantity !== undefined && item.quantity !== null ? (
-                                    <input
-                                      type="text"
-                                      value={item.quantity}
-                                      readOnly
-                                      className="mtext-104 cl3 txt-center num-product"
-                                    />
-                                  ) : (
-                                    <input
-                                      type="text"
-                                      value={1}  // Temporary fallback, or consider leaving empty until quantity is defined
-                                      readOnly
-                                      className="mtext-104 cl3 txt-center num-product"
-                                    />
-                                  )}
+                                  <input
+                                    type="text"
+                                    value={item.quantity}
+                                    readOnly
+                                    className="mtext-104 cl3 txt-center num-product"
+                                  />
                                   <button
                                     type="button"
-                                    onClick={() => upCartItemQuantity(item.tb_product_id, item.quantity + 1)}
+                                    onClick={() => upCartItemQuantity(item.id, item.quantity + 1)}
                                     className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                                   >
-                                    <i className="fs-16 zmdi zmdi-plus"></i>
+                                    +
                                   </button>
                                 </div>
                               </td>
-
                               <td style={{ padding: "0 20px" }}>
-                                {item.price !== undefined && item.quantity !== undefined
-                                  ? `$${(item.price * item.quantity).toFixed(2)}`
-                                  : "Loading..."}
+                                ${(item.variant.price * item.quantity).toLocaleString()}
                               </td>
-
-                              <td >
-                                <IconButton onClick={() => removeFromCart(item.tb_product_id)} aria-label="delete" sx={{ padding: "5px", margin: "20px 20px 0 0" }}>
-                                  <CancelOutlinedIcon sx={{ color: "red", cursor: "pointer" }} />
+                              <td>
+                                <IconButton
+                                  onClick={() => removeFromCart(item.id)}
+                                  sx={{ padding: "5px", margin: "20px 20px 0 0" }}
+                                >
+                                  <CancelOutlinedIcon sx={{ color: "red" }} />
                                 </IconButton>
                               </td>
-
                             </tr>
                           ))}
                         </tbody>
@@ -186,23 +237,13 @@ const ShoppingCart: React.FC = () => {
                     </div>
 
                     <div className="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-                      <div className="flex-w flex-m m-r-20 m-tb-5">
-                        <input
-                          type="text"
-                          placeholder="Coupon Code"
-                          className="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
-                        />
-                        <button type="button" className="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
-                          Apply coupon
-                        </button>
-                      </div>
                       <button
                         type="button"
                         onClick={clearCart}
                         disabled={loading}
                         className="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn4 p-lr-15 trans-04 pointer m-tb-10"
                       >
-                        Clear Cart
+                        Xóa giỏ hàng
                       </button>
                     </div>
                   </div>
@@ -210,63 +251,30 @@ const ShoppingCart: React.FC = () => {
 
                 <div className="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
                   <div className="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
-                    <h4 className="mtext-109 cl2 p-b-30">Giỏ hàng tổng</h4>
-
-                    <div className="flex-w flex-t bor12 p-b-13">
-                      <div className="size-208">
-                        <span className="stext-110 cl2">Tạm tính:</span>
-                      </div>
-                      <div className="size-209">
-                        <span className="mtext-110 cl2">${calculateSelectedTotal().toFixed(2)}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex-w flex-t bor12 p-t-15 p-b-30">
-                      <div className="size-208 w-full-ssm">
-                        <span className="stext-110 cl2">
-                          Giảm giá:
-                        </span>
-                      </div>
-                      <div className="size-209">
-                        <span className="mtext-110 cl2">
-                          -$0
-                        </span>
-                      </div>
-                    </div>
+                    <h4 className="mtext-109 cl2 p-b-30">Tổng giỏ hàng</h4>
 
                     <div className="flex-w flex-t p-t-27 p-b-33">
                       <div className="size-208">
-                        <span className="mtext-101 cl2">
-                          Tổng:
-                        </span>
+                        <span className="mtext-101 cl2">Tổng tiền:</span>
                       </div>
                       <div className="size-209 p-t-1">
                         <span className="mtext-110 cl2">
-                          ${calculateSelectedTotal().toFixed(2)}
+                          ${calculateSelectedTotal().toLocaleString()}
                         </span>
                       </div>
                     </div>
 
-                    <div className="d-grid gap-2 mt-3">
-                      <button
-                        onClick={handleCheckout}
-                        disabled={selectedItems.length === 0 || loading}
-                        className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-                      >
-                        {loading ? (
-                          <>
-                            <span
-                              className="spinner-border spinner-border-sm me-2"
-                              role="status"
-                              aria-hidden="true"
-                            ></span>
-                            Processing...
-                          </>
-                        ) : (
-                          `Thanh toán`
-                        )}
-                      </button>
-                    </div>
+                    <button
+                      onClick={handleCheckout}
+                      disabled={selectedVariants.length === 0 || loading}
+                      className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+                    >
+                      {loading ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Thanh toán"
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -274,11 +282,10 @@ const ShoppingCart: React.FC = () => {
           </form>
         </div>
       ) : (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-          <h1>Giỏ hàng của bạn đang trống!</h1>
+        <div className="flex justify-center items-center h-screen">
+          <h1>Giỏ hàng trống!</h1>
         </div>
       )}
-
     </div>
   );
 };

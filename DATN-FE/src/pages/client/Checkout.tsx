@@ -5,8 +5,8 @@ import { useUser } from 'src/context/User';
 
 interface LocationState {
   selectedProducts: any[];
+  selectedVariantIds: number[];
   subtotal: number;
-  delivery: number;
   total: number;
 }
 
@@ -14,14 +14,13 @@ const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { clearCart } = useCart();
-  const { user } = useUser(); // Get user data from UserContext
+  const { user } = useUser();
 
   const [loadingUser, setLoadingUser] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [addressError, setAddressError] = useState('');
@@ -31,8 +30,8 @@ const CheckoutPage: React.FC = () => {
 
   const state = location.state as LocationState;
   const selectedProducts = state?.selectedProducts || [];
+  const selectedVariantIds = state?.selectedVariantIds || [];
   const subtotal = state?.subtotal || 0;
-  const delivery = state?.delivery || 0;
   const total = state?.total || 0;
 
   useEffect(() => {
@@ -119,10 +118,7 @@ const CheckoutPage: React.FC = () => {
           phone,
           address,
           total_amount: total,
-          cart_items: selectedProducts.map(item => ({
-            product_id: item.tb_product_id,
-            quantity: item.quantity
-          }))
+          cart_ids: selectedVariantIds
         })
       });
 
@@ -233,11 +229,13 @@ const CheckoutPage: React.FC = () => {
               <h5 className="card-title mb-4">Đơn hàng của bạn</h5>
               <div className="mb-4">
                 {selectedProducts.map((item) => (
-                  <div key={item.tb_product_id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
-                    <img src="/api/placeholder/80/80" alt={item.name} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                  <div key={item.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
+                    <img src="/api/placeholder/80/80" alt="Product" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
-                      <p className="mb-0">{item.name}</p>
-                      <small>{item.quantity} x {item.price.toFixed(2)} $</small>
+                      <p className="mb-0">Product Name</p>
+                      <small>Size: {item.variant.size.name}</small><br/>
+                      <small>Color: {item.variant.color.name}</small><br/>
+                      <small>{item.quantity} x {item.variant.price.toFixed(2)} $</small>
                     </div>
                   </div>
                 ))}
@@ -245,10 +243,6 @@ const CheckoutPage: React.FC = () => {
               <div className="d-flex justify-content-between mb-3">
                 <span>Tạm tính</span>
                 <span>{subtotal.toFixed(2)} $</span>
-              </div>
-              <div className="d-flex justify-content-between mb-3">
-                <span>Phí giao hàng</span>
-                <span>{delivery.toFixed(2)} $</span>
               </div>
               <div className="d-flex justify-content-between mb-3">
                 <span><strong>Tổng cộng</strong></span>
