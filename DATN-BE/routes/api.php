@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\NewController;
 use App\Http\Controllers\OderController;
@@ -51,6 +52,7 @@ Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
 Route::resource('discount', DiscountController::class);
 Route::resource('logo_banner', LogoBannerController::class);
+Route::resource('contact', ContactController::class);
 
 //Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
@@ -78,5 +80,8 @@ Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay
 //oder
 Route::get('/list-oder-client',[OderController::class,'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin',[OderController::class,'listOderAdmin'])->name('list_oder_admin');
+
+//contact
+Route::get('/getByUser',[ContactController::class,'getByUser'])->name('getByUser');
 
 

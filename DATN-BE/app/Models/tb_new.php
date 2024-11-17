@@ -12,7 +12,8 @@ class tb_new extends Model
     protected $fillable = [
         'title',
         'content',
-        'create_day'
+        'create_day',
+        'image'
     ];
 
 }
