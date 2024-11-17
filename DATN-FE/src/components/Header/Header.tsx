@@ -156,13 +156,13 @@ const Header: React.FC = () => {
                   <a href="shoping-cart.html">Features</a>
                 </li>
                 <li>
-                  <a href="blog.html">Blog</a>
+                  <Link to="/blog">Blog</Link>
                 </li>
                 <li>
                   <a href="about.html">About</a>
                 </li>
                 <li>
-                  <a href="contact.html">Contact</a>
+                  <Link to="/contact">Contact</Link>
                 </li>
               </ul>
             </div>
@@ -283,7 +283,7 @@ const Header: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="blog.html">Blog</a>
+            <a href="/blog">Blog</a>
           </li>
           <li>
             <a href="about.html">About</a>

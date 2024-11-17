@@ -16,6 +16,8 @@ import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
 import { UserProvider } from "./context/User";
 import Order from "./pages/admin/order/Order";
+import Blog from "./components/Home/Blog";
+import Contact from "./components/Home/Contact";
 
 const routeConfig = [
   {
@@ -25,6 +27,14 @@ const routeConfig = [
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/blog",
+        element: <Blog />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
       },
       {
         path: "register",
