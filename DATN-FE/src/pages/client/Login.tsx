@@ -1,17 +1,12 @@
 import {
-  Avatar,
   Box,
-  Button,
-  Container,
   Grid,
   Link,
-  styled,
   TextField,
   Typography,
 } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { User } from "src/types/user";
 import axiosInstance from "src/config/axiosInstance";
 
@@ -39,101 +34,94 @@ const Login = () => {
     }
   };
 
-  const GradientButton = styled(Button)(() => ({
-    background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
-    backgroundSize: "200% 200%",
-    border: 0,
-    borderRadius: 3,
-    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
-    color: "white",
-    height: 48,
-    width: 600,
-    marginTop: "20px",
-    padding: "0 30px",
-    transition: "background-position 1s ease",
-    backgroundPosition: "0% 100%",
-    "&:hover": {
-      backgroundPosition: "200% 100%",
-    },
-  }));
-
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          margin: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
+    <div className="container mt-5">
+      <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+        <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
+          Trang chủ
+          <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+        </button>
+        <span className="stext-109 cl4">Đăng nhập</span>
+      </div>
 
-        <Typography component="h1" variant="h3">
-          Sign in
-        </Typography>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Box
+          sx={{
+            width: 700,
+            margin: 5,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
 
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Email Address"
-                autoComplete="email"
-                {...register("email", {
-                  required: "Required email",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email",
-                  },
-                })}
-                error={!!errors?.email?.message}
-                helperText={errors?.email?.message}
-              />
-            </Grid>
+          <Typography component="h1" variant="h3">
+            Sign in
+          </Typography>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Mật khẩu"
-                type="password"
-                autoComplete="new-password"
-                {...register("password", {
-                  required: "Required password",
-                  minLength: {
-                    value: 6,
-                    message: "Password must have at least 6 characters",
-                  },
-                })}
-                error={!!errors?.password?.message}
-                helperText={errors?.password?.message}
-              />
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Email Address"
+                  autoComplete="email"
+                  {...register("email", {
+                    required: "Required email",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email",
+                    },
+                  })}
+                  error={!!errors?.email?.message}
+                  helperText={errors?.email?.message}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Mật khẩu"
+                  type="password"
+                  autoComplete="new-password"
+                  {...register("password", {
+                    required: "Required password",
+                    minLength: {
+                      value: 6,
+                      message: "Password must have at least 6 characters",
+                    },
+                  })}
+                  error={!!errors?.password?.message}
+                  helperText={errors?.password?.message}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <GradientButton type="submit">Sign in</GradientButton>
-          <Grid container justifyContent="center">
-            <Grid item>
-              <Link
-                href="/forgot_password"
-                variant="body2"
-                sx={{ lineHeight: "4" }}
-              >
-                Forgot Password?
-              </Link>
+            <button type="submit" className="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer" style={{ marginTop: 30 }}>
+              Đăng nhập
+            </button>
+            <Grid container justifyContent="center">
+              <Grid item>
+                <Link
+                  href="/forgot_password"
+                  variant="body2"
+                  sx={{ lineHeight: "4" }}
+                >
+                  Quên mật khẩu?
+                </Link>
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link href="/register" variant="body2" sx={{ lineHeight: "2" }}>
-                Don't have an account? Sign up here
-              </Link>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="/register" variant="body2" sx={{ lineHeight: "2" }}>
+                  Chưa có tài khoản? Đăng ký
+                </Link>
+              </Grid>
             </Grid>
-          </Grid>
+          </Box>
         </Box>
-      </Box>
-    </Container>
+      </div>
+    </div>
+
   );
 };
 export default Login;
