@@ -24,20 +24,19 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         });
         if (response.status === 200) {
           const cartData = response.data.data;
+
           const updatedCartItems = await Promise.all(
             cartData.map(async (item: CartItem | null) => {
-              if (!item || !item.tb_product_id) return null;
-              const productResponse = await axiosInstance.get(
-                `api/product/${item.tb_product_id}`
-              );
-              const productData = productResponse.data;
+              if (!item || !item.id) return null;
               return {
                 ...item,
-                name: productData.name,
-                price: productData.variants[0]?.price,
+                id: item.id,
+                name: item.name,
+                price: item.price,
               };
             })
           );
+
           const validCartItems = updatedCartItems.filter(Boolean) as CartItem[];
           setCartItems(validCartItems);
           setTotalQuantity(
@@ -64,7 +63,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       });
 
       if (response.status === 200) {
-        alert("Thêm thành công");
+        alert("Điều hướng thành công");
         //navigate("/guest-info");
       }
     } catch (error) {
@@ -85,8 +84,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         {
           tb_product_id: item.tb_product_id,
           quantity: item.quantity,
-          tb_size_id: item.tb_size_id,
-          tb_color_id: item.tb_color_id,
+          tb_variant_id: item.tb_variant_id,
+          // tb_size_id: item.tb_size_id,
+          // tb_color_id: item.tb_color_id,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -94,6 +94,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       if (response.status === 200) {
         const newItem = response.data.data;
 
+        // Kiểm tra xem newItem có tồn tại không và có đầy đủ các thuộc tính không
         setCartItems((prevItems) => {
           const existingItemIndex = prevItems.findIndex(
             (i) => i.tb_product_id === newItem.tb_product_id
@@ -130,7 +131,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   };
 
-  const removeFromCart = async (tb_product_id: number) => {
+  const removeFromCart = async (id: number) => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please log in to remove items from the cart.");
@@ -140,17 +141,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     try {
       const response = await axiosInstance.post(
         "api/cart/del-one-cart",
-        { tb_product_id },
+        { id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.status === 200) {
         setCartItems((prevItems) =>
-          prevItems.filter((item) => item.tb_product_id !== tb_product_id)
+          prevItems.filter((item) => item.id !== id)
         );
         setTotalQuantity(
           (prevTotal) =>
             prevTotal -
-            (cartItems.find((item) => item.tb_product_id === tb_product_id)
+            (cartItems.find((item) => item.id === id)
               ?.quantity || 0)
         ); // Update total quantity
         alert("Xóa thành công");
@@ -161,13 +162,13 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const reduceCartItemQuantity = async (
-    tb_product_id: number,
+    id: number,
     quantity: number
   ) => {
     if (quantity < 1) return;
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.tb_product_id === tb_product_id
+        item.id === id
           ? { ...item, quantity: Math.max(1, quantity) }
           : item
       )
@@ -183,7 +184,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     try {
       await axiosInstance.post(
         "api/cart/update-quantity-cart",
-        { tb_product_id, quantity: 1 },
+        { id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
@@ -192,12 +193,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const upCartItemQuantity = async (
-    tb_product_id: number,
+    id: number,
     quantity: number
   ) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.tb_product_id === tb_product_id
+        item.id === id
           ? { ...item, quantity: Math.max(1, quantity) }
           : item
       )
@@ -210,7 +211,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     try {
       await axiosInstance.post(
         "api/cart/up-quantity-cart",
-        { tb_product_id, quantity: 1 },
+        { id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {

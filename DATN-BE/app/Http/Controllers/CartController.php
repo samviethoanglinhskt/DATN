@@ -53,8 +53,10 @@ class CartController extends Controller
     {
         $request->validate([
             'tb_product_id' => 'required|exists:tb_products,id',
-            // 'tb_variant_id' => 'required|exists:tb_variants,id',
+            'tb_variant_id' => 'required|exists:tb_variants,id',
             'quantity' => 'required|integer|min:1',
+            // 'tb_size_id' => 'nullable|exists:tb_sizes,id',
+            // 'tb_color_id' => 'nullable|exists:tb_colors,id',
         ]);
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -66,10 +68,17 @@ class CartController extends Controller
             }
 
             $product = tb_product::findOrFail($request->tb_product_id);
-            $variant = tb_variant::where('tb_product_id', $request->tb_product_id)
-                ->where('tb_size_id', $request->tb_size_id)
-                ->where('tb_color_id', $request->tb_color_id)
-                ->first();
+            $variant = tb_variant::find($request->tb_variant_id);
+
+            // Kiểm tra xem variant có tồn tại không
+            if (!$variant) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy variant cho sản phẩm với size và màu đã chọn.',
+                    'tb_product_id' => $request->tb_product_id,
+                    'tb_variant_id' => $request->tb_variant_id
+                ], 404);
+            }
             // Thêm sản phẩm vào giỏ hàng
             $cart = tb_cart::firstOrCreate(
                 [
@@ -111,10 +120,10 @@ class CartController extends Controller
                 ], 404);
             }
 
-            $product = tb_product::find($request->tb_product_id);
+            // $product = tb_product::find($request->tb_product_id);
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
-                ->where('tb_product_id', $product->id)
+                ->where('id', $request->id)
                 ->first();
             // Cập nhật số lượng
             $cart->quantity -= $request->quantity;
@@ -146,10 +155,10 @@ class CartController extends Controller
                 ], 404);
             }
 
-            $product = tb_product::find($request->tb_product_id);
+            // $product = tb_product::find($request->tb_product_id);
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
-                ->where('tb_product_id', $product->id)
+                ->where('id', $request->id)
                 ->first();
             // Cập nhật số lượng
             $cart->quantity += $request->quantity;
@@ -181,16 +190,9 @@ class CartController extends Controller
                 ], 404);
             }
 
-            $product = tb_product::find($request->tb_product_id);
-            if (!$product) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Sản phẩm không tồn tại',
-                ], 404);
-            }
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
-                ->where('tb_product_id', $product->id)
+                ->where('id', $request->id)
                 ->first();
             $cart->delete();
 
@@ -242,7 +244,7 @@ class CartController extends Controller
                 'message' => 'Người dùng không tồn tại',
             ], 404);
         }
-        $cart = tb_cart::with('variant.size', 'variant.color')->where('user_id', $user->id)->get();
+        $cart = tb_cart::with('products', 'variant.size', 'variant.color', 'variant.images')->where('user_id', $user->id)->get();
 
         return response()->json([
             'success' => true,
@@ -251,7 +253,8 @@ class CartController extends Controller
         ]);
     }
 
-    public function checkoutGuest(Request $request){ // khách vãng lai
+    public function checkoutGuest(Request $request)
+    { // khách vãng lai
 
         try {
             $totalOrder = 0;
@@ -273,10 +276,10 @@ class CartController extends Controller
             }
             $oderDetail = tb_oderdetail::create([
                 'tb_oder_id' => $order->id,
-                'tb_product_id' =>$request->tb_product_id,
-                'tb_variant_id' =>$request->tb_variant_id,
-                'quantity' =>$request->quantity,
-                'price' =>$variant->price
+                'tb_product_id' => $request->tb_product_id,
+                'tb_variant_id' => $request->tb_variant_id,
+                'quantity' => $request->quantity,
+                'price' => $variant->price
             ]);
 
             $order->order_code = 'ORD-' . $order->id;
@@ -294,7 +297,7 @@ class CartController extends Controller
             $vnp_OrderType = "Imperial Beauty";
             $vnp_Amount = $totalOrder * 100;
             $vnp_Locale = "VN";
-//            $vnp_BankCode = "NCB";
+            //            $vnp_BankCode = "NCB";
             $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
 
             $inputData = array(
@@ -312,7 +315,7 @@ class CartController extends Controller
                 "vnp_TxnRef" => $vnp_TxnRef
             );
 
-//            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+            //            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
 //                $inputData['vnp_BankCode'] = $vnp_BankCode;
 //            }
 //            if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
@@ -336,7 +339,7 @@ class CartController extends Controller
 
             $vnp_Url = $vnp_Url . "?" . $query;
             if (isset($vnp_HashSecret)) {
-                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
 
@@ -369,7 +372,7 @@ class CartController extends Controller
             }
 
             // Lấy danh sách product_ids từ yêu cầu
-            $productIds = $request->input('product_ids');
+            $productIds = $request->cart_items;
             $discountCode = $request->input('discount_code'); // Lấy mã giảm giá từ yêu cầu
             if (empty($productIds)) {
                 return response()->json([
@@ -395,22 +398,22 @@ class CartController extends Controller
             $totalOrder = 0;
             $tbDiscountId = null; // Khởi tạo giá trị cho tb_discount_id
             // Áp dụng giảm giá nếu có mã giảm giá
-            if($discountCode) {
-                $discount = tb_discount::where('discount_code', $discountCode)->first();
-                if ($discount) {
-                    $tbDiscountId = $discount->id; // Lưu ID của mã giảm giá
-                }
-            }
+            // if ($discountCode) {
+            //     $discount = tb_discount::where('discount_code', $discountCode)->first();
+            //     if ($discount) {
+            //         $tbDiscountId = $discount->id; // Lưu ID của mã giảm giá
+            //     }
+            // }
             $order = tb_oder::create([
                 'user_id' => $user->id,
                 'tb_discount_id' => $tbDiscountId,
                 'order_date' => now(),
                 // 'total_amount' => $totalAmount,
                 'order_status' => 'Chờ xử lý',
-                'name' => $user->name,
-                'phone' => $user->phone,
-                'address' => $user->address,
-                'email' => $user->email,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'email' => $request->email,
             ]);
             foreach ($selectedItems as $item) {
                 $variant = tb_variant::find($item->tb_variant_id);
@@ -420,22 +423,22 @@ class CartController extends Controller
                 }
                 $oderDetail = tb_oderdetail::create([
                     'tb_oder_id' => $order->id,
-                    'tb_product_id' =>$item->tb_product_id,
-                    'tb_variant_id' =>$item->tb_variant_id,
-                    'quantity' =>$item->quantity,
-                    'price' =>$variant->price
+                    'tb_product_id' => $item->tb_product_id,
+                    'tb_variant_id' => $item->tb_variant_id,
+                    'quantity' => $item->quantity,
+                    'price' => $variant->price
                 ]);
 
                 $orderDetails[] = $oderDetail;
             }
             // Áp dụng giảm giá theo phần trăm nếu có mã giảm giá
-             if ($tbDiscountId && isset($discount)) {
-                 $discountValue = $discount->discount_value; // Giá trị phần trăm giảm giá
-                 $totalOrder -= $totalOrder * ($discountValue / 100); // Áp dụng giảm giá theo phần trăm
-             }
+            // if ($tbDiscountId && isset($discount)) {
+            //     $discountValue = $discount->discount_value; // Giá trị phần trăm giảm giá
+            //     $totalOrder -= $totalOrder * ($discountValue / 100); // Áp dụng giảm giá theo phần trăm
+            // }
 
             $order->order_code = 'ORD-' . $order->id;
-            $order->total_amount = $totalOrder;
+            $order->total_amount = $request->total_amount;
             $order->save();
             // tích hợp vnpay
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -490,7 +493,7 @@ class CartController extends Controller
 
             $vnp_Url = $vnp_Url . "?" . $query;
             if (isset($vnp_HashSecret)) {
-                $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
 

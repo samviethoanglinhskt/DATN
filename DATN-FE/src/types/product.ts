@@ -1,13 +1,22 @@
+// Brand interface
+export type Brand = {
+  id: number;
+  name: string;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
 export type Image = {
   id: number;
   tb_variant_id: number;
   name_image: string;
-  status: string;
   created_at: string;
   updated_at: string;
 };
 
 export type Variant = {
+  color: Color;
+  size: Size;
   id: number;
   tb_product_id: number;
   tb_size_id: number;
@@ -48,6 +57,7 @@ export type Product = {
   id: number;
   tb_category_id: number;
   tb_brand_id: number;
+  brand: Brand;
   name: string;
   status: string;
   description: string;
@@ -59,10 +69,10 @@ export type Product = {
   sizes: Size[];
 };
 
-export interface Category {
+export type Category = {
   id: number;
   name: string;
   created_at: string | null;
   updated_at: string | null;
   products: Product[];
-}
+};

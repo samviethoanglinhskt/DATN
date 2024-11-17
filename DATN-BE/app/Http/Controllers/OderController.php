@@ -38,7 +38,7 @@ class OderController extends Controller
                     'message' => 'Người dùng không tồn tại',
                 ], 404);
             }
-            $oder = tb_oder::with('oderDetails', 'oderDetails.product', 'oderDetails.variant',)
+            $oder = tb_oder::with('oderDetails', 'oderDetails.product','oderDetails.variant', 'oderDetails.variant.size','oderDetails.variant.color')
                 ->where('user_id', $user->id)
                 ->get();
             return response()->json([

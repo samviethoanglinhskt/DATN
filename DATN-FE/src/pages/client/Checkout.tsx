@@ -1,38 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useCart } from 'src/context/Cart';
 import { useUser } from 'src/context/User';
 
-interface LocationState {
-  selectedProducts: any[];
-  selectedVariantIds: number[];
-  subtotal: number;
-  total: number;
+interface Product {
+  id: number;
+  products: {
+    name: string;
+  };
+  variant: {
+    size?: { name: string };
+    color?: { name: string };
+    price: number;
+  };
+  quantity: number;
 }
 
+interface LocationState {
+  selectedProducts: Product[];
+  subtotal: number;
+  total: number;
+  cartId: number[];
+}
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { clearCart } = useCart();
-  const { user } = useUser();
+  const { user } = useUser(); // Get user data from UserContext
 
   const [loadingUser, setLoadingUser] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [addressError, setAddressError] = useState('');
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
 
   const state = location.state as LocationState;
-  const selectedProducts = state?.selectedProducts || [];
-  const selectedVariantIds = state?.selectedVariantIds || [];
-  const subtotal = state?.subtotal || 0;
-  const total = state?.total || 0;
+  const selectedProducts = useMemo(() => state?.selectedProducts || [], [state?.selectedProducts]);
+
+  const subtotal = state?.subtotal ?? 0;
+  const total = state?.total ?? 0;
+  const cartId = state?.cartId || [];
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else if (!selectedProducts.length) {
+      navigate("/cart");
+    }
+  }, [navigate, selectedProducts]);
 
   useEffect(() => {
     if (user?.data) {
@@ -46,14 +66,6 @@ const CheckoutPage: React.FC = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    } else if (!selectedProducts.length) {
-      navigate("/cart");
-    }
-  }, [navigate, selectedProducts]);
 
   const validateForm = () => {
     let isValid = true;
@@ -96,71 +108,67 @@ const CheckoutPage: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCheckOut = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setLoading(true);
-    setError('');
-
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch('/api/cart/check-out-cart', {
+      const response = await fetch('http://localhost:8000/api/cart/check-out-cart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          user_id: user?.id,
           name,
           email,
           phone,
           address,
           total_amount: total,
-          cart_ids: selectedVariantIds
+          cart_items: cartId,
         })
       });
 
-      if (response.ok) {
-        clearCart();
-        navigate('/order-success', {
-          state: {
-            orderDetails: { products: selectedProducts, total, address }
-          }
-        });
-      } else {
-        const data = await response.json();
-        throw new Error(data.message || 'Thanh toán thất bại');
+      if (!response.ok) {
+        const errorMessage = await response.text(); // Trích xuất lỗi nếu có
+        throw new Error(errorMessage || 'Thanh toán thất bại');
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Có lỗi xảy ra khi thanh toán');
+      // navigate('/order-success', {
+      //   state: {
+      //     orderDetails: { products: selectedProducts, total, address },
+      //   },
+      // });
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
+
   if (loadingUser) {
     return <div>Đang tải thông tin người dùng...</div>;
+  }
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="container py-5 mt-5">
-      <nav aria-label="breadcrumb" className="mb-4">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <button className="btn btn-link p-0 text-decoration-none" onClick={() => navigate("/")}>
-              Trang chủ
-            </button>
-          </li>
-          <li className="breadcrumb-item">
-            <button className="btn btn-link p-0 text-decoration-none" onClick={() => navigate("/cart")}>
-              Giỏ hàng
-            </button>
-          </li>
-          <li className="breadcrumb-item active">Thanh toán</li>
-        </ol>
-      </nav>
+      <div className="container mt-2 mb-5">
+        <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+          <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
+            Home
+            <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+          </button>
+          <button onClick={() => navigate("/cart")} className="stext-109 cl8 hov-cl1 trans-04">
+            Giỏ hàng
+            <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+          </button>
+          <span className="stext-109 cl4">Shopping Cart</span>
+        </div>
+      </div>
 
       <h1 className="h3 mb-4">Thanh Toán</h1>
 
@@ -170,7 +178,7 @@ const CheckoutPage: React.FC = () => {
             <div className="card-body">
               <h5 className="card-title mb-4">Thông tin giao hàng</h5>
 
-              <form onSubmit={handleSubmit}>
+              <form>
                 <div className="mb-3">
                   <label className="form-label">Họ tên</label>
                   <input
@@ -213,11 +221,6 @@ const CheckoutPage: React.FC = () => {
                   {addressError && <div className="invalid-feedback">{addressError}</div>}
                 </div>
 
-                {error && <div className="alert alert-danger" role="alert">{error}</div>}
-
-                <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                  {loading ? 'Đang xử lý...' : `Xác nhận thanh toán - ${total.toFixed(2)} $`}
-                </button>
               </form>
             </div>
           </div>
@@ -230,12 +233,29 @@ const CheckoutPage: React.FC = () => {
               <div className="mb-4">
                 {selectedProducts.map((item) => (
                   <div key={item.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
-                    <img src="/api/placeholder/80/80" alt="Product" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                    <img src="https://picsum.photos/300/300" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
-                      <p className="mb-0">Product Name</p>
-                      <small>Size: {item.variant.size.name}</small><br/>
-                      <small>Color: {item.variant.color.name}</small><br/>
-                      <small>{item.quantity} x {item.variant.price.toFixed(2)} $</small>
+                      <p className="mb-0" style={{ fontSize: 15 }}>{item.products.name}</p>
+                      <div>
+                        {item.variant.size && item.variant.size !== null ? (
+                          <small>{item.variant.size.name} | SL: {item.quantity}</small>
+                        ) : (
+                          null
+                        )}
+                        {item.variant.color && item.variant.color !== null ? (
+                          <small>{item.variant.color.name} | SL: {item.quantity}  </small>
+                        ) : (
+                          null
+                        )}
+                        {!item.variant.size && !item.variant.color ? (
+                          <small>SL: {item.quantity}</small>
+                        ) : (
+                          null
+                        )}
+                      </div>
+
+                      {/* Kiểm tra nếu biến thể và giá tồn tại */}
+                      <span>{item.variant.price}$</span>
                     </div>
                   </div>
                 ))}
@@ -246,8 +266,12 @@ const CheckoutPage: React.FC = () => {
               </div>
               <div className="d-flex justify-content-between mb-3">
                 <span><strong>Tổng cộng</strong></span>
-                <span><strong>{total.toFixed(2)} $</strong></span>
+                <span><strong>{Number(total).toFixed(2)} $</strong></span>
               </div>
+
+              <button onClick={handleCheckOut} type="button" className="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" style={{ margin: "70px 0 30px 100px" }}>
+                Đặt hàng
+              </button>
             </div>
           </div>
         </div>
