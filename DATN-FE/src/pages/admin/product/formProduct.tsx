@@ -69,9 +69,9 @@ const ProductSteps: React.FC = () => {
 
   const handleProductImageChange = (info: UploadChangeParam<UploadFile>) => {
     console.log(info);
-    const { file } = info;
-    if (file.originFileObj) {
-      setProductImage(file.originFileObj);
+    const { fileList } = info;
+    if (fileList?.[0]?.originFileObj) {
+      setProductImage(fileList?.[0]?.originFileObj || null);
     }
   };
 
