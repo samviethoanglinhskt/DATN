@@ -4,7 +4,7 @@ export type Brand = {
   name: string;
   created_at: string | null;
   updated_at: string | null;
-}
+};
 
 export type Image = {
   id: number;
@@ -69,10 +69,10 @@ export type Product = {
   sizes: Size[];
 };
 
-export interface Category {
+export type Category = {
   id: number;
   name: string;
   created_at: string | null;
   updated_at: string | null;
   products: Product[];
-}
+};
