@@ -87,8 +87,10 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
-            if ($request['image'] && $request['image']->isValid()) {
-                $imagePr = $request['image']->store('products', 'public');
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                $imagePr = $request->file('image')->store('products', 'public');
+            } else {
+                return response()->json(['error' => 'Lỗi ảnh sản phẩm'], 400);
             }
             $product = tb_product::query()->create([
                 'tb_category_id' => $request->tb_category_id,
@@ -115,7 +117,7 @@ class ProductController extends Controller
                     'tb_image' => []
                 ];
 
-                if (!empty($new_variant)) {
+                if (!empty($variant['images'])) {
                     foreach ($variant['images'] as $image) {
 
                         // Sử dụng request->file() để lấy file
@@ -125,11 +127,13 @@ class ProductController extends Controller
                             // return response()->json($path);
                             // Lưu thông tin ảnh vào CSDL
                             $tb_image = tb_image::query()->create([
-                                'tb_variant_id' => $new_variant->id,                          
+                                'tb_variant_id' => $new_variant->id,
                                 'name_image' => $path,
 
                             ]);
                             $variant_data['tb_image'][] = $tb_image;
+                        } else {
+                            return response()->json(['error' => 'lỗi ảnh biến thể'], 400);
                         }
                     }
                 }
@@ -158,30 +162,31 @@ class ProductController extends Controller
                 }
                 // Lưu ảnh mới
                 $imagePr = $request->file('image')->store('products', 'public');
+            } else {
+                $imagePr = $product->image;
             }
-
-            $product->update([
-                'tb_category_id' => $request->tb_category_id,
-                'tb_brand_id' => $request->tb_brand_id,
-                'name' => $request->name,
-                'status' => $request->status,
-                'description' => $request->description,
-                'image' => $imagePr
-            ]);
+            $product->update(array_filter([
+                'tb_category_id' => $request->tb_category_id ?? null,
+                'tb_brand_id' => $request->tb_brand_id ?? null,
+                'name' => $request->name ?? null,
+                'status' => $request->status ?? null,
+                'description' => $request->description ?? null,
+                'image' => $imagePr ?? $product->image,
+            ]));
             // return response()->json($product);
             if ($request->variants && is_array($request->variants)) {
                 foreach ($request->variants as $id => $variantData) {
                     if (isset($product->variants[$id])) {
                         // Cập nhật biến thể nếu tồn tại
                         $variant = $product->variants[$id];
-                        $variant->update([
-                            'tb_size_id' => $variantData['tb_size_id'],
-                            'tb_color_id' => $variantData['tb_color_id'],
-                            'sku' => $variantData['sku'],
-                            'price' => $variantData['price'],
-                            'quantity' => $variantData['quantity'],
-                            'status' => $variantData['status']
-                        ]);
+                        $variant->update(array_filter([
+                            'tb_size_id' => $variantData['tb_size_id'] ?? null,
+                            'tb_color_id' => $variantData['tb_color_id'] ?? null,
+                            'sku' => $variantData['sku'] ?? null,
+                            'price' => $variantData['price'] ?? null,
+                            'quantity' => $variantData['quantity'] ?? null,
+                            'status' => $variantData['status'] ?? null,
+                        ]));
                         if (isset($variantData['images']) && is_array($variantData['images'])) {
                             foreach ($variant->images as $id_image => $variantImage) {
                                 if (isset($variantData['images'][$id_image]['name_image']) && $variantData['images'][$id_image]['name_image']->isValid()) {
@@ -193,13 +198,12 @@ class ProductController extends Controller
                                     $newImagePath = $variantData['images'][$id_image]['name_image']->store('images', 'public');
                                     // Cập nhật đường dẫn ảnh mới và các thông tin khác
                                     $variantImage->update([
-                                        'name_image' => $newImagePath,                                    
+                                        'name_image' => $newImagePath,
                                     ]);
-                                } 
+                                }
                             }
                         }
                     } else {
-                        // Nếu không có ID, thêm biến thể mới
                         $variant = $product->variants()->create([
                             'tb_product_id' => $product->id,
                             'tb_size_id' => $variantData['tb_size_id'],
@@ -218,7 +222,7 @@ class ProductController extends Controller
 
                                     // Thêm ảnh mới vào biến thể
                                     $variant->images()->create([
-                                        'name_image' => $newImagePath,                                    
+                                        'name_image' => $newImagePath,
                                     ]);
                                 }
                             }
@@ -246,7 +250,7 @@ class ProductController extends Controller
     public function show(string $id) // hiển thị sản phẩm theo id
     {
         try {
-            $product = tb_product::with('category', 'brand', 'variants.images','colors','sizes')->findOrFail($id);
+            $product = tb_product::with('category', 'brand', 'variants.images', 'colors', 'sizes')->findOrFail($id);
             return response()->json($product);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
@@ -291,7 +295,6 @@ class ProductController extends Controller
             $product->delete();
 
             return response()->json(['message' => 'Sản phẩm đã được xóa thành công'], 204);
-            
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Sản phẩm không tồn tại'], 404);
         } catch (Exception $e) {
