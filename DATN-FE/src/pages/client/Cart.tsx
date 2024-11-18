@@ -62,9 +62,9 @@ const ShoppingCart: React.FC = () => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log("Cart Items: ", cartItems);
-  // }, [cartItems]);
+  useEffect(() => {
+    console.log("Cart Items: ", cartItems);
+  }, [cartItems]);
 
   if (loading) {
     return (
@@ -129,7 +129,7 @@ const ShoppingCart: React.FC = () => {
                               <td style={{ padding: "0 20px" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <img
-                                    src="https://picsum.photos/300/300"
+                                    src={`http://127.0.0.1:8000/storage/${item.products.image}`}
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />

@@ -273,7 +273,7 @@ const CheckoutPage: React.FC = () => {
                 {/* Kiểm tra nếu selectedProducts có sản phẩm */}
                 {selectedProducts.length > 0 && selectedProducts.map((item) => (
                   <div key={item.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
-                    <img src="https://picsum.photos/300/300" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                    <img src={`http://127.0.0.1:8000/storage/${item.products.image}`} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
                       <p className="mb-0" style={{ fontSize: 15 }}>{item.products.name}</p>
                       <div>
@@ -295,7 +295,7 @@ const CheckoutPage: React.FC = () => {
                 {/* Kiểm tra nếu cartItem có sản phẩm */}
                 {cartItem && (
                   <div key={cartItem.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
-                    <img src="https://picsum.photos/300/300" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                    <img src={`http://127.0.0.1:8000/storage/${cartItem.image}`} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
                       <p className="mb-0" style={{ fontSize: 15 }}>{cartItem.name}</p>
                       <div>
