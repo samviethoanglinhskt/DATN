@@ -53,6 +53,7 @@ Route::resource('new', NewController::class);
 Route::resource('discount', DiscountController::class);
 Route::resource('logo_banner', LogoBannerController::class);
 Route::resource('contact', ContactController::class);
+Route::resource('order', OderController::class);
 
 //Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
