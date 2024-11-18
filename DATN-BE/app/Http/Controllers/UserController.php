@@ -173,7 +173,7 @@ class UserController extends Controller
             $user = User::query()->findOrFail($id);
             $user->update([
                 'name' => $request->name,
-                'tb_role_id' => 2,
+                'tb_role_id' => $request->id,
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'email' => $request->email,
