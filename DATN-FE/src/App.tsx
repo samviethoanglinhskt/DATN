@@ -15,9 +15,16 @@ import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
 import { UserProvider } from "./context/User";
-import Order from "./pages/admin/order/Order";
 import ProductSteps from "./pages/admin/product/formProduct";
 import ProductEdit from "./pages/admin/product/editProduct";
+import UserList from "./pages/admin/user/UserList";
+import ColorManagement from "./pages/admin/color-size-brand-banner/Color";
+import SizeManagement from "./pages/admin/color-size-brand-banner/Size";
+import Discount from "./pages/admin/discount/Discount";
+import BrandManagement from "./pages/admin/color-size-brand-banner/Brand";
+import Order from "./pages/admin/order-size/Order";
+import LogoBannerManagement from "./pages/admin/color-size-brand-banner/Banner";
+
 
 const routeConfig = [
   {
@@ -90,6 +97,30 @@ const routeConfig = [
         path: "order",
         element: <Order />,
       },
+      {
+        path: "user",
+        element: <UserList />,
+      },
+      {
+        path:"color",
+        element:<ColorManagement />
+      },
+      {
+        path:"banner",
+        element:<LogoBannerManagement />
+      },
+      {
+        path:"size",
+        element:<SizeManagement />
+      },
+      {
+        path:"brand",
+        element:<BrandManagement />
+      },
+      {
+        path:"discount",
+        element:<Discount />
+      }
     ],
   },
 ];
