@@ -1,90 +1,128 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Card, Steps, Upload } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import type { RcFile, UploadFile } from 'antd/es/upload/interface';
-import type { UploadProps } from 'antd/es/upload';
-import axiosInstance from 'src/config/axiosInstance';
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Button,
+  Space,
+  Popconfirm,
+  Card,
+  message,
+  Modal,
+  Spin,
+} from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOneOutlined,
+  VisibilityOutlined,
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "src/config/axiosInstance";
+import "./ProductList.css";
 
 interface Product {
   id: number;
-  tb_category_id: number;
-  tb_brand_id: number;
   name: string;
   image: string;
+  tb_category_id: number;
+  tb_brand_id: number;
+  status: string;
+  variants: any[];
+}
+
+interface ProductDetail {
+  id: number;
+  name: string;
+  image: string;
+  tb_category_id: number;
+  tb_brand_id: number;
   status: string;
   description: string;
-  created_at: string;
-  updated_at: string;
-  variants: Variant[];
+  variants: Array<{
+    id: number;
+    tb_size_id: number;
+    tb_color_id: number;
+    sku: string;
+    price: number;
+    quantity: number;
+    status: string;
+    images: string[];
+  }>;
 }
 
-interface Variant {
-  id?: number;
-  tb_product_id: number;
-  tb_size_id: number;
-  tb_color_id: number;
-  sku: string;
-  price: number;
-  quantity: number;
-  status: string;
-  images: { name_image: string }[];
-}
+const BASE_URL = "http://127.0.0.1:8000";
+const STORAGE_URL = `${BASE_URL}/storage`;
 
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface Brand {
-  id: number;
-  name: string;
-}
-
-interface Size {
-  id: number;
-  name: string;
-}
-
-interface Color {
-  id: number;
-  name: string;
-}
-
-const ProductManagement = () => {
+// Reusable Image Components
+const ProductImage = ({
+  src,
+  size = "100",
+}: {
+  src: string;
+  size?: string;
+}) => {
+  return (
+    <div
+      className={`relative w-[${size}px] h-[${size}px] overflow-hidden rounded-lg cursor-pointer`}
+      onClick={(e) => {
+        e.stopPropagation();
+        window.open(`${STORAGE_URL}/${src}`, "_blank");
+      }}
+    >
+      <img
+        src={`${STORAGE_URL}/${src}`}
+        alt="Product"
+        className="w-full h-full object-contain border border-gray-200 hover:opacity-80 transition-all duration-300"
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = "/placeholder-product.png";
+        }}
+      />
+    </div>
+  );
+};
+const DetailImage = ({ src }: { src: string }) => {
+  return (
+    <div
+      className="relative bg-gray-50 rounded-lg overflow-hidden border border-gray-200"
+      style={{
+        width: "400px",
+        height: "400px",
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        window.open(`${STORAGE_URL}/${src}`, "_blank");
+      }}
+    >
+      <img
+        src={`${STORAGE_URL}/${src}`}
+        alt="Product detail"
+        className="w-full h-full hover:opacity-80 transition-all duration-300 cursor-pointer"
+        style={{ objectFit: "contain" }}
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = "/placeholder-product.png";
+        }}
+      />
+    </div>
+  );
+};
+const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [sizes, setSizes] = useState<Size[]>([]);
-  const [colors, setColors] = useState<Color[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
+  const [sizes, setSizes] = useState<any[]>([]);
+  const [colors, setColors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [productForm] = Form.useForm();
-  const [variantForm] = Form.useForm();
-  const [variants, setVariants] = useState<any[]>([]);
-  const [productImage, setProductImage] = useState<RcFile | null>(null);
-  const [previewImage, setPreviewImage] = useState<string>('');
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductDetail | null>(
+    null
+  );
+  const [detailLoading, setDetailLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchInitialData();
   }, []);
-  useEffect(() => {
-    if (editingProduct) {
-      // Khi chỉnh sửa sản phẩm, khôi phục dữ liệu vào form
-      productForm.setFieldsValue({
-        name: editingProduct.name,
-        tb_category_id: editingProduct.tb_category_id,
-        tb_brand_id: editingProduct.tb_brand_id,
-        status: editingProduct.status,
-        description: editingProduct.description,
-      });
-      setPreviewImage(`http://127.0.0.1:8000/${editingProduct.image}`);
-    }
-  }, [editingProduct]); // Sử dụng effect để cập nhật form khi có sản phẩm đang chỉnh sửa
 
-
+  // Fetch functions - keeping all existing logic
   const fetchInitialData = async () => {
     try {
       setLoading(true);
@@ -100,396 +138,184 @@ const ProductManagement = () => {
     }
   };
 
+  // All your existing fetch functions remain the same
   const fetchProducts = async () => {
     try {
-      const response = await axiosInstance.get('/api/product-list');
+      const response = await axiosInstance.get("/api/product-list");
       setProducts(response.data.data);
     } catch (error) {
-      message.error('Failed to fetch products');
+      message.error("Failed to fetch products");
     }
   };
 
   const fetchCategories = async () => {
     try {
-      const response = await axiosInstance.get('/api/category');
+      const response = await axiosInstance.get("/api/category");
       setCategories(response.data);
     } catch (error) {
-      message.error('Failed to fetch categories');
+      message.error("Failed to fetch categories");
     }
   };
 
   const fetchBrands = async () => {
     try {
-      const response = await axiosInstance.get('/api/brand');
+      const response = await axiosInstance.get("/api/brand");
       setBrands(response.data);
     } catch (error) {
-      message.error('Failed to fetch brands');
+      message.error("Failed to fetch brands");
     }
   };
 
   const fetchSizes = async () => {
     try {
-      const response = await axiosInstance.get('/api/size');
+      const response = await axiosInstance.get("/api/size");
       setSizes(response.data);
     } catch (error) {
-      message.error('Failed to fetch sizes');
+      message.error("Failed to fetch sizes");
     }
   };
 
   const fetchColors = async () => {
     try {
-      const response = await axiosInstance.get('/api/color');
+      const response = await axiosInstance.get("/api/color");
       setColors(response.data);
     } catch (error) {
-      message.error('Failed to fetch colors');
-    }
-  };
-  const handleProductImageChange: UploadProps['onChange'] = ({ file }) => {
-    console.log(file);  // Check the file object for debugging purposes
-
-    if (file.status !== 'removed') {
-      const fileObj = file.originFileObj;
-
-      // Ensure fileObj is a valid File object (or Blob)
-      if (fileObj && fileObj instanceof Blob) {
-        setProductImage(fileObj);
-        setPreviewImage(URL.createObjectURL(fileObj));  // Generate a preview URL for the image
-      } else {
-        setProductImage(null);
-        setPreviewImage('');
-        message.error('Định dạng tệp không hợp lệ');
-      }
-    } else {
-      setProductImage(null);
-      setPreviewImage('');
+      message.error("Failed to fetch colors");
     }
   };
 
-  // Hàm thêm biến thể mới
-  const handleVariantAdd = async () => {
+  const fetchProductDetail = async (id: number) => {
     try {
-      const values = await variantForm.validateFields();
-      const newVariant = {
-        ...values,
-        images: values.images?.fileList?.map((file: UploadFile) => ({
-          originFileObj: file.originFileObj,
-          url: URL.createObjectURL(file.originFileObj as Blob),
-        })) || [],
-      };
-
-      // Thêm biến thể vào state
-      setVariants(prev => [...prev, newVariant]);
-      variantForm.resetFields();
-      message.success('Variant added successfully');
+      setDetailLoading(true);
+      const response = await axiosInstance.get(`/api/product/${id}`);
+      setSelectedProduct(response.data);
     } catch (error) {
-      message.error('Please fill all required fields');
-    }
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const productValues = await productForm.validateFields();
-      const formData = new FormData();
-
-      // Append product data
-      Object.keys(productValues).forEach(key => {
-        if (key !== 'image') {
-          formData.append(key, productValues[key]);
-        }
-      });
-
-      // Append product image
-      if (productImage) {
-        formData.append('imagePr', productImage); // Sửa từ 'image' thành 'imagePr'
-      }
-
-      // Append variants
-      variants.forEach((variant, index) => {
-        Object.keys(variant).forEach(key => {
-          if (key === 'images') {
-            variant.images.forEach((image: any, imageIndex: number) => {
-              formData.append(`variants[${index}][imageVa][${imageIndex}]`, image.originFileObj); // Sửa từ 'images' thành 'imageVa'
-            });
-          } else {
-            formData.append(`variants[${index}][${key}]`, variant[key]);
-          }
-        });
-      });
-
-      if (editingProduct) {
-        await axiosInstance.post(`/api/product/${editingProduct.id}`, formData);
-        message.success('Product updated successfully');
-      } else {
-        await axiosInstance.post('/api/product', formData);
-        message.success('Product created successfully');
-      }
-
-      resetForms();
-      setModalVisible(false);
-      fetchProducts();
-    } catch (error) {
-      message.error('Failed to save product');
-      console.error(error);
+      message.error("Failed to fetch product details");
+    } finally {
+      setDetailLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await axiosInstance.delete(`/api/product/${id}`);
-      message.success('Product deleted successfully');
+      message.success("Product deleted successfully");
       fetchProducts();
     } catch (error) {
-      message.error('Failed to delete product');
+      message.error("Failed to delete product");
     }
   };
 
-  const resetForms = () => {
-    productForm.resetFields();
-    variantForm.resetFields();
-    setVariants([]);
-    setCurrentStep(0);
-    setEditingProduct(null);
-    setProductImage(null);
-    setPreviewImage('');
+  const handleEdit = (id: number) => {
+    navigate(`/admin/product/edit/${id}`);
   };
 
-  const steps = [
+  const handleViewDetail = async (id: number) => {
+    await fetchProductDetail(id);
+    setDetailModalVisible(true);
+  };
+
+  const columns = [
     {
-      title: 'Product Information',
-      content: (
-        <Form form={productForm} layout="vertical">
-          <Form.Item name="name" label="Tên sản phẩm" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="tb_category_id" label="Danh mục" rules={[{ required: true }]}>
-            <Select>
-              {categories.map(category => (
-                <Select.Option key={category.id} value={category.id}>
-                  {category.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item name="tb_brand_id" label="Thương hiệu" rules={[{ required: true }]}>
-            <Select>
-              {brands.map(brand => (
-                <Select.Option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item name="status" label="Trạng thái" rules={[{ required: true }]}>
-            <Select>
-              <Select.Option value="còn hàng">Còn hàng</Select.Option>
-              <Select.Option value="hết hàng">Hết hàng</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="description" label="Mô tả" rules={[{ required: true }]}>
-            <Input.TextArea rows={4} />
-          </Form.Item>
-          <Form.Item name="image" label="Hình ảnh" required>
-            <Upload
-              listType="picture-card"
-              maxCount={1}
-              beforeUpload={(file) => {
-                // Validate file type (image formats like png, jpg, jpeg, gif)
-                const isImage = file.type.startsWith('image/');
-
-                // If the file is not an image, display an error
-                if (!isImage) {
-                  message.error('Vui lòng tải lên tệp hình ảnh (jpg, png, jpeg, gif).');
-                }
-
-                // Return true to allow the file if it's an image
-                return isImage;
-              }}
-              onChange={handleProductImageChange}
-              showUploadList={previewImage ? false : true}
-            >
-              {previewImage ? (
-                <img src={previewImage} alt="product" style={{ width: '100%' }} />
-              ) : (
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
-
-        </Form>
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text: string, record: Product) => (
+        <span
+          className="text-blue-600 cursor-pointer hover:underline"
+          onClick={() => handleEdit(record.id)}
+        >
+          {text}
+        </span>
       ),
     },
     {
-      title: 'Variants',
-      content: (
-        <div>
-          <Form form={variantForm} layout="vertical">
-            <Form.Item name="tb_size_id" label="Kích thước" rules={[{ required: true }]}>
-              <Select>
-                {sizes.map(size => (
-                  <Select.Option key={size.id} value={size.id}>
-                    {size.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="tb_color_id" label="Màu sắc" rules={[{ required: true }]}>
-              <Select>
-                {colors.map(color => (
-                  <Select.Option key={color.id} value={color.id}>
-                    {color.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="sku" label="SKU" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="price" label="Giá" rules={[{ required: true }]}>
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item name="quantity" label="Số lượng" rules={[{ required: true }]}>
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item name="status" label="Trạng thái" rules={[{ required: true }]}>
-              <Select>
-                <Select.Option value="còn hàng">Còn hàng</Select.Option>
-                <Select.Option value="hết hàng">Hết hàng</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="images" label="Hình ảnh biến thể">
-              <Upload
-                listType="picture-card"
-                multiple
-                beforeUpload={() => false}
-              >
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              </Upload>
-            </Form.Item>
-            <Button type="primary" onClick={handleVariantAdd}>
-              Thêm biến thể
-            </Button>
-          </Form>
-
-          {variants.length > 0 && (
-            <Card title="Biến thể đã thêm" className="mt-4">
-              {variants.map((variant, index) => (
-                <Card.Grid key={index} style={{ width: '100%' }}>
-                  <p>Kích thước: {sizes.find(s => s.id === variant.tb_size_id)?.name}</p>
-                  <p>Màu sắc: {colors.find(c => c.id === variant.tb_color_id)?.name}</p>
-                  <p>SKU: {variant.sku}</p>
-                  <p>Giá: {variant.price}</p>
-                  <p>Số lượng: {variant.quantity}</p>
-                  <div className="flex gap-2">
-                    {variant.images?.map((image: any, imgIndex: number) => (
-                      <img
-                        key={imgIndex}
-                        src={image.url}
-                        alt={`Variant ${imgIndex}`}
-                        style={{ width: 50, height: 50, objectFit: 'cover' }}
-                      />
-                    ))}
-                  </div>
-                </Card.Grid>
-              ))}
-            </Card>
-          )}
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      width: 120,
+      render: (image: string) => (
+        <div className="flex justify-center items-center">
+          <ProductImage src={image} />
         </div>
       ),
     },
-  ];
-  const columns: ColumnsType<Product> = [
+    // Other columns remain exactly the same
     {
-      title: 'Tên sản phẩm',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Category",
+      dataIndex: "tb_category_id",
+      key: "category",
+      render: (categoryId: number) =>
+        categories.find((c) => c.id === categoryId)?.name || "-",
     },
     {
-      title: 'Hình ảnh',
-      dataIndex: 'image',
-      key: 'image',
-      render: (image: string) => (
-        <img
-          src={`http://127.0.0.1:8000/${image}`}
-          alt="Product"
-          style={{ width: 50, height: 50, objectFit: 'cover' }}
-        />
-      ),
+      title: "Brand",
+      dataIndex: "tb_brand_id",
+      key: "brand",
+      render: (brandId: number) =>
+        brands.find((b) => b.id === brandId)?.name || "-",
     },
     {
-      title: 'Danh mục',
-      dataIndex: 'tb_category_id',
-      key: 'category',
-      render: (categoryId: number) => categories.find(c => c.id === categoryId)?.name || '-',
-    },
-    {
-      title: 'Thương hiệu',
-      dataIndex: 'tb_brand_id',
-      key: 'brand',
-      render: (brandId: number) => brands.find(b => b.id === brandId)?.name || '-',
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (status: string) => (
-        <span style={{ color: status === 'còn hàng' ? '#52c41a' : '#f5222d' }}>
+        <span
+          className={`px-2 py-1 rounded ${
+            status === "còn hàng"
+              ? "text-green-500 bg-green-50"
+              : "text-red-500 bg-red-50"
+          }`}
+        >
           {status}
         </span>
       ),
     },
     {
-      title: 'Số biến thể',
-      key: 'variants',
-      render: (_, record) => record.variants?.length || 0,
-    },
-    {
-      title: 'Thao tác',
-      key: 'actions',
-      render: (_, record) => (
+      title: "Actions",
+      key: "actions",
+      align: "center" as const,
+      render: (_: any, record: Product) => (
         <Space>
           <Button
             type="primary"
+            icon={<VisibilityOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewDetail(record.id);
+            }}
+            style={{ backgroundColor: "#8c8c8c" }}
+          >
+            View
+          </Button>
+          <Button
+            type="primary"
             icon={<EditOutlined />}
-            onClick={() => {
-              setEditingProduct(record);
-              productForm.setFieldsValue({
-                ...record,
-                image: undefined // Reset image field since we'll handle it separately
-              });
-              setPreviewImage(`http://127.0.0.1:8000/${record.image}`);
-
-              // Setup variants
-              if (record.variants) {
-                setVariants(record.variants.map(variant => ({
-                  ...variant,
-                  images: variant.images.map(img => ({
-                    url: `http://127.0.0.1:8000/${img.name_image}`,
-                    name_image: img.name_image
-                  }))
-                })));
-              }
-
-              setModalVisible(true);
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(record.id);
             }}
           >
-            Sửa
+            Edit
           </Button>
           <Popconfirm
-            title="Xóa sản phẩm"
-            description="Bạn có chắc chắn muốn xóa sản phẩm này?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Có"
-            cancelText="Không"
-            icon={<ExclamationCircleOutlined style={{ color: '#ff4d4f' }} />}
+            title="Delete Product"
+            description="Are you sure to delete this product?"
+            onConfirm={(e) => {
+              e?.stopPropagation();
+              handleDelete(record.id);
+            }}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{ danger: true }}
           >
-            <Button type="primary" danger icon={<DeleteOutlined />}>
-              Xóa
+            <Button
+              type="primary"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Delete
             </Button>
           </Popconfirm>
         </Space>
@@ -497,19 +323,269 @@ const ProductManagement = () => {
     },
   ];
 
+  const renderDetailModal = () => (
+    <Modal
+      title={
+        <div className="d-flex align-items-center border-bottom pb-3">
+          <h4 className="mb-0 text-primary">Chi tiết sản phẩm</h4>
+          <span className="ms-2 badge bg-secondary">{selectedProduct?.id}</span>
+        </div>
+      }
+      open={detailModalVisible}
+      onCancel={() => setDetailModalVisible(false)}
+      width={1200}
+      footer={[
+        <Button
+          key="close"
+          onClick={() => setDetailModalVisible(false)}
+          className="px-4"
+        >
+          Close
+        </Button>,
+      ]}
+    >
+      {detailLoading ? (
+        <div className="d-flex justify-content-center py-5">
+          <Spin size="large" />
+        </div>
+      ) : selectedProduct ? (
+        <div className="container-fluid p-0">
+          <div className="row g-4 mb-4">
+            {/* Basic Information Column */}
+            <div className="col-md-7">
+              <div className="card border-0 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title border-bottom pb-3 mb-3">
+                    Thông tin cơ bản
+                  </h5>
+                  <div className="row g-3">
+                    <div className="col-12">
+                      <div className="d-flex">
+                        <span className="fw-semibold text-muted w-25">
+                          Name:
+                        </span>
+                        <span>{selectedProduct.name}</span>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="d-flex">
+                        <span className="fw-semibold text-muted w-25">
+                          Category:
+                        </span>
+                        <span>
+                          {
+                            categories.find(
+                              (c) => c.id === selectedProduct.tb_category_id
+                            )?.name
+                          }
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="d-flex">
+                        <span className="fw-semibold text-muted w-25">
+                          Brand:
+                        </span>
+                        <span>
+                          {
+                            brands.find(
+                              (b) => b.id === selectedProduct.tb_brand_id
+                            )?.name
+                          }
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="d-flex align-items-center">
+                        <span className="fw-semibold text-muted w-25">
+                          Status:
+                        </span>
+                        <span
+                          className={`badge ${
+                            selectedProduct.status === "còn hàng"
+                              ? "bg-success-subtle text-success"
+                              : "bg-danger-subtle text-danger"
+                          } px-3 py-2`}
+                        >
+                          {selectedProduct.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="d-flex">
+                        <span className="fw-semibold text-muted w-25">
+                          Description:
+                        </span>
+                        <span className="text-secondary">
+                          {selectedProduct.description || "N/A"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Product Image Column */}
+            <div className="col-md-5">
+              <div className="card h-100 border-0 shadow-sm">
+                <div className="card-body d-flex justify-content-center align-items-center">
+                  <DetailImage src={selectedProduct.image} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Variants Section */}
+          <div className="card border-0 shadow-sm">
+            <div className="card-body">
+              <h5 className="card-title d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                <span>Biến thể sản phẩm</span>
+                <span className="badge bg-primary">
+                  {selectedProduct.variants.length}
+                </span>
+              </h5>
+
+              <div
+                className="variants-container"
+                style={{ maxHeight: "500px", overflowY: "auto" }}
+              >
+                {selectedProduct.variants.map((variant) => (
+                  <div key={variant.id} className="card mb-3 border shadow-sm">
+                    <div className="card-body">
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <div className="row g-2">
+                            <div className="col-12">
+                              <div className="d-flex">
+                                <span className="fw-semibold text-muted w-25">
+                                  Size:
+                                </span>
+                                <span>
+                                  {
+                                    sizes.find(
+                                      (s) => s.id === variant.tb_size_id
+                                    )?.name
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                            <div className="col-12">
+                              <div className="d-flex">
+                                <span className="fw-semibold text-muted w-25">
+                                  Color:
+                                </span>
+                                <span>
+                                  {
+                                    colors.find(
+                                      (c) => c.id === variant.tb_color_id
+                                    )?.name
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                            <div className="col-12">
+                              <div className="d-flex">
+                                <span className="fw-semibold text-muted w-25">
+                                  SKU:
+                                </span>
+                                <span>{variant.sku}</span>
+                              </div>
+                            </div>
+                            <div className="col-12">
+                              <div className="d-flex">
+                                <span className="fw-semibold text-muted w-25">
+                                  Price:
+                                </span>
+                                <span className="text-primary fw-semibold">
+                                  ${variant.price.toLocaleString()}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="col-12">
+                              <div className="d-flex">
+                                <span className="fw-semibold text-muted w-25">
+                                  Quantity:
+                                </span>
+                                <span>{variant.quantity}</span>
+                              </div>
+                            </div>
+                            <div className="col-12">
+                              <div className="d-flex align-items-center">
+                                <span className="fw-semibold text-muted w-25">
+                                  Status:
+                                </span>
+                                <span
+                                  className={`badge ${
+                                    variant.status === "còn hàng"
+                                      ? "bg-success-subtle text-success"
+                                      : "bg-danger-subtle text-danger"
+                                  } px-3 py-2`}
+                                >
+                                  {variant.status}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {variant.images && variant.images.length > 0 && (
+                          <div className="col-md-6">
+                            <p className="fw-semibold text-muted mb-2">
+                              Variant Images:
+                            </p>
+                            <div className="row g-2">
+                              {variant.images && variant.images.length > 0 && (
+                                <div className="col-md-6">
+                                  <p className="fw-semibold text-muted mb-2">
+                                    Variant Images:
+                                  </p>
+                                  <div className="row g-2">
+                                    {variant.images.map((image, imgIndex) => (
+                                      <div key={imgIndex} className="col-auto">
+                                        <ProductImage src={image} />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-5 text-muted">
+          <i className="bi bi-inbox fs-1 d-block mb-3"></i>
+          No product details available
+        </div>
+      )}
+    </Modal>
+  );
+
   return (
     <Card
-      title="Quản lý sản phẩm"
+      title={
+        <div className="flex items-center justify-between">
+          <span>Product Management</span>
+          <span className="text-gray-500">
+            Total: {products.length} products
+          </span>
+        </div>
+      }
       extra={
         <Button
           type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            resetForms();
-            setModalVisible(true);
-          }}
+          icon={<PlusOneOutlined />}
+          onClick={() => navigate("/admin/product/create")}
         >
-          Thêm sản phẩm
+          Add Product
         </Button>
       }
     >
@@ -518,53 +594,19 @@ const ProductManagement = () => {
         dataSource={products}
         rowKey="id"
         loading={loading}
-        pagination={{ pageSize: 10 }}
-      />
-
-      <Modal
-        title={editingProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}
-        open={modalVisible}
-        onCancel={() => {
-          setModalVisible(false);
-          resetForms();
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
         }}
-        width={800}
-        footer={null}
-      >
-        <Steps current={currentStep} items={steps} className="mb-8" />
-        <div>{steps[currentStep].content}</div>
-        <div className="flex justify-end gap-2 mt-4">
-          {currentStep > 0 && (
-            <Button onClick={() => setCurrentStep(current => current - 1)}>
-              Quay lại
-            </Button>
-          )}
-          {currentStep < steps.length - 1 && (
-            <Button
-              type="primary"
-              onClick={async () => {
-                try {
-                  if (currentStep === 0) {
-                    await productForm.validateFields();
-                  }
-                  setCurrentStep(current => current + 1);
-                } catch (error) {
-                  message.error('Vui lòng điền đầy đủ thông tin!');
-                }
-              }}
-            >
-              Tiếp theo
-            </Button>
-          )}
-          {currentStep === steps.length - 1 && (
-            <Button type="primary" onClick={handleSubmit}>
-              {editingProduct ? 'Cập nhật' : 'Tạo mới'}
-            </Button>
-          )}
-        </div>
-      </Modal>
+        onRow={(record) => ({
+          onClick: () => handleEdit(record.id),
+          className: "cursor-pointer hover:bg-gray-50",
+        })}
+      />
+      {renderDetailModal()}
     </Card>
   );
 };
 
-export default ProductManagement;
+export default ProductList;

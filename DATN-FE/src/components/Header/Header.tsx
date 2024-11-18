@@ -98,10 +98,10 @@ const Header: React.FC = () => {
                       }}
                     >
                       <MenuItem
-                        onClick={() => navigate("/forgot-password")}
+                        onClick={() => navigate("/admin")}
                         sx={{ "&:hover": { color: "#717FE0" } }}
                       >
-                        Quên mật khẩu
+                        Admin
                       </MenuItem>
                       <MenuItem
                         onClick={handleLogout}

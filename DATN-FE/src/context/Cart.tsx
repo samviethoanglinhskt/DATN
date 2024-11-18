@@ -85,8 +85,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           tb_product_id: item.tb_product_id,
           quantity: item.quantity,
           tb_variant_id: item.tb_variant_id,
-          // tb_size_id: item.tb_size_id,
-          // tb_color_id: item.tb_color_id,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );

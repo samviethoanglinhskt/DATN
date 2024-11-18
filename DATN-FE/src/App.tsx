@@ -16,6 +16,8 @@ import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
 import { UserProvider } from "./context/User";
 import Order from "./pages/admin/order/Order";
+import ProductSteps from "./pages/admin/product/formProduct";
+import ProductEdit from "./pages/admin/product/editProduct";
 import Blog from "./components/Home/Blog";
 import Contact from "./components/Home/Contact";
 import About from "./components/Home/About";
@@ -90,6 +92,14 @@ const routeConfig = [
       {
         path: "product",
         element: <AppProduct />,
+      },
+      {
+        path: "product/create",
+        element: <ProductSteps />,
+      },
+      {
+        path: "product/edit/:id", 
+        element: <ProductEdit />,
       },
       {
         path: "order",

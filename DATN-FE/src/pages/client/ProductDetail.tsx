@@ -103,6 +103,13 @@ const ProductDetail = () => {
     addToCart(cartItem);
   }
 
+  const handleAddToBuy = () => {
+    if (!currentVariant) {
+      alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
+      return;
+    }
+  }
+
   if (!product) {
     return <div>Loading...</div>; // Hiển thị Loading nếu chưa có dữ liệu
   }
@@ -276,7 +283,7 @@ const ProductDetail = () => {
                         <button onClick={handleAddToCart} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" style={{ width: "250px", margin: "0 20px 0 -100px" }}>
                           Add to cart
                         </button>
-                        <button className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                        <button onClick={handleAddToBuy} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
                           Mua ngay
                         </button>
                       </div>
