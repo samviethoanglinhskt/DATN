@@ -18,6 +18,7 @@ import { UserProvider } from "./context/User";
 import Order from "./pages/admin/order/Order";
 import Blog from "./components/Home/Blog";
 import Contact from "./components/Home/Contact";
+import About from "./components/Home/About";
 
 const routeConfig = [
   {
@@ -31,6 +32,10 @@ const routeConfig = [
       {
         path: "/blog",
         element: <Blog />,
+      },
+      {
+        path: "/about",
+        element: <About />,
       },
       {
         path: "/contact",
