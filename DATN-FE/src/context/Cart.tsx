@@ -53,24 +53,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     fetchCartItems();
   }, []);
 
-  const addToBuy = async (item: CartItem) => {
-    try {
-      const response = await axiosInstance.post("/api/list-to-guest", {
-        tb_product_id: item.tb_product_id,
-        quantity: item.quantity,
-        tb_size_id: item.tb_size_id,
-        tb_color_id: item.tb_color_id,
-      });
-
-      if (response.status === 200) {
-        alert("Điều hướng thành công");
-        //navigate("/guest-info");
-      }
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
-    }
-  };
-
   const addToCart = async (item: CartItem) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -249,7 +231,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         totalQuantity,
         loading,
         addToCart,
-        addToBuy,
         removeFromCart,
         clearCart,
         reduceCartItemQuantity,

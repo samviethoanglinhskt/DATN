@@ -54,7 +54,7 @@ class UserController extends Controller
                 'message' => 'Đăng nhập thành công!',
                 'data' => [
                     'account' => $account,
-                    'token'=>$token,
+                    'token' => $token,
                     // Có thể thêm thông tin khác nếu cần
                 ]
             ], 200); // 200 OK
@@ -147,7 +147,7 @@ class UserController extends Controller
                 'message' => 'Hiển thị thông tin người dùng thành công',
                 'data' => $user,
             ], 200); // 200 OK
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
@@ -159,6 +159,121 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    public function edit(string $id)
+    {
+        try {
+            $user = user::findOrFail($id);
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Hiển thị thông tin người dùng thành công',
+                'data' => $user,
+            ], 200); // 200 OK
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    public function show(string $id)
+    {
+        try {
+            $user = user::findOrFail($id);
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Hiển thị thông tin người dùng thành công',
+                'data' => $user,
+            ], 200); // 200 OK
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function updateUser(RuleUpdateTaiKhoan $request, string $id)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            $user->update([
+                'name' => $user->name,
+                'tb_role_id' => $user->id,
+                'phone' => $user->phone,
+                'address' => $user->address,
+                'email' => $user->email,
+                'password' => Hash::make($user->password),
+            ]);
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $user
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
+        } catch (Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(RuleUpdateTaiKhoan $request, string $id)
+    {
+        try {
+            $user = User::query()->findOrFail($id);
+            $user->update([
+                'name' => $request->name,
+                'tb_role_id' => $request->id,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $user
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
+        } catch (Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+
 
     /**
      * Remove the specified resource from storage.

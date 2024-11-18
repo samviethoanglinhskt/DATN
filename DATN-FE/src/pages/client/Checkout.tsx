@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from 'src/context/User';
+import { Variant } from 'src/types/product';
 
 interface Product {
   id: number;
@@ -15,11 +16,35 @@ interface Product {
   quantity: number;
 }
 
+interface CartItem {
+  id?: number;
+  tb_product_id: number;
+  quantity: number;
+  name?: string;
+  price?: number;
+  tb_size_id?: number;
+  tb_color_id?: number;
+  sku?: string;
+  image?: string;
+  tb_variant_id: number;
+  variant: Variant
+  size?: {
+    name: string;
+    tb_size_id: number;
+  };
+  color?: {
+    name: string;
+    tb_color_id: number;
+  };
+}
+
 interface LocationState {
   selectedProducts: Product[];
   subtotal: number;
   total: number;
   cartId: number[];
+  cartItem: CartItem;
+  // quantity: number;
 }
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -44,18 +69,29 @@ const CheckoutPage: React.FC = () => {
   const subtotal = state?.subtotal ?? 0;
   const total = state?.total ?? 0;
   const cartId = state?.cartId || [];
+  const cartItem = state?.cartItem;
+  // const quantity = state?.quantity ?? 0;
+
+  const calculateSubtotal = (cartItem: CartItem): number => {
+    const price = cartItem.price ?? 0;  // Nếu không có giá, mặc định là 0
+    return price * cartItem.quantity;  // Tính tổng cho 1 item
+  };
+
+  const calculateTotal = (subtotal: number, discountPercent: number): number => {
+    const discount = subtotal * (discountPercent / 100);  // Tính số tiền giảm
+    return subtotal - discount;  // Tính tổng sau khi giảm giá
+  };
+
+  const subtotalCartItem = cartItem ? calculateSubtotal(cartItem) : 0;
+  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, 0) : 0;
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
-      navigate("/login");
-    } else if (!selectedProducts.length) {
-      navigate("/cart");
-    }
-  }, [navigate, selectedProducts]);
-
-  useEffect(() => {
-    if (user?.data) {
+      // Người dùng không đăng nhập, form sẽ để trống.
+      setLoadingUser(false);
+    } else if (user?.data) {
+      // Nếu người dùng đã đăng nhập, lấy thông tin từ context.
       setName(user.data.name || '');
       setEmail(user.data.email || '');
       setPhone(user.data.phone || '');
@@ -64,8 +100,10 @@ const CheckoutPage: React.FC = () => {
     } else {
       setLoadingUser(false);
     }
-  }, [user]);
+    console.log(cartItem);
+    console.log(selectedProducts);
 
+  }, [user]);
 
   const validateForm = () => {
     let isValid = true;
@@ -104,7 +142,6 @@ const CheckoutPage: React.FC = () => {
     } else {
       setAddressError('');
     }
-
     return isValid;
   };
 
@@ -114,31 +151,34 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch('http://localhost:8000/api/cart/check-out-cart', {
+      const url = token ? 'http://localhost:8000/api/cart/check-out-cart' : 'http://localhost:8000/api/cart/check-out-guest';
+      const totalAmount = selectedProducts.length > 0 ? total : totalCartItem;
+      const tbProductId = selectedProducts.length > 0 ? null : cartItem.tb_product_id;
+      const tbVariantId = selectedProducts.length > 0 ? null : cartItem.tb_variant_id;
+      const quantity = selectedProducts.length > 0 ? null : cartItem.quantity;
+      const cart_items = selectedProducts.length > 0 ? cartId : null;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
         body: JSON.stringify({
           name,
           email,
           phone,
           address,
-          total_amount: total,
-          cart_items: cartId,
+          quantity: quantity,
+          tb_product_id: tbProductId,
+          tb_variant_id: tbVariantId,
+          total_amount: totalAmount,
+          cart_items: cart_items,
         })
       });
 
-      if (!response.ok) {
-        const errorMessage = await response.text(); // Trích xuất lỗi nếu có
-        throw new Error(errorMessage || 'Thanh toán thất bại');
+      if (response.ok) {
+        alert("Đặt hàng thành công")
       }
-      // navigate('/order-success', {
-      //   state: {
-      //     orderDetails: { products: selectedProducts, total, address },
-      //   },
-      // });
     } catch (error) {
       console.log(error);
     } finally {
@@ -210,7 +250,7 @@ const CheckoutPage: React.FC = () => {
                   {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Địa chỉ giao hàng *</label>
+                  <label className="form-label">Địa chỉ giao hàng</label>
                   <textarea
                     className={`form-control ${addressError ? 'is-invalid' : ''}`}
                     rows={3}
@@ -220,7 +260,6 @@ const CheckoutPage: React.FC = () => {
                   />
                   {addressError && <div className="invalid-feedback">{addressError}</div>}
                 </div>
-
               </form>
             </div>
           </div>
@@ -231,44 +270,78 @@ const CheckoutPage: React.FC = () => {
             <div className="card-body">
               <h5 className="card-title mb-4">Đơn hàng của bạn</h5>
               <div className="mb-4">
-                {selectedProducts.map((item) => (
+                {/* Kiểm tra nếu selectedProducts có sản phẩm */}
+                {selectedProducts.length > 0 && selectedProducts.map((item) => (
                   <div key={item.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
                     <img src="https://picsum.photos/300/300" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
                       <p className="mb-0" style={{ fontSize: 15 }}>{item.products.name}</p>
                       <div>
-                        {item.variant.size && item.variant.size !== null ? (
+                        {item.variant?.size && item.variant.size !== null ? (
                           <small>{item.variant.size.name} | SL: {item.quantity}</small>
-                        ) : (
-                          null
-                        )}
-                        {item.variant.color && item.variant.color !== null ? (
-                          <small>{item.variant.color.name} | SL: {item.quantity}  </small>
-                        ) : (
-                          null
-                        )}
-                        {!item.variant.size && !item.variant.color ? (
+                        ) : null}
+                        {item.variant?.color && item.variant.color !== null ? (
+                          <small>{item.variant.color.name} | SL: {item.quantity}</small>
+                        ) : null}
+                        {!item.variant?.size && !item.variant?.color ? (
                           <small>SL: {item.quantity}</small>
-                        ) : (
-                          null
-                        )}
+                        ) : null}
                       </div>
-
-                      {/* Kiểm tra nếu biến thể và giá tồn tại */}
-                      <span>{item.variant.price}$</span>
+                      <span>{item.variant?.price}$</span>
                     </div>
                   </div>
                 ))}
-              </div>
-              <div className="d-flex justify-content-between mb-3">
-                <span>Tạm tính</span>
-                <span>{subtotal.toFixed(2)} $</span>
-              </div>
-              <div className="d-flex justify-content-between mb-3">
-                <span><strong>Tổng cộng</strong></span>
-                <span><strong>{Number(total).toFixed(2)} $</strong></span>
+
+                {/* Kiểm tra nếu cartItem có sản phẩm */}
+                {cartItem && (
+                  <div key={cartItem.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
+                    <img src="https://picsum.photos/300/300" className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                    <div className="flex-grow-1">
+                      <p className="mb-0" style={{ fontSize: 15 }}>{cartItem.name}</p>
+                      <div>
+                        {cartItem.size && cartItem.size !== null ? (
+                          <small>{cartItem.size.name} | SL: {cartItem.quantity}</small>
+                        ) : null}
+                        {cartItem.color && cartItem.color !== null ? (
+                          <small>{cartItem.color.name} | SL: {cartItem.quantity}</small>
+                        ) : null}
+                        {!cartItem.size && !cartItem.color ? (
+                          <small>SL: {cartItem.quantity}</small>
+                        ) : null}
+                      </div>
+                      <span>{cartItem.price}$</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
+              {selectedProducts.length > 0 && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span>Tạm tính</span>
+                  <span>{subtotal.toFixed(2)}$</span>
+                </div>
+              )}
+
+              {cartItem && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span>Tạm tính</span>
+                  <span>{subtotalCartItem.toFixed(2)}$</span>
+                </div>
+              )}
+
+              {selectedProducts.length > 0 && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span><strong>Tổng cộng</strong></span>
+                  <span><strong>{Number(total).toFixed(2)}$</strong></span>
+                </div>
+              )}
+
+              {cartItem && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span><strong>Tổng cộng</strong></span>
+                  <span><strong>{Number(totalCartItem).toFixed(2)}$</strong></span>
+                </div>
+              )}
               <button onClick={handleCheckOut} type="button" className="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" style={{ margin: "70px 0 30px 100px" }}>
                 Đặt hàng
               </button>
