@@ -6,11 +6,8 @@ import ClientLayout from "./layouts/ClientLayout";
 import AppCategoryyy from "./pages/admin/category/Category";
 import AppProduct from "./pages/admin/product/listProducts";
 import Cart from "./pages/client/Cart";
-import GuestInfoForm from "./pages/client/GuestInfoForm";
 import HomePage from "./pages/client/HomePage";
 import Login from "./pages/client/Login";
-import OrderDetails from "./pages/client/OrderDetails";
-import Payment from "./pages/client/Payment";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
@@ -67,18 +64,6 @@ const routeConfig = [
         path: "checkout",
         element: <CheckoutPage />,
       },
-      {
-        path: "guest-info",
-        element: <GuestInfoForm />,
-      },
-      {
-        path: "order-details",
-        element: <OrderDetails />,
-      },
-      {
-        path: "payment",
-        element: <Payment />,
-      },
     ],
   },
   {
@@ -98,7 +83,7 @@ const routeConfig = [
         element: <ProductSteps />,
       },
       {
-        path: "product/edit/:id", 
+        path: "product/edit/:id",
         element: <ProductEdit />,
       },
       {
