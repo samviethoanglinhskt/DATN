@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Typography, Skeleton } from "antd";
+import { Card, Row, Col, Typography, Skeleton, Modal } from "antd";
+import { CalendarOutlined, ReadOutlined } from "@ant-design/icons";
 import axios from "axios";
 
 const { Title, Text } = Typography;
@@ -7,6 +8,8 @@ const { Title, Text } = Typography;
 const Blog: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]); // Dữ liệu bài viết
   const [loading, setLoading] = useState<boolean>(true); // Trạng thái loading
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false); // Trạng thái hiển thị modal
+  const [selectedPost, setSelectedPost] = useState<any>(null); // Bài viết được chọn
 
   // Lấy dữ liệu từ API
   useEffect(() => {
@@ -29,8 +32,16 @@ const Blog: React.FC = () => {
     return content.length > 20 ? content.substring(0, 20) + "..." : content;
   };
 
-  // Thêm state để quản lý việc hiển thị nội dung đầy đủ
-  const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
+  // Hàm hiển thị modal với nội dung đầy đủ
+  const showModal = (post: any) => {
+    setSelectedPost(post);
+    setIsModalVisible(true);
+  };
+
+  // Hàm đóng modal
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <section className="sec-blog bg0 p-t-60 p-b-90">
@@ -42,55 +53,88 @@ const Blog: React.FC = () => {
         </div>
         <Row gutter={[16, 16]}>
           {loading ? (
-            // Hiển thị skeleton khi đang tải dữ liệu
             <>
-              <Col span={8}>
+              {/* Hiển thị skeleton khi đang tải dữ liệu */}
+              <Col xs={24} sm={12} md={8}>
                 <Skeleton active />
               </Col>
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <Skeleton active />
               </Col>
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <Skeleton active />
               </Col>
             </>
           ) : (
             // Hiển thị dữ liệu từ API
             posts.map((post, index) => (
-              <Col span={8} key={index}>
+              <Col xs={24} sm={12} md={8} key={index}>
                 <Card
                   hoverable
                   cover={
-                    post.image ? (
-                      <img alt="blog-image" src={post.image} />
-                    ) : (
+                    <div style={{ position: "relative" }}>
                       <img
-                        alt="default-image"
-                        src="https://picsum.photos/50/50"
+                        alt="blog-image"
+                        src={post.image || "https://picsum.photos/200/200"}
+                        style={{
+                          width: "100%",
+                          height: "200px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                          transition: "transform 0.3s ease",
+                        }}
                       />
-                    )
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "0",
+                          background: "rgba(0, 0, 0, 0.5)",
+                          color: "#fff",
+                          width: "100%",
+                          padding: "10px",
+                          transition: "all 0.3s ease",
+                          borderRadius: "0 0 8px 8px",
+                        }}
+                      >
+                        <Text>
+                          <CalendarOutlined
+                            style={{
+                              fontSize: "200%",
+                              paddingRight: "8px",
+                            }}
+                          />
+                          {`Ngày tạo: ${new Date(
+                            post.create_day
+                          ).toLocaleDateString()}`}
+                        </Text>
+                        <Title level={4} style={{ margin: 0, color: "#fff" }}>
+                          <ReadOutlined style={{ marginRight: "8px" }} />
+                          {post.title}
+                        </Title>
+                      </div>
+                    </div>
                   }
+                  onClick={() => showModal(post)}
+                  style={{
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    transition: "transform 0.3s ease",
+                  }}
                 >
-                  <Title level={4}>{post.title}</Title>
-                  <Text>{`Ngày tạo: ${new Date(
-                    post.create_day
-                  ).toLocaleDateString()}`}</Text>
                   <p>
-                    {expandedPostId === post.id
-                      ? post.content // Hiển thị toàn bộ nội dung nếu mở rộng
-                      : truncateContent(post.content)}{" "}
+                    <ReadOutlined
+                      style={{ fontSize: "150%", paddingRight: "8px" }}
+                    />
+                    {truncateContent(post.content)}{" "}
                     <a
                       href="#"
                       style={{ color: "#1890ff" }}
                       onClick={(e) => {
                         e.preventDefault();
-                        // Nếu bài viết đang được mở rộng, thu gọn
-                        setExpandedPostId(
-                          expandedPostId === post.id ? null : post.id
-                        );
+                        showModal(post);
                       }}
                     >
-                      {expandedPostId === post.id ? "Thu gọn" : "Đọc thêm"}
+                      Đọc thêm
                     </a>
                   </p>
                 </Card>
@@ -98,6 +142,36 @@ const Blog: React.FC = () => {
             ))
           )}
         </Row>
+        {selectedPost && (
+          <Modal
+            title={selectedPost.title}
+            visible={isModalVisible}
+            onCancel={handleCancel}
+            footer={null}
+            width={800}
+          >
+            <img
+              alt="blog-image"
+              src={selectedPost.image || "https://picsum.photos/200/200"}
+              style={{
+                width: "100%",
+                height: "300px",
+                objectFit: "cover",
+                marginBottom: "20px",
+                borderRadius: "8px",
+              }}
+            />
+            <Text style={{ fontSize: "16px", fontWeight: "bold" }}>
+              <CalendarOutlined style={{ marginRight: "8px" }} />
+              {`Ngày tạo: ${new Date(
+                selectedPost.create_day
+              ).toLocaleDateString()}`}
+            </Text>
+            <p style={{ fontSize: "16px", marginTop: "20px" }}>
+              {selectedPost.content}
+            </p>
+          </Modal>
+        )}
       </div>
     </section>
   );

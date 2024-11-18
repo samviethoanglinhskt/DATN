@@ -303,88 +303,134 @@ class CartController extends Controller
             ], 500);
         }
     }
+
     public function checkoutCart(Request $request)
     {
+        $selectedItems = null; // Khởi tạo mặc định
+        $orderDetails = null;
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Người dùng không tồn tại',
-                ], 404);
-            }
-
-            // Lấy danh sách product_ids từ yêu cầu
-            $productIds = $request->cart_items;
-            $discountCode = $request->input('discount_code'); // Lấy mã giảm giá từ yêu cầu
-            if (empty($productIds)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không có sản phẩm nào được chọn để thanh toán',
-                ], 400);
-            }
-
-            // Lấy các sản phẩm từ giỏ hàng của user với các product_ids đã chọn
-            $selectedItems = tb_cart::where('user_id', $user->id)
-                ->whereIn('id', $productIds)
-                ->get();
-
-            if ($selectedItems->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm nào trong giỏ hàng',
-                ], 404);
-            }
-
-            // Tạo một mảng để lưu các đơn hàng đã tạo
-            $orderDetails = [];
-            $totalOrder = 0;
-            $tbDiscountId = null; // Khởi tạo giá trị cho tb_discount_id
-            // Áp dụng giảm giá nếu có mã giảm giá
-            // if ($discountCode) {
-            //     $discount = tb_discount::where('discount_code', $discountCode)->first();
-            //     if ($discount) {
-            //         $tbDiscountId = $discount->id; // Lưu ID của mã giảm giá
-            //     }
-            // }
-            $order = tb_oder::create([
-                'user_id' => $user->id,
-                'tb_discount_id' => $tbDiscountId,
-                'order_date' => now(),
-                // 'total_amount' => $totalAmount,
-                'order_status' => 'Chờ xử lý',
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'email' => $request->email,
-            ]);
-            foreach ($selectedItems as $item) {
-                $variant = tb_variant::find($item->tb_variant_id);
+            if (isset($request->tb_product_id) && isset($request->tb_variant_id)) {
+                $user = JWTAuth::parseToken()->authenticate();
+                if (!$user) {
+                    $id_user = 1;
+                } else {
+                    $id_user = $user->id;
+                }
+                $totalOrder = 0;
+                $order = tb_oder::create([
+                    'user_id' => $id_user,
+                    'tb_discount_id' => 1,
+                    'order_date' => now(),
+                    // 'total_amount' => $totalAmount,
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                    'email' => $request->email,
+                ]);
+                $variant = tb_variant::find($request->tb_variant_id);
                 if ($variant) {
-                    $totalAmount = $variant->price * $item->quantity;
-                    $totalOrder += $totalAmount;
+                    $totalAmount = $variant->price * $request->quantity;
+                    $totalOrder = $totalAmount;
                 }
                 $oderDetail = tb_oderdetail::create([
                     'tb_oder_id' => $order->id,
-                    'tb_product_id' => $item->tb_product_id,
-                    'tb_variant_id' => $item->tb_variant_id,
-                    'quantity' => $item->quantity,
+                    'tb_product_id' => $request->tb_product_id,
+                    'tb_variant_id' => $request->tb_variant_id,
+                    'quantity' => $request->quantity,
                     'price' => $variant->price
                 ]);
 
-                $orderDetails[] = $oderDetail;
+                $order->order_code = 'ORD-' . $order->id;
+                $order->total_amount = $totalOrder;
+                $order->save();
+                $variant->quantity -= $request->quantity;
+                $variant->save();
+            } else {
+                $user = JWTAuth::parseToken()->authenticate();
+                if (!$user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Người dùng không tồn tại',
+                    ], 404);
+                }
+
+                // Lấy danh sách product_ids từ yêu cầu
+                $productIds = $request->cart_items;
+                // $discountCode = $request->input('discount_code'); // Lấy mã giảm giá từ yêu cầu
+                if (empty($productIds)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không có sản phẩm nào được chọn để thanh toán',
+                    ], 400);
+                }
+
+                // Lấy các sản phẩm từ giỏ hàng của user với các product_ids đã chọn
+                $selectedItems = tb_cart::where('user_id', $user->id)
+                    ->whereIn('id', $productIds)
+                    ->get();
+
+                if ($selectedItems->isEmpty()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không tìm thấy sản phẩm nào trong giỏ hàng',
+                    ], 404);
+                }
+
+                // Tạo một mảng để lưu các đơn hàng đã tạo
+                $orderDetails = [];
+                $totalOrder = 0;
+                $tbDiscountId = null; // Khởi tạo giá trị cho tb_discount_id
+                // Áp dụng giảm giá nếu có mã giảm giá
+                // if ($discountCode) {
+                //     $discount = tb_discount::where('discount_code', $discountCode)->first();
+                //     if ($discount) {
+                //         $tbDiscountId = $discount->id; // Lưu ID của mã giảm giá
+                //     }
+                // }
+                $order = tb_oder::create([
+                    'user_id' => $user->id,
+                    'tb_discount_id' => $tbDiscountId,
+                    'order_date' => now(),
+                    // 'total_amount' => $totalAmount,
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                    'email' => $request->email,
+                ]);
+                foreach ($selectedItems as $item) {
+                    $variant = tb_variant::find($item->tb_variant_id);
+                    if ($variant) {
+                        $totalAmount = $variant->price * $item->quantity;
+                        $totalOrder += $totalAmount;
+                    }
+                    $oderDetail = tb_oderdetail::create([
+                        'tb_oder_id' => $order->id,
+                        'tb_product_id' => $item->tb_product_id,
+                        'tb_variant_id' => $item->tb_variant_id,
+                        'quantity' => $item->quantity,
+                        'price' => $variant->price
+                    ]);
+
+                    $orderDetails[] = $oderDetail;
+
+                    //Cập nhật lại số lượng của sản phẩm
+                    $variant->quantity -= $item->quantity;
+                    $variant->save();
+                    //Xóa giỏ hàng khi thêm đơn thành công
+                    $item->delete();
+                }
+                // Áp dụng giảm giá theo phần trăm nếu có mã giảm giá
+                // if ($tbDiscountId && isset($discount)) {
+                //     $discountValue = $discount->discount_value; // Giá trị phần trăm giảm giá
+                //     $totalOrder -= $totalOrder * ($discountValue / 100); // Áp dụng giảm giá theo phần trăm
+                // }
+
+                $order->order_code = 'ORD-' . $order->id;
+                $order->total_amount = $request->total_amount;
+                $order->save();
             }
-            // Áp dụng giảm giá theo phần trăm nếu có mã giảm giá
-            // if ($tbDiscountId && isset($discount)) {
-            //     $discountValue = $discount->discount_value; // Giá trị phần trăm giảm giá
-            //     $totalOrder -= $totalOrder * ($discountValue / 100); // Áp dụng giảm giá theo phần trăm
-            // }
-
-            $order->order_code = 'ORD-' . $order->id;
-            $order->total_amount = $request->total_amount;
-            $order->save();
-
-
             return response()->json([
                 'success' => true,
                 'message' => 'Lấy sản phẩm đã chọn thành công!',
@@ -392,6 +438,7 @@ class CartController extends Controller
                 'order' => $order,
                 'orderDetail' => $orderDetails,
             ]);
+
         } catch (\Exception $e) {
             Log::error('Lỗi khi đặt hàng: ' . $e->getMessage());
 
@@ -402,6 +449,8 @@ class CartController extends Controller
             ], 500);
         }
     }
+
+
     public function handleVnpayIpn(Request $request)
     {
         // Lấy tất cả các thông tin từ query string

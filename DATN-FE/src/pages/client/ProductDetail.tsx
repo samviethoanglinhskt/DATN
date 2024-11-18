@@ -127,7 +127,7 @@ const ProductDetail = () => {
 
     navigate("/checkout", {
       state: {
-        cartItem,
+        cartItem
       },
     });
 

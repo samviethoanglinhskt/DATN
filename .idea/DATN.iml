@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/DATN-BE/tests/Unit" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/DATN-BE/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/DATN-BE/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/DATN-BE/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/DATN-BE/vendor/dflydev/dot-access-data" />

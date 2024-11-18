@@ -44,6 +44,7 @@ interface LocationState {
   total: number;
   cartId: number[];
   cartItem: CartItem;
+  // quantity: number;
 }
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -69,6 +70,7 @@ const CheckoutPage: React.FC = () => {
   const total = state?.total ?? 0;
   const cartId = state?.cartId || [];
   const cartItem = state?.cartItem;
+  // const quantity = state?.quantity ?? 0;
 
   const calculateSubtotal = (cartItem: CartItem): number => {
     const price = cartItem.price ?? 0;  // Nếu không có giá, mặc định là 0
@@ -151,6 +153,10 @@ const CheckoutPage: React.FC = () => {
       const token = localStorage.getItem("token");
       const url = token ? 'http://localhost:8000/api/cart/check-out-cart' : 'http://localhost:8000/api/cart/check-out-guest';
       const totalAmount = selectedProducts.length > 0 ? total : totalCartItem;
+      const tbProductId = selectedProducts.length > 0 ? null : cartItem.tb_product_id;
+      const tbVariantId = selectedProducts.length > 0 ? null : cartItem.tb_variant_id;
+      const quantity = selectedProducts.length > 0 ? null : cartItem.quantity;
+      const cart_items = selectedProducts.length > 0 ? cartId : null;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -162,10 +168,11 @@ const CheckoutPage: React.FC = () => {
           email,
           phone,
           address,
-          tb_product_id: cartItem.tb_product_id,
-          tb_vartiant_id: cartItem.tb_variant_id,
+          quantity: quantity,
+          tb_product_id: tbProductId,
+          tb_variant_id: tbVariantId,
           total_amount: totalAmount,
-          cart_items: cartId || null,
+          cart_items: cart_items,
         })
       });
 
