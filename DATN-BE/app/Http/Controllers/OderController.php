@@ -20,7 +20,7 @@ class OderController extends Controller
                 'message' => 'Hiển thị toàn bộ đơn hàng thành công',
                 'data' => $oder,
             ], 200); // 200 OK
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
@@ -38,7 +38,7 @@ class OderController extends Controller
                     'message' => 'Người dùng không tồn tại',
                 ], 404);
             }
-            $oder = tb_oder::with('oderDetails', 'oderDetails.product','oderDetails.variant', 'oderDetails.variant.size','oderDetails.variant.color')
+            $oder = tb_oder::with('oderDetails', 'oderDetails.product', 'oderDetails.variant', 'oderDetails.variant.size', 'oderDetails.variant.color')
                 ->where('user_id', $user->id)
                 ->get();
             return response()->json([
@@ -46,7 +46,7 @@ class OderController extends Controller
                 'message' => 'Hiển thị đơn hàng theo người dùng thành công',
                 'data' => $oder,
             ], 200); // 200 OK
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
@@ -76,7 +76,12 @@ class OderController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $order = tb_oder::with('oderDetails.product', 'oderDetails.variant.size', 'oderDetails.variant.color')->findOrFail($id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Lấy đơn hàng thành công',
+            'order' => $order,
+        ]);
     }
 
     /**
@@ -92,7 +97,22 @@ class OderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $order = tb_oder::findOrFail($id);
+        $order->order_status = $request->status;
+        $order->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật trạng thái đơn hàng thành công',
+            'order' => $order,
+        ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cập nhật trạng thái đơn hàng thất bại',
+                'error' => $e->getMessage()
+            ],500);
+        }
     }
 
     /**
