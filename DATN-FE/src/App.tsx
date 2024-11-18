@@ -20,6 +20,7 @@ import ProductSteps from "./pages/admin/product/formProduct";
 import ProductEdit from "./pages/admin/product/editProduct";
 import Blog from "./components/Home/Blog";
 import Contact from "./components/Home/Contact";
+import About from "./components/Home/About";
 
 const routeConfig = [
   {
@@ -33,6 +34,10 @@ const routeConfig = [
       {
         path: "/blog",
         element: <Blog />,
+      },
+      {
+        path: "/about",
+        element: <About />,
       },
       {
         path: "/contact",

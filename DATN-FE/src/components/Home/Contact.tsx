@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "src/context/User"; // Import useUser hook
+import { notification } from "antd"; // Import Ant Design notification
 
 const Contact: React.FC = () => {
   const { user } = useUser(); // Get user data from UserContext
@@ -87,9 +88,24 @@ const Contact: React.FC = () => {
           },
         }
       );
+
+      // Show success notification
+      notification.success({
+        message: "Success",
+        description: "Your message has been sent successfully!",
+        onClose: () => {
+          window.location.reload(); // Refresh the page after closing the notification
+        },
+      });
+
       console.log("Data submitted successfully:", response.data);
     } catch (error: any) {
       console.error("Lỗi khi gửi dữ liệu:", error.response?.data || error);
+      notification.error({
+        message: "Error",
+        description:
+          "There was an error sending your message. Please try again.",
+      });
     }
   };
 
