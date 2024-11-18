@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -8,7 +8,6 @@ import {
   Col,
   Card,
   Pagination,
-  Spin,
   Checkbox,
   Slider,
   Breadcrumb,
@@ -55,8 +54,8 @@ const ProductList = () => {
   // Lọc sản phẩm
   const filteredProductsByCategory = Array.isArray(allProducts)
     ? allProducts.filter(
-        (product: Product) => product.tb_category_id === Number(id)
-      )
+      (product: Product) => product.tb_category_id === Number(id)
+    )
     : [];
 
   console.log("Sản phẩm theo danh mục:", filteredProductsByCategory);
@@ -64,8 +63,8 @@ const ProductList = () => {
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? filteredProductsByCategory.filter((product: Product) =>
-          selectedBrands.includes(product.tb_brand_id)
-        )
+        selectedBrands.includes(product.tb_brand_id)
+      )
       : filteredProductsByCategory;
 
   console.log("Sản phẩm theo thương hiệu:", filteredProductsByBrand);
@@ -197,34 +196,36 @@ const ProductList = () => {
             <Row gutter={[48, 48]}>
               {paginatedProducts.length > 0 ? (
                 paginatedProducts.map((product: Product) => (
-                  <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
-                    <Card
-                      hoverable
-                      cover={
-                        <img
-                          alt={product.name}
-                          src={`http://127.0.0.1:8000/storage/${product.image}`}
-                          style={{
-                            height: "300px",
-                            objectFit: "cover",
-                            borderRadius: "10px",
-                          }}
-                        />
-                      }
-                      onClick={() => navigate(`/product/${product.id}`)}
-                    >
-                      <Card.Meta
-                        title={
-                          <div>
-                            <span>{product.name}</span>
-                            <span style={{ float: "right", color: "#f5222d" }}>
-                              {`$${product.variants[0]?.price}`}
-                            </span>
+                  <div key={product.id} className="col product-item">
+                    <div className="card h-100 product-card border-0" style={{ width: "300px" }}>
+                      <div className="position-relative">
+                        <div className="product-image-wrapper">
+                          <img
+                            src={`http://127.0.0.1:8000/storage/${product.image}`}
+                            className="card-img-top product-image"
+                            alt={product.name}
+                          />
+                          <div className="product-overlay">
+                            <button className="btn btn-light buy-button">
+                              Mua Ngay
+                            </button>
                           </div>
-                        }
-                      />
-                    </Card>
-                  </Col>
+                        </div>
+                        {/* <button className="btn wishlist-btn position-absolute top-0 end-0 m-2">
+                          <i className="far fa-heart"></i>
+                        </button> */}
+                      </div>
+
+                      <div className="card-body text-center">
+                        <Link to={`/product/${product.id}`} className="product-link">
+                          <h5 className="product-title">{product.name}</h5>
+                        </Link>
+                        <p className="product-price fw-bold">
+                          ${product.variants[0]?.price}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 ))
               ) : (
                 <div className="text-center my-5">

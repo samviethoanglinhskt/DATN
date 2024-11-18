@@ -60,6 +60,8 @@ const ProductImage = ({
   src: string;
   size?: string;
 }) => {
+  console.log(`${STORAGE_URL}/${src}`);
+
   return (
     <div
       className={`relative w-[${size}px] h-[${size}px] overflow-hidden rounded-lg cursor-pointer`}
@@ -72,9 +74,6 @@ const ProductImage = ({
         src={`${STORAGE_URL}/${src}`}
         alt="Product"
         className="w-full h-full object-contain border border-gray-200 hover:opacity-80 transition-all duration-300"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = "/placeholder-product.png";
-        }}
       />
     </div>
   );
@@ -261,11 +260,10 @@ const ProductList = () => {
       key: "status",
       render: (status: string) => (
         <span
-          className={`px-2 py-1 rounded ${
-            status === "còn hàng"
-              ? "text-green-500 bg-green-50"
-              : "text-red-500 bg-red-50"
-          }`}
+          className={`px-2 py-1 rounded ${status === "còn hàng"
+            ? "text-green-500 bg-green-50"
+            : "text-red-500 bg-red-50"
+            }`}
         >
           {status}
         </span>
@@ -401,11 +399,10 @@ const ProductList = () => {
                           Status:
                         </span>
                         <span
-                          className={`badge ${
-                            selectedProduct.status === "còn hàng"
-                              ? "bg-success-subtle text-success"
-                              : "bg-danger-subtle text-danger"
-                          } px-3 py-2`}
+                          className={`badge ${selectedProduct.status === "còn hàng"
+                            ? "bg-success-subtle text-success"
+                            : "bg-danger-subtle text-danger"
+                            } px-3 py-2`}
                         >
                           {selectedProduct.status}
                         </span>
@@ -516,11 +513,10 @@ const ProductList = () => {
                                   Status:
                                 </span>
                                 <span
-                                  className={`badge ${
-                                    variant.status === "còn hàng"
-                                      ? "bg-success-subtle text-success"
-                                      : "bg-danger-subtle text-danger"
-                                  } px-3 py-2`}
+                                  className={`badge ${variant.status === "còn hàng"
+                                    ? "bg-success-subtle text-success"
+                                    : "bg-danger-subtle text-danger"
+                                    } px-3 py-2`}
                                 >
                                   {variant.status}
                                 </span>
@@ -537,15 +533,22 @@ const ProductList = () => {
                             <div className="row g-2">
                               {variant.images && variant.images.length > 0 && (
                                 <div className="col-md-6">
-                                  <p className="fw-semibold text-muted mb-2">
+                                  {/* <p className="fw-semibold text-muted mb-2">
                                     Variant Images:
-                                  </p>
+                                  </p> */}
                                   <div className="row g-2">
-                                    {variant.images.map((image, imgIndex) => (
-                                      <div key={imgIndex} className="col-auto">
-                                        <ProductImage src={image} />
-                                      </div>
-                                    ))}
+                                    {variant.images.map(
+                                      (image: any, imgIndex) => (
+                                        <div
+                                          key={imgIndex}
+                                          className="col-auto"
+                                        >
+                                          <ProductImage
+                                            src={image?.name_image}
+                                          />
+                                        </div>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                               )}
@@ -574,9 +577,7 @@ const ProductList = () => {
       title={
         <div className="flex items-center justify-between">
           <span>Quản lý sản phẩm</span>
-          <span className="text-gray-500">
-            : {products.length} Sản phẩm
-          </span>
+          <span className="text-gray-500">: {products.length} Sản phẩm</span>
         </div>
       }
       extra={

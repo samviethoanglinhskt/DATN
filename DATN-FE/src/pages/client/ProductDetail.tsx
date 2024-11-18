@@ -118,6 +118,7 @@ const ProductDetail = () => {
       sku: currentVariant.sku,
       price: currentVariant.price,
       quantity,
+      image: product?.image,
       size: product?.sizes?.find((s) => String(s.id) === selectedOption) || null,
       color: product?.colors?.find((c) => String(c.id) === selectedOption) || null,
       tb_variant_id: currentVariant.id,
@@ -164,9 +165,9 @@ const ProductDetail = () => {
                   <div className="wrap-slick3-dots" />
                   <div className="wrap-slick3-arrows flex-sb-m flex-w" />
                   <div className="slick3 gallery-lb">
-                    <div className="item-slick3" data-thumb="https://picsum.photos/200/300">
+                    <div className="item-slick3" data-thumb={`http://127.0.0.1:8000/storage/${product.image}`}>
                       <div className="wrap-pic-w pos-relative">
-                        <img src="https://picsum.photos/200/300" alt="IMG-PRODUCT" height={500} />
+                        <img src={`http://127.0.0.1:8000/storage/${product.image}`} alt="IMG-PRODUCT" height={500} />
                       </div>
                     </div>
                   </div>

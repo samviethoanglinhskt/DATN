@@ -54,20 +54,18 @@ const NewProduct = () => {
             <div key={product.id} className="col product-item">
               <div className="card h-100 product-card border-0">
                 <div className="position-relative">
-                  {product.variants[0]?.images[0] && (
-                    <div className="product-image-wrapper">
-                      <img
-                        src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
-                        className="card-img-top product-image"
-                        alt={product.name}
-                      />
-                      <div className="product-overlay">
-                        <button className="btn btn-light buy-button">
-                          Mua Ngay
-                        </button>
-                      </div>
+                  <div className="product-image-wrapper">
+                    <img
+                      src={`http://127.0.0.1:8000/storage/${product.image}`}
+                      className="card-img-top product-image"
+                      alt={product.name}
+                    />
+                    <div className="product-overlay">
+                      <button className="btn btn-light buy-button">
+                        Mua Ngay
+                      </button>
                     </div>
-                  )}
+                  </div>
                   <button className="btn wishlist-btn position-absolute top-0 end-0 m-2">
                     <i className="far fa-heart"></i>
                   </button>

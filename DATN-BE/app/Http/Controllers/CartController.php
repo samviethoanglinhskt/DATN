@@ -285,6 +285,8 @@ class CartController extends Controller
             $order->order_code = 'ORD-' . $order->id;
             $order->total_amount = $totalOrder;
             $order->save();
+            $variant->quantity -= $request->quantity;
+            $variant->save();
 
             return response()->json([
                 'success' => true,
