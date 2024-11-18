@@ -1,17 +1,19 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
 import { Product, Variant } from "src/types/product";
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>(); // lấy productId từ URL
-  const { addToCart } = useCart();  // Giả sử bạn có hàm addToCart trong context
+  const { id } = useParams<{ id: string }>();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);  // Số lượng sản phẩm trong giỏ
+  const navigate = useNavigate();
+
 
   // Gọi API để lấy thông tin sản phẩm
   useEffect(() => {
@@ -101,6 +103,36 @@ const ProductDetail = () => {
     };
     // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
     addToCart(cartItem);
+  }
+
+
+  const handleBuyNow = () => {
+    if (!currentVariant) {
+      alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
+      return;
+    }
+
+    const cartItem = {
+      tb_product_id: product?.id ?? 0,
+      name: product?.name,
+      sku: currentVariant.sku,
+      price: currentVariant.price,
+      quantity,
+      size: product?.sizes?.find((s) => String(s.id) === selectedOption) || null,
+      color: product?.colors?.find((c) => String(c.id) === selectedOption) || null,
+      tb_variant_id: currentVariant.id,
+      variant: currentVariant,
+    };
+
+
+    navigate("/checkout", {
+      state: {
+        cartItem
+      },
+    });
+
+    console.log(cartItem);
+
   }
 
   if (!product) {
@@ -276,7 +308,7 @@ const ProductDetail = () => {
                         <button onClick={handleAddToCart} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" style={{ width: "250px", margin: "0 20px 0 -100px" }}>
                           Add to cart
                         </button>
-                        <button className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                        <button onClick={handleBuyNow} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
                           Mua ngay
                         </button>
                       </div>

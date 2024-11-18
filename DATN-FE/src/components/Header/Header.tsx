@@ -98,10 +98,10 @@ const Header: React.FC = () => {
                       }}
                     >
                       <MenuItem
-                        onClick={() => navigate("/forgot-password")}
+                        onClick={() => navigate("/admin")}
                         sx={{ "&:hover": { color: "#717FE0" } }}
                       >
-                        Quên mật khẩu
+                        Admin
                       </MenuItem>
                       <MenuItem
                         onClick={handleLogout}
@@ -156,13 +156,13 @@ const Header: React.FC = () => {
                   <a href="shoping-cart.html">Features</a>
                 </li>
                 <li>
-                  <a href="blog.html">Blog</a>
+                  <Link to="/blog">Blog</Link>
                 </li>
                 <li>
-                  <a href="about.html">About</a>
+                  <Link to="/about">About</Link>
                 </li>
                 <li>
-                  <a href="contact.html">Contact</a>
+                  <Link to="/contact">Contact</Link>
                 </li>
               </ul>
             </div>
@@ -283,7 +283,7 @@ const Header: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="blog.html">Blog</a>
+            <a href="/blog">Blog</a>
           </li>
           <li>
             <a href="about.html">About</a>

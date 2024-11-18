@@ -1,139 +1,246 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Select,
+  Input,
+  Row,
+  Col,
+  Card,
+  Pagination,
+  Spin,
+  Checkbox,
+  Slider,
+  Breadcrumb,
+  Skeleton,
+} from "antd";
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
-import { Select, Input, Button, Pagination } from "antd"; // Import các component từ Ant Design
 
 const { Option } = Select;
 
 const ProductList = () => {
-  const { id } = useParams<{ id: string }>(); // Lấy ID danh mục từ URL
-  const navigate = useNavigate(); // Hàm điều hướng
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc"); // Sắp xếp
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-  const [searchQuery, setSearchQuery] = useState(""); // Từ khóa tìm kiếm
-  const itemsPerPage = 6; // Số sản phẩm mỗi trang
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const itemsPerPage = 6;
 
-  // Lấy toàn bộ danh sách sản phẩm
+  // Query lấy thương hiệu
+  const { data: brands, isLoading: loadingBrands } = useQuery({
+    queryKey: ["brands"],
+    queryFn: async () => {
+      const response = await instance.get("http://127.0.0.1:8000/api/brand");
+      console.log("Thương hiệu:", response.data); // Log thương hiệu
+      return response.data;
+    },
+  });
+
+  // Query lấy sản phẩm
   const { data: allProducts, isLoading: loadingProducts } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const response = await instance.get(
         "http://127.0.0.1:8000/api/product-list"
       );
-      return response.data;
+      console.log("Tất cả sản phẩm:", response.data.data); // Log tất cả sản phẩm
+      return response.data.data;
     },
   });
 
-  // Lọc sản phẩm theo tb_category_id
-  const filteredProducts = Array.isArray(allProducts?.data)
-    ? allProducts.data.filter(
+  // Lọc sản phẩm
+  const filteredProductsByCategory = Array.isArray(allProducts)
+    ? allProducts.filter(
         (product: Product) => product.tb_category_id === Number(id)
       )
     : [];
 
-  // Lọc sản phẩm theo từ khóa tìm kiếm
-  const searchedProducts = filteredProducts.filter((product: any) =>
+  console.log("Sản phẩm theo danh mục:", filteredProductsByCategory);
+
+  const filteredProductsByBrand =
+    selectedBrands.length > 0
+      ? filteredProductsByCategory.filter((product: Product) =>
+          selectedBrands.includes(product.tb_brand_id)
+        )
+      : filteredProductsByCategory;
+
+  console.log("Sản phẩm theo thương hiệu:", filteredProductsByBrand);
+
+  const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
+    const price = product.variants?.[0]?.price || 0;
+    console.log(`Sản phẩm ${product.name} có giá: ${price}`); // Kiểm tra giá sản phẩm
+    return price >= priceRange[0] && price <= priceRange[1];
+  });
+
+  console.log("Sản phẩm theo giá:", filteredByPrice);
+
+  // Kiểm tra việc tìm kiếm
+  const searchedProducts = filteredByPrice.filter((product: Product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Sắp xếp sản phẩm theo giá
+  console.log("Sản phẩm tìm kiếm:", searchedProducts);
+
+  // Kiểm tra giá trị của `searchQuery` (giả sử là trống)
+  console.log("Tìm kiếm với từ khóa:", searchQuery);
+
+  // Kiểm tra giá trị `priceRange`
+  console.log("Khoảng giá:", priceRange);
+
   const sortedProducts = [...searchedProducts].sort((a, b) => {
-    const priceA = a.variants[0]?.price || 0;
-    const priceB = b.variants[0]?.price || 0;
+    const priceA = a.variants?.[0]?.price || 0;
+    const priceB = b.variants?.[0]?.price || 0;
     return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
   });
 
-  // Tính toán phân trang
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+  console.log("Sản phẩm sắp xếp:", sortedProducts);
 
-  if (loadingProducts)
-    return <div className="text-center my-5">Loading products...</div>;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = sortedProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  console.log("Sản phẩm phân trang:", paginatedProducts);
+
+  // Skeleton loader
+  const renderSkeleton = () => (
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <Card>
+        <Skeleton.Image style={{ width: "100%", height: 300 }} />
+        <Skeleton active paragraph={{ rows: 2 }} />
+      </Card>
+    </Col>
+  );
+
+  if (loadingProducts || loadingBrands)
+    return (
+      <Row gutter={[48, 48]}>
+        {Array.from({ length: itemsPerPage }).map((_, index) => (
+          <React.Fragment key={index}>{renderSkeleton()}</React.Fragment>
+        ))}
+      </Row>
+    );
 
   return (
-    <section className="py-5 bg-light">
-      <div className="container">
-        <h3 className="text-center mb-5" style={{ marginTop: "80px" }}>
-          Danh Mục Sản Phẩm
-        </h3>
+    <section
+      className="py-5 bg-light"
+      style={{
+        minHeight: "100vh",
+        padding: "40px 20px", // Giảm padding trên và dưới để cân bằng hơn
+        marginTop: "40px", // Thêm marginTop để đẩy phần giao diện xuống
+      }}
+    >
+      <div className="container" style={{ width: "70%" }}>
+        {/* Breadcrumb */}
+        <Breadcrumb style={{ marginBottom: "20px" }}>
+          <Breadcrumb.Item onClick={() => navigate("/")}>
+            Trang chủ
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Danh mục sản phẩm</Breadcrumb.Item>
+          <Breadcrumb.Item>{id ? `ID: ${id}` : "Tất cả"}</Breadcrumb.Item>
+        </Breadcrumb>
 
-        {/* Bộ lọc */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          {/* Sắp xếp */}
-          <Select
-            style={{ width: "200px" }}
-            value={sortOrder}
-            onChange={(value) => setSortOrder(value as "asc" | "desc")}
-          >
-            <Option value="asc">Giá: Thấp đến Cao</Option>
-            <Option value="desc">Giá: Cao đến Thấp</Option>
-          </Select>
-
-          {/* Tìm kiếm */}
-          <div className="d-flex">
-            <Input
-              placeholder="Tìm kiếm sản phẩm..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: "300px", marginRight: "10px" }}
-            />
-            <Button
-              type="primary"
-              onClick={() => setCurrentPage(1)} // Reset về trang đầu khi tìm kiếm
-            >
-              Tìm kiếm
-            </Button>
-          </div>
-        </div>
-
-        {/* Danh sách sản phẩm */}
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-          {paginatedProducts.length > 0 ? (
-            paginatedProducts.map((product: Product) => (
-              <div
-                key={product.id}
-                className="col product-item"
-                onClick={() => navigate(`/product/${product.id}`)}
-                style={{ cursor: "pointer" }}
+        <Row gutter={[32, 32]}>
+          {/* Sidebar */}
+          <Col span={6} style={{ marginTop: "40px" }}>
+            <Card style={{ padding: "10px" }}>
+              <h5>Sắp xếp giá:</h5>
+              <Select
+                style={{ width: "100%", marginBottom: "10px" }}
+                value={sortOrder}
+                onChange={(value) => setSortOrder(value as "asc" | "desc")}
               >
-                <div className="card h-100 product-card border-0">
-                  <div className="position-relative">
-                    {product.variants[0]?.images[0] && (
-                      <img
-                        src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
-                        className="card-img-top product-image"
-                        alt={product.name}
-                      />
-                    )}
-                  </div>
-                  <div className="card-body text-center">
-                    <h5 className="card-title product-name">{product.name}</h5>
-                    <p className="product-price fw-bold">
-                      ${product.variants[0]?.price}
-                    </p>
-                  </div>
-                </div>
+                <Option value="asc">Thấp đến cao</Option>
+                <Option value="desc">Cao đến thấp</Option>
+              </Select>
+              <h5>Chọn thương hiệu:</h5>
+              <Checkbox.Group
+                options={brands.map((brand: { id: number; name: string }) => ({
+                  label: brand.name,
+                  value: brand.id,
+                }))}
+                value={selectedBrands}
+                onChange={(checkedValues) =>
+                  setSelectedBrands(checkedValues as number[])
+                }
+              />
+              <h5>Khoảng giá:</h5>
+              <Slider
+                range
+                min={0}
+                max={10000000}
+                step={10}
+                defaultValue={priceRange}
+                onChange={(value) => setPriceRange(value as [number, number])}
+              />
+              <div>
+                Giá từ: ${priceRange[0]} - ${priceRange[1]}
               </div>
-            ))
-          ) : (
-            <div className="text-center my-5">Không có sản phẩm nào.</div>
-          )}
-        </div>
+            </Card>
+          </Col>
 
-        {/* Phân trang */}
-        <div className="d-flex justify-content-center mt-4">
-          <Pagination
-            current={currentPage}
-            total={sortedProducts.length}
-            pageSize={itemsPerPage}
-            onChange={(page) => setCurrentPage(page)}
-            showSizeChanger={false}
-          />
-        </div>
+          {/* Product List */}
+          <Col span={18} style={{ marginTop: "40px" }}>
+            <div className="d-flex justify-content-end mb-4">
+              <Input
+                style={{ width: 300 }}
+                placeholder="Tìm kiếm sản phẩm..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Row gutter={[48, 48]}>
+              {paginatedProducts.length > 0 ? (
+                paginatedProducts.map((product: Product) => (
+                  <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
+                    <Card
+                      hoverable
+                      cover={
+                        <img
+                          alt={product.name}
+                          src={`http://127.0.0.1:8000/storage/${product.image}`}
+                          style={{
+                            height: "300px",
+                            objectFit: "cover",
+                            borderRadius: "10px",
+                          }}
+                        />
+                      }
+                      onClick={() => navigate(`/product/${product.id}`)}
+                    >
+                      <Card.Meta
+                        title={
+                          <div>
+                            <span>{product.name}</span>
+                            <span style={{ float: "right", color: "#f5222d" }}>
+                              {`$${product.variants[0]?.price}`}
+                            </span>
+                          </div>
+                        }
+                      />
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <div className="text-center my-5">
+                  Không tìm thấy sản phẩm nào khớp với bộ lọc.
+                </div>
+              )}
+            </Row>
+            <Pagination
+              current={currentPage}
+              pageSize={itemsPerPage}
+              total={sortedProducts.length}
+              onChange={(page) => setCurrentPage(page)}
+              style={{ textAlign: "center", marginTop: "40px" }}
+            />
+          </Col>
+        </Row>
       </div>
     </section>
   );

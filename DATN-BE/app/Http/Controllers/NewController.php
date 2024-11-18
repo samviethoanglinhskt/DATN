@@ -33,20 +33,31 @@ class NewController extends Controller
     public function store(Request $request)
     {
         //
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'create_day' => 'required|date',
-        ]);
-
         try {
-            $news = tb_new::query()->create($request->all());
-            return response()->json([
-                'message' => 'Tạo mới bài viết thành công',
-                'data' => $news
+            // Kiểm tra và xử lý ảnh chính (nếu có)
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                $imagePath = $request->file('image')->store('news', 'public'); 
+            } else {
+                return response()->json(['error' => 'Lỗi ảnh bài viết'], 400);
+            }
+
+            // Tạo bài viết mới
+            $new = tb_new::query()->create([
+                'title' => $request->title,
+                'content' => $request->content,
+                'status' => $request->status,
+                'image' => $imagePath,
             ]);
+
+            // Trả về phản hồi thành công
+            return response()->json([
+                'message' => 'Tạo bài viết thành công',
+                'news' => $new,
+            ], 201);
+
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể tạo bài viết'], 500);
+            // Trả về lỗi nếu có ngoại lệ
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
