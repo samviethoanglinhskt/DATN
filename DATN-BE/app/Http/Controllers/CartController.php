@@ -316,11 +316,11 @@ class CartController extends Controller
             );
 
             //            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
-//                $inputData['vnp_BankCode'] = $vnp_BankCode;
-//            }
-//            if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
-//                $inputData['vnp_Bill_State'] = $vnp_Bill_State;
-//            }
+            //                $inputData['vnp_BankCode'] = $vnp_BankCode;
+            //            }
+            //            if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
+            //                $inputData['vnp_Bill_State'] = $vnp_Bill_State;
+            //            }
 
             //var_dump($inputData);
             ksort($inputData);
@@ -430,6 +430,12 @@ class CartController extends Controller
                 ]);
 
                 $orderDetails[] = $oderDetail;
+
+                //Cập nhật lại số lượng của sản phẩm
+                $variant->quantity -= $item->quantity;
+                $variant->save();
+                //Xóa giỏ hàng khi thêm đơn thành công
+                $item->delete();
             }
             // Áp dụng giảm giá theo phần trăm nếu có mã giảm giá
             // if ($tbDiscountId && isset($discount)) {
