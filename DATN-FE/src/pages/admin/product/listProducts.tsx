@@ -573,9 +573,9 @@ const ProductList = () => {
     <Card
       title={
         <div className="flex items-center justify-between">
-          <span>Product Management</span>
+          <span>Quản lý sản phẩm</span>
           <span className="text-gray-500">
-            Total: {products.length} products
+            : {products.length} Sản phẩm
           </span>
         </div>
       }
