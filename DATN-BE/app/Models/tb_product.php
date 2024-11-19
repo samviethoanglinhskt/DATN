@@ -59,4 +59,8 @@ class tb_product extends Model
     public function oderDetail(){
         return $this->hasMany(tb_oderdetail::class);
     }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'product_id');
+    }
 }
