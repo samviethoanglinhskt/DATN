@@ -480,7 +480,14 @@ class CartController extends Controller
 
         if ($secureHash == $vnp_SecureHash) {
             if ($_GET['vnp_ResponseCode'] == '00') {
-                echo 'Thành công';
+                $order = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->get();
+                if ($order->isNotEmpty()) {
+                    // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
+                    foreach ($order as $orders) {
+                        $orders->update(['order_status' => 'Đã thanh toán']);
+                    }
+                    echo "GD Thanh cong";
+                }
             } else {
                 echo "GD Khong thanh cong";
             }
