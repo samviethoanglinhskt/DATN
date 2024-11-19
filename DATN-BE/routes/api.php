@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\NewController;
 use App\Http\Controllers\OderController;
 use App\Http\Controllers\DiscountController;
@@ -83,5 +84,12 @@ Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('
 
 //contact
 Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');
+
+// product favorite
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
+});
 
 
