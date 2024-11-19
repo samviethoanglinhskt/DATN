@@ -260,7 +260,7 @@ class CartController extends Controller
             $totalOrder = 0;
             $order = tb_oder::create([
                 'user_id' => 1,
-                'tb_discount_id' => 1,
+                'tb_discount_id' => null,
                 'order_date' => now(),
                 // 'total_amount' => $totalAmount,
                 'order_status' => 'Chờ xử lý',
@@ -321,7 +321,7 @@ class CartController extends Controller
                 $totalOrder = 0;
                 $order = tb_oder::create([
                     'user_id' => $id_user,
-                    'tb_discount_id' => 1,
+                    'tb_discount_id' => $request->tb_discount_id,
                     'order_date' => now(),
                     // 'total_amount' => $totalAmount,
                     'order_status' => 'Chờ xử lý',
@@ -332,8 +332,7 @@ class CartController extends Controller
                 ]);
                 $variant = tb_variant::find($request->tb_variant_id);
                 if ($variant) {
-                    $totalAmount = $variant->price * $request->quantity;
-                    $totalOrder = $totalAmount;
+                    $totalOrder = $request->total_amount;
                 }
                 $oderDetail = tb_oderdetail::create([
                     'tb_oder_id' => $order->id,
@@ -382,17 +381,9 @@ class CartController extends Controller
                 // Tạo một mảng để lưu các đơn hàng đã tạo
                 $orderDetails = [];
                 $totalOrder = 0;
-                $tbDiscountId = null; // Khởi tạo giá trị cho tb_discount_id
-                // Áp dụng giảm giá nếu có mã giảm giá
-                // if ($discountCode) {
-                //     $discount = tb_discount::where('discount_code', $discountCode)->first();
-                //     if ($discount) {
-                //         $tbDiscountId = $discount->id; // Lưu ID của mã giảm giá
-                //     }
-                // }
                 $order = tb_oder::create([
                     'user_id' => $user->id,
-                    'tb_discount_id' => $tbDiscountId,
+                    'tb_discount_id' => $request->tb_discount_id,
                     'order_date' => now(),
                     // 'total_amount' => $totalAmount,
                     'order_status' => 'Chờ xử lý',
@@ -404,8 +395,7 @@ class CartController extends Controller
                 foreach ($selectedItems as $item) {
                     $variant = tb_variant::find($item->tb_variant_id);
                     if ($variant) {
-                        $totalAmount = $variant->price * $item->quantity;
-                        $totalOrder += $totalAmount;
+                        $totalOrder += $item->total_amount;
                     }
                     $oderDetail = tb_oderdetail::create([
                         'tb_oder_id' => $order->id,

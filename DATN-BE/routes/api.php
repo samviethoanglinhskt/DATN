@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FavoriteController;
@@ -51,7 +52,6 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
-Route::resource('discount', DiscountController::class);
 Route::resource('logo_banner', LogoBannerController::class);
 Route::resource('contact', ContactController::class);
 Route::resource('order', OderController::class);
@@ -93,4 +93,14 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
 });
 
+// comments
+Route::middleware('auth:api')->group(function () {
+    // Route để tạo bình luận
+    Route::post('comments', [CommentController::class, 'store']);
 
+    // Route để lấy tất cả bình luận của một sản phẩm
+    Route::get('products/{product_id}/comments', [CommentController::class, 'index']);
+
+    // Route để lấy các bình luận trả lời của một bình luận
+    Route::get('comments/{comment_id}/replies', [CommentController::class, 'showReplies']);
+});
