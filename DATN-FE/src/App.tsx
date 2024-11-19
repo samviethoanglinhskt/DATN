@@ -108,24 +108,24 @@ const routeConfig = [
         element: <UserList />,
       },
       {
-        path:"color",
-        element:<ColorManagement />
+        path: "color",
+        element: <ColorManagement />
       },
       {
-        path:"banner",
-        element:<LogoBannerManagement />
+        path: "banner",
+        element: <LogoBannerManagement />
       },
       {
-        path:"size",
-        element:<SizeManagement />
+        path: "size",
+        element: <SizeManagement />
       },
       {
-        path:"brand",
-        element:<BrandManagement />
+        path: "brand",
+        element: <BrandManagement />
       },
       {
-        path:"discount",
-        element:<Discount />
+        path: "discount",
+        element: <Discount />
       }
     ],
   },
@@ -135,9 +135,8 @@ function App() {
   const routes = useRoutes(routeConfig);
 
   return (
-    <UserProvider>
-      <main>{routes}</main>
-    </UserProvider>
+    <main>{routes}
+    </main>
   );
 }
 

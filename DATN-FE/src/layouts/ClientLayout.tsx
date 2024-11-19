@@ -7,6 +7,7 @@ import Cart from "src/components/Home/Cart"
 import Modall from "src/components/Home/Modall"
 
 const ClientLayout = () => {
+
     return (
         <Stack>
             <Header />
