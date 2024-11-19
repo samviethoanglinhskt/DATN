@@ -51,7 +51,6 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
-Route::resource('discount', DiscountController::class);
 Route::resource('logo_banner', LogoBannerController::class);
 Route::resource('contact', ContactController::class);
 Route::resource('order', OderController::class);
