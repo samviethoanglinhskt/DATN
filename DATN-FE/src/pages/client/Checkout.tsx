@@ -1,11 +1,17 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, List, ListItem, Radio, RadioGroup, Typography } from '@mui/material';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from 'src/context/User';
 import { Variant } from 'src/types/product';
+import logoVoucher from 'src/assets/images/logo/z6049078466357_4627467cef3023a6ad0594fd0cfdc81e-removebg-preview.png';
+import axiosInstance from 'src/config/axiosInstance';
+import { Discount } from 'src/types/discount';
 
 interface Product {
   id: number;
   products: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    image: any;
     name: string;
   };
   variant: {
@@ -41,40 +47,41 @@ interface CartItem {
 interface LocationState {
   selectedProducts: Product[];
   subtotal: number;
-  total: number;
   cartId: number[];
   cartItem: CartItem;
-  // quantity: number;
 }
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser(); // Get user data from UserContext
-
   const [loadingUser, setLoadingUser] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-
   const [loading, setLoading] = useState(false);
   const [addressError, setAddressError] = useState('');
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
-
   const state = location.state as LocationState;
   const selectedProducts = useMemo(() => state?.selectedProducts || [], [state?.selectedProducts]);
-
   const subtotal = state?.subtotal ?? 0;
-  const total = state?.total ?? 0;
   const cartId = state?.cartId || [];
   const cartItem = state?.cartItem;
-  // const quantity = state?.quantity ?? 0;
+  const [discounts, setDiscounts] = useState<Discount[]>([]);
+  const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod', 'vnpay', or 'momo'
+
+  // Phương thức xử lý khi thay đổi lựa chọn phương thức thanh toán
+  const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPaymentMethod(event.target.value);
+  };
 
   const calculateSubtotal = (cartItem: CartItem): number => {
-    const price = cartItem.price ?? 0;  // Nếu không có giá, mặc định là 0
-    return price * cartItem.quantity;  // Tính tổng cho 1 item
+    const price = cartItem.price ?? 0;
+    return price * cartItem.quantity;
   };
 
   const calculateTotal = (subtotal: number, discountPercent: number): number => {
@@ -83,15 +90,18 @@ const CheckoutPage: React.FC = () => {
   };
 
   const subtotalCartItem = cartItem ? calculateSubtotal(cartItem) : 0;
-  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, 0) : 0;
+  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, selectedVoucher?.discount || 0) : 0;
+  const totalWithDiscount = selectedProducts.length > 0 ? calculateTotal(subtotal, selectedVoucher?.discount || 0) : 0;
+  const handleApplyVoucher = (voucher: { id: number; code: string; discount: number }) => {
+    setSelectedVoucher(voucher);
+    setVoucherDialogOpen(false);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      // Người dùng không đăng nhập, form sẽ để trống.
       setLoadingUser(false);
     } else if (user?.data) {
-      // Nếu người dùng đã đăng nhập, lấy thông tin từ context.
       setName(user.data.name || '');
       setEmail(user.data.email || '');
       setPhone(user.data.phone || '');
@@ -100,8 +110,8 @@ const CheckoutPage: React.FC = () => {
     } else {
       setLoadingUser(false);
     }
-    console.log(cartItem);
-    console.log(selectedProducts);
+    // console.log(cartItem);
+    // console.log(selectedProducts);
 
   }, [user]);
 
@@ -152,28 +162,34 @@ const CheckoutPage: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const url = token ? 'http://localhost:8000/api/cart/check-out-cart' : 'http://localhost:8000/api/cart/check-out-guest';
-      const totalAmount = selectedProducts.length > 0 ? total : totalCartItem;
+      const totalAmount = selectedProducts.length > 0 ? totalWithDiscount : totalCartItem;
       const tbProductId = selectedProducts.length > 0 ? null : cartItem.tb_product_id;
       const tbVariantId = selectedProducts.length > 0 ? null : cartItem.tb_variant_id;
       const quantity = selectedProducts.length > 0 ? null : cartItem.quantity;
       const cart_items = selectedProducts.length > 0 ? cartId : null;
+
+      const requestBody = {
+        name,
+        email,
+        phone,
+        address,
+        quantity: quantity,
+        tb_product_id: tbProductId,
+        tb_variant_id: tbVariantId,
+        total_amount: totalAmount,
+        cart_items: cart_items,
+        tb_discount_id: selectedVoucher?.id,
+        // payment_method: paymentMethod, 
+      };
+
+      console.log("Request Body:", requestBody); // Log dữ liệu trước khi gửi
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token && { 'Authorization': `Bearer ${token}` })
         },
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          address,
-          quantity: quantity,
-          tb_product_id: tbProductId,
-          tb_variant_id: tbVariantId,
-          total_amount: totalAmount,
-          cart_items: cart_items,
-        })
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
@@ -186,6 +202,27 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchDiscounts = async () => {
+      try {
+        const response = await axiosInstance.get('/api/discount');
+        const allDiscounts = response.data;
+        const currentDate = new Date();
+
+        // Lọc chỉ voucher còn hiệu lực
+        const validDiscounts = allDiscounts.filter((discount: Discount) => {
+          const startDate = new Date(discount.start_day);
+          const endDate = new Date(discount.end_day);
+          return currentDate >= startDate && currentDate <= endDate;
+        });
+
+        setDiscounts(validDiscounts);
+      } catch (error) {
+        console.error('Error fetching discounts:', error);
+      }
+    };
+    fetchDiscounts();
+  }, []);
 
   if (loadingUser) {
     return <div>Đang tải thông tin người dùng...</div>;
@@ -199,14 +236,14 @@ const CheckoutPage: React.FC = () => {
       <div className="container mt-2 mb-5">
         <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
           <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
-            Home
+            Trang chủ
             <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
           </button>
           <button onClick={() => navigate("/cart")} className="stext-109 cl8 hov-cl1 trans-04">
             Giỏ hàng
             <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
           </button>
-          <span className="stext-109 cl4">Shopping Cart</span>
+          <span className="stext-109 cl4">Thanh toán</span>
         </div>
       </div>
 
@@ -217,7 +254,6 @@ const CheckoutPage: React.FC = () => {
           <div className="card shadow-sm">
             <div className="card-body">
               <h5 className="card-title mb-4">Thông tin giao hàng</h5>
-
               <form>
                 <div className="mb-3">
                   <label className="form-label">Họ tên</label>
@@ -261,6 +297,24 @@ const CheckoutPage: React.FC = () => {
                   {addressError && <div className="invalid-feedback">{addressError}</div>}
                 </div>
               </form>
+
+              {/* Thêm giao diện phương thức thanh toán */}
+              <div className="mt-4">
+                <h5 className="card-title mb-4">Phương thức thanh toán</h5>
+                <FormControl component="fieldset">
+                  <RadioGroup
+                    aria-label="payment-method"
+                    name="payment-method"
+                    value={paymentMethod}
+                    onChange={handlePaymentMethodChange}
+                  >
+                    <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
+                    <FormControlLabel value="vnpay" control={<Radio />} label="Thanh toán qua VNPay" />
+                    <FormControlLabel value="momo" control={<Radio />} label="Thanh toán qua MoMo" />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+
             </div>
           </div>
         </div>
@@ -287,7 +341,7 @@ const CheckoutPage: React.FC = () => {
                           <small>SL: {item.quantity}</small>
                         ) : null}
                       </div>
-                      <span>{item.variant?.price}$</span>
+                      <span>{item.variant?.price}đ</span>
                     </div>
                   </div>
                 ))}
@@ -309,7 +363,7 @@ const CheckoutPage: React.FC = () => {
                           <small>SL: {cartItem.quantity}</small>
                         ) : null}
                       </div>
-                      <span>{cartItem.price}$</span>
+                      <span>{cartItem.price}đ</span>
                     </div>
                   </div>
                 )}
@@ -318,33 +372,95 @@ const CheckoutPage: React.FC = () => {
               {selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Tạm tính</span>
-                  <span>{subtotal.toFixed(2)}$</span>
+                  <span>{subtotal}đ</span>
                 </div>
               )}
 
               {cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Tạm tính</span>
-                  <span>{subtotalCartItem.toFixed(2)}$</span>
+                  <span>{subtotalCartItem}đ</span>
+                </div>
+              )}
+
+              {selectedVoucher && selectedProducts.length > 0 && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span>Giảm giá ({selectedVoucher.code})</span>
+                  <span>-{(subtotal * selectedVoucher.discount) / 100}đ</span>
+                </div>
+              )}
+              {selectedVoucher && cartItem && (
+                <div className="d-flex justify-content-between mb-3">
+                  <span>Giảm giá ({selectedVoucher.code})</span>
+                  <span>-{(subtotalCartItem * selectedVoucher.discount) / 100}đ</span>
                 </div>
               )}
 
               {selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span><strong>Tổng cộng</strong></span>
-                  <span><strong>{Number(total).toFixed(2)}$</strong></span>
+                  <span><strong>{Number(totalWithDiscount)}đ</strong></span>
                 </div>
               )}
 
               {cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span><strong>Tổng cộng</strong></span>
-                  <span><strong>{Number(totalCartItem).toFixed(2)}$</strong></span>
+                  <span><strong>{Number(totalCartItem)}đ</strong></span>
                 </div>
               )}
+
+              <Button
+                variant="outlined"
+                color="primary"
+                fullWidth
+                onClick={() => setVoucherDialogOpen(true)}
+                sx={{ marginBottom: 2 }}
+              >
+                Chọn Voucher
+              </Button>
               <button onClick={handleCheckOut} type="button" className="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" style={{ margin: "70px 0 30px 100px" }}>
                 Đặt hàng
               </button>
+
+              <Dialog open={voucherDialogOpen} onClose={() => setVoucherDialogOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Chọn giảm giá</DialogTitle>
+                <DialogContent>
+                  {localStorage.getItem('token') ? (
+                    <List>
+                      {discounts.map((discount) => (
+                        <ListItem
+                          key={discount.id}
+                          divider
+                          onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value })}
+                          sx={{ display: 'flex', justifyContent: 'space-between' }}
+                        >
+                          <img src={logoVoucher} alt="" width={150} />
+                          <div style={{ marginLeft: -150 }}>
+                            <Typography variant="subtitle1">{discount.discount_code}</Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              Giảm {discount.discount_value}% | HSD: {discount.end_day}
+                            </Typography>
+                          </div>
+                          <Button variant="contained" size="small" sx={{ backgroundColor: "#717FE0" }}>
+                            Áp dụng
+                          </Button>
+                        </ListItem>
+                      ))}
+                    </List>
+                  ) : (
+                    <Typography variant="body1" color="textSecondary" align="center" sx={{ fontSize: "25px" }}>
+                      Hãy đăng nhập để có voucher.
+                    </Typography>
+                  )}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setVoucherDialogOpen(false)} color="primary">
+                    Đóng
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
             </div>
           </div>
         </div>
