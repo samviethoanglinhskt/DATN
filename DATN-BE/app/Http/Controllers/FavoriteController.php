@@ -60,13 +60,4 @@ class FavoriteController extends Controller
             ], 500);
         }
     }
-    // Lọc theo danh mục sản phẩm
-    private function filterByCategory(&$query, $request)
-    {
-        if ($request->has('category_id')) {
-            $query->whereHas('product', function ($q) use ($request) {
-                $q->where('tb_category_id', $request->input('category_id'));
-            });
-        }
-    }
 }
