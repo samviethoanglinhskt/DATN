@@ -82,6 +82,7 @@ Route::post('/payment-online', [CartController::class, 'vnpay_momo'])->name('pay
 //oder
 Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('list_oder_admin');
+Route::put('/destroy-order-client', [OderController::class, 'destroyOrder'])->name('destroy_order_client');
 
 //contact
 Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');
