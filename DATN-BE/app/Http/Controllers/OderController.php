@@ -99,19 +99,19 @@ class OderController extends Controller
     {
         try {
             $order = tb_oder::findOrFail($id);
-        $order->order_status = $request->status;
-        $order->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Cập nhật trạng thái đơn hàng thành công',
-            'order' => $order,
-        ], 200);
+            $order->order_status = $request->status;
+            $order->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật trạng thái đơn hàng thành công',
+                'order' => $order,
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cập nhật trạng thái đơn hàng thất bại',
                 'error' => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
@@ -121,5 +121,41 @@ class OderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function destroyOrder(Request $request)
+    { // Hủy đơn hàng của người dùng
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            $order = tb_oder::where('id', $request->id)
+                ->where('user_id', $user->id)
+                ->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đơn hàng không tồn tại',
+                ], 404);
+            }
+            $order->order_status = 'Đã hủy đơn hàng';
+            $order->feedback = $request->feedback;
+            $order->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Hủy đơn hàng thành công',
+                'data' => $order,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hủy đơn hàng thất bại',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
