@@ -17,6 +17,7 @@ import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadChangeParam } from "antd/es/upload";
 import axiosInstance from "src/config/axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
+import "./ProductList.css";
 
 const { TextArea } = Input;
 
@@ -330,51 +331,60 @@ const ProductEdit: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
+          <div className="flex">
+            <div>
+              <Form.Item
+                name="tb_brand_id"
+                label="Thương hiệu"
+                rules={[
+                  { required: true, message: "Vui lòng chọn Thương hiệu" },
+                ]}
+              >
+                <Select placeholder="Chọn Thương hiệu">
+                  {brands.map((brand) => (
+                    <Select.Option key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
-          <Form.Item
-            name="tb_brand_id"
-            label="Thương hiệu"
-            rules={[{ required: true, message: "Vui lòng chọn Thương hiệu" }]}
-          >
-            <Select placeholder="Chọn Thương hiệu">
-              {brands.map((brand) => (
-                <Select.Option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+              <Form.Item
+                name="status"
+                label="Status"
+                rules={[{ required: true }]}
+              >
+                <Select>
+                  <Select.Option value="còn hàng">In Stock</Select.Option>
+                  <Select.Option value="hết hàng">Out of Stock</Select.Option>
+                </Select>
+              </Form.Item>
 
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <Select>
-              <Select.Option value="còn hàng">In Stock</Select.Option>
-              <Select.Option value="hết hàng">Out of Stock</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="description" label="Description">
-            <TextArea rows={4} />
-          </Form.Item>
-
-          <Form.Item
-            label="Product Image"
-            required
-            tooltip="Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP"
-          >
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onChange={handleProductImageChange}
-              beforeUpload={() => false}
-            >
-              {fileList.length >= 1 ? null : (
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
+              <Form.Item name="description" label="Description">
+                <TextArea rows={4} />
+              </Form.Item>
+              </div>
+              <Form.Item
+                label="Product Image"
+                required
+                tooltip="Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP"
+              >
+                <Upload
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={handleProductImageChange}
+                  beforeUpload={() => false}
+                >
+                  {fileList.length >= 1 ? null : (
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+            
+          </div>
         </Form>
       ),
     },
