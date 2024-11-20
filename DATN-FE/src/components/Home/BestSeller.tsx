@@ -18,7 +18,8 @@ const StoreOverView = () => {
         const response = await axiosInstance.get("/api/product-list");
         return response.data;
       } catch (error) {
-        throw new Error("Call API thất bại");
+        console.log(error);
+
       }
     },
   });
@@ -35,7 +36,7 @@ const StoreOverView = () => {
     <section className="product-section py-5">
       <div className="container">
         <div className="text-center mb-5">
-          <h2 className="section-title">Related Products</h2>
+          <h2 className="section-title">Xu hướng làm đẹp</h2>
           <div className="title-underline"></div>
         </div>
 
@@ -45,16 +46,12 @@ const StoreOverView = () => {
             {products.data.map((product: Product) => (
               <div key={product.id} className="slide">
                 <div className="product-inner">
-                  {product.variants[0]?.images[0] && (
-                    <div className="product-image-wrapper">
-                      <img
-                        src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
-                        className="product-image"
-                        alt={product.name}
-                      />
-                      <div className="block2-btn">Mua Ngay</div>
-                    </div>
-                  )}
+                  <div className="product-image-wrapper">
+                    <img
+                      src={`http://127.0.0.1:8000/storage/${product.image}`}
+                      className="product-image"
+                    />
+                  </div>
                   <div className="product-info">
                     <Link to={`/product/${product.id}`} className="product-link">
                       <h5 className="product-title">{product.name}</h5>
@@ -73,11 +70,9 @@ const StoreOverView = () => {
                   {product.variants[0]?.images[0] && (
                     <div className="product-image-wrapper">
                       <img
-                        src="https://naidecor.vn/wp-content/uploads/2020/07/BST-MP-11.jpg"
+                        src={`http://127.0.0.1:8000/storage/${product.image}`}
                         className="product-image"
-                        alt={product.name}
                       />
-                      <div className="block2-btn">Mua Ngay</div>
                     </div>
                   )}
                   <div className="product-info">

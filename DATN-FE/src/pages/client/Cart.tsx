@@ -45,8 +45,6 @@ const ShoppingCart: React.FC = () => {
       .reduce((total, item) => total + (item.variant.price || 0) * (item.quantity || 0), 0);
   };
 
-
-
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
     const selectedProducts = cartItems.filter((item) =>
@@ -54,17 +52,16 @@ const ShoppingCart: React.FC = () => {
     );
 
     const subtotal = calculateSelectedTotal();
-    const total = subtotal;
     // Truyền thêm `cartId` vào navigation
     const cartId = selectedItems;  // Giả sử tất cả các mục trong giỏ hàng có cùng cart_id
     navigate("/checkout", {
-      state: { selectedProducts, subtotal, total, cartId },
+      state: { selectedProducts, subtotal, cartId },
     });
   };
 
-  // useEffect(() => {
-  //   console.log("Cart Items: ", cartItems);
-  // }, [cartItems]);
+  useEffect(() => {
+    console.log("Cart Items: ", cartItems);
+  }, [cartItems]);
 
   if (loading) {
     return (
@@ -82,10 +79,10 @@ const ShoppingCart: React.FC = () => {
           <div className="container mt-5">
             <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
               <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
-                Home
+                Trang chủ
                 <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
               </button>
-              <span className="stext-109 cl4">Shopping Cart</span>
+              <span className="stext-109 cl4">Giỏ hàng</span>
             </div>
           </div>
 
@@ -104,11 +101,11 @@ const ShoppingCart: React.FC = () => {
                                 onChange={handleSelectAll}
                               />
                             </th>
-                            <th style={{ padding: "20px" }}>Product</th>
+                            <th style={{ padding: "20px" }}>Sản phẩm</th>
                             <th style={{ padding: "20px" }}>Loại</th>
-                            <th style={{ padding: "20px" }}>Price</th>
-                            <th style={{ padding: "20px" }}>Quantity</th>
-                            <th style={{ padding: "20px" }}>Total</th>
+                            <th style={{ padding: "20px" }}>Giá</th>
+                            <th style={{ padding: "20px" }}>Số lượng</th>
+                            <th style={{ padding: "20px" }}>Tổng</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -129,7 +126,7 @@ const ShoppingCart: React.FC = () => {
                               <td style={{ padding: "0 20px" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <img
-                                    src="https://picsum.photos/300/300"
+                                    src={`http://127.0.0.1:8000/storage/${item.products.image}`}
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />
@@ -147,7 +144,7 @@ const ShoppingCart: React.FC = () => {
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.price !== undefined && item.variant.price !== null ? `$${item.variant.price.toFixed(2)}` : "Loading..."}
+                                {item.variant.price !== undefined && item.variant.price !== null ? `$${item.variant.price}` : "Loading..."}
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
@@ -195,7 +192,7 @@ const ShoppingCart: React.FC = () => {
 
                               <td style={{ padding: "0 20px" }}>
                                 {item.variant.price !== undefined && item.quantity !== undefined
-                                  ? `$${(item.variant.price * item.quantity).toFixed(2)}`
+                                  ? `$${(item.variant.price * item.quantity)}`
                                   : "Loading..."}
                               </td>
 
@@ -217,14 +214,7 @@ const ShoppingCart: React.FC = () => {
 
                     <div className="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
                       <div className="flex-w flex-m m-r-20 m-tb-5">
-                        <input
-                          type="text"
-                          placeholder="Coupon Code"
-                          className="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
-                        />
-                        <button type="button" className="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
-                          Apply coupon
-                        </button>
+
                       </div>
                       <button
                         type="button"
@@ -232,7 +222,7 @@ const ShoppingCart: React.FC = () => {
                         disabled={loading}
                         className="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn4 p-lr-15 trans-04 pointer m-tb-10"
                       >
-                        Clear Cart
+                        Xóa toàn bộ giỏ hàng
                       </button>
                     </div>
                   </div>
@@ -240,30 +230,7 @@ const ShoppingCart: React.FC = () => {
 
                 <div className="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
                   <div className="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
-                    <h4 className="mtext-109 cl2 p-b-30">Giỏ hàng tổng</h4>
-
-                    <div className="flex-w flex-t bor12 p-b-13">
-                      <div className="size-208">
-                        <span className="stext-110 cl2">Tạm tính:</span>
-                      </div>
-                      <div className="size-209">
-                        <span className="mtext-110 cl2">${calculateSelectedTotal().toFixed(2)}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex-w flex-t bor12 p-t-15 p-b-30">
-                      <div className="size-208 w-full-ssm">
-                        <span className="stext-110 cl2">
-                          Giảm giá:
-                        </span>
-                      </div>
-                      <div className="size-209">
-                        <span className="mtext-110 cl2">
-                          -$0
-                        </span>
-                      </div>
-                    </div>
-
+                    <h4 className="mtext-109 cl2 p-b-30">Thông tin đơn hàng</h4>
                     <div className="flex-w flex-t p-t-27 p-b-33">
                       <div className="size-208">
                         <span className="mtext-101 cl2">
@@ -272,7 +239,7 @@ const ShoppingCart: React.FC = () => {
                       </div>
                       <div className="size-209 p-t-1">
                         <span className="mtext-110 cl2">
-                          ${calculateSelectedTotal().toFixed(2)}
+                          {calculateSelectedTotal()}đ
                         </span>
                       </div>
                     </div>

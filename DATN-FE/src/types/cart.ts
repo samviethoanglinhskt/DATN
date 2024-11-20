@@ -3,6 +3,8 @@ import { Variant } from "./product";
 
 // Định nghĩa kiểu dữ liệu cho một sản phẩm trong giỏ hàng
 export interface CartItem {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  products: any;
   id?: number;
   tb_product_id: number;
   quantity: number;
@@ -26,7 +28,6 @@ export interface CartContextType {
   cartItems: CartItem[];
   totalQuantity: number;
   addToCart: (item: CartItem) => void;
-  addToBuy: (item: CartItem) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
   reduceCartItemQuantity: (id: number, quantity: number) => void;

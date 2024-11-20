@@ -6,8 +6,10 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\NewController;
 use App\Http\Controllers\OderController;
 use App\Http\Controllers\DiscountController;
@@ -39,7 +41,7 @@ Route::middleware('isAdmin')->group(function () {
     // Middleware
     Route::apiResource('variants', VariantsController::class);
     // Không dùng Middleware
-    Route::get('api/variants',[VariantsController::class,'index'])->name('variants.index')->withoutMiddleware('isAdmin');
+    Route::get('api/variants', [VariantsController::class, 'index'])->name('variants.index')->withoutMiddleware('isAdmin');
 });
 Route::resource('product', ProductController::class);
 Route::resource('category', controller: CategoryController::class);
@@ -50,9 +52,9 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
-Route::resource('discount', DiscountController::class);
 Route::resource('logo_banner', LogoBannerController::class);
 Route::resource('contact', ContactController::class);
+Route::resource('order', OderController::class);
 
 //Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
@@ -62,10 +64,10 @@ Route::get('/product-list', [ProductController::class, 'getListProduct'])->name(
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
-Route::get('/show-user',[UserController::class, 'showUser'])->name('show_User');
+Route::get('/show-user', [UserController::class, 'showUser'])->name('show_User');
 
-Route::post('/add-cart', [CartController::class,'addToCart'])->name('add_cart');
-Route::post('/list-to-guest', [CartController::class,'listToGuest'])->name('list_to_guest');
+Route::post('/add-cart', [CartController::class, 'addToCart'])->name('add_cart');
+Route::post('/list-to-guest', [CartController::class, 'listToGuest'])->name('list_to_guest');
 Route::get('/cart', [CartController::class, 'listCart'])->name('list_cart');
 
 Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name('del_all_cart');
@@ -76,12 +78,30 @@ Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->na
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
-
+Route::post('/payment-online', [CartController::class, 'vnpay_momo'])->name('payment.online');
 //oder
-Route::get('/list-oder-client',[OderController::class,'listOderClient'])->name('list_oder_client');
-Route::get('/list-oder-admin',[OderController::class,'listOderAdmin'])->name('list_oder_admin');
+Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
+Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('list_oder_admin');
+Route::put('/destroy-order-client', [OderController::class, 'destroyOrder'])->name('destroy_order_client');
 
 //contact
-Route::get('/getByUser',[ContactController::class,'getByUser'])->name('getByUser');
+Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');
 
+// product favorite
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']);
+});
 
+// comments
+Route::middleware('auth:api')->group(function () {
+    // Route để tạo bình luận
+    Route::post('comments', [CommentController::class, 'store']);
+
+    // Route để lấy tất cả bình luận của một sản phẩm
+    Route::get('products/{product_id}/comments', [CommentController::class, 'index']);
+
+    // Route để lấy các bình luận trả lời của một bình luận
+    Route::get('comments/{comment_id}/replies', [CommentController::class, 'showReplies']);
+});
