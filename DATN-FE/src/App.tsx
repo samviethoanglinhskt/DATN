@@ -10,7 +10,6 @@ import Login from "./pages/client/Login";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
-import { UserProvider } from "./context/User";
 import ProductSteps from "./pages/admin/product/formProduct";
 import UserList from "./pages/admin/user/UserList";
 import ColorManagement from "./pages/admin/color-size-brand-banner/Color";
@@ -24,7 +23,12 @@ import Contact from "./components/Home/Contact";
 import About from "./components/Home/About";
 import ProductListMain from "./pages/admin/product/productlist/MainProductList";
 import ProductEdit from "./pages/admin/product/editProduct";
-import ProductMyLove from "./pages/client/ProductMyLove";
+import FavoritesPage from "./pages/client/ProductMyLove";
+import MyOrders from "./pages/client/MyOder";
+
+
+
+
 
 
 const routeConfig = [
@@ -74,8 +78,13 @@ const routeConfig = [
       },
       {
         path: "love",
-        element: <ProductMyLove />,
+        element: <FavoritesPage />
       },
+      {
+        path: "myoder",
+        element: <MyOrders />
+      }
+
     ],
   },
   {
@@ -126,7 +135,8 @@ const routeConfig = [
       {
         path: "discount",
         element: <Discount />
-      }
+      },
+     
     ],
   },
 ];
