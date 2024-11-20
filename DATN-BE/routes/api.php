@@ -78,7 +78,7 @@ Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->na
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
-Route::post('/payment-online', [CartController::class, 'vnpay_momo'])->name('payment.online');
+Route::post('/payment-online', [CartController::class, 'vnpay'])->name('payment.online');
 //oder
 Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('list_oder_admin');
