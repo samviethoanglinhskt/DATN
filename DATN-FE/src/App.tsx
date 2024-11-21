@@ -25,11 +25,8 @@ import ProductListMain from "./pages/admin/product/productlist/MainProductList";
 import ProductEdit from "./pages/admin/product/editProduct";
 import FavoritesPage from "./pages/client/ProductMyLove";
 import MyOrders from "./pages/client/MyOder";
-
-
-
-
-
+import PaymentSuccess from "./pages/client/PaymentSuccess";
+import PaymentFailure from "./pages/client/PaymentFailure";
 
 const routeConfig = [
   {
@@ -41,15 +38,15 @@ const routeConfig = [
         element: <HomePage />,
       },
       {
-        path: "/blog",
+        path: "blog",
         element: <Blog />,
       },
       {
-        path: "/about",
+        path: "about",
         element: <About />,
       },
       {
-        path: "/contact",
+        path: "contact",
         element: <Contact />,
       },
       {
@@ -83,8 +80,15 @@ const routeConfig = [
       {
         path: "myoder",
         element: <MyOrders />
+      },
+      {
+        path: "payment-success",
+        element: <PaymentSuccess />
+      },
+      {
+        path: "payment-failure",
+        element: <PaymentFailure />
       }
-
     ],
   },
   {
@@ -136,7 +140,7 @@ const routeConfig = [
         path: "discount",
         element: <Discount />
       },
-     
+
     ],
   },
 ];
