@@ -8,6 +8,7 @@ import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
 import logo from "src/assets/images/icons/logo-01.png";
 import { useCart } from "src/context/Cart";
+import { ArrowCircleDownOutlined, CarCrashOutlined, LogoutOutlined } from "@mui/icons-material";
 
 const Header: React.FC = () => {
   const { user, setUser } = useUser();
@@ -94,19 +95,84 @@ const Header: React.FC = () => {
                       open={Boolean(anchorEl)}
                       onClose={handleMenuClose}
                       MenuListProps={{
-                        onMouseLeave: handleMenuClose, // Close menu when mouse leaves
+                        onMouseLeave: handleMenuClose,
+                      }}
+                      sx={{
+                        "& .MuiPaper-root": {
+                          borderRadius: "12px",
+                          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                          padding: "8px",
+                          minWidth: "200px",
+                        },
                       }}
                     >
                       <MenuItem
                         onClick={() => navigate("/admin")}
-                        sx={{ "&:hover": { color: "#717FE0" } }}
+                        sx={{
+                          padding: "10px 16px",
+                          borderRadius: "8px",
+                          gap: "12px",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                            color: "#ff69b4",
+                            "& .menu-icon": {
+                              transform: "scale(1.1)",
+                              color: "#ff69b4",
+                            },
+                          },
+                        }}
                       >
+                       <ArrowCircleDownOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
+      
                         Admin
                       </MenuItem>
                       <MenuItem
-                        onClick={handleLogout}
-                        sx={{ "&:hover": { color: "#717FE0" } }}
+                        onClick={() => navigate("/myoder")}
+                        sx={{
+                          padding: "10px 16px",
+                          borderRadius: "8px",
+                          gap: "12px",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                            color: "#ff69b4",
+                            "& .menu-icon": {
+                              transform: "scale(1.1)",
+                              color: "#ff69b4",
+                            },
+                          },
+                        }}
                       >
+                         <CarCrashOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
+                        Đơn hàng của tôi
+                      </MenuItem>
+                      <MenuItem
+                        onClick={handleLogout}
+                        sx={{
+                          padding: "10px 16px",
+                          borderRadius: "8px",
+                          gap: "12px",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                            color: "#ff69b4",
+                            "& .menu-icon": {
+                              transform: "scale(1.1)",
+                              color: "#ff69b4",
+                            },
+                          },
+                        }}
+                      >
+                        <LogoutOutlined
+                          style={{
+                            fontSize: "18px",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
                         Đăng xuất
                       </MenuItem>
                     </Menu>

@@ -310,7 +310,6 @@ const CheckoutPage: React.FC = () => {
                   >
                     <FormControlLabel value="cod" control={<Radio />} label="Thanh toán khi nhận hàng (COD)" />
                     <FormControlLabel value="vnpay" control={<Radio />} label="Thanh toán qua VNPay" />
-                    <FormControlLabel value="momo" control={<Radio />} label="Thanh toán qua MoMo" />
                   </RadioGroup>
                 </FormControl>
               </div>

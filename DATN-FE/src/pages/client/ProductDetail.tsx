@@ -11,7 +11,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
-  const [quantity, setQuantity] = useState(1);  // Số lượng sản phẩm trong giỏ
+  const [quantity, setQuantity] = useState(1);  
   const navigate = useNavigate();
 
 
@@ -96,6 +96,7 @@ const ProductDetail = () => {
       sku: currentVariant.sku,
       price: currentVariant.price,
       quantity,
+      products: null,
       size: product?.sizes ? product.variants.find(s => String(s.tb_size_id) === selectedOption) : null,
       color: product?.colors ? product.variants.find(c => String(c.tb_color_id) === selectedOption) : null,
       tb_variant_id: currentVariant.id,  // Lưu biến thể được chọn
@@ -337,8 +338,89 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
+
+          {/* review và mô tả */}
+          <div className="bor10 m-t-50 p-t-43 p-b-40">
+            <div className="tab01">
+              <ul className="nav nav-tabs" role="tablist">
+                <li className="nav-item p-b-10">
+                  <a className="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a>
+                </li>
+                <li className="nav-item p-b-10">
+                  <a className="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews (1)</a>
+                </li>
+              </ul>
+              <div className="tab-content p-t-43">
+                <div className="tab-pane fade show active" id="description" role="tabpanel">
+                  <div className="how-pos2 p-lr-15-md">
+                    <p className="stext-102 cl6">
+                      Mô tả sp ở đây
+                    </p>
+                  </div>
+                </div>
+
+                <div className="tab-pane fade" id="reviews" role="tabpanel">
+                  <div className="row">
+                    <div className="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+                      <div className="p-b-30 m-lr-15-sm">
+                        <div className="flex-w flex-t p-b-68">
+                          <div className="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
+                            <img src="images/avatar-01.jpg" alt="AVATAR" />
+                          </div>
+                          <div className="size-207">
+                            <div className="flex-w flex-sb-m p-b-17">
+                              <span className="mtext-107 cl2 p-r-20">
+                                Ariana Grande
+                              </span>
+                              <span className="fs-18 cl11">
+                                <i className="zmdi zmdi-star" />
+                                <i className="zmdi zmdi-star" />
+                                <i className="zmdi zmdi-star" />
+                                <i className="zmdi zmdi-star" />
+                                <i className="zmdi zmdi-star-half" />
+                              </span>
+                            </div>
+                            <p className="stext-102 cl6">
+                              Quod autem in homine praestantissimum atque optimum est, id
+                              deseruit. Apud ceteros autem philosophos
+                            </p>
+                          </div>
+                        </div>
+                        <form className="w-full">
+                          <div className="flex-w flex-m p-t-50 p-b-23">
+                            <span className="stext-102 cl3 m-r-16">
+                              Your Rating
+                            </span>
+                            <span className="wrap-rating fs-18 cl11 pointer">
+                              <i className="item-rating pointer zmdi zmdi-star-outline" />
+                              <i className="item-rating pointer zmdi zmdi-star-outline" />
+                              <i className="item-rating pointer zmdi zmdi-star-outline" />
+                              <i className="item-rating pointer zmdi zmdi-star-outline" />
+                              <i className="item-rating pointer zmdi zmdi-star-outline" />
+                              <input className="dis-none" type="number" name="rating" />
+                            </span>
+                          </div>
+                          <div className="row p-b-25">
+                            <div className="col-12 p-b-5">
+                              <label className="stext-102 cl3" htmlFor="review">Your review</label>
+                              <textarea className="size-110 bor8 stext-102 cl2 p-lr-20 p-tb-10" id="review" name="review" defaultValue={""} />
+                            </div>
+                          </div>
+                          <button className="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+                            Submit
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
+
     </div>
   )
 }

@@ -4,16 +4,13 @@ import ProductList from "./components/Home/Product";
 import AdminLayout from "./layouts/AdminLayout";
 import ClientLayout from "./layouts/ClientLayout";
 import AppCategoryyy from "./pages/admin/category/Category";
-import AppProduct from "./pages/admin/product/listProducts";
 import Cart from "./pages/client/Cart";
 import HomePage from "./pages/client/HomePage";
 import Login from "./pages/client/Login";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import CheckoutPage from "./pages/client/Checkout";
-import { UserProvider } from "./context/User";
 import ProductSteps from "./pages/admin/product/formProduct";
-import ProductEdit from "./pages/admin/product/editProduct";
 import UserList from "./pages/admin/user/UserList";
 import ColorManagement from "./pages/admin/color-size-brand-banner/Color";
 import SizeManagement from "./pages/admin/color-size-brand-banner/Size";
@@ -24,6 +21,14 @@ import LogoBannerManagement from "./pages/admin/color-size-brand-banner/Banner";
 import Blog from "./components/Home/Blog";
 import Contact from "./components/Home/Contact";
 import About from "./components/Home/About";
+import ProductListMain from "./pages/admin/product/productlist/MainProductList";
+import ProductEdit from "./pages/admin/product/editProduct";
+import FavoritesPage from "./pages/client/ProductMyLove";
+import MyOrders from "./pages/client/MyOder";
+
+
+
+
 
 
 const routeConfig = [
@@ -71,6 +76,15 @@ const routeConfig = [
         path: "checkout",
         element: <CheckoutPage />,
       },
+      {
+        path: "love",
+        element: <FavoritesPage />
+      },
+      {
+        path: "myoder",
+        element: <MyOrders />
+      }
+
     ],
   },
   {
@@ -81,10 +95,7 @@ const routeConfig = [
         path: "category",
         element: <AppCategoryyy />,
       },
-      {
-        path: "product",
-        element: <AppProduct />,
-      },
+
       {
         path: "product/create",
         element: <ProductSteps />,
@@ -92,6 +103,10 @@ const routeConfig = [
       {
         path: "product/edit/:id",
         element: <ProductEdit />,
+      },
+      {
+        path: '/admin/product',
+        element: <ProductListMain />
       },
       {
         path: "order",
@@ -120,7 +135,8 @@ const routeConfig = [
       {
         path: "discount",
         element: <Discount />
-      }
+      },
+     
     ],
   },
 ];
