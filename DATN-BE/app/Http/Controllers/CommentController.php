@@ -22,7 +22,23 @@ class CommentController extends Controller
                 'rating' => 'nullable|integer|min:1|max:5',
                 'parent_id' => 'nullable|exists:tb_comments,id', // Nếu có parent_id, phải là id hợp lệ
             ]);
-
+            $oders = $user->oders;
+            $check = false;
+            foreach($oders ?? [] as $oder){
+                if ($oder->order_status === 'Đã giao hàng') {               
+                    foreach($oder->oderDetails ?? [] as $oder_detail){
+                        if ($oder_detail->tb_product_id == $request->tb_product_id) {
+                            $check = true;
+                            break 2;
+                        }
+                    }
+                }
+            }
+            if (!$check) {
+                return response()->json([
+                    'error' => 'Bạn chỉ có thể bình luận sau khi đã mua và nhận sản phẩm.',
+                ], 403);
+            }
             // Tạo bình luận mới
             $comment = tb_comment::create([
                 'user_id' => $user->id,
@@ -32,7 +48,9 @@ class CommentController extends Controller
                 'parent_id' => $request->parent_id ?? null,
             ]);
 
-            return response()->json($comment, 201);  // Trả về bình luận vừa tạo với mã 201
+            return response()->json([
+               'data' => $comment,
+            ], 201);  // Trả về bình luận vừa tạo với mã 201
 
         } catch (Exception $e) {
             return response()->json([
