@@ -72,7 +72,7 @@ const CheckoutPage: React.FC = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod', 'vnpay', or 'momo'
+  const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod', 'vnpay'
 
   // Phương thức xử lý khi thay đổi lựa chọn phương thức thanh toán
   const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,7 +161,16 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const url = token ? 'http://localhost:8000/api/cart/check-out-cart' : 'http://localhost:8000/api/cart/check-out-guest';
+      let url = token
+        ? 'http://localhost:8000/api/cart/check-out-cart'
+        : 'http://localhost:8000/api/cart/check-out-guest';
+      if (paymentMethod == 'vnpay' && token) {
+        url = 'http://localhost:8000/api/payment-online'
+      }
+      if (paymentMethod == 'vnpay' && !token) {
+        url = 'http://localhost:8000/api/payment-guest'
+      }
+
       const totalAmount = selectedProducts.length > 0 ? totalWithDiscount : totalCartItem;
       const tbProductId = selectedProducts.length > 0 ? null : cartItem.tb_product_id;
       const tbVariantId = selectedProducts.length > 0 ? null : cartItem.tb_variant_id;
@@ -182,7 +191,6 @@ const CheckoutPage: React.FC = () => {
         // payment_method: paymentMethod, 
       };
 
-      console.log("Request Body:", requestBody); // Log dữ liệu trước khi gửi
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -193,7 +201,18 @@ const CheckoutPage: React.FC = () => {
       });
 
       if (response.ok) {
-        alert("Đặt hàng thành công")
+        const responseData = await response.json();
+
+        if (paymentMethod === 'vnpay' && responseData.vnpay_url) {
+          // Chuyển hướng đến VNPay URL
+          window.location.href = responseData.vnpay_url;
+        } else {
+          alert("Đặt hàng thành công");
+          navigate("/"); // Chuyển hướng về trang chủ
+        }
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Đặt hàng thất bại. Vui lòng thử lại.");
       }
     } catch (error) {
       console.log(error);
