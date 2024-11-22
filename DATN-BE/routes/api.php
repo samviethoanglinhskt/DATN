@@ -52,7 +52,10 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
+//logo_banner
 Route::resource('logo_banner', LogoBannerController::class);
+Route::post('/upload-image', [LogoBannerController::class, 'storeImage'])->name('uploat_image');
+Route::post('/update-image/{id}', [LogoBannerController::class, 'updateImage'])->name('update_image');
 Route::resource('contact', ContactController::class);
 Route::resource('order', OderController::class);
 
