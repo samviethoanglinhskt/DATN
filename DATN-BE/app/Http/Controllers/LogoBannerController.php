@@ -41,7 +41,7 @@ class LogoBannerController extends Controller
         // Lưu ảnh vào thư mục storage/app/public/logo_banner
         $path = $request->file('image')->store('public/logo_banner');
         // Tạo đường dẫn tương đối để lưu vào database 
-        $imagePath = str_replace('public/', 'storage/', $path);
+        $imagePath = str_replace('public/', '', $path);
         // Lưu thông tin vào database 
         $logoBanner = new tb_logo_banner(); 
         $logoBanner->name = $request->input('name'); 
@@ -95,13 +95,16 @@ class LogoBannerController extends Controller
             $logoBanner->name = $request->input('name');
             if ($request->hasFile('image')) { 
                 // Xóa ảnh cũ nếu có 
-                if ($logoBanner->image) { 
-                    Storage::delete(str_replace('storage/', 'public/', $logoBanner->image)); 
-                } 
+                 if ($logoBanner->image) { 
+                    $oldImagePath = 'public/' . $logoBanner->image;
+                    if (Storage::exists($oldImagePath)) { 
+                        Storage::delete($oldImagePath); 
+                    } 
+                }
                 // Lưu ảnh mới vào thư mục storage/app/public/logo_banner 
                 $path = $request->file('image')->store('public/logo_banner'); 
                 // Tạo đường dẫn tương đối để lưu vào database 
-                $imagePath = str_replace('public/', 'storage/', $path); 
+                $imagePath = str_replace('public/', '', $path); 
                 // Cập nhật đường dẫn ảnh mới 
                 $logoBanner->image = $imagePath; 
             }
