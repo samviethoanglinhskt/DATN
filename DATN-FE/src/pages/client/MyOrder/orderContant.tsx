@@ -1,0 +1,69 @@
+import {
+  ShoppingOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
+import "./Love.css"
+export const STATUS_CONFIG = {
+  "Chờ Xử Lí": {
+    color: "processing",
+    icon: <ClockCircleOutlined />,
+    bgColor: "bg-blue-50",
+    textColor: "text-blue-600",
+  },
+  "Đã Xử Lí": {
+    color: "warning",
+    icon: <ShoppingOutlined />,
+    bgColor: "bg-yellow-50",
+    textColor: "text-yellow-600",
+  },
+  "Đang Giao Hàng": {
+    color: "processing",
+    icon: <ShoppingOutlined />,
+    bgColor: "bg-purple-50",
+    textColor: "text-purple-600",
+  },
+  "Chưa Thanh Toán": {
+    color: "error",
+    icon: <ClockCircleOutlined />,
+    bgColor: "bg-orange-50",
+    textColor: "text-orange-600",
+  },
+  "Đã Thanh Toán": {
+    color: "success",
+    icon: <CheckCircleOutlined />,
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
+  },
+  "Đã Hoàn Thành": {
+    color: "success",
+    icon: <CheckCircleOutlined />,
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
+  },
+  "Đã hủy đơn hàng": {
+    color: "error",
+    icon: <CloseCircleOutlined />,
+    bgColor: "bg-red-50",
+    textColor: "text-red-600",
+  },
+} as const;
+
+// Thêm type cho Order status
+export type OrderStatus = keyof typeof STATUS_CONFIG;
+
+// Interface cho Order
+export interface Order {
+  id: number;
+  order_code: string;
+  order_date: string;
+  name: string;
+  phone: string;
+  address: string;
+  email?: string;
+  total_amount: number;
+  final_amount?: number;
+  order_status: OrderStatus;
+  // ... other fields
+}
