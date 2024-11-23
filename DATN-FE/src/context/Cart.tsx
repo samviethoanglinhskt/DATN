@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { CartItem, CartProviderProps, CartContextType } from "src/types/cart";
 
-// Tạo context cho giỏ hàng
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Tạo provider cho giỏ hàng
+
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState(0); // Add state for total quantity

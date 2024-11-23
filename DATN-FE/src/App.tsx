@@ -1,35 +1,32 @@
 import { useRoutes } from "react-router-dom";
 import "./App.css";
+import About from "./components/Home/About";
+import Blog from "./components/Home/Blog";
+import Contact from "./components/Home/Contact";
 import ProductList from "./components/Home/Product";
 import AdminLayout from "./layouts/AdminLayout";
 import ClientLayout from "./layouts/ClientLayout";
 import AppCategoryyy from "./pages/admin/category/Category";
-import Cart from "./pages/client/Cart";
-import HomePage from "./pages/client/HomePage";
-import Login from "./pages/client/Login";
-import ProductDetail from "./pages/client/ProductDetail";
-import Register from "./pages/client/Register";
-import CheckoutPage from "./pages/client/Checkout";
-import ProductSteps from "./pages/admin/product/formProduct";
-import UserList from "./pages/admin/user/UserList";
+import LogoBannerManagement from "./pages/admin/color-size-brand-banner/Banner";
+import BrandManagement from "./pages/admin/color-size-brand-banner/Brand";
 import ColorManagement from "./pages/admin/color-size-brand-banner/Color";
 import SizeManagement from "./pages/admin/color-size-brand-banner/Size";
 import Discount from "./pages/admin/discount/Discount";
-import BrandManagement from "./pages/admin/color-size-brand-banner/Brand";
 import Order from "./pages/admin/order-size/Order";
-import LogoBannerManagement from "./pages/admin/color-size-brand-banner/Banner";
-import Blog from "./components/Home/Blog";
-import Contact from "./components/Home/Contact";
-import About from "./components/Home/About";
-import ProductListMain from "./pages/admin/product/productlist/MainProductList";
 import ProductEdit from "./pages/admin/product/editProduct";
-import FavoritesPage from "./pages/client/ProductMyLove";
-import MyOrders from "./pages/client/MyOder";
-
-
-
-
-
+import ProductSteps from "./pages/admin/product/formProduct";
+import ProductListMain from "./pages/admin/product/productlist/MainProductList";
+import UserList from "./pages/admin/user/UserList";
+import Cart from "./pages/client/Cart";
+import CheckoutPage from "./pages/client/Checkout";
+import HomePage from "./pages/client/HomePage";
+import Login from "./pages/client/Login";
+import FavoritesPage from "./pages/client/MyFavorites/ProductMyLove";
+import MyOrders from "./pages/client/MyOrder/MyOder";
+import PaymentFailure from "./pages/client/PaymentFailure";
+import PaymentSuccess from "./pages/client/PaymentSuccess";
+import ProductDetail from "./pages/client/ProductDetail";
+import Register from "./pages/client/Register";
 
 const routeConfig = [
   {
@@ -41,15 +38,15 @@ const routeConfig = [
         element: <HomePage />,
       },
       {
-        path: "/blog",
+        path: "blog",
         element: <Blog />,
       },
       {
-        path: "/about",
+        path: "about",
         element: <About />,
       },
       {
-        path: "/contact",
+        path: "contact",
         element: <Contact />,
       },
       {
@@ -83,8 +80,15 @@ const routeConfig = [
       {
         path: "myoder",
         element: <MyOrders />
+      },
+      {
+        path: "payment-success",
+        element: <PaymentSuccess />
+      },
+      {
+        path: "payment-failure",
+        element: <PaymentFailure />
       }
-
     ],
   },
   {
@@ -136,7 +140,7 @@ const routeConfig = [
         path: "discount",
         element: <Discount />
       },
-     
+
     ],
   },
 ];
