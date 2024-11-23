@@ -4,8 +4,8 @@ import type { ColumnsType } from "antd/es/table";
 import { ReloadOutlined } from "@ant-design/icons";
 
 type OrderStatus =
-  | "Chờ Xử Lí"
-  | "Đã Xử Lí"
+  | "Chờ xử lý"
+  | "Đã xử lý"
   | "Đang Giao Hàng"
   | "Chưa Thanh Toán"
   | "Đã Thanh Toán"
@@ -30,8 +30,8 @@ const Order: React.FC = () => {
 
   // Định nghĩa thứ tự cho các trạng thái
   const statusOrder: Record<OrderStatus, number> = {
-    "Chờ Xử Lí": 1,
-    "Đã Xử Lí": 2,
+    "Chờ xử lý": 1,
+    "Đã xử lý": 2,
     "Đang Giao Hàng": 3,
     "Chưa Thanh Toán": 4,
     "Đã Thanh Toán": 5,
@@ -40,8 +40,8 @@ const Order: React.FC = () => {
   };
 
   const statusOptions = [
-    { value: "Chờ Xử Lí", label: "Chờ Xử Lí" },
-    { value: "Đã Xử Lí", label: "Đã Xử Lí" },
+    { value: "Chờ xử lý", label: "Chờ xử lý" },
+    { value: "Đã xử lý", label: "Đã xử lý" },
     { value: "Đang Giao Hàng", label: "Đang Giao Hàng" },
     { value: "Chưa Thanh Toán", label: "Chưa Thanh Toán" },
     { value: "Đã Thanh Toán", label: "Đã Thanh Toán" },
@@ -49,8 +49,8 @@ const Order: React.FC = () => {
   ];
 
   const statusColors: Record<OrderStatus, string> = {
-    "Chờ Xử Lí": "warning",
-    "Đã Xử Lí": "processing",
+    "Chờ xử lý": "warning",
+    "Đã xử lý": "processing",
     "Đang Giao Hàng": "cyan",
     "Đã Hoàn Thành": "success",
     "Chưa Thanh Toán": "default",
