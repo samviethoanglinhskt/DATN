@@ -355,8 +355,8 @@ const ProductEdit: React.FC = () => {
                 rules={[{ required: true }]}
               >
                 <Select>
-                  <Select.Option value="còn hàng">In Stock</Select.Option>
-                  <Select.Option value="hết hàng">Out of Stock</Select.Option>
+                  <Select.Option value="còn hàng">Còn hàng</Select.Option>
+                  <Select.Option value="hết hàng">Hết hàng</Select.Option>
                 </Select>
               </Form.Item>
 

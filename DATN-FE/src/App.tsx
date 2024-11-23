@@ -23,8 +23,8 @@ import Contact from "./components/Home/Contact";
 import About from "./components/Home/About";
 import ProductListMain from "./pages/admin/product/productlist/MainProductList";
 import ProductEdit from "./pages/admin/product/editProduct";
-import FavoritesPage from "./pages/client/ProductMyLove";
-import MyOrders from "./pages/client/MyOder";
+import FavoritesPage from "./pages/client/MyFavorites/ProductMyLove";
+import MyOrders from "./pages/client/MyOrder/MyOder";
 
 
 

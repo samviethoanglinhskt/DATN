@@ -8,13 +8,35 @@ import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
 import logo from "src/assets/images/icons/logo-01.png";
 import { useCart } from "src/context/Cart";
-import { ArrowCircleDownOutlined, CarCrashOutlined, LogoutOutlined } from "@mui/icons-material";
+import {
+  ArrowCircleDownOutlined,
+  CarCrashOutlined,
+  LogoutOutlined,
+} from "@mui/icons-material";
 
 const Header: React.FC = () => {
   const { user, setUser } = useUser();
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
-
+  // Hàm thêm sản phẩm vào yêu thích
+  const { data: favoriteCount } = useQuery({
+    queryKey: ["favoriteCount"],
+    queryFn: async () => {
+      try {
+        const response = await axiosInstance.get("/api/favorites/count", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        return response.data.count; // Giả sử API trả về { count: số_lượng_yêu_thích }
+      } catch (error) {
+        console.error("Error fetching favorite count:", error);
+        return 0;
+      }
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // Cập nhật dữ liệu sau mỗi 30s
+  });
   // State to manage the open status of the menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -124,8 +146,12 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-                       <ArrowCircleDownOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
-      
+                        <ArrowCircleDownOutlined
+                          style={{
+                            fontSize: "18px",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
                         Admin
                       </MenuItem>
                       <MenuItem
@@ -146,7 +172,12 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-                         <CarCrashOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
+                        <CarCrashOutlined
+                          style={{
+                            fontSize: "18px",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
                         Đơn hàng của tôi
                       </MenuItem>
                       <MenuItem
@@ -247,9 +278,9 @@ const Header: React.FC = () => {
                 <i className="zmdi zmdi-shopping-cart"></i>
               </a>
               <a
-                href="#"
-                className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
-                data-notify="0"
+                href="/love"
+                className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+                data-notify={isLoading ? 0 : favoriteCount} // Cập nhật số lượng yêu thích
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
               </a>

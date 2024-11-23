@@ -16,6 +16,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadChangeParam } from "antd/es/upload";
 import axiosInstance from "src/config/axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
+import "./ProductList.css"
 
 const { TextArea } = Input;
 
@@ -80,6 +81,8 @@ const ProductSteps: React.FC = () => {
       const values = await variantForm.validateFields();
       const newVariant: IVariant = {
         ...values,
+        tb_size_id: values.tb_size_id || null, // Có thể là null
+        tb_color_id: values.tb_color_id || null, // Có thể là null
         images: values.images?.fileList?.map((file: any) => ({
           originFileObj: file.originFileObj,
           url: URL.createObjectURL(file.originFileObj),
