@@ -207,8 +207,7 @@ const CheckoutPage: React.FC = () => {
           // Chuyển hướng đến VNPay URL
           window.location.href = responseData.vnpay_url;
         } else {
-          alert("Đặt hàng thành công");
-          navigate("/"); // Chuyển hướng về trang chủ
+          navigate("/payment-success"); // Chuyển hướng về trang chủ
         }
       } else {
         const errorData = await response.json();

@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import "./Love.css"
 export const STATUS_CONFIG = {
-  "Chờ Xử Lí": {
+  "Chờ xử lý": {
     color: "processing",
     icon: <ClockCircleOutlined />,
     bgColor: "bg-blue-50",

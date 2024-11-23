@@ -16,7 +16,7 @@ const PaymentSuccess = () => {
         >
             <CheckCircleOutlineIcon sx={{ fontSize: 80, color: "green", mb: 2 }} />
             <Typography variant="h4" gutterBottom>
-                Thanh toán thành công
+                Đặt hàng thành công
             </Typography>
             <Typography variant="body1" color="textSecondary" gutterBottom>
                 Cảm ơn bạn đã mua hàng! Giao dịch của bạn đã hoàn tất thành công.
