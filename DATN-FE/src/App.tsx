@@ -12,6 +12,7 @@ import BrandManagement from "./pages/admin/color-size-brand-banner/Brand";
 import ColorManagement from "./pages/admin/color-size-brand-banner/Color";
 import SizeManagement from "./pages/admin/color-size-brand-banner/Size";
 import Discount from "./pages/admin/discount/Discount";
+import OrderMain from "./pages/admin/orderadmin/Order";
 import ProductEdit from "./pages/admin/product/editProduct";
 import ProductSteps from "./pages/admin/product/formProduct";
 import ProductListMain from "./pages/admin/product/productlist/MainProductList";
@@ -26,7 +27,6 @@ import PaymentFailure from "./pages/client/PaymentFailure";
 import PaymentSuccess from "./pages/client/PaymentSuccess";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
-import OrderMain from "./pages/admin/orderadmin/Order";
 
 const routeConfig = [
   {

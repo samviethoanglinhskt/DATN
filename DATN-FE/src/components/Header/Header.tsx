@@ -174,8 +174,13 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-                       <ArrowCircleDownOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
-      
+
+                        <ArrowCircleDownOutlined
+                          style={{
+                            fontSize: "18px",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
                         Admin
                       </MenuItem>
                       <MenuItem
@@ -196,7 +201,12 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-                         <CarCrashOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
+                        <CarCrashOutlined
+                          style={{
+                            fontSize: "18px",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
                         Đơn hàng của tôi
                       </MenuItem>
                       <MenuItem

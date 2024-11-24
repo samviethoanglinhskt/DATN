@@ -7,7 +7,7 @@
 import { OrderStatus, StatusConfig } from "./ordertype";
 
   export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
-    "Chờ Xử Lí": {
+    "Chờ xử lý": {
       color: "processing",
       icon: <ClockCircleOutlined />,
       bgColor: "bg-blue-50",

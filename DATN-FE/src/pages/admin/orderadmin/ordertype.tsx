@@ -36,7 +36,7 @@ export interface StatusConfig {
 }
 
 export type OrderStatus = 
-  | "Chờ Xử Lí"
+  | "Chờ xử lý"
   | "Đã Xử Lí"
   | "Đang Giao Hàng"
   | "Chưa Thanh Toán"
