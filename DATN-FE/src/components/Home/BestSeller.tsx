@@ -19,7 +19,6 @@ const StoreOverView = () => {
         return response.data;
       } catch (error) {
         console.log(error);
-
       }
     },
   });
@@ -36,7 +35,9 @@ const StoreOverView = () => {
     <section className="product-section py-5">
       <div className="container">
         <div className="text-center mb-5">
-          <h2 className="section-title">Xu hướng làm đẹp</h2>
+          <h2 className="section-title" style={{ textDecoration: "none" }}>
+            Top 10 Sản Phẩm Mới Nhất Trong Tháng
+          </h2>
           <div className="title-underline"></div>
         </div>
 
@@ -53,7 +54,10 @@ const StoreOverView = () => {
                     />
                   </div>
                   <div className="product-info">
-                    <Link to={`/product/${product.id}`} className="product-link">
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="product-link"
+                    >
                       <h5 className="product-title">{product.name}</h5>
                     </Link>
                     <p className="product-price">
@@ -76,7 +80,10 @@ const StoreOverView = () => {
                     </div>
                   )}
                   <div className="product-info">
-                    <Link to={`/product/${product.id}`} className="product-link">
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="product-link"
+                    >
                       <h5 className="product-title">{product.name}</h5>
                     </Link>
                     <p className="product-price">

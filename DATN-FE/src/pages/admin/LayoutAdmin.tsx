@@ -11,7 +11,16 @@ import {
   LogoutOutlined,
   BellOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme, Avatar, Space, Badge, Dropdown } from "antd";
+import {
+  Button,
+  Layout,
+  Menu,
+  theme,
+  Avatar,
+  Space,
+  Badge,
+  Dropdown,
+} from "antd";
 import { NavLink, Outlet } from "react-router-dom";
 import type { MenuProps } from "antd";
 
@@ -41,22 +50,38 @@ const LayoutAdmin: React.FC = () => {
     {
       key: "1",
       icon: <AppstoreOutlined />,
-      label: <NavLink to="category">Danh Mục Sản Phẩm</NavLink>,
+      label: (
+        <NavLink to="category" className="text-decoration-none">
+          Danh Mục Sản Phẩm
+        </NavLink>
+      ),
     },
     {
       key: "2",
       icon: <ShoppingOutlined />,
-      label: <NavLink to="product">Quản Lý Sản Phẩm</NavLink>,
+      label: (
+        <NavLink to="product" className="text-decoration-none">
+          Quản Lý Sản Phẩm
+        </NavLink>
+      ),
     },
     {
       key: "3",
       icon: <ShoppingCartOutlined />,
-      label: <NavLink to="order">Quản Lý Đơn Hàng</NavLink>,
+      label: (
+        <NavLink to="order" className="text-decoration-none">
+          Quản Lý Đơn Hàng
+        </NavLink>
+      ),
     },
     {
       key: "4",
       icon: <UserOutlined />,
-      label: <NavLink to="user">Quản Lý Tài Khoản</NavLink>,
+      label: (
+        <NavLink to="user" className="text-decoration-none">
+          Quản Lý Tài Khoản
+        </NavLink>
+      ),
     },
     {
       key: "5",
@@ -65,27 +90,47 @@ const LayoutAdmin: React.FC = () => {
       children: [
         {
           key: "5-1",
-          label: <NavLink to="size">Quản Lý Kích Thước</NavLink>,
+          label: (
+            <NavLink to="size" className="text-decoration-none">
+              Quản Lý Kích Thước
+            </NavLink>
+          ),
         },
         {
           key: "5-2",
-          label: <NavLink to="color">Quản Lý Màu Sắc</NavLink>,
+          label: (
+            <NavLink to="color" className="text-decoration-none">
+              Quản Lý Màu Sắc
+            </NavLink>
+          ),
         },
         {
           key: "5-3",
-          label: <NavLink to="brand">Quản Lý Thương Hiệu</NavLink>,
+          label: (
+            <NavLink to="brand" className="text-decoration-none">
+              Quản Lý Thương Hiệu
+            </NavLink>
+          ),
         },
       ],
     },
     {
       key: "6",
       icon: <SkinOutlined />,
-      label: <NavLink to="discount">Mã Giảm Giá</NavLink>,
+      label: (
+        <NavLink to="discount" className="text-decoration-none">
+          Mã Giảm Giá
+        </NavLink>
+      ),
     },
     {
       key: "7",
       icon: <SkinOutlined />,
-      label: <NavLink to="banner">Quản Lý Banner</NavLink>,
+      label: (
+        <NavLink to="banner" className="text-decoration-none">
+          Quản Lý Banner
+        </NavLink>
+      ),
     },
   ];
 
