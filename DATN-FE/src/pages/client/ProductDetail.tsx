@@ -11,7 +11,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
-  const [quantity, setQuantity] = useState(1);  
+  const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
 
 
