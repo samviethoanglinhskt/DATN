@@ -17,7 +17,7 @@ import {
   TabsProps,
   Tabs,
 } from "antd";
-import { ShoppingOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
 import {
   ApiResponse,
   CancellationModalProps,
@@ -25,7 +25,7 @@ import {
   OrderDetailModalProps,
 } from "src/types/Myorder";
 import { STATUS_CONFIG } from "./orderContant";
-import "./Love.css";
+import styles from "./OrderDetails.module.css";
 const { TextArea } = Input;
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
@@ -83,45 +83,110 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
           </Descriptions.Item>
         </Descriptions>
 
-        <div className="border rounded-lg p-4 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Chi tiết sản phẩm</h3>
-          <div className="space-y-4">
-            {order.oder_details?.map((detail) => (
-              <div key={detail.id} className="flex items-center border-b pb-4">
-                <div className="w-20 h-20 mr-4">
-                  <Image
-                    src={`/storage/${detail.product.image}`}
-                    alt={detail.product.name}
-                    className="object-cover rounded"
-                    fallback="/placeholder.png"
-                  />
-                </div>
-                <div className="flex-grow">
-                  <h4 className="font-medium">{detail.product.name}</h4>
-                  <p className="text-gray-600">
-                    {detail.variant.size?.name}
-                    {detail.variant.color && ` - ${detail.variant.color.name}`}
-                  </p>
-                  <div className="flex justify-between mt-2">
-                    <span>Số lượng: {detail.quantity}</span>
+        <div className={styles.orderCard}>
+          <div className={styles.cardHeader}>
+            <div className={styles.headerTitle}>
+              <h3 className={styles.title}>Chi tiết sản phẩm</h3>
+              <span className={styles.productCount}>
+                {order.oder_details?.length || 0} sản phẩm
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cardBody}>
+            {order.oder_details?.map((detail, index) => (
+              <div key={detail.id} className={styles.productItem}>
+                <div className={styles.productContent}>
+                  <div className={styles.productImage}>
+                    <Image
+                      src="https://images2.thanhnien.vn/528068263637045248/2024/1/25/428059e47aeafb68640f168d615371dc-65a11b038315c880-1706156293087602824781.jpg"
+                      alt={detail.product.name}
+                      className={styles.productImg}
+                      fallback="/placeholder.png"
+                      preview={{
+                        mask: (
+                          <div className={styles.previewMask}>
+                            <ShoppingCartOutlined
+                              className={styles.previewIcon}
+                            />
+                            <span>Xem ảnh</span>
+                          </div>
+                        ),
+                      }}
+                    />
                   </div>
-                  <div className="flex justify-between mt-2">
-                    <span>Giá: {detail.price.toLocaleString()}đ</span>
+
+                  <div className={styles.productInfo}>
+                    <div className={styles.productRow}>
+                      <div className={styles.productNameCol}>
+                        <h4 className={styles.productName}>
+                          {detail.product.name}
+                        </h4>
+                        {(detail.variant.size || detail.variant.color) && (
+                          <div className={styles.variants}>
+                            {detail.variant.size?.name && (
+                              <span className={styles.variantBadge}>
+                                {detail.variant.size.name}
+                              </span>
+                            )}
+                            {detail.variant.color && (
+                              <span className={styles.variantBadge}>
+                                {detail.variant.color.name}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className={styles.priceCol}>
+                        <div className={styles.priceInfo}>
+                          <div className={styles.priceLabel}>Đơn giá</div>
+                          <div className={styles.price}>
+                            {detail.price.toLocaleString()}đ
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.quantityRow}>
+                      <div className={styles.quantityCol}>
+                        <div className={styles.quantityBadge}>
+                          <span className={styles.quantityLabel}>
+                            Số lượng:
+                          </span>
+                          <span className={styles.quantityValue}>
+                            ×{detail.quantity}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.subtotalCol}>
+                        <span className={styles.subtotalLabel}>
+                          Thành tiền:
+                        </span>
+                        <span className={styles.subtotalValue}>
+                          {(detail.price * detail.quantity).toLocaleString()}đ
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {index < (order.oder_details?.length || 0) - 1 && (
+                  <div className={styles.divider} />
+                )}
               </div>
             ))}
           </div>
-        </div>
 
-        <div className="flex justify-end text-lg">
-          <div className="space-y-2">
-            <p className="text-xl font-bold">
-              <span className="mr-4">Tổng thanh toán:</span>
-              <span className="text-red-600">
-                {(order.final_amount || order.total_amount).toLocaleString()}đ
-              </span>
-            </p>
+          <div className={styles.cardFooter}>
+            <div className={styles.footerContent}>
+              <div className={styles.totalLabel}>
+                <ShoppingCartOutlined className={styles.cartIcon} />
+                <span>Tổng ({order.oder_details?.length || 0} sản phẩm):</span>
+              </div>
+              <div className={styles.totalAmount}>
+                {order.total_amount.toLocaleString()}đ
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -183,11 +248,7 @@ const MyOrder: React.FC = () => {
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [cancelLoading, setCancelLoading] = useState(false);
 
-  const {
-    data: orderData,
-    isLoading,
-    refetch,
-  } = useQuery<ApiResponse>({
+  const { data: orderData, isLoading } = useQuery<ApiResponse>({
     queryKey: ["orders"],
     queryFn: async () => {
       const response = await axios.get(
@@ -209,7 +270,7 @@ const MyOrder: React.FC = () => {
   // Cập nhật logic lọc đơn hàng
   const filteredOrders = React.useMemo(() => {
     if (!orderData?.data) return [];
-    
+
     // Nếu là tab "all" thì trả về tất cả đơn hàng
     if (activeTab === "all") return orderData.data;
 
@@ -218,7 +279,7 @@ const MyOrder: React.FC = () => {
       // Chuyển đổi status về chữ thường để so sánh
       const orderStatus = order.order_status.toLowerCase();
       const currentTab = activeTab.toLowerCase();
-      
+
       // So sánh status của đơn hàng với tab đang active
       return orderStatus === currentTab;
     });
@@ -302,23 +363,59 @@ const MyOrder: React.FC = () => {
       title: "Thông tin khách hàng",
       key: "customer",
       render: (record: Order) => (
-        <Space direction="vertical" size="small" className="text-gray-700">
+        <Space
+          direction="vertical"
+          size="small"
+          className="text-gray-700 w-full"
+        >
           <div className="font-medium">{record.name}</div>
           <div className="text-sm">📱 {record.phone}</div>
           <div className="text-sm">📍 {record.address}</div>
+          <div className="text-sm font-semibold text-green-600">
+            Tổng tiền: {record.total_amount.toLocaleString()}đ
+          </div>
         </Space>
       ),
     },
     {
-      title: "Tổng tiền",
-      dataIndex: "total_amount",
-      key: "total_amount",
-      render: (amount: number) => (
-        <span className="font-semibold text-lg text-green-600">
-          {amount.toLocaleString()}đ
-        </span>
-      ),
+      title: "Sản phẩm",
+      key: "products",
+      render: (record: Order) => {
+        const firstDetail = record.oder_details?.[0]; // Lấy sản phẩm đầu tiên
+        const remainingCount = record.oder_details?.length - 1; // Số sản phẩm còn lại
+
+        return (
+          <div className="flex gap-2 flex-wrap">
+            {firstDetail && ( // Hiển thị hình ảnh của sản phẩm đầu tiên
+              <div className="flex-shrink-0 text-center">
+                <Image
+                  src="https://images2.thanhnien.vn/528068263637045248/2024/1/25/c3c8177f2e6142e8c4885dbff89eb92a-65a11aeea03da880-1706156293184503262817.jpg"
+                  alt={firstDetail.product.name}
+                  width={100}
+                  height={100}
+                  className="object-cover rounded"
+                  fallback="/placeholder.png"
+                  preview={{
+                    mask: (
+                      <div className="text-xs text-center">
+                        {firstDetail.product.name}
+                      </div>
+                    ),
+                  }}
+                />
+                {/* Hiển thị số sản phẩm còn lại nếu có */}
+                {remainingCount > 0 && (
+                  <div className="text-xs text-center text-gray-500 mt-1">
+                    +{remainingCount} sản phẩm khác
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      },
     },
+
     {
       title: "Trạng thái",
       dataIndex: "order_status",

@@ -1,7 +1,7 @@
 import { Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useUser } from "src/context/User";
@@ -39,6 +39,8 @@ const Header: React.FC = () => {
   });
   // State to manage the open status of the menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isFixed, setIsFixed] = useState(false); // Trạng thái cố định menu
+  const [topOffset, setTopOffset] = useState(0); // Độ cao của top-bar
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget); // Open the menu
@@ -77,6 +79,27 @@ const Header: React.FC = () => {
     }
   };
 
+  // Xử lý logic cố định menu khi cuộn
+  useEffect(() => {
+    const topBar = document.querySelector(".top-bar") as HTMLElement | null;
+    const posWrapHeader = topBar ? topBar.offsetHeight : 0;
+    setTopOffset(posWrapHeader);
+
+    const handleScroll = () => {
+      if (window.scrollY > posWrapHeader) {
+        setIsFixed(true);
+      } else {
+        setIsFixed(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   if (isLoading) return <div>Loading...</div>;
   if (isError)
     return (
@@ -88,7 +111,12 @@ const Header: React.FC = () => {
   return (
     <header>
       {/* Header desktop */}
-      <div className="container-menu-desktop">
+      <div
+        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""}`}
+        style={{
+          top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
+        }}
+      >
         {/* Topbar */}
         <div className="top-bar">
           <div className="content-topbar flex-sb-m h-full container">
@@ -138,20 +166,16 @@ const Header: React.FC = () => {
                           "&:hover": {
                             background:
                               "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
-                            color: "#ff69b4",
+                            color: "#717FE0",
                             "& .menu-icon": {
                               transform: "scale(1.1)",
-                              color: "#ff69b4",
+                              color: "#717FE0",
                             },
                           },
                         }}
                       >
-                        <ArrowCircleDownOutlined
-                          style={{
-                            fontSize: "18px",
-                            transition: "all 0.3s ease",
-                          }}
-                        />
+                       <ArrowCircleDownOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
+      
                         Admin
                       </MenuItem>
                       <MenuItem
@@ -164,20 +188,15 @@ const Header: React.FC = () => {
                           "&:hover": {
                             background:
                               "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
-                            color: "#ff69b4",
+                            color: "#717FE0",
                             "& .menu-icon": {
                               transform: "scale(1.1)",
-                              color: "#ff69b4",
+                              color: "#717FE0",
                             },
                           },
                         }}
                       >
-                        <CarCrashOutlined
-                          style={{
-                            fontSize: "18px",
-                            transition: "all 0.3s ease",
-                          }}
-                        />
+                         <CarCrashOutlined style={{ fontSize: "18px", transition: "all 0.3s ease" }} />
                         Đơn hàng của tôi
                       </MenuItem>
                       <MenuItem
@@ -190,10 +209,10 @@ const Header: React.FC = () => {
                           "&:hover": {
                             background:
                               "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
-                            color: "#ff69b4",
+                            color: "#717FE0",
                             "& .menu-icon": {
                               transform: "scale(1.1)",
-                              color: "#ff69b4",
+                              color: "#717FE0",
                             },
                           },
                         }}
@@ -213,10 +232,10 @@ const Header: React.FC = () => {
             ) : (
               <div className="right-top-bar flex-w h-full">
                 <a href="/login" className="flex-c-m trans-04 p-lr-25">
-                  Login
+                  Đăng nhập
                 </a>
                 <a href="/register" className="flex-c-m trans-04 p-lr-25">
-                  Register
+                  Đăng ký
                 </a>
               </div>
             )}
@@ -234,10 +253,10 @@ const Header: React.FC = () => {
             <div className="menu-desktop">
               <ul className="main-menu">
                 <li className="active-menu">
-                  <a href="/">Home</a>
+                  <a href="/">Trang chủ</a>
                 </li>
                 <li>
-                  <a href="#">Category</a>
+                  <a href="#">Sản phẩm</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
                       <li key={category.id}>
@@ -249,17 +268,17 @@ const Header: React.FC = () => {
                   </ul>
                 </li>
 
-                <li className="label1" data-label1="hot">
-                  <a href="shoping-cart.html">Features</a>
+                <li>
+                  <a href="shoping-cart.html">Thương hiệu</a>
                 </li>
                 <li>
-                  <Link to="/blog">Blog</Link>
+                  <Link to="/about">Giới thiệu</Link>
                 </li>
                 <li>
-                  <Link to="/about">About</Link>
+                  <Link to="/blog">Bài viết</Link>
                 </li>
                 <li>
-                  <Link to="/contact">Contact</Link>
+                  <Link to="/contact">Liên hệ</Link>
                 </li>
               </ul>
             </div>

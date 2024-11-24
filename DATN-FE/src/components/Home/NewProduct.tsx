@@ -107,7 +107,7 @@ const NewProduct = () => {
   return (
     <section className="py-5 bg-light">
       <div className="container">
-        <h3 className="text-center mb-5">Newest Products</h3>
+        <h3 className="text-center mb-5">Sản Phẩm Yêu Thích Nhất</h3>
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
           {products.data.slice(0, visibleProducts).map((product: Product) => (
             <div key={product.id} className="col product-item">

@@ -1,6 +1,6 @@
 .product-card {
   transition: all 0.3s ease;
-  background: #fff;
+  
 }
 
 .product-card:hover {
@@ -141,4 +141,7 @@
   .product-price {
     font-size: 1rem;
   }
+}
+.bg-light {
+  background-color: rgba(120, 167, 218, 0.5) !important; /* Màu xanh nhạt (light cyan) */
 }

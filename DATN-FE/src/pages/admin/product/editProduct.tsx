@@ -17,7 +17,6 @@ import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadChangeParam } from "antd/es/upload";
 import axiosInstance from "src/config/axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
-import "./ProductList.css";
 
 const { TextArea } = Input;
 

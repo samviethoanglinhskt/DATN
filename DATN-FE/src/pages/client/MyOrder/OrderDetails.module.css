@@ -1,0 +1,229 @@
+/* OrderDetails.module.css */
+.orderCard {
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.cardHeader {
+  background-color: #fff !important;
+  border-bottom: 1px solid #edf2f7 !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.productCount {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 20px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+.cardBody {
+  padding: 0 !important;
+}
+
+.productItem {
+  position: relative;
+}
+
+.productContent {
+  display: flex;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.productImage {
+  flex-shrink: 0;
+}
+
+.productImg {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 12px !important;
+  object-fit: cover !important;
+}
+
+.productInfo {
+  flex-grow: 1;
+}
+
+.productRow {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.productNameCol {
+  flex: 0 0 66.666667%;
+  max-width: 66.666667%;
+  padding-right: 1rem;
+}
+
+.productName {
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1.1rem !important;
+  color: #1f2937;
+}
+
+.variants {
+  margin-bottom: 1rem;
+}
+
+.variantBadge {
+  background-color: #f3f4f6 !important;
+  color: #4b5563 !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 16px !important;
+  margin-right: 0.5rem !important;
+  font-size: 0.875rem !important;
+}
+
+.priceCol {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+  text-align: right;
+}
+
+.priceInfo {
+  background-color: rgba(59, 130, 246, 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.priceLabel {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.price {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.quantityRow {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.quantityCol {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+}
+
+.quantityBadge {
+  display: flex;
+  align-items: center;
+}
+
+.quantityLabel {
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.quantityValue {
+  background-color: #6b7280 !important;
+  color: white !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 16px !important;
+  font-size: 0.875rem !important;
+}
+
+.subtotalCol {
+  flex: 0 0 66.666667%;
+  max-width: 66.666667%;
+  text-align: right;
+}
+
+.subtotalLabel {
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.subtotalValue {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.divider {
+  border-bottom: 1px solid #e5e7eb;
+  opacity: 0.25;
+}
+
+.cardFooter {
+  background-color: #f8fafc !important;
+  padding: 1rem 1.5rem !important;
+  border-top: 1px dashed #e2e8f0 !important;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.totalLabel {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+}
+
+.cartIcon {
+  color: #3b82f6;
+  margin-right: 0.5rem;
+}
+
+.totalAmount {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .productContent {
+    flex-direction: column;
+  }
+
+  .productImage {
+    margin-bottom: 1rem;
+  }
+  
+  .productImg {
+    width: 100% !important;
+    height: 200px !important;
+  }
+
+  .productNameCol,
+  .priceCol {
+    flex: 0 0 100%;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .priceCol {
+    margin-top: 1rem;
+  }
+
+  .quantityCol,
+  .subtotalCol {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .subtotalCol {
+    margin-top: 0.5rem;
+    text-align: left;
+  }
+}

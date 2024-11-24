@@ -4,7 +4,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import "./Love.css"
+
 export const STATUS_CONFIG = {
   "Chờ Xử Lí": {
     color: "processing",

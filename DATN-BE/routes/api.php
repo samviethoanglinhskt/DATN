@@ -52,7 +52,10 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
+//logo_banner
 Route::resource('logo_banner', LogoBannerController::class);
+Route::post('/upload-image', [LogoBannerController::class, 'storeImage'])->name('uploat_image');
+Route::post('/update-image/{id}', [LogoBannerController::class, 'updateImage'])->name('update_image');
 Route::resource('contact', ContactController::class);
 Route::resource('order', OderController::class);
 
@@ -78,7 +81,8 @@ Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->na
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
-Route::post('/payment-online', [CartController::class, 'vnpay_momo'])->name('payment.online');
+Route::post('/payment-online', [CartController::class, 'vnpay'])->name('payment.online');
+Route::post('/payment-guest', [CartController::class, 'vnpay_guest'])->name('payment.guest');
 //oder
 Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('list_oder_admin');
