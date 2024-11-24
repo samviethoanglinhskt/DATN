@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\tb_oder;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\tb_oderdetail;
 
 class OderController extends Controller
 {
@@ -70,23 +71,6 @@ class OderController extends Controller
     {
         //
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $order = tb_oder::with('oderDetails.product', 'oderDetails.variant.size', 'oderDetails.variant.color')->findOrFail($id);
-        return response()->json([
-            'success' => true,
-            'message' => 'Lấy đơn hàng thành công',
-            'order' => $order,
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
@@ -118,9 +102,23 @@ class OderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function showOrderDetails($id)
     {
-        //
+        try { 
+            $order = tb_oder::with('oderDetails.product', 'oderDetails.variant.size', 'oderDetails.variant.color')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Thông tin chi tiết đơn hàng',
+                'order' => $order,
+            ]);
+        } catch (\Exception $e) { 
+            return response()->json([ 
+                'success' => false, 
+                'message' => 'Không tìm thấy đơn hàng', 
+                'error' => $e->getMessage() 
+            ], 404); // 404 Not Found 
+                
+        }
     }
 
     public function destroyOrder(Request $request)

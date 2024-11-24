@@ -86,6 +86,7 @@ Route::post('/payment-guest', [CartController::class, 'vnpay_guest'])->name('pay
 //oder
 Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('list_oder_admin');
+Route::get('/show-oder-detail/{id}', [OderController::class, 'showOrderDetails'])->name('show_oder_detail');
 Route::put('/destroy-order-client', [OderController::class, 'destroyOrder'])->name('destroy_order_client');
 
 //contact
