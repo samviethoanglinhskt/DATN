@@ -1,24 +1,35 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Table, Card, Tag, Space, Select, Button, message, Tabs, Tooltip, DatePicker } from "antd";
+import {
+  Table,
+  Card,
+  Tag,
+  Space,
+  Select,
+  Button,
+  message,
+  Tabs,
+  Tooltip,
+  DatePicker,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { 
-  ShoppingOutlined, 
+import {
+  ShoppingOutlined,
   FilterOutlined,
   DownloadOutlined,
-  EyeOutlined
+  EyeOutlined,
 } from "@ant-design/icons";
 
 import axios from "axios";
 // import "./styles/Order.css";
-import * as XLSX from 'xlsx';
-import dayjs from 'dayjs';
-import 'dayjs/locale/vi';
+import * as XLSX from "xlsx";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
 
 import OrderDetailModal from "./orderModal";
 import { Order, OrderStatus } from "./ordertype";
 import { API_ENDPOINTS, STATUS_CONFIG } from "./orderContant";
 
-dayjs.locale('vi');
+dayjs.locale("vi");
 
 const OrderMain: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -26,10 +37,12 @@ const OrderMain: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([null, null]);
+  const [searchText, setSearchText] = useState("");
+  const [dateRange, setDateRange] = useState<
+    [dayjs.Dayjs | null, dayjs.Dayjs | null]
+  >([null, null]);
 
-  const statusOptions = Object.keys(STATUS_CONFIG).map(status => ({
+  const statusOptions = Object.keys(STATUS_CONFIG).map((status) => ({
     value: status,
     label: (
       <Space>
@@ -50,7 +63,7 @@ const OrderMain: React.FC = () => {
       message.error("Không thể tải danh sách đơn hàng");
     } finally {
       setLoading(false);
-    }   
+    }
   }, []);
 
   useEffect(() => {
@@ -62,35 +75,38 @@ const OrderMain: React.FC = () => {
 
     // Filter by status
     if (activeTab !== "all") {
-      filtered = filtered.filter(order => order.order_status === activeTab);
+      filtered = filtered.filter((order) => order.order_status === activeTab);
     }
 
     // Filter by search text
     if (searchText) {
       const searchLower = searchText.toLowerCase();
-      filtered = filtered.filter(order => 
-        order.order_code.toLowerCase().includes(searchLower) ||
-        order.name.toLowerCase().includes(searchLower) ||
-        order.phone.includes(searchText) ||
-        order.email?.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (order) =>
+          order.order_code.toLowerCase().includes(searchLower) ||
+          order.name.toLowerCase().includes(searchLower) ||
+          order.phone.includes(searchText) ||
+          order.email?.toLowerCase().includes(searchLower)
       );
     }
 
     // Filter by date range
 
-
     return filtered;
   }, [orders, activeTab, searchText, dateRange]);
 
-  const handleStatusChange = async (orderId: number, newStatus: OrderStatus) => {
+  const handleStatusChange = async (
+    orderId: number,
+    newStatus: OrderStatus
+  ) => {
     setLoading(true);
     try {
       await axios.put(`${API_ENDPOINTS.UPDATE_ORDER}/${orderId}`, {
         status: newStatus,
       });
 
-      setOrders(prevOrders =>
-        prevOrders.map(order =>
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
           order.id === orderId ? { ...order, order_status: newStatus } : order
         )
       );
@@ -104,26 +120,26 @@ const OrderMain: React.FC = () => {
   };
 
   const exportToExcel = () => {
-    const exportData = filteredOrders.map(order => ({
-      'Mã đơn hàng': order.order_code,
-      'Ngày đặt': new Date(order.order_date).toLocaleDateString('vi-VN'),
-      'Khách hàng': order.name,
-      'Số điện thoại': order.phone,
-      'Email': order.email,
-      'Địa chỉ': order.address,
-      'Tổng tiền': order.total_amount.toLocaleString('vi-VN') + 'đ',
-      'Trạng thái': order.order_status
+    const exportData = filteredOrders.map((order) => ({
+      "Mã đơn hàng": order.order_code,
+      "Ngày đặt": new Date(order.order_date).toLocaleDateString("vi-VN"),
+      "Khách hàng": order.name,
+      "Số điện thoại": order.phone,
+      Email: order.email,
+      "Địa chỉ": order.address,
+      "Tổng tiền": order.total_amount.toLocaleString("vi-VN") + "đ",
+      "Trạng thái": order.order_status,
     }));
 
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
-    
+    XLSX.utils.book_append_sheet(wb, ws, "Orders");
+
     // Generate filename with current date
-    const fileName = `orders_${dayjs().format('YYYY-MM-DD')}.xlsx`;
+    const fileName = `orders_${dayjs().format("YYYY-MM-DD")}.xlsx`;
     XLSX.writeFile(wb, fileName);
-    
-    message.success('Đã xuất file Excel thành công');
+
+    message.success("Đã xuất file Excel thành công");
   };
   const tabItems = [
     {
@@ -142,7 +158,7 @@ const OrderMain: React.FC = () => {
           {config.icon}
           <span className="ml-2">{status}</span>
           <span className="ml-2 px-2 py-0.5 bg-gray-100 rounded-full text-xs">
-            {orders.filter(o => o.order_status === status).length}
+            {orders.filter((o) => o.order_status === status).length}
           </span>
         </span>
       ),
@@ -191,7 +207,7 @@ const OrderMain: React.FC = () => {
       width: 150,
       render: (date) => (
         <span className="whitespace-nowrap">
-          {dayjs(date).format('DD/MM/YYYY HH:mm')}
+          {dayjs(date).format("DD/MM/YYYY HH:mm")}
         </span>
       ),
       sorter: (a, b) => dayjs(a.order_date).unix() - dayjs(b.order_date).unix(),
@@ -203,7 +219,7 @@ const OrderMain: React.FC = () => {
       align: "right",
       render: (amount) => (
         <span className="font-medium text-green-600">
-          {amount.toLocaleString('vi-VN')}đ
+          {amount.toLocaleString("vi-VN")}đ
         </span>
       ),
       sorter: (a, b) => a.total_amount - b.total_amount,
@@ -215,8 +231,8 @@ const OrderMain: React.FC = () => {
       render: (status: OrderStatus) => {
         const config = STATUS_CONFIG[status];
         return (
-          <Tag 
-            color={config.color} 
+          <Tag
+            color={config.color}
             className={`${config.textColor} order-status-tag`}
             icon={config.icon}
           >
@@ -247,9 +263,14 @@ const OrderMain: React.FC = () => {
           <Select
             style={{ width: 140 }}
             value={record.order_status}
-            onChange={(value: OrderStatus) => handleStatusChange(record.id, value)}
+            onChange={(value: OrderStatus) =>
+              handleStatusChange(record.id, value)
+            }
             options={statusOptions}
-            disabled={record.order_status === "Đã Hoàn Thành" || record.order_status === "Đã hủy đơn hàng"}
+            disabled={
+              record.order_status === "Đã Hoàn Thành" ||
+              record.order_status === "Đã hủy đơn hàng"
+            }
           />
         </Space>
       ),
@@ -269,15 +290,15 @@ const OrderMain: React.FC = () => {
       <Button
         icon={<FilterOutlined />}
         onClick={() => {
-          setSearchText('');
+          setSearchText("");
           setDateRange([null, null]);
-          setActiveTab('all');
+          setActiveTab("all");
         }}
       >
         Xóa lọc
       </Button>
       <Tooltip title="Xuất Excel">
-        <Button 
+        <Button
           type="primary"
           icon={<DownloadOutlined />}
           onClick={exportToExcel}
@@ -304,7 +325,7 @@ const OrderMain: React.FC = () => {
         items={tabItems}
         className="mb-4 order-tabs"
       />
-      
+
       {tableHeader}
 
       <Table<Order>
@@ -323,16 +344,26 @@ const OrderMain: React.FC = () => {
         rowClassName="hover:bg-gray-50"
         className="order-table"
         size="middle"
-        summary={pageData => {
-          const total = pageData.reduce((sum, order) => sum + order.total_amount, 0);
+        summary={(pageData) => {
+          const total = pageData.reduce(
+            (sum, order) => sum + order.total_amount,
+            0
+          );
           return (
             <Table.Summary fixed>
               <Table.Summary.Row>
-                <Table.Summary.Cell index={0} colSpan={4} className="text-right font-medium">
+                <Table.Summary.Cell
+                  index={0}
+                  colSpan={4}
+                  className="text-right font-medium"
+                >
                   Tổng giá trị đơn hàng:
                 </Table.Summary.Cell>
-                <Table.Summary.Cell index={1} className="text-right font-bold text-green-600">
-                  {total.toLocaleString('vi-VN')}đ
+                <Table.Summary.Cell
+                  index={1}
+                  className="text-right font-bold text-green-600"
+                >
+                  {total.toLocaleString("vi-VN")}đ
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={2} colSpan={2} />
               </Table.Summary.Row>
@@ -342,11 +373,10 @@ const OrderMain: React.FC = () => {
       />
 
       <OrderDetailModal
-        order={selectedOrder}
+        orderId={selectedOrder?.id}
         visible={isModalVisible}
         onClose={() => {
           setIsModalVisible(false);
-          setSelectedOrder(null);
         }}
       />
     </Card>

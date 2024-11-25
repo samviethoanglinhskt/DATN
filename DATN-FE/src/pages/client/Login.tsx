@@ -1,127 +1,152 @@
-import {
-  Box,
-  Grid,
-  Link,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, Link, TextField, Typography } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { User } from "src/types/user";
 import axiosInstance from "src/config/axiosInstance";
-
+import { message } from "antd";
+import "../../assets/css/Login.css";
+import {
+  MailOutlined,
+  LockOutlined,
+  KeyOutlined,
+  UserAddOutlined,
+  LoadingOutlined,
+  LoginOutlined,
+} from "@ant-design/icons";
 const Login = () => {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<User>();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     try {
+      const hide = message.loading("Đang đăng nhập...", 0);
       const response = await axiosInstance.post("/api/login", data);
-      console.log("Đăng nhập thành công:", response.data);
-      localStorage.setItem("token", response.data.data.token);
-      reset();
-      setTimeout(() => {
+      hide();
+
+      if (response.data.success) {
+        message.success({
+          content: "Đăng nhập thành công!",
+          icon: (
+            <i className="fas fa-check-circle" style={{ color: "#52c41a" }} />
+          ),
+          duration: 2,
+        });
+        localStorage.setItem("token", response.data.data.token);
+        reset();
+
+        // Sử dụng Promise để đảm bảo animation hoàn thành
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate("/");
         window.location.reload();
-      }, 2000);
-    } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
+      } else {
+        message.error({
+          content: response.data.message || "Đăng nhập thất bại",
+          duration: 3,
+        });
+      }
+    } catch (error: any) {
+      message.error({
+        content: error.response?.data?.message || "Lỗi kết nối server",
+        duration: 3,
+      });
+      console.error("Login error:", error);
     }
   };
 
   return (
-    <div className="container mt-5">
-      <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-        <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
-          Trang chủ
-          <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-        </button>
-        <span className="stext-109 cl4">Đăng nhập</span>
-      </div>
+    <div className="login-container">
+      <div className="login-overlay">
+        <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg"></div>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Box
-          sx={{
-            width: 700,
-            margin: 5,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-
-          <Typography component="h1" variant="h3">
-            Sign in
-          </Typography>
-
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Email Address"
-                  autoComplete="email"
-                  {...register("email", {
-                    required: "Required email",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email",
-                    },
-                  })}
-                  error={!!errors?.email?.message}
-                  helperText={errors?.email?.message}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Mật khẩu"
-                  type="password"
-                  autoComplete="new-password"
-                  {...register("password", {
-                    required: "Required password",
-                    minLength: {
-                      value: 6,
-                      message: "Password must have at least 6 characters",
-                    },
-                  })}
-                  error={!!errors?.password?.message}
-                  helperText={errors?.password?.message}
-                />
-              </Grid>
-            </Grid>
-            <button type="submit" className="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer" style={{ marginTop: 30 }}>
+        <Box className="login-form-container">
+          <Box className="login-form-box">
+            <Typography component="h1" variant="h3" className="login-title">
               Đăng nhập
-            </button>
-            <Grid container justifyContent="center">
-              <Grid item>
-                <Link
-                  href="/forgot_password"
-                  variant="body2"
-                  sx={{ lineHeight: "4" }}
-                >
+            </Typography>
+
+            <Box
+              component="form"
+              onSubmit={handleSubmit(onSubmit)}
+              className="login-form"
+            >
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    autoComplete="email"
+                    {...register("email", {
+                      required: "Email là bắt buộc",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Email không hợp lệ",
+                      },
+                    })}
+                    error={!!errors?.email}
+                    helperText={errors?.email?.message}
+                    InputProps={{
+                      startAdornment: <MailOutlined className="input-icon" />,
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Mật khẩu"
+                    type="password"
+                    autoComplete="current-password"
+                    {...register("password", {
+                      required: "Mật khẩu là bắt buộc",
+                      minLength: {
+                        value: 6,
+                        message: "Mật khẩu phải có ít nhất 6 ký tự",
+                      },
+                    })}
+                    error={!!errors?.password}
+                    helperText={errors?.password?.message}
+                    InputProps={{
+                      startAdornment: <LockOutlined className="input-icon" />,
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              <button
+                type="submit"
+                className="login-button"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <LoadingOutlined className="mr-2" />
+                ) : (
+                  <LoginOutlined className="mr-2" />
+                )}
+                Đăng nhập
+              </button>
+
+              <div className="login-links">
+                <Link href="/forgot_password" className="forgot-password-link">
+                  <KeyOutlined className="mr-1" />
                   Quên mật khẩu?
                 </Link>
-              </Grid>
-            </Grid>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/register" variant="body2" sx={{ lineHeight: "2" }}>
+
+                <Link href="/register" className="register-link">
+                  <UserAddOutlined className="mr-1" />
                   Chưa có tài khoản? Đăng ký
                 </Link>
-              </Grid>
-            </Grid>
+              </div>
+            </Box>
           </Box>
         </Box>
       </div>
     </div>
-
   );
 };
+
 export default Login;

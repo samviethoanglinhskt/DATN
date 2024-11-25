@@ -1,14 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Tooltip, message, Modal, Form, Input, Card, Space, Popconfirm, Image } from 'antd';
-import { 
-  EditOutlined, 
-  DeleteOutlined, 
-  PlusOutlined, 
-  FileImageOutlined, 
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  Button,
+  Tooltip,
+  message,
+  Modal,
+  Form,
+  Input,
+  Card,
+  Space,
+  Popconfirm,
+  Image,
+  Upload,
+} from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  FileImageOutlined,
   ReloadOutlined,
-  SearchOutlined
-} from '@ant-design/icons';
-import axiosInstance from 'src/config/axiosInstance';
+  SearchOutlined,
+} from "@ant-design/icons";
+import axiosInstance from "src/config/axiosInstance";
 
 interface LogoBanner {
   id: number;
@@ -24,16 +37,18 @@ const LogoBannerManagement: React.FC = () => {
   const [editModal, setEditModal] = useState(false);
   const [editingLogo, setEditingLogo] = useState<LogoBanner | null>(null);
   const [addModal, setAddModal] = useState(false);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [form] = Form.useForm();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchLogos = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/api/logo_banner');
+      const response = await axiosInstance.get("/api/logo_banner");
       setLogos(response.data);
     } catch (error: any) {
-      message.error('Không thể tải danh sách logo & banner');
+      message.error("Không thể tải danh sách logo & banner");
     } finally {
       setLoading(false);
     }
@@ -43,67 +58,130 @@ const LogoBannerManagement: React.FC = () => {
     fetchLogos();
   }, []);
 
-  const handleAdd = async (values: any) => {
+  // Hàm xử lý upload ảnh
+  const handleImageSelect = async (file: File) => {
+    setSelectedFile(file);
+    // Tạo preview URL cho ảnh đã chọn
+    const previewURL = URL.createObjectURL(file);
+    setPreviewImage(previewURL);
+    return false; // Ngăn upload tự động
+  };
+
+  // Hàm upload ảnh lên server
+  // Cập nhật uploadImage
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
     try {
-      await axiosInstance.post('/api/logo_banner', {
-        name: values.name,
-        image: values.image
-      });
-      message.success('Thêm logo/banner thành công');
-      setAddModal(false);
-      form.resetFields();
-      fetchLogos();
+      const response = await axiosInstance.post("/api/upload-image", formData); // Không cần thiết lập "Content-Type" nếu là FormData
+      return response.data.url;
     } catch (error) {
-      message.error('Không thể thêm logo/banner');
+      throw new Error("Không thể tải lên hình ảnh");
     }
   };
 
+  // Xử lý thêm mới
+  // Xử lý thêm mới
+  const handleAdd = async (values: any) => {
+    try {
+      setLoading(true);
+
+      if (!selectedFile) {
+        message.error("Vui lòng chọn hình ảnh");
+        return;
+      }
+
+      // Upload ảnh trước
+      let imageUrl = "";
+            // Log dữ liệu trước khi tạo logo/banner mới
+    console.log("Dữ liệu logo/banner cần thêm:", {
+      name: values.name.trim(),
+      image: imageUrl,
+    });
+
+      try {
+        const formData = new FormData();
+      formData.append('name', values.name.trim());
+        formData.append("image", selectedFile);
+        const uploadResponse = await axiosInstance.post(
+          "/api/upload-image",
+          formData
+        );
+        imageUrl = uploadResponse.data.url;
+      } catch (error) {
+        message.error("Không thể tải lên hình ảnh");
+        return;
+      } 
+
+     
+      const formData = new FormData();
+      formData.append('name', values.name.trim());
+      formData.append('image', selectedFile); // selectedFile là file ảnh
+      
+      fetch('http://localhost:8000/api/upload-image', {
+        method: 'POST',
+        body: formData,
+      }).then((response) => console.log(response));
+    } catch (error: any) {
+      console.error("Lỗi:", error);
+      message.error(error.message || "Không thể thêm logo/banner");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Xử lý cập nhật
   const handleEdit = async (values: any) => {
     try {
+      setLoading(true);
+      let imageUrl = editingLogo?.image;
+
+      if (selectedFile) {
+        imageUrl = await uploadImage(selectedFile);
+      }
+
       if (editingLogo) {
         await axiosInstance.put(`/api/logo_banner/${editingLogo.id}`, {
           name: values.name,
-          image: values.image
+          image: imageUrl,
         });
-        message.success('Cập nhật logo/banner thành công');
-        setEditModal(false);
-        form.resetFields();
-        fetchLogos();
       }
+
+      message.success("Cập nhật logo/banner thành công");
+      setEditModal(false);
+      form.resetFields();
+      setSelectedFile(null);
+      setPreviewImage(null);
+      fetchLogos();
     } catch (error) {
-      message.error('Không thể cập nhật logo/banner');
+      message.error("Không thể cập nhật logo/banner");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
       await axiosInstance.delete(`/api/logo_banner/${id}`);
-      message.success('Xóa logo/banner thành công');
+      message.success("Xóa logo/banner thành công");
       fetchLogos();
     } catch (error) {
-      message.error('Không thể xóa logo/banner');
+      message.error("Không thể xóa logo/banner");
     }
   };
 
-  const validateImageUrl = (_: any, value: string) => {
-    if (!value) return Promise.reject('Vui lòng nhập URL hình ảnh!');
-    
-    const urlPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i;
-    if (!urlPattern.test(value)) {
-      return Promise.reject('URL hình ảnh không hợp lệ!');
-    }
-    return Promise.resolve();
+  const resetModal = () => {
+    form.resetFields();
+    setSelectedFile(null);
+    setPreviewImage(null);
   };
-
-  const filteredLogos = logos.filter(logo =>
-    logo.name.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   const columns = [
     {
-      title: 'Hình ảnh',
-      dataIndex: 'image',
-      key: 'image',
+      title: "Hình ảnh",
+      dataIndex: "image",
+      key: "image",
       width: 120,
       render: (image: string) => (
         <Image
@@ -111,15 +189,15 @@ const LogoBannerManagement: React.FC = () => {
           alt="Logo"
           width={80}
           height={80}
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: "cover" }}
           fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADA..."
         />
       ),
     },
     {
-      title: 'Tên',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Tên",
+      dataIndex: "name",
+      key: "name",
       render: (text: string) => (
         <Space>
           <FileImageOutlined />
@@ -129,25 +207,28 @@ const LogoBannerManagement: React.FC = () => {
       sorter: (a: LogoBanner, b: LogoBanner) => a.name.localeCompare(b.name),
     },
     {
-      title: 'URL Hình ảnh',
-      dataIndex: 'image',
-      key: 'imageUrl',
+      title: "URL Hình ảnh",
+      dataIndex: "image",
+      key: "imageUrl",
       ellipsis: true,
       render: (url: string) => (
         <Tooltip title={url}>
-          <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            {url}
+          </a>
         </Tooltip>
       ),
     },
     {
-      title: 'Ngày tạo',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (date: string) => date ? new Date(date).toLocaleDateString('vi-VN') : 'N/A',
+      title: "Ngày tạo",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (date: string) =>
+        date ? new Date(date).toLocaleDateString("vi-VN") : "N/A",
     },
     {
-      title: 'Thao tác',
-      key: 'actions',
+      title: "Thao tác",
+      key: "actions",
       width: 150,
       render: (_: any, record: LogoBanner) => (
         <Space>
@@ -159,6 +240,7 @@ const LogoBannerManagement: React.FC = () => {
               onClick={() => {
                 setEditingLogo(record);
                 form.setFieldsValue(record);
+                setPreviewImage(record.image);
                 setEditModal(true);
               }}
             />
@@ -170,17 +252,27 @@ const LogoBannerManagement: React.FC = () => {
             okText="Đồng ý"
             cancelText="Hủy"
           >
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              size="small"
-            />
+            <Button danger icon={<DeleteOutlined />} size="small" />
           </Popconfirm>
         </Space>
       ),
     },
   ];
 
+  const renderUploadButton = () => (
+    <div>
+      <Button icon={<PlusOutlined />}>Chọn ảnh</Button>
+      {previewImage && (
+        <div style={{ marginTop: 8 }}>
+          <img
+            src={previewImage}
+            alt="preview"
+            style={{ maxWidth: "100%", maxHeight: 200 }}
+          />
+        </div>
+      )}
+    </div>
+  );
   return (
     <Card
       title={
@@ -198,10 +290,7 @@ const LogoBannerManagement: React.FC = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 200 }}
           />
-          <Button
-            icon={<ReloadOutlined />}
-            onClick={fetchLogos}
-          >
+          <Button icon={<ReloadOutlined />} onClick={fetchLogos}>
             Làm mới
           </Button>
           <Button
@@ -209,7 +298,7 @@ const LogoBannerManagement: React.FC = () => {
             icon={<PlusOutlined />}
             onClick={() => {
               setAddModal(true);
-              form.resetFields();
+              resetModal();
             }}
           >
             Thêm mới
@@ -219,7 +308,7 @@ const LogoBannerManagement: React.FC = () => {
     >
       <Table
         columns={columns}
-        dataSource={filteredLogos}
+        dataSource={logos}
         rowKey="id"
         loading={loading}
         pagination={{
@@ -237,42 +326,35 @@ const LogoBannerManagement: React.FC = () => {
         onOk={() => form.submit()}
         onCancel={() => {
           setAddModal(false);
-          form.resetFields();
+          resetModal();
         }}
         okText="Thêm"
         cancelText="Hủy"
+        confirmLoading={loading}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleAdd}
-        >
+        <Form form={form} layout="vertical" onFinish={handleAdd}>
           <Form.Item
             name="name"
-            label="Tên"
-            rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+            label="Tên Logo/Banner"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên logo/banner" },
+            ]}
           >
             <Input placeholder="Nhập tên logo/banner" />
           </Form.Item>
+
           <Form.Item
-            name="image"
-            label="URL Hình ảnh"
-            rules={[
-              { validator: validateImageUrl }
-            ]}
+            label="Chọn Hình Ảnh"
+            required
+            rules={[{ required: true, message: "Vui lòng tải lên hình ảnh" }]}
           >
-            <Input placeholder="Nhập URL hình ảnh (https://example.com/image.jpg)" />
-          </Form.Item>
-          <Form.Item label="Xem trước">
-            {form.getFieldValue('image') && (
-              <Image
-                src={form.getFieldValue('image')}
-                alt="Preview"
-                width={200}
-                style={{ marginTop: 8 }}
-                fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADA..."
-              />
-            )}
+            <Upload
+              beforeUpload={(file) => handleImageSelect(file)}
+              showUploadList={false}
+              accept="image/*"
+            >
+              {renderUploadButton()}
+            </Upload>
           </Form.Item>
         </Form>
       </Modal>
@@ -284,42 +366,31 @@ const LogoBannerManagement: React.FC = () => {
         onOk={() => form.submit()}
         onCancel={() => {
           setEditModal(false);
-          form.resetFields();
+          resetModal();
         }}
-        okText="Lưu"
+        okText="Cập nhật"
         cancelText="Hủy"
+        confirmLoading={loading}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleEdit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleEdit}>
           <Form.Item
             name="name"
-            label="Tên"
-            rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+            label="Tên Logo/Banner"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên logo/banner" },
+            ]}
           >
             <Input placeholder="Nhập tên logo/banner" />
           </Form.Item>
-          <Form.Item
-            name="image"
-            label="URL Hình ảnh"
-            rules={[
-              { validator: validateImageUrl }
-            ]}
-          >
-            <Input placeholder="Nhập URL hình ảnh (https://example.com/image.jpg)" />
-          </Form.Item>
-          <Form.Item label="Xem trước">
-            {form.getFieldValue('image') && (
-              <Image
-                src={form.getFieldValue('image')}
-                alt="Preview"
-                width={200}
-                style={{ marginTop: 8 }}
-                fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADA..."
-              />
-            )}
+
+          <Form.Item label="Chọn Hình Ảnh" required>
+            <Upload
+              beforeUpload={(file) => handleImageSelect(file)}
+              showUploadList={false}
+              accept="image/*"
+            >
+              {renderUploadButton()}
+            </Upload>
           </Form.Item>
         </Form>
       </Modal>
