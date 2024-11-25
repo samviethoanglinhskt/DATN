@@ -2,16 +2,23 @@ import { ReactNode } from "react";
 
 export interface OrderDetail {
   id: number;
+  quantity: number;
+  price: number;
   product: {
+    id: number;
     name: string;
     image: string;
   };
   variant: {
-    size?: { name: string };
-    color?: { name: string };
+    id: number;
+    price: number;
+    size: {
+      name: string;
+    };
+    color: {
+      name: string;
+    } | null;
   };
-  quantity: number;
-  price: number;
 }
 
 export interface Order {
@@ -35,7 +42,7 @@ export interface StatusConfig {
   textColor: string;
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | "Chờ xử lý"
   | "Đã Xử Lí"
   | "Đang Giao Hàng"
