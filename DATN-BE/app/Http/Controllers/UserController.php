@@ -11,10 +11,11 @@ use App\Http\Requests\RuleRegister;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\RuleUpdateTaiKhoan;
+use App\Models\tb_address_user;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     /**
@@ -69,26 +70,36 @@ class UserController extends Controller
     public function register(RuleRegister $request)
     {
         try {
-            // Tạo người dùng mới
-            $account = User::create([
-                'name' => $request->name,
-                'tb_role_id' => 2,
-                'password' => Hash::make($request->password),
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'email' => $request->email,
+            // Bắt đầu transaction 
+            DB::beginTransaction();
 
+            // Tạo người dùng mới 
+            $account = User::create([ 
+                'name' => $request->name, 
+                'tb_role_id' => 2, 
+                'password' => Hash::make($request->password), 
+                'phone' => $request->phone, 
+                'email' => $request->email, 
             ]);
 
+            // Lưu địa chỉ người dùng vào bảng tb_address_users 
+            $address = tb_address_user::create([ 
+                'user_id' => $account->id, 
+                'address' => $request->address, 
+                'address_detail' => $request->address_detail, 
+            ]);
+
+            // Commit transaction 
+            DB::commit();
             // Trả về phản hồi thành công
-            return response()->json([
-                'success' => true,
-                'message' => 'Đăng ký thành công!',
-                'data' => [
-                    'account' => $account,
-                    // Có thể thêm thông tin khác nếu cần
-                ]
-            ], 201); // 201 Created
+            return response()->json([ 
+                'success' => true, 
+                'message' => 'Đăng ký thành công!', 
+                'data' => [ 
+                    'account' => $account, 
+                    'address' => $address, 
+                    ] 
+                ], 201); // 201 Created
         } catch (\Exception $e) {
             \Log::error('Registration error: ' . $e->getMessage());
             return response()->json([
