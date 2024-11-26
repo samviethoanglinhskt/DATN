@@ -17,6 +17,7 @@ use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\Paymentcontroller;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariantsController;
@@ -52,6 +53,7 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
+
 //logo_banner
 Route::resource('logo_banner', LogoBannerController::class);
 Route::post('/upload-image', [LogoBannerController::class, 'storeImage'])->name('uploat_image');
@@ -110,3 +112,8 @@ Route::middleware('auth:api')->group(function () {
     // Route để lấy các bình luận trả lời của một bình luận
     Route::get('comments/{comment_id}/replies', [CommentController::class, 'showReplies']);
 });
+
+// review
+Route::get('/reviews/product/{product_id}', [ReviewController::class, 'index']);
+
+Route::post('/reviews', [ReviewController::class, 'store']);

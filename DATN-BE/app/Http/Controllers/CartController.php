@@ -479,6 +479,15 @@ class CartController extends Controller
                     return redirect('http://localhost:5173/payment-success');
                 }
             } else {
+                $order = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->get();
+                if ($order->isNotEmpty()) {
+                    foreach ($order as $orders) {
+                        // Xóa các chi tiết đơn hàng liên quan 
+                        tb_oderdetail::where('tb_oder_id', $orders->id)->delete();
+                        // Xóa đơn hàng 
+                        $orders->delete();
+                    }
+                }
                 // echo "GD Khong thanh cong";
                 return redirect('http://localhost:5173/payment-failure');
             }
