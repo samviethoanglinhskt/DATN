@@ -153,10 +153,12 @@ class UserController extends Controller
                     'message' => 'Người dùng không tồn tại',
                 ], 404);
             }
+            $address = $user->address; // Loại bỏ địa chỉ khỏi đối tượng người dùng
+            unset($user->address);
             return response()->json([
                 'success' => true,
                 'message' => 'Hiển thị thông tin người dùng thành công',
-                'data' => $user,
+                'data' => [ 'user' => $user, 'address' => $address, ],
             ], 200); // 200 OK
         } catch (\Exception $e) {
             return response()->json([
