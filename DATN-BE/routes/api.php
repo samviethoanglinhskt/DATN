@@ -19,6 +19,7 @@ use App\Http\Controllers\Paymentcontroller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariantsController;
 use App\Http\Middleware\CheckAdmin;
@@ -113,7 +114,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('comments/{comment_id}/replies', [CommentController::class, 'showReplies']);
 });
 
-// review
-Route::get('/reviews/product/{product_id}', [ReviewController::class, 'index']);
 
-Route::post('/reviews', [ReviewController::class, 'store']);
+// thống kê
+// doanh thu  theo ngày, tháng , năm
+Route::get('/statistics/revenue', [StatisticsController::class, 'revenueByDay']);
+// top 10 sản phẩm bán chạy
+Route::get('/statistics/top-selling-products', [StatisticsController::class, 'topSellingProductsByMonth']);
+// tổng đơn hàng, tổng tài khoản, tỉ lệ thành công,hủy của đơn hàng
+Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatistics']);
+
