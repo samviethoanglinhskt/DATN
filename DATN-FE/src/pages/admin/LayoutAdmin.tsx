@@ -48,6 +48,15 @@ const LayoutAdmin: React.FC = () => {
 
   const menuItems = [
     {
+      key: "0",
+      icon: <AppstoreOutlined />,
+      label: (
+        <NavLink to="dashboard" className="text-decoration-none">
+          Thống kê
+        </NavLink>
+      ),
+    },
+    {
       key: "1",
       icon: <AppstoreOutlined />,
       label: (

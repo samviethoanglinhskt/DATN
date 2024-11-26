@@ -1,6 +1,6 @@
 import { Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
@@ -14,90 +14,133 @@ import {
   LogoutOutlined,
 } from "@mui/icons-material";
 
+// Cache constants
+const CACHE_KEYS = {
+  CATEGORIES: "cached_categories",
+  FAVORITE_COUNT: "cached_favorite_count",
+};
+
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
+// Cache utility functions
+const getCache = (key: string) => {
+  const cached = localStorage.getItem(key);
+  if (!cached) return null;
+
+  try {
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_DURATION) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return data;
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
+};
+
+const setCache = (key: string, data: any) => {
+  localStorage.setItem(
+    key,
+    JSON.stringify({
+      data,
+      timestamp: Date.now(),
+    })
+  );
+};
+
 const Header: React.FC = () => {
   const { user, setUser } = useUser();
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
-  // Hàm thêm sản phẩm vào yêu thích
-  const { data: favoriteCount } = useQuery({
-    queryKey: ["favoriteCount"],
-    queryFn: async () => {
-      try {
-        const response = await axiosInstance.get("/api/favorites/count", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        return response.data.count; // Giả sử API trả về { count: số_lượng_yêu_thích }
-      } catch (error) {
-        console.error("Error fetching favorite count:", error);
-        return 0;
-      }
-    },
-    refetchOnWindowFocus: false,
-    staleTime: 30000, // Cập nhật dữ liệu sau mỗi 30s
-  });
-  // State to manage the open status of the menu
+  const queryClient = useQueryClient();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [isFixed, setIsFixed] = useState(false); // Trạng thái cố định menu
-  const [topOffset, setTopOffset] = useState(0); // Độ cao của top-bar
+  const [isFixed, setIsFixed] = useState(false);
+  const [topOffset, setTopOffset] = useState(0);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget); // Open the menu
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null); // Close the menu
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-    navigate("/login");
-    window.location.reload();
-  };
-
+  // Enhanced categories query with caching
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
     queryFn: async () => {
+      const cachedCategories = getCache(CACHE_KEYS.CATEGORIES);
+      if (cachedCategories) {
+        return cachedCategories;
+      }
+
       try {
         const response = await axiosInstance.get("/api/category");
+        setCache(CACHE_KEYS.CATEGORIES, response.data);
         return response.data;
       } catch (error) {
         console.log(error);
         throw new Error("Call API thất bại");
       }
     },
+    staleTime: CACHE_DURATION,
+    cacheTime: CACHE_DURATION,
+    retry: 1,
   });
+
+  // Cleanup caches
+  useEffect(() => {
+    return () => {
+      Object.values(CACHE_KEYS).forEach((key) => {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          try {
+            const { timestamp } = JSON.parse(cached);
+            if (Date.now() - timestamp > CACHE_DURATION) {
+              localStorage.removeItem(key);
+            }
+          } catch {
+            localStorage.removeItem(key);
+          }
+        }
+      });
+    };
+  }, []);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Enhanced logout with cache clearing
+  const handleLogout = () => {
+    Object.values(CACHE_KEYS).forEach((key) => {
+      localStorage.removeItem(key);
+    });
+    localStorage.removeItem("token");
+    setUser(null);
+    queryClient.clear();
+    navigate("/login");
+    window.location.reload();
+  };
 
   const handleCartClick = () => {
     if (!user) {
       alert("Bạn phải đăng nhập để vào giỏ hàng");
-      // navigate("/login");
     } else {
       navigate("/cart");
     }
   };
 
-  // Xử lý logic cố định menu khi cuộn
   useEffect(() => {
     const topBar = document.querySelector(".top-bar") as HTMLElement | null;
     const posWrapHeader = topBar ? topBar.offsetHeight : 0;
     setTopOffset(posWrapHeader);
 
     const handleScroll = () => {
-      if (window.scrollY > posWrapHeader) {
-        setIsFixed(true);
-      } else {
-        setIsFixed(false);
-      }
+      setIsFixed(window.scrollY > posWrapHeader);
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   if (isLoading) return <div>Loading...</div>;
@@ -112,7 +155,9 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""}`}
+        className={`container-menu-desktop ${
+          isFixed ? "fix-menu-desktop" : ""
+        }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -130,7 +175,6 @@ const Header: React.FC = () => {
                     <Typography color="white">Hi, {user.data.name}</Typography>
                   </Grid>
                   <Grid item>
-                    {/* Add hover effect to trigger the menu */}
                     <IconButton
                       sx={{
                         color: "white",
@@ -139,7 +183,6 @@ const Header: React.FC = () => {
                     >
                       <AccountCircleIcon />
                     </IconButton>
-                    {/* Menu for logout and password reset */}
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
@@ -174,7 +217,6 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-
                         <ArrowCircleDownOutlined
                           style={{
                             fontSize: "18px",
@@ -277,7 +319,6 @@ const Header: React.FC = () => {
                     ))}
                   </ul>
                 </li>
-
                 <li>
                   <a href="shoping-cart.html">Thương hiệu</a>
                 </li>
@@ -308,8 +349,7 @@ const Header: React.FC = () => {
               </a>
               <a
                 href="/love"
-                className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-                data-notify={isLoading ? 0 : favoriteCount} // Cập nhật số lượng yêu thích
+                className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"  
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
               </a>
@@ -318,13 +358,16 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* header mobie */}
+      {/* Header Mobile */}
       <div className="wrap-header-mobile">
+        {/* Logo moblie */}
         <div className="logo-mobile">
           <a href="/">
             <img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" />
           </a>
         </div>
+
+        {/* Icon header */}
         <div className="wrap-icon-header flex-w flex-r-m m-r-15">
           <div className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
             <i className="zmdi zmdi-search"></i>
@@ -365,6 +408,7 @@ const Header: React.FC = () => {
               <a href="#" className="flex-c-m p-lr-10 trans-04">
                 Help & FAQs
               </a>
+              // Tiếp tục từ phần Menu Mobile
               <a href="#" className="flex-c-m p-lr-10 trans-04">
                 My Account
               </a>
@@ -380,47 +424,65 @@ const Header: React.FC = () => {
 
         <ul className="main-menu-m">
           <li>
-            <a href="index.html">Home</a>
+            <a href="/">Trang chủ</a>
+          </li>
+          <li>
+            <a href="#">Sản phẩm</a>
             <ul className="sub-menu-m">
-              <li>
-                <a href="index.html">Homepage 1</a>
-              </li>
-              <li>
-                <a href="home-02.html">Homepage 2</a>
-              </li>
-              <li>
-                <a href="home-03.html">Homepage 3</a>
-              </li>
+              {data.map((category: Category) => (
+                <li key={category.id}>
+                  <Link to={`/category/${category.id}`}>{category.name}</Link>
+                </li>
+              ))}
             </ul>
             <span className="arrow-main-menu-m">
               <i className="fa fa-angle-right" aria-hidden="true"></i>
             </span>
           </li>
           <li>
-            <a href="product.html">Shop</a>
+            <a href="#">Thương hiệu</a>
           </li>
           <li>
-            <a
-              href="shoping-cart.html"
-              className="label1 rs1"
-              data-label1="hot"
-            >
-              Features
-            </a>
+            <Link to="/blog">Bài viết</Link>
           </li>
           <li>
-            <a href="/blog">Blog</a>
+            <Link to="/about">Giới thiệu</Link>
           </li>
           <li>
-            <a href="about.html">About</a>
-          </li>
-          <li>
-            <a href="contact.html">Contact</a>
+            <Link to="/contact">Liên hệ</Link>
           </li>
         </ul>
       </div>
+
+      {/* Modal Search */}
+      <div className="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+        <div className="container-search-header">
+          <button className="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+            <img src="src/assets/images/icons/icon-close2.png" alt="CLOSE" />
+          </button>
+
+          <form className="wrap-search-header flex-w p-l-15">
+            <button className="flex-c-m trans-04">
+              <i className="zmdi zmdi-search"></i>
+            </button>
+            <input
+              className="plh3"
+              type="text"
+              name="search"
+              placeholder="Tìm kiếm..."
+            />
+          </form>
+        </div>
+      </div>
     </header>
   );
+};
+
+// Override React Query's default stale time for this component
+export const headerQueryConfig = {
+  queries: {
+    staleTime: CACHE_DURATION,
+  },
 };
 
 export default Header;

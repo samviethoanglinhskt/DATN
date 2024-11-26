@@ -67,7 +67,7 @@ const NewProduct = () => {
       message.error(error.message || "Có lỗi xảy ra!");
     },
   });
-  
+
   const handleFavoriteClick = async (
     e: React.MouseEvent,
     productId: number
@@ -124,7 +124,7 @@ const NewProduct = () => {
                     className="btn wishlist-btn position-absolute top-0 end-0 m-2"
                     onClick={(e) => handleFavoriteClick(e, product.id)}
                   >
-                    <i className="far fa-heart"></i>
+                    <i className="zmdi zmdi-favorite-outline"></i>
                   </button>
                 </div>
                 <div className="card-body text-center">

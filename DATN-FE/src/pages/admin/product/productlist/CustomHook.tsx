@@ -1,11 +1,41 @@
 import { useState, useEffect } from 'react';
 import { message } from 'antd';
 import { IProduct, IProductDetail } from './Type';
+
+import { CACHE_KEYS, getCache, CACHE_DURATION } from './CacheUtils';
 import { ProductService } from './ProductServie';
 
+export const useProductCacheCleanup = () => {
+  useEffect(() => {
+    const cleanup = () => {
+      Object.values(CACHE_KEYS).forEach(key => {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          try {
+            const { timestamp } = JSON.parse(cached);
+            if (Date.now() - timestamp > CACHE_DURATION) {
+              localStorage.removeItem(key);
+            }
+          } catch {
+            localStorage.removeItem(key);
+          }
+        }
+      });
+    };
+
+    cleanup();
+    const interval = setInterval(cleanup, CACHE_DURATION);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+};
 
 export const useProductList = () => {
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<IProduct[]>(() => {
+    return getCache<IProduct[]>(CACHE_KEYS.PRODUCTS) || [];
+  });
   const [loading, setLoading] = useState(false);
 
   const fetchProducts = async () => {
@@ -21,7 +51,9 @@ export const useProductList = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    if (!getCache(CACHE_KEYS.PRODUCTS)) {
+      fetchProducts();
+    }
   }, []);
 
   return {
@@ -59,10 +91,18 @@ export const useProductDetail = () => {
 };
 
 export const useProductMasterData = () => {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [brands, setBrands] = useState<any[]>([]);
-  const [sizes, setSizes] = useState<any[]>([]);
-  const [colors, setColors] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>(() => 
+    getCache(CACHE_KEYS.CATEGORIES) || []
+  );
+  const [brands, setBrands] = useState<any[]>(() => 
+    getCache(CACHE_KEYS.BRANDS) || []
+  );
+  const [sizes, setSizes] = useState<any[]>(() => 
+    getCache(CACHE_KEYS.SIZES) || []
+  );
+  const [colors, setColors] = useState<any[]>(() => 
+    getCache(CACHE_KEYS.COLORS) || []
+  );
   const [loading, setLoading] = useState(false);
 
   const fetchMasterData = async () => {
@@ -87,8 +127,10 @@ export const useProductMasterData = () => {
   };
 
   useEffect(() => {
-    fetchMasterData();
-  }, []);
+    if (!categories.length || !brands.length || !sizes.length || !colors.length) {
+      fetchMasterData();
+    }
+  }, [categories.length, brands.length, sizes.length, colors.length]);
 
   return {
     categories,

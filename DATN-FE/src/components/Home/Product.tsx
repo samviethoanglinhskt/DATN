@@ -12,83 +12,63 @@ import {
   Slider,
   Breadcrumb,
   Skeleton,
+  Badge,
+  Tooltip
 } from "antd";
+import { HeartOutlined, ShoppingCartOutlined, SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
+import "./Productlist.css";
 
 const { Option } = Select;
 
 const ProductList = () => {
+  // Giữ nguyên các state và logic cũ
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const itemsPerPage = 6;
+  const itemsPerPage = 8; // Tăng số sản phẩm mỗi trang
 
-  // Query lấy thương hiệu
+  // Giữ nguyên các query
   const { data: brands, isLoading: loadingBrands } = useQuery({
     queryKey: ["brands"],
     queryFn: async () => {
       const response = await instance.get("http://127.0.0.1:8000/api/brand");
-      console.log("Thương hiệu:", response.data); // Log thương hiệu
       return response.data;
     },
   });
 
-  // Query lấy sản phẩm
   const { data: allProducts, isLoading: loadingProducts } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const response = await instance.get(
-        "http://127.0.0.1:8000/api/product-list"
-      );
-      console.log("Tất cả sản phẩm:", response.data.data); // Log tất cả sản phẩm
+      const response = await instance.get("http://127.0.0.1:8000/api/product-list");
       return response.data.data;
     },
   });
 
-  // Lọc sản phẩm
+  // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
-    ? allProducts.filter(
-      (product: Product) => product.tb_category_id === Number(id)
-    )
+    ? allProducts.filter((product: Product) => product.tb_category_id === Number(id))
     : [];
 
-  console.log("Sản phẩm theo danh mục:", filteredProductsByCategory);
-
-  const filteredProductsByBrand =
-    selectedBrands.length > 0
-      ? filteredProductsByCategory.filter((product: Product) =>
-        selectedBrands.includes(product.tb_brand_id)
-      )
-      : filteredProductsByCategory;
-
-  console.log("Sản phẩm theo thương hiệu:", filteredProductsByBrand);
+  const filteredProductsByBrand = selectedBrands.length > 0
+    ? filteredProductsByCategory.filter((product: Product) =>
+      selectedBrands.includes(product.tb_brand_id)
+    )
+    : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
     const price = product.variants?.[0]?.price || 0;
-    console.log(`Sản phẩm ${product.name} có giá: ${price}`); // Kiểm tra giá sản phẩm
     return price >= priceRange[0] && price <= priceRange[1];
   });
 
-  console.log("Sản phẩm theo giá:", filteredByPrice);
-
-  // Kiểm tra việc tìm kiếm
   const searchedProducts = filteredByPrice.filter((product: Product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  console.log("Sản phẩm tìm kiếm:", searchedProducts);
-
-  // Kiểm tra giá trị của `searchQuery` (giả sử là trống)
-  console.log("Tìm kiếm với từ khóa:", searchQuery);
-
-  // Kiểm tra giá trị `priceRange`
-  console.log("Khoảng giá:", priceRange);
 
   const sortedProducts = [...searchedProducts].sort((a, b) => {
     const priceA = a.variants?.[0]?.price || 0;
@@ -96,154 +76,176 @@ const ProductList = () => {
     return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
   });
 
-  console.log("Sản phẩm sắp xếp:", sortedProducts);
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = sortedProducts.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
-  console.log("Sản phẩm phân trang:", paginatedProducts);
-
-  // Skeleton loader
+  // Skeleton loader với thiết kế mới
   const renderSkeleton = () => (
     <Col xs={24} sm={12} md={8} lg={6}>
-      <Card>
-        <Skeleton.Image style={{ width: "100%", height: 300 }} />
+      <Card className="product-card-skeleton">
+        <Skeleton.Image style={{ width: "100%", height: 250 }} active />
         <Skeleton active paragraph={{ rows: 2 }} />
       </Card>
     </Col>
   );
 
-  if (loadingProducts || loadingBrands)
+  if (loadingProducts || loadingBrands) {
     return (
-      <Row gutter={[48, 48]}>
-        {Array.from({ length: itemsPerPage }).map((_, index) => (
-          <React.Fragment key={index}>{renderSkeleton()}</React.Fragment>
-        ))}
-      </Row>
+      <div className="products-container">
+        <Row gutter={[24, 24]}>
+          {Array.from({ length: itemsPerPage }).map((_, index) => (
+            <React.Fragment key={index}>{renderSkeleton()}</React.Fragment>
+          ))}
+        </Row>
+      </div>
     );
+  }
 
   return (
-    <section
-      className="py-5 bg-light"
-      style={{
-        minHeight: "100vh",
-        padding: "40px 20px", // Giảm padding trên và dưới để cân bằng hơn
-        marginTop: "40px", // Thêm marginTop để đẩy phần giao diện xuống
-      }}
-    >
-      <div className="container" style={{ width: "70%" }}>
-        {/* Breadcrumb */}
-        <Breadcrumb style={{ marginBottom: "20px" }}>
-          <Breadcrumb.Item onClick={() => navigate("/")}>
-            Trang chủ
-          </Breadcrumb.Item>
+    <div className="products-page">
+      {/* Header Area */}
+      <div className="products-header">
+        <Breadcrumb>
+          <Breadcrumb.Item onClick={() => navigate("/")}>Trang chủ</Breadcrumb.Item>
           <Breadcrumb.Item>Danh mục sản phẩm</Breadcrumb.Item>
           <Breadcrumb.Item>{id ? `ID: ${id}` : "Tất cả"}</Breadcrumb.Item>
         </Breadcrumb>
 
-        <Row gutter={[32, 32]}>
-          {/* Sidebar */}
-          <Col span={6} style={{ marginTop: "40px" }}>
-            <Card style={{ padding: "10px" }}>
-              <h5>Sắp xếp giá:</h5>
-              <Select
-                style={{ width: "100%", marginBottom: "10px" }}
-                value={sortOrder}
-                onChange={(value) => setSortOrder(value as "asc" | "desc")}
-              >
-                <Option value="asc">Thấp đến cao</Option>
-                <Option value="desc">Cao đến thấp</Option>
-              </Select>
-              <h5>Chọn thương hiệu:</h5>
-              <Checkbox.Group
-                options={brands.map((brand: { id: number; name: string }) => ({
-                  label: brand.name,
-                  value: brand.id,
-                }))}
-                value={selectedBrands}
-                onChange={(checkedValues) =>
-                  setSelectedBrands(checkedValues as number[])
-                }
-              />
-              <h5>Khoảng giá:</h5>
-              <Slider
-                range
-                min={0}
-                max={10000000}
-                step={10}
-                defaultValue={priceRange}
-                onChange={(value) => setPriceRange(value as [number, number])}
-              />
-              <div>
-                Giá từ: ${priceRange[0]} - ${priceRange[1]}
-              </div>
-            </Card>
-          </Col>
+        <div className="header-controls">
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder="Tìm kiếm sản phẩm..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+      </div>
 
-          {/* Product List */}
-          <Col span={18} style={{ marginTop: "40px" }}>
-            <div className="d-flex justify-content-end mb-4">
-              <Input
-                style={{ width: 300 }}
-                placeholder="Tìm kiếm sản phẩm..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+      <Row gutter={24} className="products-content">
+        {/* Sidebar Filters */}
+        <Col xs={24} md={6}>
+          <Card className="filters-card">
+            <div className="filter-section">
+              <h4><FilterOutlined /> Bộ lọc</h4>
+              
+              <div className="filter-group">
+                <h5>Sắp xếp giá</h5>
+                <Select
+                  className="sort-select"
+                  value={sortOrder}
+                  onChange={(value) => setSortOrder(value as "asc" | "desc")}
+                >
+                  <Option value="asc">Giá thấp đến cao</Option>
+                  <Option value="desc">Giá cao đến thấp</Option>
+                </Select>
+              </div>
+
+              <div className="filter-group">
+                <h5>Thương hiệu</h5>
+                <Checkbox.Group
+                  className="brand-checkboxes"
+                  options={brands.map((brand: { id: number; name: string }) => ({
+                    label: brand.name,
+                    value: brand.id,
+                  }))}
+                  value={selectedBrands}
+                  onChange={(checkedValues) => setSelectedBrands(checkedValues as number[])}
+                />
+              </div>
+
+              <div className="filter-group">
+                <h5>Khoảng giá</h5>
+                <Slider
+                  range
+                  min={0}
+                  max={10000000}
+                  step={100000}
+                  defaultValue={priceRange}
+                  onChange={(value) => setPriceRange(value as [number, number])}
+                  className="price-slider"
+                />
+                <div className="price-range-display">
+                  {priceRange[0].toLocaleString('vi-VN')}đ - {priceRange[1].toLocaleString('vi-VN')}đ
+                </div>
+              </div>
             </div>
-            <Row gutter={[48, 48]}>
-              {paginatedProducts.length > 0 ? (
-                paginatedProducts.map((product: Product) => (
-                  <div key={product.id} className="col product-item">
-                    <div className="card h-100 product-card border-0" style={{ width: "300px" }}>
-                      <div className="position-relative">
-                        <div className="product-image-wrapper">
+          </Card>
+        </Col>
+
+        {/* Product Grid */}
+        <Col xs={24} md={18}>
+          <Row gutter={[24, 24]}>
+            {paginatedProducts.length > 0 ? (
+              paginatedProducts.map((product: Product) => (
+                <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
+                  <Badge.Ribbon 
+                    text="Mới" 
+                    color="#f50" 
+                    className="product-badge"
+                  >
+                    <Card
+                      className="product-card"
+                      cover={
+                        <div className="product-image-container">
                           <img
                             src={`http://127.0.0.1:8000/storage/${product.image}`}
-                            className="card-img-top product-image"
                             alt={product.name}
+                            className="product-image"
                           />
                           <div className="product-overlay">
-                            <button className="btn btn-light buy-button">
-                              Mua Ngay
-                            </button>
+                            <div className="product-actions">
+                              <Tooltip title="Thêm vào giỏ hàng">
+                                <button className="action-button">
+                                  <ShoppingCartOutlined />
+                                </button>
+                              </Tooltip>
+                              <Tooltip title="Thêm vào yêu thích">
+                                <button className="action-button">
+                                  <HeartOutlined />
+                                </button>
+                              </Tooltip>
+                            </div>
                           </div>
                         </div>
-                        {/* <button className="btn wishlist-btn position-absolute top-0 end-0 m-2">
-                          <i className="far fa-heart"></i>
-                        </button> */}
-                      </div>
+                      }
+                      actions={[
+                        <button className="buy-now-button">
+                          Mua ngay
+                        </button>
+                      ]}
+                    >
+                      <Link to={`/product/${product.id}`} className="product-link">
+                        <h3 className="product-name">{product.name}</h3>
+                        <div className="product-price">
+                          {product.variants[0]?.price?.toLocaleString('vi-VN')}đ
+                        </div>
+                      </Link>
+                    </Card>
+                  </Badge.Ribbon>
+                </Col>
+              ))
+            ) : (
+              <div className="no-products">
+                <h3>Không tìm thấy sản phẩm nào khớp với bộ lọc.</h3>
+              </div>
+            )}
+          </Row>
 
-                      <div className="card-body text-center">
-                        <Link to={`/product/${product.id}`} className="product-link">
-                          <h5 className="product-title">{product.name}</h5>
-                        </Link>
-                        <p className="product-price fw-bold">
-                          ${product.variants[0]?.price}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center my-5">
-                  Không tìm thấy sản phẩm nào khớp với bộ lọc.
-                </div>
-              )}
-            </Row>
-            <Pagination
-              current={currentPage}
-              pageSize={itemsPerPage}
-              total={sortedProducts.length}
-              onChange={(page) => setCurrentPage(page)}
-              style={{ textAlign: "center", marginTop: "40px" }}
-            />
-          </Col>
-        </Row>
-      </div>
-    </section>
+          <Pagination
+            current={currentPage}
+            pageSize={itemsPerPage}
+            total={sortedProducts.length}
+            onChange={(page) => setCurrentPage(page)}
+            className="pagination"
+            showSizeChanger={false}
+          />
+        </Col>
+      </Row>
+    </div>
   );
 };
 
