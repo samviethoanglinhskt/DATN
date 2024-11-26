@@ -51,6 +51,8 @@ export interface OrderDetailModalProps {
   order: Order | null;
   visible: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onOpenRatingModal: (product: any, order_id: number, orderdetail_id: number) => void;
 }
 
 export interface CancellationModalProps {

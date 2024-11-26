@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class ReviewController extends Controller
 {
     //
-    public function index($product_id)
+    public function index(Request $request, $product_id)
     {
         // Kiểm tra sản phẩm có tồn tại không
         $product = tb_product::find($product_id);
@@ -22,10 +22,13 @@ class ReviewController extends Controller
             ], 404); // Nếu sản phẩm không tồn tại
         }
 
-        // Lấy tất cả các đánh giá của sản phẩm
+        // Số lượng đánh giá mỗi trang (mặc định là 10, có thể lấy từ query string)
+        $perPage = $request->input('per_page', 3);
+
+        // Lấy danh sách đánh giá phân trang
         $reviews = tb_review::where('tb_product_id', $product_id)
-            ->with('user')  // Lấy thông tin người dùng đã đánh giá
-            ->get();
+            ->with('user') // Lấy thông tin người dùng đã đánh giá
+            ->paginate($perPage); // Phân trang
 
         // Nếu không có đánh giá, trả về thông báo
         if ($reviews->isEmpty()) {
@@ -34,7 +37,7 @@ class ReviewController extends Controller
             ], 200);
         }
 
-        return response()->json($reviews, 200); // Trả về danh sách các đánh giá
+        return response()->json($reviews, 200); // Trả về danh sách các đánh giá (bao gồm thông tin phân trang)
     }
 
     // thêm đánh giá
@@ -53,7 +56,7 @@ class ReviewController extends Controller
         $order = tb_oder::find($validated['order_id']);
         $orderDetail = tb_oderdetail::findOrFail($request->id);
         // Nếu không tìm thấy đơn hàng hoặc trạng thái không phải "đã hoàn thành", trả về lỗi
-        if (!$order || $order->order_status !== 'Đã Hoàn Thành') {
+        if (!$order || $order->order_status !== 'Đã hoàn thành') {
             return response()->json([
                 'message' => 'Đơn hàng phải ở trạng thái "đã hoàn thành" để có thể đánh giá sản phẩm.'
             ], 400); // Trả về lỗi nếu đơn hàng chưa hoàn thành

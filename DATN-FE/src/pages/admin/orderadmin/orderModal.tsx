@@ -4,7 +4,6 @@ import { STATUS_CONFIG } from "./orderContant";
 import axios from "axios";
 import dayjs from "dayjs";
 import { OrderStatus } from "./ordertype";
-import { ShoppingCartOutlined } from "@mui/icons-material";
 
 interface OrderDetail {
   id: number;
@@ -175,7 +174,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                           const target = e.target as HTMLImageElement;
                           target.src = "/placeholder.png";
                         }}
-                      
+
                       />
                     </div>
                     <div className="flex-grow-1">

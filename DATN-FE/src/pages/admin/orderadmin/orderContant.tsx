@@ -13,31 +13,31 @@ export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
     bgColor: "bg-blue-50",
     textColor: "text-blue-600",
   },
-  "Đã Xử Lí": {
+  "Đã xử lý": {
     color: "warning",
     icon: <ShoppingOutlined />,
     bgColor: "bg-yellow-50",
     textColor: "text-yellow-600",
   },
-  "Đang Giao Hàng": {
+  "Đang giao hàng": {
     color: "processing",
     icon: <ShoppingOutlined />,
     bgColor: "bg-purple-50",
     textColor: "text-purple-600",
   },
-  "Chưa Thanh Toán": {
+  "Chưa thanh toán": {
     color: "error",
     icon: <ClockCircleOutlined />,
     bgColor: "bg-orange-50",
     textColor: "text-orange-600",
   },
-  "Đã Thanh Toán": {
+  "Đã thanh toán": {
     color: "success",
     icon: <CheckCircleOutlined />,
     bgColor: "bg-emerald-50",
     textColor: "text-emerald-600",
   },
-  "Đã Hoàn Thành": {
+  "Đã hoàn thành": {
     color: "success",
     icon: <CheckCircleOutlined />,
     bgColor: "bg-emerald-50",

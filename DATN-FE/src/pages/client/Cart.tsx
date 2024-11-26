@@ -130,7 +130,7 @@ const ShoppingCart: React.FC = () => {
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />
-                                  <div style={{ fontSize: "13px", display: "inline" }}>{item.name}</div>
+                                  <div style={{ fontSize: "13px", display: "inline" }}>{item.products.name}</div>
                                 </div>
                                 <div style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</div>
                               </td>

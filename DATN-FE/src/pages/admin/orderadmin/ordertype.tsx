@@ -44,11 +44,11 @@ export interface StatusConfig {
 
 export type OrderStatus =
   | "Chờ xử lý"
-  | "Đã Xử Lí"
-  | "Đang Giao Hàng"
-  | "Chưa Thanh Toán"
-  | "Đã Thanh Toán"
-  | "Đã Hoàn Thành"
+  | "Đã xử lý"
+  | "Đang giao hàng"
+  | "Chưa thanh toán"
+  | "Đã thanh toán"
+  | "Đã hoàn thành"
   | "Đã hủy đơn hàng";
 
 export interface ApiResponse {
