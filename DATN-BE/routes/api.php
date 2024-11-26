@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AddressUserController;
 use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
@@ -71,6 +72,8 @@ Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
 Route::get('/show-user', [UserController::class, 'showUser'])->name('show_User');
+//địa chỉ theo người dùng
+Route::resource('address', AddressUserController::class);
 
 Route::post('/add-cart', [CartController::class, 'addToCart'])->name('add_cart');
 Route::post('/list-to-guest', [CartController::class, 'listToGuest'])->name('list_to_guest');
