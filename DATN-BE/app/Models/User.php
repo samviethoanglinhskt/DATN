@@ -33,7 +33,6 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'phone',
-        'address',
         'password',
     ];
 
@@ -56,6 +55,11 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function address(){
+        return $this->hasMany(tb_address_user::class);
+     }
+     
     public function comments()
     {
         return $this->hasMany(tb_comment::class);
