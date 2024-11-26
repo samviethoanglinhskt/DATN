@@ -1,5 +1,4 @@
-/* OrderDetails.module.css */
-.orderCard {
+OrderDetails.module.css .orderCard {
   border: none !important;
   border-radius: 8px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
@@ -199,7 +198,7 @@
   .productImage {
     margin-bottom: 1rem;
   }
-  
+
   .productImg {
     width: 100% !important;
     height: 200px !important;
@@ -226,4 +225,29 @@
     margin-top: 0.5rem;
     text-align: left;
   }
+}
+
+.ratingButton {
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+}
+
+.ratingButton:hover {
+  background: linear-gradient(135deg, #e52e71, #ff8a00);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.ratingButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }

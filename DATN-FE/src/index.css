@@ -1,0 +1,19 @@
+.titlelove {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    background-image: none;
+    transition: all 0.3s ease;
+}
+
+/* Style cho các tiêu đề khác mà bạn muốn loại bỏ đường gạch chân */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
+    text-decoration: none;
+    color: inherit;
+}

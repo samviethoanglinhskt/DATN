@@ -39,7 +39,7 @@ class OderController extends Controller
                     'message' => 'Người dùng không tồn tại',
                 ], 404);
             }
-            $oder = tb_oder::with('oderDetails', 'oderDetails.product', 'oderDetails.variant', 'oderDetails.variant.size', 'oderDetails.variant.color')
+            $oder = tb_oder::with('oderDetails', 'oderDetails.product', 'oderDetails.variant', 'oderDetails.variant.size', 'oderDetails.variant.color', 'discount')
                 ->where('user_id', $user->id)
                 ->get();
             return response()->json([
@@ -104,20 +104,20 @@ class OderController extends Controller
      */
     public function showOrderDetails($id)
     {
-        try { 
+        try {
             $order = tb_oder::with('oderDetails.product', 'oderDetails.variant.size', 'oderDetails.variant.color')->findOrFail($id);
             return response()->json([
                 'success' => true,
                 'message' => 'Thông tin chi tiết đơn hàng',
                 'order' => $order,
             ]);
-        } catch (\Exception $e) { 
-            return response()->json([ 
-                'success' => false, 
-                'message' => 'Không tìm thấy đơn hàng', 
-                'error' => $e->getMessage() 
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy đơn hàng',
+                'error' => $e->getMessage()
             ], 404); // 404 Not Found 
-                
+
         }
     }
 
