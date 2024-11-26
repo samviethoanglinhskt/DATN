@@ -14,7 +14,10 @@ const ProductDetail = () => {
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [reviews, setReviews] = useState<any[]>([]); // Lưu danh sách đánh giá
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const reviewsPerPage = 3; // Số đánh giá mỗi trang
   const navigate = useNavigate();
 
 
@@ -45,20 +48,32 @@ const ProductDetail = () => {
       }
     };
 
-    const fetchReviews = async () => {
+    const fetchReviews = async (page: number) => {
       try {
-        const reviewResponse = await axiosInstance.get(`/api/reviews/product/${id}`);
-        setReviews(reviewResponse.data); // Lưu danh sách đánh giá
+        const response = await axiosInstance.get(`/api/reviews/product/${id}`, {
+          params: {
+            page,
+            per_page: reviewsPerPage,
+          },
+        });
+        setReviews(response.data.data); // Lưu danh sách đánh giá
+        setCurrentPage(response.data.current_page); // Cập nhật trang hiện tại
+        setTotalPages(response.data.last_page); // Cập nhật tổng số trang
       } catch (error) {
         console.error("Lỗi khi lấy danh sách đánh giá:", error);
       }
     };
     if (id) {
       fetchProduct();
-      fetchReviews();
+      fetchReviews(currentPage);
     }
+  }, [id, currentPage]);
 
-  }, [id]);
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   // useEffect(() => {
   //   console.log(reviews);
@@ -362,10 +377,10 @@ const ProductDetail = () => {
             <div className="tab01">
               <ul className="nav nav-tabs" role="tablist">
                 <li className="nav-item p-b-10">
-                  <a className="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a>
+                  <a className="nav-link active" data-toggle="tab" href="#description" role="tab">Mô tả</a>
                 </li>
                 <li className="nav-item p-b-10">
-                  <a className="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews (1)</a>
+                  <a className="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá</a>
                 </li>
               </ul>
               <div className="tab-content p-t-43">
@@ -385,7 +400,7 @@ const ProductDetail = () => {
                           reviews.map((review) => (
                             <div className="flex-w flex-t p-b-68" key={review.id}>
                               <div className="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
-                                <img src={iconUser} alt="User Icon" />
+                                <img src={iconUser} alt="User Icon" style={{ width: 50, height: 50 }} />
                               </div>
                               <div className="size-207">
                                 <div className="flex-w flex-sb-m p-b-17">
@@ -409,6 +424,25 @@ const ProductDetail = () => {
                         ) : (
                           <p className="stext-102 cl6">Không có đánh giá nào cho sản phẩm này.</p>
                         )}
+                      </div>
+                      <div className="flex-w flex-c-m m-t-20">
+                        <button
+                          className="flex-c-m stext-101 cl2 size-103 bg8 bor13 hov-btn3 trans-04 m-all-4"
+                          disabled={currentPage === 1}
+                          onClick={() => handlePageChange(currentPage - 1)}
+                        >
+                          Trước
+                        </button>
+                        <span className="stext-102 cl6 m-all-4">
+                          {currentPage} / {totalPages}
+                        </span>
+                        <button
+                          className="flex-c-m stext-101 cl2 size-103 bg8 bor13 hov-btn3 trans-04 m-all-4"
+                          disabled={currentPage === totalPages}
+                          onClick={() => handlePageChange(currentPage + 1)}
+                        >
+                          Sau
+                        </button>
                       </div>
                     </div>
                   </div>

@@ -228,9 +228,9 @@ OrderDetails.module.css .orderCard {
 }
 
 .ratingButton {
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  background: linear-gradient(135deg, #3677E2, #717FE0);
   color: white;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: bold;
   padding: 12px 24px;
   border: none;
@@ -239,10 +239,11 @@ OrderDetails.module.css .orderCard {
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-transform: uppercase;
+  width: 110px;
+  margin-top: 10px;
 }
 
 .ratingButton:hover {
-  background: linear-gradient(135deg, #e52e71, #ff8a00);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
