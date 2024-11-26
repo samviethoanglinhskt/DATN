@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
 import { Product, Variant } from "src/types/product";
+import iconUser from "src/assets/images/icons/user.png"
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,6 +13,8 @@ const ProductDetail = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [reviews, setReviews] = useState<any[]>([]); // Lưu danh sách đánh giá
   const navigate = useNavigate();
 
 
@@ -41,10 +44,25 @@ const ProductDetail = () => {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
       }
     };
+
+    const fetchReviews = async () => {
+      try {
+        const reviewResponse = await axiosInstance.get(`/api/reviews/product/${id}`);
+        setReviews(reviewResponse.data); // Lưu danh sách đánh giá
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách đánh giá:", error);
+      }
+    };
     if (id) {
       fetchProduct();
+      fetchReviews();
     }
+
   }, [id]);
+
+  // useEffect(() => {
+  //   console.log(reviews);
+  // })
 
   const updateVariant = (sizeId: string | null, colorId: string | null) => {
     if (!product) return;
@@ -144,10 +162,10 @@ const ProductDetail = () => {
   return (
     <div>
       {/* breadcrumb */}
-      <div className="container mt-5">
+      <div className="container" style={{ marginTop: 80 }}>
         <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
           <a href="/" className="stext-109 cl8 hov-cl1 trans-04">
-            Home
+            Trang chủ
             <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
           </a>
           <span className="stext-109 cl4">
@@ -308,7 +326,7 @@ const ProductDetail = () => {
                       </div>
                       <div style={{ display: 'flex', marginTop: "10px" }}>
                         <button onClick={handleAddToCart} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" style={{ width: "250px", margin: "0 20px 0 -100px" }}>
-                          Add to cart
+                          Thêm vào giỏ hàng
                         </button>
                         <button onClick={handleBuyNow} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
                           Mua ngay
@@ -354,7 +372,7 @@ const ProductDetail = () => {
                 <div className="tab-pane fade show active" id="description" role="tabpanel">
                   <div className="how-pos2 p-lr-15-md">
                     <p className="stext-102 cl6">
-                      Mô tả sp ở đây
+                      {product.description}
                     </p>
                   </div>
                 </div>
@@ -363,53 +381,34 @@ const ProductDetail = () => {
                   <div className="row">
                     <div className="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
                       <div className="p-b-30 m-lr-15-sm">
-                        <div className="flex-w flex-t p-b-68">
-                          <div className="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
-                            <img src="images/avatar-01.jpg" alt="AVATAR" />
-                          </div>
-                          <div className="size-207">
-                            <div className="flex-w flex-sb-m p-b-17">
-                              <span className="mtext-107 cl2 p-r-20">
-                                Ariana Grande
-                              </span>
-                              <span className="fs-18 cl11">
-                                <i className="zmdi zmdi-star" />
-                                <i className="zmdi zmdi-star" />
-                                <i className="zmdi zmdi-star" />
-                                <i className="zmdi zmdi-star" />
-                                <i className="zmdi zmdi-star-half" />
-                              </span>
+                        {reviews.length > 0 ? (
+                          reviews.map((review) => (
+                            <div className="flex-w flex-t p-b-68" key={review.id}>
+                              <div className="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
+                                <img src={iconUser} alt="User Icon" />
+                              </div>
+                              <div className="size-207">
+                                <div className="flex-w flex-sb-m p-b-17">
+                                  <span className="mtext-107 cl2 p-r-20">
+                                    {review.user.name}
+                                  </span>
+                                  <span className="fs-18 cl11">
+                                    {Array.from({ length: 5 }).map((_, index) => (
+                                      <i
+                                        key={index}
+                                        className={`zmdi ${index < review.rating ? "zmdi-star" : "zmdi-star-outline"
+                                          }`}
+                                      />
+                                    ))}
+                                  </span>
+                                </div>
+                                <p className="stext-102 cl6">{review.comment}</p>
+                              </div>
                             </div>
-                            <p className="stext-102 cl6">
-                              Quod autem in homine praestantissimum atque optimum est, id
-                              deseruit. Apud ceteros autem philosophos
-                            </p>
-                          </div>
-                        </div>
-                        <form className="w-full">
-                          <div className="flex-w flex-m p-t-50 p-b-23">
-                            <span className="stext-102 cl3 m-r-16">
-                              Your Rating
-                            </span>
-                            <span className="wrap-rating fs-18 cl11 pointer">
-                              <i className="item-rating pointer zmdi zmdi-star-outline" />
-                              <i className="item-rating pointer zmdi zmdi-star-outline" />
-                              <i className="item-rating pointer zmdi zmdi-star-outline" />
-                              <i className="item-rating pointer zmdi zmdi-star-outline" />
-                              <i className="item-rating pointer zmdi zmdi-star-outline" />
-                              <input className="dis-none" type="number" name="rating" />
-                            </span>
-                          </div>
-                          <div className="row p-b-25">
-                            <div className="col-12 p-b-5">
-                              <label className="stext-102 cl3" htmlFor="review">Your review</label>
-                              <textarea className="size-110 bor8 stext-102 cl2 p-lr-20 p-tb-10" id="review" name="review" defaultValue={""} />
-                            </div>
-                          </div>
-                          <button className="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
-                            Submit
-                          </button>
-                        </form>
+                          ))
+                        ) : (
+                          <p className="stext-102 cl6">Không có đánh giá nào cho sản phẩm này.</p>
+                        )}
                       </div>
                     </div>
                   </div>

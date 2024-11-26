@@ -9,7 +9,7 @@ class tb_oder extends Model
 {
     use HasFactory;
 
-    protected $table;
+    protected $table = 'tb_oders';
 
     protected $fillable = [
         'order_code',
@@ -36,7 +36,7 @@ class tb_oder extends Model
 
     public function discount()
     {
-        return $this->belongsTo(tb_discount::class);
+        return $this->belongsTo(tb_discount::class, 'tb_discount_id', 'id');
     }
 
     public function oderDetails()

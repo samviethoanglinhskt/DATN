@@ -54,9 +54,9 @@ const ProductCard: React.FC<{
             alt={product.name}
             onClick={() => onClick(product.id)}
             onLoad={() => setImageLoaded(true)}
-            onError={(e) => {
-              // Handle image error
-            }}
+            // onError={(e) => {
+            //   // Handle image error
+            // }}
             loading="lazy"
           />
           {isHovered && imageLoaded && (
@@ -282,68 +282,82 @@ const FavoritesPage: React.FC = () => {
   const hasFavorites = filteredProducts && filteredProducts.length > 0;
 
   return (
-    <div className="container favorites">
-      <div className="page-header">
-        <h2 className="mb-0 titlelove">
-          SẢN PHẨM YÊU THÍCH CỦA TÔI: (
-          {hasFavorites ? filteredProducts.length : 0}) Sản phẩm
-        </h2>
-        <button
-          className="btn btn-outline-primary"
-          onClick={() => navigate("/")}
-        >
-          Tiếp tục mua sắm
-        </button>
+    <div>
+      <div className="container" style={{ marginTop: 80 }}>
+        <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+          <a href="/" className="stext-109 cl8 hov-cl1 trans-04">
+            Trang chủ
+            <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
+          </a>
+          <span className="stext-109 cl4">
+            Sản phẩm yêu thích
+          </span>
+        </div>
       </div>
 
-      <div className="favoritesmunu">
-        {renderBrandFilter()}
-
-        <div className="search-container mb-3 flex">
-          <Input.Search
-            size="large"
-            placeholder="Tìm kiếm sản phẩm yêu thích"
-            onSearch={(value) => setSearchTerm(value)}
-            enterButton
-          />
+      <div className="container favorites">
+        <div className="page-header">
+          <h2 className="mb-0 titlelove">
+            SẢN PHẨM YÊU THÍCH CỦA TÔI: (
+            {hasFavorites ? filteredProducts.length : 0}) Sản phẩm
+          </h2>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => navigate("/")}
+          >
+            Tiếp tục mua sắm
+          </button>
         </div>
 
-        {!hasFavorites ? (
-          <div className="empty-state">
-            <img
-              style={{ width: 200, height: 200 }}
-              src="./images/notfound.webp"
-              alt="No favorites"
+        <div className="favoritesmunu">
+          {renderBrandFilter()}
+
+          <div className="search-container mb-3 flex">
+            <Input.Search
+              size="large"
+              placeholder="Tìm kiếm sản phẩm yêu thích"
+              onSearch={(value) => setSearchTerm(value)}
+              enterButton
             />
-            <p style={{ marginTop: 10, fontWeight: "bold", color: "#FF1493" }}>
-              {searchTerm || selectedBrand !== "all"
-                ? "Không tìm thấy sản phẩm phù hợp!"
-                : "Chưa có sản phẩm yêu thích!"}
-            </p>
-            <button
-              style={{ backgroundColor: "#FFC0CB", borderColor: "#FFC0CB" }}
-              className="btn btn-primary btn-lg bg-prink"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedBrand("all");
-                navigate("/");
-              }}
-            >
-              Khám phá sản phẩm
-            </button>
           </div>
-        ) : (
-          <div className="row">
-            {filteredProducts.map((product: Product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onRemove={removeFromFavorites.mutate}
-                onClick={(id) => navigate(`/product/${id}`)}
+
+          {!hasFavorites ? (
+            <div className="empty-state">
+              <img
+                style={{ width: 200, height: 200 }}
+                src="./images/notfound.webp"
+                alt="No favorites"
               />
-            ))}
-          </div>
-        )}
+              <p style={{ marginTop: 10, fontWeight: "bold", color: "#FF1493" }}>
+                {searchTerm || selectedBrand !== "all"
+                  ? "Không tìm thấy sản phẩm phù hợp!"
+                  : "Chưa có sản phẩm yêu thích!"}
+              </p>
+              <button
+                style={{ backgroundColor: "#FFC0CB", borderColor: "#FFC0CB" }}
+                className="btn btn-primary btn-lg bg-prink"
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedBrand("all");
+                  navigate("/");
+                }}
+              >
+                Khám phá sản phẩm
+              </button>
+            </div>
+          ) : (
+            <div className="row">
+              {filteredProducts.map((product: Product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onRemove={removeFromFavorites.mutate}
+                  onClick={(id) => navigate(`/product/${id}`)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

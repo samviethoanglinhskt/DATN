@@ -11,12 +11,13 @@ class tb_oderdetail extends Model
 
     protected $table = "tb__oderdetail";
 
-    protected $fillable =  [
+    protected $fillable = [
         'tb_oder_id',
         'tb_product_id',
         'tb_variant_id',
         'quantity',
-        'price'
+        'price',
+        'is_reviewed',
     ];
 
     public function oder()

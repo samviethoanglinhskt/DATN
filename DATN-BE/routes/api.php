@@ -17,7 +17,9 @@ use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\Paymentcontroller;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VariantsController;
 use App\Http\Middleware\CheckAdmin;
@@ -52,6 +54,7 @@ Route::resource('users', UserController::class);
 Route::resource('size', SizeController::class);
 Route::resource('color', ColorController::class);
 Route::resource('new', NewController::class);
+
 //logo_banner
 Route::resource('logo_banner', LogoBannerController::class);
 Route::post('/upload-image', [LogoBannerController::class, 'storeImage'])->name('uploat_image');
@@ -110,3 +113,13 @@ Route::middleware('auth:api')->group(function () {
     // Route để lấy các bình luận trả lời của một bình luận
     Route::get('comments/{comment_id}/replies', [CommentController::class, 'showReplies']);
 });
+
+
+// thống kê
+// doanh thu  theo ngày, tháng , năm
+Route::get('/statistics/revenue', [StatisticsController::class, 'revenueByDay']);
+// top 10 sản phẩm bán chạy
+Route::get('/statistics/top-selling-products', [StatisticsController::class, 'topSellingProductsByMonth']);
+// tổng đơn hàng, tổng tài khoản, tỉ lệ thành công,hủy của đơn hàng
+Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatistics']);
+

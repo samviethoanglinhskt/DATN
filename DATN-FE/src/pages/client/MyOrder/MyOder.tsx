@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -34,6 +34,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
   onClose,
 }) => {
   if (!order) return null;
+  console.log(order);
 
   const config =
     STATUS_CONFIG[order.order_status as keyof typeof STATUS_CONFIG];
@@ -166,6 +167,8 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                           {(detail.price * detail.quantity).toLocaleString()}đ
                         </span>
                       </div>
+                      {/* <button className={styles.ratingButton}>Đánh giá</button> */}
+
                     </div>
                   </div>
                 </div>
@@ -176,12 +179,13 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
               </div>
             ))}
           </div>
+          <div style={{ display: "flex", justifyContent: "end" }}>Mã giảm giá đã áp dụng: {order.discount.discount_code}</div>
 
           <div className={styles.cardFooter}>
             <div className={styles.footerContent}>
               <div className={styles.totalLabel}>
                 <ShoppingCartOutlined className={styles.cartIcon} />
-                <span>Tổng ({order.oder_details?.length || 0} sản phẩm):</span>
+                <span>Tổng tiền ({order.oder_details?.length || 0} sản phẩm) sau giảm giá:</span>
               </div>
               <div className={styles.totalAmount}>
                 {order.total_amount.toLocaleString()}đ
@@ -263,9 +267,9 @@ const MyOrder: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    console.log("Tab đang hoạt động:", activeTab);
-  }, [activeTab]);
+  // useEffect(() => {
+  //   console.log("Tab đang hoạt động:", activeTab);
+  // }, [activeTab]);
 
   // Cập nhật logic lọc đơn hàng
   const filteredOrders = React.useMemo(() => {
@@ -443,31 +447,48 @@ const MyOrder: React.FC = () => {
     {
       title: "Thao tác",
       key: "action",
-      render: (record: Order) => (
-        <Space size="middle">
-          <Button
-            type="primary"
-            ghost
-            className="hover:border-blue-600 hover:text-blue-600"
-            onClick={() => {
-              setSelectedOrder(record);
-              setIsModalVisible(true);
-            }}
-          >
-            Chi tiết
-          </Button>
-          {record.order_status === "Chờ xử lý" && (
+      render: (record: Order) => {
+        const hasUnreviewedProducts = record.oder_details?.some(
+          (detail) => !detail.is_reviewed
+        );
+        return (
+          <Space size="middle">
             <Button
-              danger
-              className="hover:bg-red-50"
-              onClick={() => showCancelModal(record.id)}
+              type="primary"
+              ghost
+              onClick={() => {
+                setSelectedOrder(record);
+                setIsModalVisible(true);
+              }}
             >
-              Hủy đơn
+              Chi tiết
             </Button>
-          )}
-        </Space>
-      ),
-    },
+            {record.order_status === "Đã Hoàn Thành" && hasUnreviewedProducts && (
+              <Button
+                style={{ border: "1px solid #FB8D00" }}
+                className="buttonReview"
+                onClick={() => {
+                  setSelectedOrder(record);
+                  setIsModalVisible(true);
+                }}
+              >
+                Đánh giá
+              </Button>
+            )}
+
+            {record.order_status === "Chờ xử lý" && (
+              <Button
+                danger
+                className="hover:bg-red-50"
+                onClick={() => showCancelModal(record.id)}
+              >
+                Hủy đơn
+              </Button>
+            )}
+          </Space>
+        );
+      },
+    }
   ];
 
   // Cập nhật cấu hình tabItems để khớp với STATUS_CONFIG
@@ -495,82 +516,96 @@ const MyOrder: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-grow container order mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+    <div>
+      <div className="container" style={{ marginTop: 80 }}>
+        <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+          <a href="/" className="stext-109 cl8 hov-cl1 trans-04">
+            Trang chủ
+            <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
+          </a>
+          <span className="stext-109 cl4">
             Đơn hàng của tôi
-          </h1>
-          <p className="text-gray-600">
-            Quản lý và theo dõi tất cả đơn hàng của bạn
-          </p>
+          </span>
         </div>
-
-        <Card className="shadow-lg rounded-lg mb-8">
-          <div className="flex overflow-x-auto no-scrollbar mb-6"></div>
-          <Tabs
-            activeKey={activeTab}
-            onChange={setActiveTab}
-            items={tabItems}
-            className="order-tabs"
-            type="card"
-          />
-          {isLoading ? (
-            <div className="flex justify-center items-center p-10">
-              <Spin size="large" />
-            </div>
-          ) : filteredOrders.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table
-                columns={columns}
-                dataSource={filteredOrders}
-                rowKey="id"
-                pagination={{
-                  pageSize: 5,
-                  showTotal: (total, range) => (
-                    <span className="text-gray-600">
-                      {`${range[0]}-${range[1]} của ${total} đơn hàng`}
-                    </span>
-                  ),
-                }}
-                className="border rounded-lg"
-                rowClassName="hover:bg-gray-50"
-              />
-            </div>
-          ) : (
-            <Empty
-              description={
-                <span className="text-gray-500">
-                  Không có đơn hàng nào{" "}
-                  {activeTab !== "all" ? "trong trạng thái này" : ""}
-                </span>
-              }
-              className="py-10"
-            />
-          )}
-        </Card>
       </div>
-      <OrderDetailModal
-        order={selectedOrder}
-        visible={isModalVisible}
-        onClose={() => {
-          setIsModalVisible(false);
-          setSelectedOrder(null);
-        }}
-      />
 
-      <CancellationModal
-        visible={cancelModalVisible}
-        onClose={() => {
-          setCancelModalVisible(false);
-          setSelectedOrderId(null);
-        }}
-        onConfirm={handleCancelOrder}
-        orderId={selectedOrderId}
-        loading={cancelLoading}
-      />
+      <div className="min-h-screen flex flex-col" style={{ margin: "50px 0" }}>
+        <div className="flex-grow container order mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              Đơn hàng của tôi
+            </h1>
+            <p className="text-gray-600">
+              Quản lý và theo dõi tất cả đơn hàng của bạn
+            </p>
+          </div>
 
-      <div className="h-16"></div>
+          <Card className="shadow-lg rounded-lg mb-8">
+            <div className="flex overflow-x-auto no-scrollbar mb-6"></div>
+            <Tabs
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              items={tabItems}
+              className="order-tabs"
+              type="card"
+            />
+            {isLoading ? (
+              <div className="flex justify-center items-center p-10">
+                <Spin size="large" />
+              </div>
+            ) : filteredOrders.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table
+                  columns={columns}
+                  dataSource={filteredOrders}
+                  rowKey="id"
+                  pagination={{
+                    pageSize: 5,
+                    showTotal: (total, range) => (
+                      <span className="text-gray-600">
+                        {`${range[0]}-${range[1]} của ${total} đơn hàng`}
+                      </span>
+                    ),
+                  }}
+                  className="border rounded-lg"
+                  rowClassName="hover:bg-gray-50"
+                />
+              </div>
+            ) : (
+              <Empty
+                description={
+                  <span className="text-gray-500">
+                    Không có đơn hàng nào{" "}
+                    {activeTab !== "all" ? "trong trạng thái này" : ""}
+                  </span>
+                }
+                className="py-10"
+              />
+            )}
+          </Card>
+        </div>
+        <OrderDetailModal
+          order={selectedOrder}
+          visible={isModalVisible}
+          onClose={() => {
+            setIsModalVisible(false);
+            setSelectedOrder(null);
+          }}
+        />
+
+        <CancellationModal
+          visible={cancelModalVisible}
+          onClose={() => {
+            setCancelModalVisible(false);
+            setSelectedOrderId(null);
+          }}
+          onConfirm={handleCancelOrder}
+          orderId={selectedOrderId}
+          loading={cancelLoading}
+        />
+
+        <div className="h-16"></div>
+      </div>
     </div>
   );
 };

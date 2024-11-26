@@ -251,7 +251,7 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <div className="container py-5 mt-5">
-      <div className="container mt-2 mb-5">
+      <div className="container" style={{ marginBottom: 50 }}>
         <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
           <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
             Trang chủ
@@ -392,7 +392,6 @@ const CheckoutPage: React.FC = () => {
                   <span>{subtotal}đ</span>
                 </div>
               )}
-
               {cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Tạm tính</span>
@@ -419,7 +418,6 @@ const CheckoutPage: React.FC = () => {
                   <span><strong>{Number(totalWithDiscount)}đ</strong></span>
                 </div>
               )}
-
               {cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span><strong>Tổng cộng</strong></span>
