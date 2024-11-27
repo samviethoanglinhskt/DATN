@@ -159,4 +159,27 @@ class AddressUserController extends Controller
         }
     }
 
+    public function isDefaultAddress(Request $request){
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+
+            $address = $user->address()->findOrFail($request->id);
+            $user->address()->update(['is_default'=> false]);
+            $address->update(['is_default' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Thiết lập địa chỉ mặc định thành công',
+                'data' => $address
+            ], 204);
+        } catch (Exception $e) {
+            return response()->json(['success' => false,'error' => 'Không thể thiết lập mặc định địa chỉ'], 500);
+        }
+    }
+
 }
