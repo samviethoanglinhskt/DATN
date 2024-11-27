@@ -26,12 +26,14 @@ import {
 } from "src/types/Myorder";
 import { STATUS_CONFIG } from "./orderContant";
 import styles from "./OrderDetails.module.css";
+import axiosInstance from "src/config/axiosInstance";
 const { TextArea } = Input;
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
   order,
   visible,
   onClose,
+  onOpenRatingModal,
 }) => {
   if (!order) return null;
   console.log(order);
@@ -46,10 +48,14 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
         </div>
       }
       open={visible}
-      onCancel={onClose}
+      onCancel={() => {
+        onClose();
+      }}
       footer={null}
       width={800}
       className="max-h-[90vh]"
+      getContainer={false}
+      style={{ zIndex: 1000 }}
     >
       <div className="overflow-y-auto">
         <Descriptions bordered column={1} className="mb-6">
@@ -159,6 +165,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                           </span>
                         </div>
                       </div>
+
                       <div className={styles.subtotalCol}>
                         <span className={styles.subtotalLabel}>
                           Thành tiền:
@@ -167,9 +174,16 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                           {(detail.price * detail.quantity).toLocaleString()}đ
                         </span>
                       </div>
-                      {/* <button className={styles.ratingButton}>Đánh giá</button> */}
-
                     </div>
+                    {!detail.is_reviewed && order.order_status == "Đã hoàn thành" &&
+                      <div style={{ display: "flex", justifyContent: "end" }}>
+                        <button
+                          className={styles.ratingButton}
+                          onClick={() => onOpenRatingModal(detail.product, order.id, detail.id)}
+                        >Đánh giá
+                        </button>
+                      </div>
+                    }
                   </div>
                 </div>
 
@@ -179,7 +193,10 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
               </div>
             ))}
           </div>
-          <div style={{ display: "flex", justifyContent: "end" }}>Mã giảm giá đã áp dụng: {order.discount.discount_code}</div>
+
+          {order.discount &&
+            <div style={{ display: "flex", justifyContent: "end" }}>Mã giảm giá đã áp dụng: {order.discount.discount_code}</div>
+          }
 
           <div className={styles.cardFooter}>
             <div className={styles.footerContent}>
@@ -193,6 +210,72 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
             </div>
           </div>
         </div>
+      </div>
+    </Modal>
+  );
+};
+
+const RatingModal: React.FC<{
+  visible: boolean;
+  onClose: () => void;
+  onSubmit: (rating: number, comment: string) => void;
+  style?: React.CSSProperties;
+}> = ({ visible, onClose, onSubmit }) => {
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
+
+  const handleRatingClick = (value: number) => {
+    setRating(value);
+  };
+
+  const handleSubmit = () => {
+    if (rating === 0) {
+      message.error("Vui lòng chọn số sao!");
+      return;
+    }
+    onSubmit(rating, comment);
+    setRating(0);
+    setComment("");
+  };
+
+  return (
+    <Modal
+      title="Đánh giá sản phẩm"
+      open={visible}
+      onCancel={() => {
+        setRating(0);
+        setComment("");
+        onClose();
+      }}
+      onOk={handleSubmit}
+      okText="Xác nhận"
+      cancelText="Đóng"
+      style={{ zIndex: 2000 }}
+    >
+      <div className="space-y-4">
+        <div className="text-center">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => handleRatingClick(star)}
+              style={{
+                fontSize: 24,
+                color: star <= rating ? "#FFD700" : "#ccc",
+                cursor: "pointer",
+              }}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+        <TextArea
+          rows={4}
+          placeholder="Nhập nhận xét của bạn..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          maxLength={500}
+          showCount
+        />
       </div>
     </Modal>
   );
@@ -251,6 +334,42 @@ const MyOrder: React.FC = () => {
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [currentProduct, setCurrentProduct] = useState<any>(null);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleOpenRatingModal = (product: any, orderId: number, orderDetailId: number) => {
+    setCurrentProduct({ ...product, order_id: orderId, orderdetail_id: orderDetailId });
+    setIsRatingModalVisible(true);
+  };
+
+  const handleRatingSubmit = async (rating: number, comment: string) => {
+    if (!currentProduct) return;
+
+    try {
+      await axiosInstance.post(
+        "http://127.0.0.1:8000/api/reviews",
+        {
+          id: currentProduct.orderdetail_id,
+          tb_product_id: currentProduct.id,
+          order_id: currentProduct.order_id,
+          rating,
+          comment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      message.success("Đánh giá thành công!");
+      setIsRatingModalVisible(false);
+    } catch (error) {
+      console.log(error);
+      message.error("Sản phẩm này đã đánh giá rồi!");
+    }
+  };
 
   const { data: orderData, isLoading } = useQuery<ApiResponse>({
     queryKey: ["orders"],
@@ -266,10 +385,6 @@ const MyOrder: React.FC = () => {
       return response.data;
     },
   });
-
-  // useEffect(() => {
-  //   console.log("Tab đang hoạt động:", activeTab);
-  // }, [activeTab]);
 
   // Cập nhật logic lọc đơn hàng
   const filteredOrders = React.useMemo(() => {
@@ -322,12 +437,8 @@ const MyOrder: React.FC = () => {
       setCancelModalVisible(false);
       setSelectedOrderId(null);
       window.location.reload();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Full error object:", error);
-      console.error("Error response data:", error.response?.data);
-      message.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi hủy đơn hàng!"
-      );
     } finally {
       setCancelLoading(false);
     }
@@ -433,7 +544,7 @@ const MyOrder: React.FC = () => {
 
         return (
           <Badge
-            status={config.color as any}
+            status={config.color}
             text={
               <Space className={`${config.textColor} font-medium`}>
                 {config.icon}
@@ -463,7 +574,7 @@ const MyOrder: React.FC = () => {
             >
               Chi tiết
             </Button>
-            {record.order_status === "Đã Hoàn Thành" && hasUnreviewedProducts && (
+            {record.order_status === "Đã hoàn thành" && hasUnreviewedProducts && (
               <Button
                 style={{ border: "1px solid #FB8D00" }}
                 className="buttonReview"
@@ -591,6 +702,7 @@ const MyOrder: React.FC = () => {
             setIsModalVisible(false);
             setSelectedOrder(null);
           }}
+          onOpenRatingModal={handleOpenRatingModal}
         />
 
         <CancellationModal
@@ -604,6 +716,11 @@ const MyOrder: React.FC = () => {
           loading={cancelLoading}
         />
 
+        <RatingModal
+          visible={isRatingModalVisible}
+          onClose={() => setIsRatingModalVisible(false)}
+          onSubmit={handleRatingSubmit}
+        />
         <div className="h-16"></div>
       </div>
     </div>

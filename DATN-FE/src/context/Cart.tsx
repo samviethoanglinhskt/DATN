@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { CartItem, CartProviderProps, CartContextType } from "src/types/cart";
 
@@ -11,7 +10,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState(0); // Add state for total quantity
   const [loading, setLoading] = useState(true); // Loading state added
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -103,8 +101,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         });
 
         alert("Thêm thành công");
-        navigate("/cart");
-        window.location.reload();
       }
     } catch (error) {
       console.error("Error adding item to cart:", error);

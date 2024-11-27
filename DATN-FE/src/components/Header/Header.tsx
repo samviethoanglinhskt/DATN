@@ -340,7 +340,7 @@ const Header: React.FC = () => {
                 <i className="zmdi zmdi-search"></i>
               </div>
               <a
-                href="#"
+                href=""
                 onClick={handleCartClick}
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
                 data-notify={totalQuantity}
