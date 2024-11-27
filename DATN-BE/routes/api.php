@@ -75,6 +75,7 @@ Route::get('/show-user', [UserController::class, 'showUser'])->name('show_User')
 Route::put('/update-user', [UserController::class, 'updateUser'])->name('update_User');
 //địa chỉ theo người dùng
 Route::resource('address', AddressUserController::class);
+Route::put('/address-default', [AddressUserController::class, 'isDefaultAddress'])->name('address_default');
 
 Route::post('/add-cart', [CartController::class, 'addToCart'])->name('add_cart');
 Route::post('/list-to-guest', [CartController::class, 'listToGuest'])->name('list_to_guest');
