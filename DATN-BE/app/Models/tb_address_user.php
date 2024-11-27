@@ -14,10 +14,12 @@ class tb_address_user extends Model
     protected $fillable = [
         'user_id',
         'address',
-        'address_detail'
+        'address_detail',
+        'is_default'
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 }

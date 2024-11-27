@@ -51,6 +51,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
     fetchUser();
   }, []);
+  console.log(user);
+
 
   // Hàm update thông tin người dùng
   const updateUser = async (updatedData: Partial<User>) => {

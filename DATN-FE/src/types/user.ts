@@ -13,3 +13,13 @@ export type User = {
     created_at: string;
     updated_at: string;
 }
+
+export interface Address {
+    id: number;
+    address: string;
+    address_detail: string;
+    is_default: boolean;
+    user_id: number;
+    created_at: string;
+    updated_at: string;
+}
