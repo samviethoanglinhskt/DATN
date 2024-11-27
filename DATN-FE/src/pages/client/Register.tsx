@@ -253,9 +253,7 @@ const Register = () => {
                   className={`form-control register-input ${errors.address ? 'is-invalid' : ''}`}
                   id="addressInput"
                   placeholder="Địa chỉ"
-                  {...register("address", {
-                    required: "Vui lòng nhập địa chỉ",
-                  })}
+                  {...register("address")}
                   readOnly
                 />
                 <label htmlFor="addressInput" className="register-label">

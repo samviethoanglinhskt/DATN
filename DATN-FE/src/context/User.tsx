@@ -40,7 +40,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             withCredentials: true,
           });
           setUser(response.data);
-
         } else {
           setUser(null);
         }
@@ -51,6 +50,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
     fetchUser();
   }, []);
+  console.log(user);
+
 
   // Hàm update thông tin người dùng
   const updateUser = async (updatedData: Partial<User>) => {

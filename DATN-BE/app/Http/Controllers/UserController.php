@@ -89,6 +89,7 @@ class UserController extends Controller
                 'user_id' => $account->id,
                 'address' => $request->address,
                 'address_detail' => $request->address_detail,
+                'is_default' => true,
             ]);
 
             // Commit transaction
