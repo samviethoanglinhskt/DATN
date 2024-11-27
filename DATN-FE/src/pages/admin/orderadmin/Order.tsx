@@ -231,7 +231,7 @@ const OrderMain: React.FC = () => {
         const config = STATUS_CONFIG[status];
         return (
           <Tag
-            color={config.color}
+            color={config.bgColor}
             className={`${config.textColor} order-status-tag`}
             icon={config.icon}
           >

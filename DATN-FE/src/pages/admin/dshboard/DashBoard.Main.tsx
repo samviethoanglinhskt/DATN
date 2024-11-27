@@ -1,4 +1,3 @@
-// Dashboard.tsx
 import React, { useState } from "react";
 import {
   Card,
@@ -24,23 +23,29 @@ import {
 } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDashboardData } from "./dashboardService";
-
+import StatisticsDetailModal from "./StatisticsDetailModal";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { getDailyStatsColumns, getTopProductColumns } from "./TableColums";
+import {
+  formatCurrency,
+  getDailyStatsColumns,
+  getTopProductColumns,
+} from "./TableColums";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const Dashboard: React.FC = () => {
   const [timeType, setTimeType] = useState<string>("day");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState<"users" | "orders">("users");
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["dashboard", timeType],
     queryFn: () => fetchDashboardData(timeType),
     refetchOnWindowFocus: false,
   });
-
   const statistics = data?.statistics ?? {
+    totalRevenue: 0,
     totalUsers: 0,
     totalOrders: 0,
     completedOrders: 0,
@@ -49,6 +54,7 @@ const Dashboard: React.FC = () => {
     cancellationRate: 0,
     userGrowth: "0",
     orderGrowth: "0",
+    revenueGrowth: "0",
   };
 
   const dailyStats = data?.dailyStats ?? [];
@@ -67,6 +73,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleCardClick = (type: "users" | "orders") => {
+    setModalType(type);
+    setModalVisible(true);
+  };
   return (
     <div className="container-fluid py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -84,7 +94,11 @@ const Dashboard: React.FC = () => {
         <Spin spinning={isLoading} indicator={<LoadingOutlined />}>
           <Row gutter={16}>
             <Col xs={24} sm={12} lg={8}>
-              <Card hoverable className="mb-4">
+              <Card
+                hoverable
+                className="mb-4"
+                onClick={() => handleCardClick("users")}
+              >
                 <Statistic
                   title={
                     <Space>
@@ -109,30 +123,33 @@ const Dashboard: React.FC = () => {
             </Col>
 
             <Col xs={24} sm={12} lg={8}>
-              <Card hoverable className="mb-4">
+              <Card
+                hoverable
+                className="mb-4"
+                onClick={() => handleCardClick("orders")}
+              >
                 <Statistic
                   title={
                     <Space>
                       <span>Số đơn hàng</span>
                       <Badge
                         count={`+${statistics.orderGrowth}`}
-                        style={{ backgroundColor: "#1890ff" }}
+                        style={{ backgroundColor: "#FF9900" }}
                       />
                     </Space>
                   }
                   value={statistics.totalOrders}
                   prefix={<ShoppingCartOutlined />}
-                  valueStyle={{ color: "#cf1322" }}
+                  valueStyle={{ color: "#FF9900" }}
                 />
                 <Progress
                   percent={parseFloat(statistics.orderGrowth)}
                   size="small"
                   showInfo={false}
-                  strokeColor="#cf1322"
+                  strokeColor="#FF9900"
                 />
               </Card>
             </Col>
-
             <Col xs={24} sm={12} lg={8}>
               <Card hoverable className="mb-4">
                 <Statistic
@@ -140,24 +157,25 @@ const Dashboard: React.FC = () => {
                     <Space>
                       <span>Tổng doanh thu</span>
                       <Badge
-                        count={`+${statistics.orderGrowth}`}
+                        count={`${statistics.revenueGrowth}%`}
                         style={{ backgroundColor: "#1890ff" }}
                       />
                     </Space>
                   }
-                  value={statistics.totalOrders}
-                  prefix={<ShoppingCartOutlined />}
-                  valueStyle={{ color: "#cf1322" }}
+                  value={statistics.totalRevenue}
+                  prefix={<DollarCircleOutlined />}
+                  valueStyle={{ color: "#1890ff" }}
+                  formatter={(value) => formatCurrency(Number(value))}
                 />
                 <Progress
                   percent={parseFloat(statistics.orderGrowth)}
                   size="small"
                   showInfo={false}
-                  strokeColor="#cf1322"
+                  strokeColor="#1890ff"
+                  style={{ marginTop: "12px" }}
                 />
               </Card>
             </Col>
-
             <Col xs={24} sm={12} lg={8}>
               <Card hoverable className="mb-4">
                 <Statistic
@@ -251,6 +269,15 @@ const Dashboard: React.FC = () => {
               rowKey="id"
             />
           </Card>
+
+          {data && (
+            <StatisticsDetailModal
+              open={modalVisible}
+              onClose={() => setModalVisible(false)}
+              type={modalType}
+              data={data} // Pass entire data object instead of trying to destructure
+            />
+          )}
         </Spin>
       )}
     </div>
