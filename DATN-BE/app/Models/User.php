@@ -56,10 +56,11 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    public function address(){
+    public function address()
+    {
         return $this->hasMany(tb_address_user::class);
-     }
-     
+    }
+
     public function comments()
     {
         return $this->hasMany(tb_comment::class);

@@ -267,7 +267,7 @@ const OrderMain: React.FC = () => {
             }
             options={statusOptions}
             disabled={
-              record.order_status === "Đã Hoàn Thành" ||
+              record.order_status === "Đã hoàn thành" ||
               record.order_status === "Đã hủy đơn hàng"
             }
           />

@@ -6,6 +6,7 @@ export type User = {
     tb_role_id: number;
     phone: string;
     address: string;
+    address_detail: string;
     email: string;
     password: string;
     email_verified_at: string;
