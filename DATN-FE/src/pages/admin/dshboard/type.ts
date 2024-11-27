@@ -130,3 +130,21 @@ export interface RevenueByPeriod {
       [key: string]: TopSellingProduct[];
     };
   }
+  export interface RevenueStats {
+    date: string;
+    revenue: number;
+    revenueGrowth: number;
+  }
+  
+  export interface StatisticData {
+    totalUsers: number;
+    totalOrders: number;
+    completedOrders: number;
+    cancelledOrders: number;
+    completionRate: number;
+    cancellationRate: number;
+    userGrowth: string;
+    orderGrowth: string;
+    totalRevenue: number;
+    revenueGrowth: number;
+  }
