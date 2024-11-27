@@ -27,6 +27,8 @@ import PaymentFailure from "./pages/client/PaymentFailure";
 import PaymentSuccess from "./pages/client/PaymentSuccess";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
+import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
+
 
 const routeConfig = [
   {
@@ -139,6 +141,10 @@ const routeConfig = [
       {
         path: "discount",
         element: <Discount />
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />
       },
 
     ],

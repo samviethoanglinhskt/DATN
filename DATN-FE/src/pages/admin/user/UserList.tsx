@@ -1,74 +1,86 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Table, Space, Button, Tooltip, message, Popconfirm, Modal, Form, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, UserOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from 'src/config/axiosInstance';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface User {
   id: number;
   name: string;
-  tb_role_id: number;
+  tb_role_id?: number;
   phone: string;
-  address: string;
+  address?: string;
   email: string;
 }
 
 const UserList: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [searchText, setSearchText] = useState('');
   const [form] = Form.useForm();
+  const queryClient = useQueryClient();
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
+  // Query users
+  const { data: users = [], isLoading } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
       const response = await axiosInstance.get('/api/users');
-      setUsers(response.data);
-    } catch (error: any) {
-      message.error('Failed to fetch users: ' + (error.response?.data?.message || error.message));
-    } finally {
-      setLoading(false);
-    }
-  };
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    retry: 2
+  });
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleDelete = async (id: number) => {
-    try {
-      await axiosInstance.delete(`/api/users/${id}`);
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => axiosInstance.delete(`/api/users/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       message.success('User deleted successfully');
-      fetchUsers();
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       message.error('Failed to delete user: ' + (error.response?.data?.message || error.message));
     }
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: (values: Partial<User> & { id: number }) => 
+      axiosInstance.put(`/api/users/${values.id}`, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      message.success('User updated successfully');
+      setEditModalVisible(false);
+      form.resetFields();
+    },
+    onError: (error: any) => {
+      message.error('Failed to update user: ' + (error.response?.data?.message || error.message));
+    }
+  });
+
+  const handleDelete = (id: number) => {
+    deleteMutation.mutate(id);
   };
 
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    form.setFieldsValue(user);
-    setEditModalVisible(true);
-  };
+const handleEdit = (user: User) => {
+  setEditingUser(user);
+  form.setFieldsValue(user);
+  setEditModalVisible(true);
+};
+
 
   const handleEditSubmit = async () => {
     try {
       const values = await form.validateFields();
       if (editingUser) {
-        await axiosInstance.put(`/api/users/${editingUser.id}`, values);
-        message.success('User updated successfully');
-        setEditModalVisible(false);
-        form.resetFields();
-        fetchUsers();
+        updateMutation.mutate({ ...values, id: editingUser.id });
       }
-    } catch (error: any) {
-      message.error('Failed to update user: ' + (error.response?.data?.message || error.message));
+    } catch (error) {
+      // Form validation error handled by antd
     }
   };
 
-  const filteredUsers = users.filter(user =>
+  const filteredUsers = users.filter((user:User) =>
     user.name.toLowerCase().includes(searchText.toLowerCase()) ||
     user.email.toLowerCase().includes(searchText.toLowerCase()) ||
     user.phone.toLowerCase().includes(searchText.toLowerCase())
@@ -144,6 +156,7 @@ const UserList: React.FC = () => {
           <Button
             className="btn btn-outline-primary btn-sm"
             onClick={() => handleEdit(record)}
+            loading={updateMutation.isPending}
           >
             <EditOutlined /> Edit
           </Button>
@@ -156,7 +169,10 @@ const UserList: React.FC = () => {
             okButtonProps={{ className: 'btn btn-danger' }}
             cancelButtonProps={{ className: 'btn btn-outline-secondary' }}
           >
-            <Button className="btn btn-outline-danger btn-sm">
+            <Button 
+              className="btn btn-outline-danger btn-sm"
+              loading={deleteMutation.isPending}
+            >
               <DeleteOutlined /> Delete
             </Button>
           </Popconfirm>
@@ -202,7 +218,7 @@ const UserList: React.FC = () => {
             columns={columns}
             dataSource={filteredUsers}
             rowKey="id"
-            loading={loading}
+            loading={isLoading}
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
@@ -231,7 +247,10 @@ const UserList: React.FC = () => {
         }}
         okText="Save Changes"
         cancelText="Cancel"
-        okButtonProps={{ className: 'btn btn-primary' }}
+        okButtonProps={{ 
+          className: 'btn btn-primary',
+          loading: updateMutation.isPending
+        }}
         cancelButtonProps={{ className: 'btn btn-outline-secondary' }}
         destroyOnClose
         className="bootstrap-modal"
@@ -303,4 +322,4 @@ const UserList: React.FC = () => {
   );
 };
 
-export default UserList;    
+export default UserList;

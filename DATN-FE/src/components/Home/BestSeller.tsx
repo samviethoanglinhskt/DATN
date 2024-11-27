@@ -5,6 +5,26 @@ import axiosInstance from "../../config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "src/assets/css/StoreOverview.css";
 
+// Hàm lưu dữ liệu vào localStorage
+const saveToLocalStorage = (key: string, data: any) => {
+  localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem(`${key}_updated_at`, Date.now().toString());
+};
+
+// Hàm lấy dữ liệu từ localStorage
+const getFromLocalStorage = (key: string, maxAge: number) => {
+  const cachedData = localStorage.getItem(key);
+  const updatedAt = localStorage.getItem(`${key}_updated_at`);
+
+  if (cachedData && updatedAt) {
+    const age = Date.now() - parseInt(updatedAt, 10);
+    if (age < maxAge) {
+      return JSON.parse(cachedData);
+    }
+  }
+  return null;
+};
+
 const StoreOverView = () => {
   const {
     data: products,
@@ -14,11 +34,23 @@ const StoreOverView = () => {
   } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
+      // Kiểm tra dữ liệu cache trước
+      const cachedProducts = getFromLocalStorage("products", 1000 * 60 * 60); // 1 giờ
+      if (cachedProducts) {
+        return cachedProducts;
+      }
+
+      // Gọi API nếu không có cache
       try {
         const response = await axiosInstance.get("/api/product-list");
-        return response.data;
+        const data = response.data;
+
+        // Lưu dữ liệu vào localStorage
+        saveToLocalStorage("products", data);
+        return data;
       } catch (error) {
         console.log(error);
+        throw error;
       }
     },
   });
@@ -43,7 +75,6 @@ const StoreOverView = () => {
 
         <div className="slider">
           <div className="slide-track">
-            {/* Original products */}
             {products.data.map((product: Product) => (
               <div key={product.id} className="slide">
                 <div className="product-inner">
@@ -51,39 +82,11 @@ const StoreOverView = () => {
                     <img
                       src={`http://127.0.0.1:8000/storage/${product.image}`}
                       className="product-image"
+                      alt={product.name}
                     />
                   </div>
                   <div className="product-info">
-                    <Link
-                      to={`/product/${product.id}`}
-                      className="product-link"
-                    >
-                      <h5 className="product-title">{product.name}</h5>
-                    </Link>
-                    <p className="product-price">
-                      ${product.variants[0]?.price}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {/* Cloned products for seamless loop */}
-            {products.data.map((product: Product) => (
-              <div key={`clone-${product.id}`} className="slide">
-                <div className="product-inner">
-                  {product.variants[0]?.images[0] && (
-                    <div className="product-image-wrapper">
-                      <img
-                        src={`http://127.0.0.1:8000/storage/${product.image}`}
-                        className="product-image"
-                      />
-                    </div>
-                  )}
-                  <div className="product-info">
-                    <Link
-                      to={`/product/${product.id}`}
-                      className="product-link"
-                    >
+                    <Link to={`/product/${product.id}`} className="product-link">
                       <h5 className="product-title">{product.name}</h5>
                     </Link>
                     <p className="product-price">
