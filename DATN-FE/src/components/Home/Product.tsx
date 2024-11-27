@@ -13,9 +13,14 @@ import {
   Breadcrumb,
   Skeleton,
   Badge,
-  Tooltip
+  Tooltip,
 } from "antd";
-import { HeartOutlined, ShoppingCartOutlined, SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import {
+  HeartOutlined,
+  ShoppingCartOutlined,
+  SearchOutlined,
+  FilterOutlined,
+} from "@ant-design/icons";
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
 import "./Productlist.css";
@@ -45,21 +50,26 @@ const ProductList = () => {
   const { data: allProducts, isLoading: loadingProducts } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const response = await instance.get("http://127.0.0.1:8000/api/product-list");
+      const response = await instance.get(
+        "http://127.0.0.1:8000/api/product-list"
+      );
       return response.data.data;
     },
   });
 
   // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
-    ? allProducts.filter((product: Product) => product.tb_category_id === Number(id))
+    ? allProducts.filter(
+        (product: Product) => product.tb_category_id === Number(id)
+      )
     : [];
 
-  const filteredProductsByBrand = selectedBrands.length > 0
-    ? filteredProductsByCategory.filter((product: Product) =>
-      selectedBrands.includes(product.tb_brand_id)
-    )
-    : filteredProductsByCategory;
+  const filteredProductsByBrand =
+    selectedBrands.length > 0
+      ? filteredProductsByCategory.filter((product: Product) =>
+          selectedBrands.includes(product.tb_brand_id)
+        )
+      : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
     const price = product.variants?.[0]?.price || 0;
@@ -109,9 +119,11 @@ const ProductList = () => {
       {/* Header Area */}
       <div className="products-header">
         <Breadcrumb>
-          <Breadcrumb.Item onClick={() => navigate("/")}>Trang chủ</Breadcrumb.Item>
+          <Breadcrumb.Item onClick={() => navigate("/")}>
+            Trang chủ
+          </Breadcrumb.Item>
           <Breadcrumb.Item>Danh mục sản phẩm</Breadcrumb.Item>
-          <Breadcrumb.Item>{id ? `ID: ${id}` : "Tất cả"}</Breadcrumb.Item>
+          <Breadcrumb.Item>{id ? `` : "Tất cả"}</Breadcrumb.Item>
         </Breadcrumb>
 
         <div className="header-controls">
@@ -130,8 +142,10 @@ const ProductList = () => {
         <Col xs={24} md={6}>
           <Card className="filters-card">
             <div className="filter-section">
-              <h4><FilterOutlined /> Bộ lọc</h4>
-              
+              <h4>
+                <FilterOutlined /> Bộ lọc
+              </h4>
+
               <div className="filter-group">
                 <h5>Sắp xếp giá</h5>
                 <Select
@@ -148,12 +162,16 @@ const ProductList = () => {
                 <h5>Thương hiệu</h5>
                 <Checkbox.Group
                   className="brand-checkboxes"
-                  options={brands.map((brand: { id: number; name: string }) => ({
-                    label: brand.name,
-                    value: brand.id,
-                  }))}
+                  options={brands.map(
+                    (brand: { id: number; name: string }) => ({
+                      label: brand.name,
+                      value: brand.id,
+                    })
+                  )}
                   value={selectedBrands}
-                  onChange={(checkedValues) => setSelectedBrands(checkedValues as number[])}
+                  onChange={(checkedValues) =>
+                    setSelectedBrands(checkedValues as number[])
+                  }
                 />
               </div>
 
@@ -169,7 +187,8 @@ const ProductList = () => {
                   className="price-slider"
                 />
                 <div className="price-range-display">
-                  {priceRange[0].toLocaleString('vi-VN')}đ - {priceRange[1].toLocaleString('vi-VN')}đ
+                  {priceRange[0].toLocaleString("vi-VN")}đ -{" "}
+                  {priceRange[1].toLocaleString("vi-VN")}đ
                 </div>
               </div>
             </div>
@@ -182,9 +201,9 @@ const ProductList = () => {
             {paginatedProducts.length > 0 ? (
               paginatedProducts.map((product: Product) => (
                 <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
-                  <Badge.Ribbon 
-                    text="Mới" 
-                    color="#f50" 
+                  <Badge.Ribbon
+                    text="Mới"
+                    color="#f50"
                     className="product-badge"
                   >
                     <Card
@@ -213,15 +232,16 @@ const ProductList = () => {
                         </div>
                       }
                       actions={[
-                        <button className="buy-now-button">
-                          Mua ngay
-                        </button>
+                        <button className="buy-now-button">Mua ngay</button>,
                       ]}
                     >
-                      <Link to={`/product/${product.id}`} className="product-link">
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="product-link"
+                      >
                         <h3 className="product-name">{product.name}</h3>
                         <div className="product-price">
-                          {product.variants[0]?.price?.toLocaleString('vi-VN')}đ
+                          {product.variants[0]?.price?.toLocaleString("vi-VN")}đ
                         </div>
                       </Link>
                     </Card>
