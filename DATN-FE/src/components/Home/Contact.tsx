@@ -121,7 +121,7 @@ const Contact: React.FC = () => {
           <div className="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
             <form onSubmit={handleSubmit}>
               <h4 className="mtext-105 cl2 txt-center p-b-30">
-                Send Us A Message
+                Gửi tin nhắn cho chúng tôi
               </h4>
 
               {/* Name Field */}
@@ -130,7 +130,7 @@ const Contact: React.FC = () => {
                   className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
                   type="text"
                   name="name"
-                  placeholder="Your Name"
+                  placeholder="Nhập tên"
                   value={formData.name}
                   onChange={handleChange}
                 />
@@ -142,7 +142,7 @@ const Contact: React.FC = () => {
                   className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
                   type="email"
                   name="email"
-                  placeholder="Your Email Address"
+                  placeholder="Nhập email của bạn"
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -154,7 +154,7 @@ const Contact: React.FC = () => {
                   className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
                   type="text"
                   name="phone"
-                  placeholder="Your Phone Number"
+                  placeholder="Nhập số điện thoại"
                   value={formData.phone}
                   onChange={handleChange}
                 />
@@ -165,7 +165,7 @@ const Contact: React.FC = () => {
                 <textarea
                   className="stext-111 cl2 plh3 size-120 p-lr-28 p-tb-25"
                   name="message"
-                  placeholder="How Can We Help?"
+                  placeholder="Chúng tôi có thể giúp gì?"
                   value={formData.message}
                   onChange={handleChange}
                 />
@@ -176,7 +176,7 @@ const Contact: React.FC = () => {
                 type="submit"
                 className="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
               >
-                Submit
+                Gửi
               </button>
             </form>
           </div>
@@ -188,10 +188,9 @@ const Contact: React.FC = () => {
                 <span className="lnr lnr-map-marker" />
               </span>
               <div className="size-212 p-t-2">
-                <span className="mtext-110 cl2">Address</span>
+                <span className="mtext-110 cl2">Địa chỉ của chúng tôi</span>
                 <p className="stext-115 cl6 size-213 p-t-18">
-                  Coza Store Center 8th floor, 379 Hudson St, New York, NY 10018
-                  US
+                  Trịnh Văn Bô - Nam Từ Liêm
                 </p>
               </div>
             </div>
@@ -200,8 +199,8 @@ const Contact: React.FC = () => {
                 <span className="lnr lnr-phone-handset" />
               </span>
               <div className="size-212 p-t-2">
-                <span className="mtext-110 cl2">Let's Talk</span>
-                <p className="stext-115 cl1 size-213 p-t-18">+1 800 1236879</p>
+                <span className="mtext-110 cl2">Số điện thoại</span>
+                <p className="stext-115 cl1 size-213 p-t-18">0352169486</p>
               </div>
             </div>
             <div className="flex-w w-full">
@@ -209,10 +208,8 @@ const Contact: React.FC = () => {
                 <span className="lnr lnr-envelope" />
               </span>
               <div className="size-212 p-t-2">
-                <span className="mtext-110 cl2">Sale Support</span>
-                <p className="stext-115 cl1 size-213 p-t-18">
-                  contact@example.com
-                </p>
+                <span className="mtext-110 cl2">Hỗ Trợ</span>
+                <p className="stext-115 cl1 size-213 p-t-18">linh@gmail.com</p>
               </div>
             </div>
           </div>
