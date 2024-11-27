@@ -9,11 +9,11 @@ import { Category } from "src/types/product";
 import logo from "src/assets/images/icons/logo-01.png";
 import { useCart } from "src/context/Cart";
 import {
-  ArrowCircleDownOutlined,
-  CarCrashOutlined,
   LogoutOutlined,
 } from "@mui/icons-material";
-
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 // Cache constants
 const CACHE_KEYS = {
   CATEGORIES: "cached_categories",
@@ -51,6 +51,7 @@ const setCache = (key: string, data: any) => {
 };
 
 const Header: React.FC = () => {
+  const [name, setName] = useState("");
   const { user, setUser } = useUser();
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
@@ -59,6 +60,12 @@ const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFixed, setIsFixed] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
+
+  useEffect(() => {
+    if (user?.data?.user) {
+      setName(user.data.user.name);
+    }
+  }, [user]); // Chỉ chạy khi `user` thay đổi
 
   // Enhanced categories query with caching
   const { data, isLoading, isError, error } = useQuery({
@@ -141,6 +148,7 @@ const Header: React.FC = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+
   }, []);
 
   if (isLoading) return <div>Loading...</div>;
@@ -155,9 +163,8 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${
-          isFixed ? "fix-menu-desktop" : ""
-        }`}
+        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
+          }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -172,7 +179,7 @@ const Header: React.FC = () => {
               <div className="right-top-bar flex-w h-full">
                 <Grid container alignItems="center" spacing={2}>
                   <Grid item>
-                    <Typography color="white">Hi, {user.data.name}</Typography>
+                    <Typography color="white">Hi, {name}</Typography>
                   </Grid>
                   <Grid item>
                     <IconButton
@@ -217,7 +224,7 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-                        <ArrowCircleDownOutlined
+                        <AdminPanelSettingsIcon
                           style={{
                             fontSize: "18px",
                             transition: "all 0.3s ease",
@@ -225,6 +232,34 @@ const Header: React.FC = () => {
                         />
                         Admin
                       </MenuItem>
+
+                      <MenuItem
+                        onClick={() => navigate("/myinfo")}
+                        sx={{
+                          padding: "10px 16px",
+                          borderRadius: "8px",
+                          gap: "12px",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                            color: "#717FE0",
+                            "& .menu-icon": {
+                              transform: "scale(1.1)",
+                              color: "#717FE0",
+                            },
+                          },
+                        }}
+                      >
+                        <VerifiedUserIcon
+                          style={{
+                            fontSize: "18px",
+                            transition: "all 0.3s ease",
+                          }}
+                        />
+                        Tài khoản của tôi
+                      </MenuItem>
+
                       <MenuItem
                         onClick={() => navigate("/myoder")}
                         sx={{
@@ -243,7 +278,7 @@ const Header: React.FC = () => {
                           },
                         }}
                       >
-                        <CarCrashOutlined
+                        <ListAltIcon
                           style={{
                             fontSize: "18px",
                             transition: "all 0.3s ease",
@@ -251,6 +286,7 @@ const Header: React.FC = () => {
                         />
                         Đơn hàng của tôi
                       </MenuItem>
+
                       <MenuItem
                         onClick={handleLogout}
                         sx={{
@@ -349,7 +385,7 @@ const Header: React.FC = () => {
               </a>
               <a
                 href="/love"
-                className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"  
+                className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
               </a>

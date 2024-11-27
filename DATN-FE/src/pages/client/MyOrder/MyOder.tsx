@@ -106,7 +106,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                 <div className={styles.productContent}>
                   <div className={styles.productImage}>
                     <Image
-                      src="https://images2.thanhnien.vn/528068263637045248/2024/1/25/428059e47aeafb68640f168d615371dc-65a11b038315c880-1706156293087602824781.jpg"
+                      src={`http://127.0.0.1:8000/storage/${detail.product.image}`}
                       alt={detail.product.name}
                       className={styles.productImg}
                       fallback="/placeholder.png"
@@ -504,7 +504,7 @@ const MyOrder: React.FC = () => {
             {firstDetail && ( // Hiển thị hình ảnh của sản phẩm đầu tiên
               <div className="flex-shrink-0 text-center">
                 <Image
-                  src="https://images2.thanhnien.vn/528068263637045248/2024/1/25/c3c8177f2e6142e8c4885dbff89eb92a-65a11aeea03da880-1706156293184503262817.jpg"
+                  src={`http://127.0.0.1:8000/storage/${firstDetail.product.image}`}
                   alt={firstDetail.product.name}
                   width={100}
                   height={100}
