@@ -172,17 +172,24 @@ const AddressList = () => {
     const [districts, setDistricts] = useState<IDistrict[]>([]);
     const [wards, setWards] = useState<IWard[]>([]);
     const [selectedAddress, setSelectedAddress] = useState("");
+    const [addressToUpdate, setAddressToUpdate] = useState<Address | null>(null);
 
     useEffect(() => {
         setAddresses(user?.data.address);
     }, [user]);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (address?: Address) => {
+        setAddressToUpdate(address || null); // Nếu có địa chỉ được chọn để cập nhật thì set vào state
+        setNewAddress({
+            address: address ? address.address : '',
+            address_detail: address ? address.address_detail : '',
+        });
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setAddressToUpdate(null);
     };
 
     const handleAddAddress = async () => {
@@ -213,6 +220,38 @@ const AddressList = () => {
         } catch (error) {
             console.error('Lỗi khi thêm địa chỉ:', error);
             alert('Đã xảy ra lỗi khi thêm địa chỉ');
+        }
+    };
+
+    const handleUpdateAddress = async () => {
+        if (addressToUpdate) {
+            try {
+                const updatedAddressData = {
+                    address: newAddress.address,
+                    address_detail: newAddress.address_detail,
+                };
+
+                const response = await axiosInstance.put(`/api/address/${addressToUpdate.id}`, updatedAddressData, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.data.success) {
+                    // Cập nhật địa chỉ trong state
+                    const updatedAddresses = addresses.map((address) =>
+                        address.id === addressToUpdate.id ? { ...address, ...updatedAddressData } : address
+                    );
+                    setAddresses(updatedAddresses);
+                    setNewAddress({ address: '', address_detail: '' });
+                    handleClose();
+                } else {
+                    alert('Cập nhật địa chỉ không thành công');
+                }
+            } catch (error) {
+                console.error('Lỗi khi cập nhật địa chỉ:', error);
+                alert('Đã xảy ra lỗi khi cập nhật địa chỉ');
+            }
         }
     };
 
@@ -280,6 +319,58 @@ const AddressList = () => {
         }));
     };
 
+    const handleSetDefault = async (id: number) => {
+        try {
+            await axiosInstance.put(`/api/address-default`, { id }, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
+
+            const defaultAddress = addresses.find((address) => address.id === id);
+            const otherAddresses = addresses.filter((address) => address.id !== id);
+            if (defaultAddress) {
+                // Đặt is_default = true cho địa chỉ được chọn
+                defaultAddress.is_default = true;
+
+                // Đặt is_default = false cho các địa chỉ khác
+                const updatedAddresses = [
+                    defaultAddress,
+                    ...otherAddresses.map((address) => ({
+                        ...address,
+                        is_default: false,
+                    })),
+                ];
+
+                setAddresses(updatedAddresses);
+            }
+        } catch (error) {
+            console.error('Lỗi khi đặt địa chỉ mặc định:', error);
+            alert('Đã xảy ra lỗi khi cập nhật địa chỉ mặc định.');
+        }
+    };
+
+    const handleDeleteAddress = async (id: number) => {
+        const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa địa chỉ này?");
+        if (!confirmDelete) return;
+
+        try {
+            axiosInstance.delete(`/api/address/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            // Xóa địa chỉ khỏi danh sách
+            const updatedAddresses = addresses.filter((address) => address.id !== id);
+            setAddresses(updatedAddresses);
+        } catch (error) {
+            console.error("Lỗi khi xóa địa chỉ:", error);
+            alert("Đã xảy ra lỗi khi xóa địa chỉ. Vui lòng thử lại.");
+        }
+    };
+
+
     return (
         <Box p={3} bgcolor="#f9f9f9" borderRadius={2} width={1000}>
             <h1 className="text-2xl font-bold text-gray-800 mb-2">
@@ -293,7 +384,7 @@ const AddressList = () => {
                     className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
                     style={{ width: 200, margin: 20 }}
                     type='button'
-                    onClick={handleClickOpen}
+                    onClick={() => handleClickOpen()}
                 >
                     Thêm địa chỉ mới
                 </button>
@@ -317,13 +408,22 @@ const AddressList = () => {
                             </Typography>
                         )}
                         <Box mt={2}>
-                            <Button variant="text" color="secondary">
+                            <Button variant="text" color="secondary" onClick={() => handleClickOpen(address)}>
                                 Cập nhật
                             </Button>
-                            <Button variant="text" color="error">
-                                Xóa
-                            </Button>
-                            <Button variant="outlined" color="primary" sx={{ ml: 2 }}>
+                            {!address.is_default &&
+                                <Button variant="text" color="error" onClick={() => handleDeleteAddress(address.id)}>
+                                    Xóa
+                                </Button>
+                            }
+
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                sx={{ ml: 2 }}
+                                onClick={() => handleSetDefault(address.id)}
+                                disabled={!!address.is_default}
+                            >
                                 Đặt làm mặc định
                             </Button>
                         </Box>
@@ -333,7 +433,7 @@ const AddressList = () => {
 
             {/* Modal thêm địa chỉ mới */}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Thêm địa chỉ mới</DialogTitle>
+                <DialogTitle>{addressToUpdate ? "Cập nhật địa chỉ" : "Thêm địa chỉ mới"}</DialogTitle>
                 <DialogContent>
                     <div className="form-row">
                         {/* Tỉnh/Thành phố */}
@@ -406,12 +506,12 @@ const AddressList = () => {
                     {/* Địa chỉ cụ thể*/}
                     <div className="form-floating mb-3">
                         <input
+                            value={newAddress.address_detail}
                             type="text"
                             className={`form-control register-input`}
                             id="addressInput"
                             placeholder=""
                             name="address_detail"
-                            value={newAddress.address_detail}
                             onChange={handleInputChange}
                         />
                         <label htmlFor="addressInput" className="register-label">
@@ -421,11 +521,11 @@ const AddressList = () => {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleClose} color="error">
                         Hủy
                     </Button>
-                    <Button onClick={handleAddAddress} color="primary">
-                        Thêm
+                    <Button onClick={addressToUpdate ? handleUpdateAddress : handleAddAddress} color="primary">
+                        {addressToUpdate ? "Cập nhật" : "Thêm"}
                     </Button>
                 </DialogActions>
             </Dialog>

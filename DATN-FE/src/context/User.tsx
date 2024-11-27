@@ -40,7 +40,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             withCredentials: true,
           });
           setUser(response.data);
-
         } else {
           setUser(null);
         }
