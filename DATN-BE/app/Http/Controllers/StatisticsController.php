@@ -40,7 +40,7 @@ class StatisticsController extends Controller
                     $data->growth_percentage = round($growthPercentage, 2) . ' %';
                 } else {
                     // Nếu là ngày đầu tiên, không tính tăng trưởng
-                    $data->growth_percentage = 'Không có dữ liệu ngày trước';
+                    $data->growth_percentage = '0 %';
                 }
 
                 // Thêm dữ liệu vào mảng kết quả
@@ -80,7 +80,7 @@ class StatisticsController extends Controller
                     $data->growth_percentage = round($growthPercentage, 2) . ' %';
                 } else {
                     // Nếu là tháng đầu tiên, không tính tăng trưởng
-                    $data->growth_percentage = 'Không có dữ liệu tháng trước';
+                    $data->growth_percentage = '0 %';
                 }
 
                 // Thêm dữ liệu vào mảng kết quả
@@ -119,7 +119,7 @@ class StatisticsController extends Controller
                     $data->growth_percentage = round($growthPercentage, 2) . ' %';
                 } else {
                     // Nếu là năm đầu tiên, không tính tăng trưởng
-                    $data->growth_percentage = 'Không có dữ liệu năm trước';
+                    $data->growth_percentage = '0 %';
                 }
 
                 // Thêm dữ liệu vào mảng kết quả
@@ -167,7 +167,7 @@ class StatisticsController extends Controller
                     $data->growth_percentage = round($growthPercentage, 2) . ' %';
                 } else {
                     // Nếu là ngày đầu tiên, không tính tăng trưởng
-                    $data->growth_percentage = 'Không có dữ liệu ngày trước';
+                    $data->growth_percentage = '0 %';
                 }
 
                 // Thêm dữ liệu vào mảng kết quả
@@ -214,7 +214,7 @@ class StatisticsController extends Controller
                     $data->growth_percentage = round($growthPercentage, 2) . ' %';
                 } else {
                     // Nếu là tháng đầu tiên, không tính tăng trưởng
-                    $data->growth_percentage = 'Không có dữ liệu tháng trước';
+                    $data->growth_percentage = '0 %';
                 }
 
                 // Thêm dữ liệu vào mảng kết quả
@@ -256,7 +256,7 @@ class StatisticsController extends Controller
                     $data->growth_percentage = round($growthPercentage, 2) . ' %';
                 } else {
                     // Nếu là năm đầu tiên, không tính tăng trưởng
-                    $data->growth_percentage = 'Không có dữ liệu năm trước';
+                    $data->growth_percentage = '0 %';
                 }
 
                 // Thêm dữ liệu vào mảng kết quả
@@ -368,7 +368,7 @@ class StatisticsController extends Controller
                 $data->growth_percentage = round($growthPercentage, 2) . ' %';
             } else {
                 // Nếu là ngày đầu tiên, không tính tăng trưởng
-                $data->growth_percentage = 'Không có dữ liệu tháng trước';
+                $data->growth_percentage = '0 %';
             }
             // Thêm dữ liệu vào mảng kết quả
             $totalUser[] = $data;
@@ -382,7 +382,8 @@ class StatisticsController extends Controller
                 DB::raw('YEAR(created_at) as year'),
                 DB::raw('COUNT(*) as total_orders'),
                 DB::raw('SUM(CASE WHEN order_status = "Đã Hoàn Thành" THEN 1 ELSE 0 END) as completed_orders'),
-                DB::raw('SUM(CASE WHEN order_status = "Đã hủy đơn hàng" THEN 1 ELSE 0 END) as cancelled_orders')
+                DB::raw('SUM(CASE WHEN order_status = "Đã hủy đơn hàng" THEN 1 ELSE 0 END) as cancelled_orders'),
+                DB::raw('SUM(CASE WHEN order_status = "Đã Hoàn Thành" THEN total_amount ELSE 0 END) as total_revenue')
             )
             ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
             ->orderBy('year', 'asc')
@@ -393,21 +394,26 @@ class StatisticsController extends Controller
         $grandTotalOrder = 0;
         $grandTotalComplete = 0;
         $grandTotalCancel = 0;
+        $grandTotalRevenue = 0;
         foreach ($orderStatistics as $index => $order) {
             // Thêm doanh thu cho ngày hiện tại
             $currentOrder = $order->total_orders;
-            $grandTotalOrder += $currentOrder;
-
             $currentComplete = $order->completed_orders;
             $currentCancel = $order->cancelled_orders;
+            $currentRevenue = $order->total_revenue;
+
+
+            $grandTotalOrder += $currentOrder;
             $grandTotalComplete += $currentComplete;
             $grandTotalCancel += $currentCancel;
+            $grandTotalRevenue += $currentRevenue;
             // Kiểm tra nếu không phải là ngày đầu tiên để tính tỷ lệ tăng trưởng
             if ($index > 0) {
                 // Doanh thu ngày hôm trước
                 $previousOrder = $orderStatistics[$index - 1]->total_orders;
                 $previousComplete = $orderStatistics[$index - 1]->completed_orders;
                 $previousCancel = $orderStatistics[$index - 1]->cancelled_orders;
+                $previousRevenue = $orderStatistics[$index - 1]->total_revenue;
 
                 // Tính tỷ lệ tăng trưởng phần trăm
                 $growthPercentageOrder = 0;
@@ -420,17 +426,22 @@ class StatisticsController extends Controller
                 if ($previousCancel > 0) {
                     $growthPercentageCancel = (($currentCancel - $previousCancel) / $previousCancel) * 100;
                 }
+                if ($previousRevenue > 0) {
+                    $growthPercentageRevenue  = (($currentRevenue - $previousRevenue) / $previousRevenue) * 100;
+                }
 
 
                 // Thêm tỷ lệ tăng trưởng vào kết quả
                 $order->growth_percentageOrder = round($growthPercentageOrder, 2) . ' %';
                 $order->growthPercentageComplete = round($growthPercentageComplete, 2) . ' %';
                 $order->growthPercentageCancel = round($growthPercentageCancel, 2) . ' %';
+                $order->growthPercentageRevenue  = round($growthPercentageRevenue, 2) . ' %';
             } else {
                 // Nếu là ngày đầu tiên, không tính tăng trưởng
-                $order->growth_percentageOrder = 'Không có dữ liệu tháng trước';
-                $order->growthPercentageComplete = 'Không có dữ liệu tháng trước';
-                $order->growthPercentageCancel = 'Không có dữ liệu tháng trước';
+                $order->growth_percentageOrder = '0 %';
+                $order->growthPercentageComplete = '0 %';
+                $order->growthPercentageCancel = '0 %';
+                $order->growthPercentageRevenue = '0 %';
             }
 
             // Thêm dữ liệu vào mảng kết quả
@@ -452,7 +463,8 @@ class StatisticsController extends Controller
             'Tổng tất cả đơn hàng thành công' => $grandTotalComplete,
             'Tổng tất cả đơn hàng hủy' => $grandTotalCancel,
             'Tổng tỉ lệ hoàn thành đơn hàng' => $completionRate,
-            'Tổng tỉ lệ hủy đơn hàng' => $cancellationRate
+            'Tổng tỉ lệ hủy đơn hàng' => $cancellationRate,
+            'Tổng doanh thu' => $grandTotalRevenue,
         ], 200);
     }
 }
