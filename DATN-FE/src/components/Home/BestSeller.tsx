@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "src/assets/css/StoreOverview.css";
 
 // Hàm lưu dữ liệu vào localStorage
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const saveToLocalStorage = (key: string, data: any) => {
   localStorage.setItem(key, JSON.stringify(data));
   localStorage.setItem(`${key}_updated_at`, Date.now().toString());
