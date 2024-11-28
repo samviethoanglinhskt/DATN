@@ -266,7 +266,7 @@ class CartController extends Controller
                 'order_status' => 'Chờ xử lý',
                 'name' => $request->name,
                 'phone' => $request->phone,
-                'address' => $request->address,
+                'address' => $request->address_detail . ', ' . $request->address,
                 'email' => $request->email,
             ]);
             $variant = tb_variant::find($request->tb_variant_id);
@@ -327,7 +327,7 @@ class CartController extends Controller
                     'order_status' => 'Chờ xử lý',
                     'name' => $request->name,
                     'phone' => $request->phone,
-                    'address' => $request->address,
+                    'address' => $request->address_detail . ', ' . $request->address,
                     'email' => $request->email,
                 ]);
                 $variant = tb_variant::find($request->tb_variant_id);
@@ -389,7 +389,7 @@ class CartController extends Controller
                     'order_status' => 'Chờ xử lý',
                     'name' => $request->name,
                     'phone' => $request->phone,
-                    'address' => $request->address,
+                    'address' => $request->address_detail . ', ' . $request->address,
                     'email' => $request->email,
                 ]);
                 foreach ($selectedItems as $item) {
@@ -515,7 +515,7 @@ class CartController extends Controller
                     'order_status' => 'Chờ xử lý',
                     'name' => $request->name,
                     'phone' => $request->phone,
-                    'address' => $request->address,
+                    'address' => $request->address_detail . ', ' . $request->address,
                     'email' => $request->email,
                 ]);
                 $variant = tb_variant::find($request->tb_variant_id);
@@ -619,7 +619,7 @@ class CartController extends Controller
                     'order_status' => 'Chờ xử lý',
                     'name' => $user->name,
                     'phone' => $user->phone,
-                    'address' => $user->address,
+                    'address' => $request->address_detail . ', ' . $request->address,
                     'email' => $user->email,
                 ]);
                 foreach ($selectedItems as $item) {
@@ -714,7 +714,7 @@ class CartController extends Controller
                 'order_status' => 'Chờ xử lý',
                 'name' => $request->name,
                 'phone' => $request->phone,
-                'address' => $request->address,
+                'address' => $request->address_detail . ', ' . $request->address,
                 'email' => $request->email,
             ]);
             $variant = tb_variant::find($request->tb_variant_id);

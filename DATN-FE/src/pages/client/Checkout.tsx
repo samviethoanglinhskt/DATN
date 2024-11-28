@@ -6,7 +6,12 @@ import { Variant } from 'src/types/product';
 import logoVoucher from 'src/assets/images/logo/z6049078466357_4627467cef3023a6ad0594fd0cfdc81e-removebg-preview.png';
 import axiosInstance from 'src/config/axiosInstance';
 import { Discount } from 'src/types/discount';
+import { Address } from 'src/types/user';
+import { getDistrictsByProvinceCode, getProvinces, getWardsByDistrictCode } from 'vn-provinces';
+import { IDistrict, IProvince, IWard } from 'src/types/address';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 
+// interface ở đây
 interface Product {
   id: number;
   products: {
@@ -50,17 +55,407 @@ interface LocationState {
   cartId: number[];
   cartItem: CartItem;
 }
+
+interface AddressModalProps {
+  addresses: Address[];
+  selectedModalAddress: string;
+  onSelectAddress: (address: Address) => void;
+  openModal: boolean;
+  onClose: () => void;
+}
+
+interface AddressFormModalProps {
+  open: boolean;
+  addressToUpdate: Address | null; // Địa chỉ đang được cập nhật, nếu có
+  newAddress: {
+    address: string;
+    address_detail: string;
+  };
+  provinces: IProvince[];
+  districts: IDistrict[];
+  wards: IWard[];
+  selectedAddress: string;
+  onClose: () => void;
+  onProvinceChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onDistrictChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onWardChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onAddAddress: () => void;
+  onUpdateAddress: () => void;
+}
+
+const AddressModal: React.FC<AddressModalProps> = ({ addresses, selectedModalAddress, onSelectAddress, openModal, onClose }) => {
+  const { user, addAddress, updateAddress } = useUser();
+  const [open, setOpen] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    address: '',
+    address_detail: '',
+  });
+  const [provinces, setProvinces] = useState<IProvince[]>([]);
+  const [districts, setDistricts] = useState<IDistrict[]>([]);
+  const [wards, setWards] = useState<IWard[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState("");
+  const [addressToUpdate, setAddressToUpdate] = useState<Address | null>(null);
+
+  useEffect(() => {
+    // Chỉ cập nhật selectedAddress nếu là cập nhật địa chỉ từ user
+    if (user && !addressToUpdate) {
+      setSelectedAddress(user?.data?.address?.[0]?.address || '');
+    }
+  }, [user, addressToUpdate]);
+
+  const handleClickOpen = (address?: Address) => {
+    setAddressToUpdate(address || null);
+
+    if (address) {
+      // Nếu là cập nhật, hiển thị dữ liệu của địa chỉ đó
+      setNewAddress({
+        address: address.address,
+        address_detail: address.address_detail,
+      });
+      setSelectedAddress(address.address);  // Hiển thị địa chỉ chính xác khi cập nhật
+    } else {
+      // Nếu là thêm mới, đặt lại mọi trường thành trống
+      setNewAddress({
+        address: '',
+        address_detail: '',
+      });
+      setSelectedAddress('');  // Đặt lại địa chỉ trống khi thêm mới
+    }
+
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setAddressToUpdate(null);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewAddress((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    // Lấy danh sách tỉnh
+    const provincesData = getProvinces();
+    setProvinces(provincesData);
+  }, []);
+
+  const handleProvinceChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const provinceCode = e.target.value;
+    const province = provinces.find((p) => p.code === provinceCode);
+    if (province) {
+      const districtsData = getDistrictsByProvinceCode(provinceCode);
+      setDistricts(districtsData);
+      setWards([]);
+      updateSelectedAddress(province.name, "province");
+    }
+  };
+
+  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const districtCode = e.target.value;
+    const district = districts.find((d) => d.code === districtCode);
+    if (district) {
+      const wardsData = getWardsByDistrictCode(districtCode);
+      setWards(wardsData);
+      updateSelectedAddress(district.name, "district");
+    }
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const wardCode = e.target.value;
+    const ward = wards.find((w) => w.code === wardCode);
+    if (ward) {
+      updateSelectedAddress(ward.name, "ward");
+    }
+  };
+
+  const updateSelectedAddress = (value: string, level: "province" | "district" | "ward") => {
+    const parts = selectedAddress.split(", ");
+    let newSelectedAddress = "";
+
+    if (level === "province") {
+      newSelectedAddress = `${value}`;
+    } else if (level === "district") {
+      newSelectedAddress = `${parts[0]}, ${value}`;
+    } else if (level === "ward") {
+      newSelectedAddress = `${parts[0]}, ${parts[1]}, ${value}`;
+    }
+
+    setSelectedAddress(newSelectedAddress);
+    setNewAddress((prev) => ({
+      ...prev,
+      address: newSelectedAddress,
+    }));
+  };
+
+  const handleAddAddress = async () => {
+    try {
+      const newAddressData = {
+        address: newAddress.address,
+        address_detail: newAddress.address_detail,
+      };
+      await addAddress(newAddressData);
+      setNewAddress({
+        address: '',
+        address_detail: '',
+      });
+      handleClose();
+    } catch (error) {
+      console.error('Lỗi khi thêm địa chỉ:', error);
+      alert('Đã xảy ra lỗi khi thêm địa chỉ');
+    }
+  };
+
+  const handleUpdateAddress = async () => {
+    if (addressToUpdate) {
+      try {
+        const updatedAddressData = {
+          address: newAddress.address,
+          address_detail: newAddress.address_detail,
+        };
+        await updateAddress(addressToUpdate.id, updatedAddressData);
+        setNewAddress({ address: '', address_detail: '' });
+        handleClose();
+      } catch (error) {
+        console.error('Lỗi khi cập nhật địa chỉ:', error);
+        alert('Đã xảy ra lỗi khi cập nhật địa chỉ');
+      }
+    }
+  };
+
+  return (
+    <Dialog open={openModal} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Chọn địa chỉ giao hàng</DialogTitle>
+      <DialogContent>
+        <List>
+          {addresses
+            .sort((a, b) => (b.is_default ? 1 : 0) - (a.is_default ? 1 : 0))
+            .map((address) => (
+              <ListItem
+                key={address.id}
+                onClick={() => onSelectAddress(address)}
+                sx={{
+                  border: selectedModalAddress === address.address ? '2px solid #1976d2' : '1px solid #e0e0e0',
+                  borderRadius: '8px',
+                  marginBottom: '10px',
+                  padding: '15px',
+                  ":hover": { cursor: 'pointer' },
+                  position: 'relative',
+                }}
+              >
+                <div>
+                  <Typography variant="body1" fontWeight="bold">
+                    <LocationOnOutlinedIcon /> {address.address_detail}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {address.address}
+                  </Typography>
+                  {address.is_default == true && (
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        display: "inline-block",
+                        padding: "3px 6px",
+                        border: "1px solid #1998E2",
+                        color: "#1998E2",
+                        borderRadius: "4px",
+                        marginTop: 1
+                      }}
+                    >
+                      Mặc định
+                    </Typography>
+                  )}
+                </div>
+
+                <Button
+                  color="warning"
+                  sx={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    padding: "3px 6px",
+                    border: "1px solid orange",
+                    fontSize: 10,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Ngăn sự kiện click kích hoạt onClick của ListItem
+                    handleClickOpen(address);
+                  }}
+                >
+                  Cập nhật
+                </Button>
+              </ListItem>
+            ))}
+          {addresses.length === 0 && (
+            <Typography variant="body2" color="textSecondary" align="center">
+              Bạn chưa có địa chỉ nào. Hãy đăng nhập để có danh sách địa chỉ.
+            </Typography>
+          )}
+        </List>
+        {addresses.length > 0 && (
+          <Button
+            sx={{ border: "1px solid grey", padding: "8px", color: "black" }}
+            onClick={() => handleClickOpen()}
+          >+ Thêm địa chỉ mới
+          </Button>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="secondary">
+          Đóng
+        </Button>
+      </DialogActions>
+      <AddressFormModal
+        open={open}
+        addressToUpdate={addressToUpdate}
+        newAddress={newAddress}
+        provinces={provinces}
+        districts={districts}
+        wards={wards}
+        selectedAddress={selectedAddress}
+        onClose={handleClose}
+        onProvinceChange={handleProvinceChange}
+        onDistrictChange={handleDistrictChange}
+        onWardChange={handleWardChange}
+        onInputChange={handleInputChange}
+        onAddAddress={handleAddAddress}
+        onUpdateAddress={handleUpdateAddress}
+      />
+    </Dialog>
+  );
+};
+
+const AddressFormModal: React.FC<AddressFormModalProps> = ({
+  open,
+  addressToUpdate,
+  newAddress,
+  provinces,
+  districts,
+  wards,
+  selectedAddress,
+  onClose,
+  onProvinceChange,
+  onDistrictChange,
+  onWardChange,
+  onInputChange,
+  onAddAddress,
+  onUpdateAddress, }) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{addressToUpdate ? "Cập nhật địa chỉ" : "Thêm địa chỉ mới"}</DialogTitle>
+      <DialogContent>
+        <div className="form-row">
+          {/* Tỉnh/Thành phố */}
+          <div className="form-group col-md-4">
+            <label htmlFor="province">Tỉnh/Thành phố</label>
+            <select id="province" className="form-control" onChange={onProvinceChange}>
+              <option value="">Chọn tỉnh/thành</option>
+              {provinces.map((province) => (
+                <option key={province.code} value={province.code}>
+                  {province.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Quận/Huyện */}
+          <div className="form-group col-md-4">
+            <label htmlFor="district">Quận/Huyện</label>
+            <select
+              id="district"
+              className="form-control"
+              onChange={onDistrictChange}
+              disabled={!districts.length}
+            >
+              <option value="">Chọn quận/huyện</option>
+              {districts.map((district) => (
+                <option key={district.code} value={district.code}>
+                  {district.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Phường/Xã */}
+          <div className="form-group col-md-4">
+            <label htmlFor="ward">Phường/Xã</label>
+            <select
+              id="ward"
+              className="form-control"
+              onChange={onWardChange}
+              disabled={!wards.length}
+            >
+              <option value="">Chọn phường/xã</option>
+              {wards.map((ward) => (
+                <option key={ward.code} value={ward.code}>
+                  {ward.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Địa chỉ */}
+        <div className="form-floating mb-3">
+          <input
+            value={selectedAddress}
+            type="text"
+            className={`form-control register-input`}
+            id="addressInput"
+            placeholder=""
+            name="address"
+            readOnly
+          />
+          <label htmlFor="addressInput" className="register-label">
+            <i className="fas fa-map-marker-alt me-2"></i>
+            Địa chỉ
+          </label>
+        </div>
+
+        {/* Địa chỉ cụ thể*/}
+        <div className="form-floating mb-3">
+          <input
+            value={newAddress.address_detail}
+            type="text"
+            className={`form-control register-input`}
+            id="addressInput"
+            placeholder=""
+            name="address_detail"
+            onChange={onInputChange}
+          />
+          <label htmlFor="addressInput" className="register-label">
+            <i className="fas fa-map-marker-alt me-2"></i>
+            Địa chỉ cụ thể
+          </label>
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="error">
+          Hủy
+        </Button>
+        <Button onClick={addressToUpdate ? onUpdateAddress : onAddAddress} color="primary">
+          {addressToUpdate ? "Cập nhật" : "Thêm"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser(); // Get user data from UserContext
+  const { user, addresses } = useUser();
   const [loadingUser, setLoadingUser] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
-  const [addressError, setAddressError] = useState('');
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -72,7 +467,107 @@ const CheckoutPage: React.FC = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod', 'vnpay'
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+
+  const [newAddress, setNewAddress] = useState({
+    address: '',
+    address_detail: '',
+  });
+  const [provinces, setProvinces] = useState<IProvince[]>([]);
+  const [districts, setDistricts] = useState<IDistrict[]>([]);
+  const [wards, setWards] = useState<IWard[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState("");
+  const [addressModalOpen, setAddressModalOpen] = useState(false);
+
+  const handleOpenAddressModal = () => setAddressModalOpen(true);
+  const handleCloseAddressModal = () => setAddressModalOpen(false);
+
+  const handleSelectAddress = (address: Address) => {
+    setSelectedAddress(address.address);
+    setNewAddress((prev) => ({
+      ...prev,
+      address: address.address,
+      address_detail: address.address_detail,
+    }));
+    handleCloseAddressModal();
+  };
+
+  useEffect(() => {
+    if (user) {
+      const userAddress = user?.data?.address?.[0]; // Giả sử địa chỉ đầu tiên trong danh sách của user là địa chỉ chính
+      if (userAddress) {
+        setSelectedAddress(userAddress.address || '');
+        setNewAddress({
+          address: userAddress.address || '',
+          address_detail: userAddress.address_detail || '', // Cập nhật address_detail khi load trang
+        });
+      }
+    }
+  }, [user]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewAddress((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    // Lấy danh sách tỉnh
+    const provincesData = getProvinces();
+    setProvinces(provincesData);
+  }, []);
+
+  const handleProvinceChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const provinceCode = e.target.value;
+    const province = provinces.find((p) => p.code === provinceCode);
+    if (province) {
+      const districtsData = getDistrictsByProvinceCode(provinceCode);
+      setDistricts(districtsData);
+      setWards([]);
+      updateSelectedAddress(province.name, "province");
+    }
+  };
+
+  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const districtCode = e.target.value;
+    const district = districts.find((d) => d.code === districtCode);
+    if (district) {
+      const wardsData = getWardsByDistrictCode(districtCode);
+      setWards(wardsData);
+      updateSelectedAddress(district.name, "district");
+    }
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const wardCode = e.target.value;
+    const ward = wards.find((w) => w.code === wardCode);
+    if (ward) {
+      updateSelectedAddress(ward.name, "ward");
+    }
+  };
+
+  const updateSelectedAddress = (value: string, level: "province" | "district" | "ward") => {
+    const parts = selectedAddress.split(", ");
+    let newSelectedAddress = "";
+
+    if (level === "province") {
+      newSelectedAddress = `${value}`;
+    } else if (level === "district") {
+      newSelectedAddress = `${parts[0]}, ${value}`;
+    } else if (level === "ward") {
+      newSelectedAddress = `${parts[0]}, ${parts[1]}, ${value}`;
+    }
+
+    setSelectedAddress(newSelectedAddress);
+
+    // Cập nhật vào state newAddress
+    setNewAddress((prev) => ({
+      ...prev,
+      address: newSelectedAddress,
+    }));
+  };
 
   // Phương thức xử lý khi thay đổi lựa chọn phương thức thanh toán
   const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,21 +593,21 @@ const CheckoutPage: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log(user);
+
     const token = localStorage.getItem('token');
     if (!token) {
       setLoadingUser(false);
     } else if (user?.data) {
-      setName(user.data.name || '');
-      setEmail(user.data.email || '');
-      setPhone(user.data.phone || '');
-      setAddress(user.data.address || '');
+      setName(user.data.user.name || '');
+      setEmail(user.data.user.email || '');
+      setPhone(user.data.user.phone || '');
       setLoadingUser(false);
     } else {
       setLoadingUser(false);
     }
     // console.log(cartItem);
     // console.log(selectedProducts);
-
   }, [user]);
 
   const validateForm = () => {
@@ -145,16 +640,10 @@ const CheckoutPage: React.FC = () => {
     } else {
       setPhoneError('');
     }
-
-    if (!address.trim()) {
-      setAddressError('Địa chỉ không được để trống');
-      isValid = false;
-    } else {
-      setAddressError('');
-    }
     return isValid;
   };
 
+  // hàm checkout ở đây
   const handleCheckOut = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -163,7 +652,7 @@ const CheckoutPage: React.FC = () => {
       const token = localStorage.getItem("token");
       let url = token
         ? 'http://localhost:8000/api/cart/check-out-cart'
-        : 'http://localhost:8000/api/cart/check-out-guest';
+        : 'http://localhost:8000/api/cart/check-out-guest'
       if (paymentMethod == 'vnpay' && token) {
         url = 'http://localhost:8000/api/payment-online'
       }
@@ -181,14 +670,14 @@ const CheckoutPage: React.FC = () => {
         name,
         email,
         phone,
-        address,
+        address: selectedAddress,
+        address_detail: newAddress.address_detail,
         quantity: quantity,
         tb_product_id: tbProductId,
         tb_variant_id: tbVariantId,
         total_amount: totalAmount,
         cart_items: cart_items,
         tb_discount_id: selectedVoucher?.id,
-        // payment_method: paymentMethod, 
       };
 
       const response = await fetch(url, {
@@ -220,6 +709,8 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
+
+  // fetch giảm giá ở đây
   useEffect(() => {
     const fetchDiscounts = async () => {
       try {
@@ -283,6 +774,7 @@ const CheckoutPage: React.FC = () => {
                   />
                   {nameError && <div className="invalid-feedback">{nameError}</div>}
                 </div>
+
                 <div className="mb-3">
                   <label className="form-label">Email</label>
                   <input
@@ -293,6 +785,7 @@ const CheckoutPage: React.FC = () => {
                   />
                   {emailError && <div className="invalid-feedback">{emailError}</div>}
                 </div>
+
                 <div className="mb-3">
                   <label className="form-label">Số điện thoại</label>
                   <input
@@ -303,17 +796,95 @@ const CheckoutPage: React.FC = () => {
                   />
                   {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">Địa chỉ giao hàng</label>
-                  <textarea
-                    className={`form-control ${addressError ? 'is-invalid' : ''}`}
-                    rows={3}
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Vui lòng nhập địa chỉ giao hàng chi tiết"
-                  />
-                  {addressError && <div className="invalid-feedback">{addressError}</div>}
+
+                <div className="form-row">
+                  {/* Tỉnh/Thành phố */}
+                  <div className="form-group col-md-4">
+                    <label htmlFor="province">Tỉnh/Thành phố</label>
+                    <select id="province" className="form-control" onChange={handleProvinceChange}>
+                      <option value="">Chọn tỉnh/thành</option>
+                      {provinces.map((province) => (
+                        <option key={province.code} value={province.code}>
+                          {province.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Quận/Huyện */}
+                  <div className="form-group col-md-4">
+                    <label htmlFor="district">Quận/Huyện</label>
+                    <select
+                      id="district"
+                      className="form-control"
+                      onChange={handleDistrictChange}
+                      disabled={!districts.length}
+                    >
+                      <option value="">Chọn quận/huyện</option>
+                      {districts.map((district) => (
+                        <option key={district.code} value={district.code}>
+                          {district.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Phường/Xã */}
+                  <div className="form-group col-md-4">
+                    <label htmlFor="ward">Phường/Xã</label>
+                    <select
+                      id="ward"
+                      className="form-control"
+                      onChange={handleWardChange}
+                      disabled={!wards.length}
+                    >
+                      <option value="">Chọn phường/xã</option>
+                      {wards.map((ward) => (
+                        <option key={ward.code} value={ward.code}>
+                          {ward.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+
+                {/* Địa chỉ */}
+                <div className="form-floating mb-3">
+                  <input
+                    value={selectedAddress}
+                    type="text"
+                    className={`form-control register-input`}
+                    id="addressInput"
+                    placeholder=""
+                    name="address"
+                    readOnly
+                  />
+                  <label htmlFor="addressInput" className="register-label">
+                    <i className="fas fa-map-marker-alt me-2"></i>
+                    Địa chỉ
+                  </label>
+                </div>
+
+                {/* Địa chỉ cụ thể*/}
+                <div className="form-floating mb-3">
+                  <input
+                    value={newAddress.address_detail}
+                    type="text"
+                    className={`form-control register-input`}
+                    id="addressInput"
+                    placeholder=""
+                    name="address_detail"
+                    onChange={handleInputChange}
+                  />
+                  <label htmlFor="addressInput" className="register-label">
+                    <i className="fas fa-map-marker-alt me-2"></i>
+                    Địa chỉ cụ thể
+                  </label>
+                </div>
+
+                <Button variant="outlined" onClick={handleOpenAddressModal} style={{ marginBottom: '20px' }}>
+                  Chọn địa chỉ giao hàng
+                </Button>
               </form>
 
               {/* Thêm giao diện phương thức thanh toán */}
@@ -336,6 +907,15 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
 
+        <AddressModal
+          addresses={addresses}
+          selectedModalAddress={selectedAddress}
+          onSelectAddress={handleSelectAddress}
+          openModal={addressModalOpen}
+          onClose={handleCloseAddressModal}
+        />
+
+        {/* Đơn hàng ở đây */}
         <div className="col-lg-4">
           <div className="card shadow-sm">
             <div className="card-body">
@@ -479,6 +1059,7 @@ const CheckoutPage: React.FC = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -6,21 +6,7 @@ import axiosInstance from "src/config/axiosInstance";
 import "../../assets/css/Register.css";
 import { useEffect, useState } from "react";
 import { getProvinces, getDistrictsByProvinceCode, getWardsByDistrictCode } from "vn-provinces";
-
-interface IProvince {
-  code: string; // mã tỉnh
-  name: string; // tên tỉnh
-}
-
-interface IDistrict {
-  code: string; // mã huyện
-  name: string; // tên huyện
-}
-
-interface IWard {
-  code: string; // mã xã
-  name: string; // tên xã
-}
+import { IDistrict, IProvince, IWard } from "src/types/address";
 
 const Register = () => {
   const {

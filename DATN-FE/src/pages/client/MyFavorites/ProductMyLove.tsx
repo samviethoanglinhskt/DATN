@@ -49,7 +49,7 @@ const ProductCard: React.FC<{
             </div>
           )}
           <img
-            src="/images/noiimage.png"
+            src={`http://127.0.0.1:8000/storage/${product.image}`}
             className={`product-img ${imageLoaded ? "loaded" : ""}`}
             alt={product.name}
             onClick={() => onClick(product.id)}

@@ -10,9 +10,7 @@ import {
   Pagination,
   Checkbox,
   Slider,
-  Breadcrumb,
   Skeleton,
-  Badge,
   Tooltip,
 } from "antd";
 import {
@@ -60,15 +58,15 @@ const ProductList = () => {
   // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
     ? allProducts.filter(
-        (product: Product) => product.tb_category_id === Number(id)
-      )
+      (product: Product) => product.tb_category_id === Number(id)
+    )
     : [];
 
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? filteredProductsByCategory.filter((product: Product) =>
-          selectedBrands.includes(product.tb_brand_id)
-        )
+        selectedBrands.includes(product.tb_brand_id)
+      )
       : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
@@ -118,15 +116,17 @@ const ProductList = () => {
     <div className="products-page">
       {/* Header Area */}
       <div className="products-header">
-        <Breadcrumb>
-          <Breadcrumb.Item onClick={() => navigate("/")}>
-            Trang chủ
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Danh mục sản phẩm</Breadcrumb.Item>
-          <Breadcrumb.Item>{id ? `` : "Tất cả"}</Breadcrumb.Item>
-        </Breadcrumb>
+        <div style={{ marginTop: 10 }}>
+          <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
+              Trang chủ
+              <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </button>
+            <span className="stext-109 cl4">Danh mục</span>
+          </div>
+        </div>
 
-        <div className="header-controls">
+        <div className="header-controls" style={{ marginTop: 100 }}>
           <Input
             prefix={<SearchOutlined />}
             placeholder="Tìm kiếm sản phẩm..."
@@ -201,51 +201,46 @@ const ProductList = () => {
             {paginatedProducts.length > 0 ? (
               paginatedProducts.map((product: Product) => (
                 <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
-                  <Badge.Ribbon
-                    text="Mới"
-                    color="#f50"
-                    className="product-badge"
-                  >
-                    <Card
-                      className="product-card"
-                      cover={
-                        <div className="product-image-container">
-                          <img
-                            src={`http://127.0.0.1:8000/storage/${product.image}`}
-                            alt={product.name}
-                            className="product-image"
-                          />
-                          <div className="product-overlay">
-                            <div className="product-actions">
-                              <Tooltip title="Thêm vào giỏ hàng">
-                                <button className="action-button">
-                                  <ShoppingCartOutlined />
-                                </button>
-                              </Tooltip>
-                              <Tooltip title="Thêm vào yêu thích">
-                                <button className="action-button">
-                                  <HeartOutlined />
-                                </button>
-                              </Tooltip>
-                            </div>
+
+                  <Card
+                    className="product-card"
+                    cover={
+                      <div className="product-image-container">
+                        <img
+                          src={`http://127.0.0.1:8000/storage/${product.image}`}
+                          alt={product.name}
+                          className="product-image"
+                        />
+                        <div className="product-overlay">
+                          <div className="product-actions">
+                            <Tooltip title="Thêm vào giỏ hàng">
+                              <button className="action-button">
+                                <ShoppingCartOutlined />
+                              </button>
+                            </Tooltip>
+                            <Tooltip title="Thêm vào yêu thích">
+                              <button className="action-button">
+                                <HeartOutlined />
+                              </button>
+                            </Tooltip>
                           </div>
                         </div>
-                      }
-                      actions={[
-                        <button className="buy-now-button">Mua ngay</button>,
-                      ]}
+                      </div>
+                    }
+                    actions={[
+                      <button className="buy-now-button">Mua ngay</button>,
+                    ]}
+                  >
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="product-link"
                     >
-                      <Link
-                        to={`/product/${product.id}`}
-                        className="product-link"
-                      >
-                        <h3 className="product-name">{product.name}</h3>
-                        <div className="product-price">
-                          {product.variants[0]?.price?.toLocaleString("vi-VN")}đ
-                        </div>
-                      </Link>
-                    </Card>
-                  </Badge.Ribbon>
+                      <h3 className="product-name">{product.name}</h3>
+                      <div className="product-price">
+                        {product.variants[0]?.price?.toLocaleString("vi-VN")}đ
+                      </div>
+                    </Link>
+                  </Card>
                 </Col>
               ))
             ) : (
