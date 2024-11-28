@@ -175,15 +175,23 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                         </span>
                       </div>
                     </div>
-                    {!detail.is_reviewed && order.order_status == "Đã hoàn thành" &&
-                      <div style={{ display: "flex", justifyContent: "end" }}>
-                        <button
-                          className={styles.ratingButton}
-                          onClick={() => onOpenRatingModal(detail.product, order.id, detail.id)}
-                        >Đánh giá
-                        </button>
-                      </div>
-                    }
+                    {!detail.is_reviewed &&
+                      order.order_status == "Đã hoàn thành" && (
+                        <div style={{ display: "flex", justifyContent: "end" }}>
+                          <button
+                            className={styles.ratingButton}
+                            onClick={() =>
+                              onOpenRatingModal(
+                                detail.product,
+                                order.id,
+                                detail.id
+                              )
+                            }
+                          >
+                            Đánh giá
+                          </button>
+                        </div>
+                      )}
                   </div>
                 </div>
 
@@ -194,15 +202,20 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
             ))}
           </div>
 
-          {order.discount &&
-            <div style={{ display: "flex", justifyContent: "end" }}>Mã giảm giá đã áp dụng: {order.discount.discount_code}</div>
-          }
+          {order.discount && (
+            <div style={{ display: "flex", justifyContent: "end" }}>
+              Mã giảm giá đã áp dụng: {order.discount.discount_code}
+            </div>
+          )}
 
           <div className={styles.cardFooter}>
             <div className={styles.footerContent}>
               <div className={styles.totalLabel}>
                 <ShoppingCartOutlined className={styles.cartIcon} />
-                <span>Tổng tiền ({order.oder_details?.length || 0} sản phẩm) sau giảm giá:</span>
+                <span>
+                  Tổng tiền ({order.oder_details?.length || 0} sản phẩm) sau
+                  giảm giá:
+                </span>
               </div>
               <div className={styles.totalAmount}>
                 {order.total_amount.toLocaleString()}đ
@@ -339,8 +352,16 @@ const MyOrder: React.FC = () => {
   const [currentProduct, setCurrentProduct] = useState<any>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleOpenRatingModal = (product: any, orderId: number, orderDetailId: number) => {
-    setCurrentProduct({ ...product, order_id: orderId, orderdetail_id: orderDetailId });
+  const handleOpenRatingModal = (
+    product: any,
+    orderId: number,
+    orderDetailId: number
+  ) => {
+    setCurrentProduct({
+      ...product,
+      order_id: orderId,
+      orderdetail_id: orderDetailId,
+    });
     setIsRatingModalVisible(true);
   };
 
@@ -389,17 +410,10 @@ const MyOrder: React.FC = () => {
   // Cập nhật logic lọc đơn hàng
   const filteredOrders = React.useMemo(() => {
     if (!orderData?.data) return [];
-
-    // Nếu là tab "all" thì trả về tất cả đơn hàng
     if (activeTab === "all") return orderData.data;
-
-    // Lọc theo trạng thái dựa trên STATUS_CONFIG
     return orderData.data.filter((order) => {
-      // Chuyển đổi status về chữ thường để so sánh
       const orderStatus = order.order_status.toLowerCase();
       const currentTab = activeTab.toLowerCase();
-
-      // So sánh status của đơn hàng với tab đang active
       return orderStatus === currentTab;
     });
   }, [orderData?.data, activeTab]);
@@ -498,10 +512,15 @@ const MyOrder: React.FC = () => {
       render: (record: Order) => {
         const firstDetail = record.oder_details?.[0]; // Lấy sản phẩm đầu tiên
         const remainingCount = record.oder_details?.length - 1; // Số sản phẩm còn lại
-
+        if (firstDetail) {
+          console.log(
+            "Image URL: ",
+            `http://127.0.0.1:8000/storage/${firstDetail.product.image}`
+          );
+        }
         return (
           <div className="flex gap-2 flex-wrap">
-            {firstDetail && ( // Hiển thị hình ảnh của sản phẩm đầu tiên
+            {firstDetail && (
               <div className="flex-shrink-0 text-center">
                 <Image
                   src={`http://127.0.0.1:8000/storage/${firstDetail.product.image}`}
@@ -574,18 +593,19 @@ const MyOrder: React.FC = () => {
             >
               Chi tiết
             </Button>
-            {record.order_status === "Đã hoàn thành" && hasUnreviewedProducts && (
-              <Button
-                style={{ border: "1px solid #FB8D00" }}
-                className="buttonReview"
-                onClick={() => {
-                  setSelectedOrder(record);
-                  setIsModalVisible(true);
-                }}
-              >
-                Đánh giá
-              </Button>
-            )}
+            {record.order_status === "Đã hoàn thành" &&
+              hasUnreviewedProducts && (
+                <Button
+                  style={{ border: "1px solid #FB8D00" }}
+                  className="buttonReview"
+                  onClick={() => {
+                    setSelectedOrder(record);
+                    setIsModalVisible(true);
+                  }}
+                >
+                  Đánh giá
+                </Button>
+              )}
 
             {record.order_status === "Chờ xử lý" && (
               <Button
@@ -599,7 +619,7 @@ const MyOrder: React.FC = () => {
           </Space>
         );
       },
-    }
+    },
   ];
 
   // Cập nhật cấu hình tabItems để khớp với STATUS_CONFIG
@@ -634,9 +654,7 @@ const MyOrder: React.FC = () => {
             Trang chủ
             <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
           </a>
-          <span className="stext-109 cl4">
-            Đơn hàng của tôi
-          </span>
+          <span className="stext-109 cl4">Đơn hàng của tôi</span>
         </div>
       </div>
 

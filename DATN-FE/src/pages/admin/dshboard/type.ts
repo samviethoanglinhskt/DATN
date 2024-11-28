@@ -12,9 +12,11 @@ export interface OrderStatistic {
   total_orders: number;
   completed_orders: string;
   cancelled_orders: string;
+  total_revenue: string;
   growth_percentageOrder: string;
   growthPercentageComplete: string;
   growthPercentageCancel: string;
+  growthPercentageRevenue: string;
 }
 
 export interface APIResponse {
@@ -27,6 +29,7 @@ export interface APIResponse {
   "Tổng tất cả đơn hàng hủy": number;
   "Tổng tỉ lệ hoàn thành đơn hàng": string;
   "Tổng tỉ lệ hủy đơn hàng": string;
+  "Tổng doanh thu": number;
 }
 
 export interface StatisticData {
@@ -56,6 +59,8 @@ export interface TopProduct {
   sales: number;
   revenue: number;
   growth: number;
+  month: number;
+  year: number;
 }
 export interface RevenueByPeriod {
   date?: string;
@@ -89,44 +94,66 @@ export interface DailyStats {
   usersGrowth: number;
 }
 export interface RevenueByPeriod {
-    date?: string;
-    month?: number;
-    year: number;
-    revenue: string;
-    growth_percentage: string;
-  }
-  
-  export interface RevenueResponse {
-    message: string;
-    Ngày: {
-      Doanh_thu: RevenueByPeriod[];
-    };
-    Tháng: {
-      Doanh_thu: RevenueByPeriod[];
-    };
-    Năm: {
-      Doanh_thu: RevenueByPeriod[];
-    };
-  }
-  
-  export interface DailyStats {
-    date: string;
-    revenue: number;
-    revenueGrowth: number;
-  }
-  export interface TopSellingProduct {
-    year: number;
-    month: number;
-    id: number;
-    name: string;
-    total_quantity: string;
-    total_revenue: string;
-    growth_rate: string;
-  }
-  
-  export interface TopSellingResponse {
-    message: string;
-    data: {
-      [key: string]: TopSellingProduct[];
-    };
-  }
+  date?: string;
+  month?: number;
+  year: number;
+  revenue: string;
+  growth_percentage: string;
+}
+
+export interface RevenueResponse {
+  message: string;
+  Ngày: {
+    Doanh_thu: RevenueByPeriod[];
+  };
+  Tháng: {
+    Doanh_thu: RevenueByPeriod[];
+  };
+  Năm: {
+    Doanh_thu: RevenueByPeriod[];
+  };
+}
+
+export interface DailyStats {
+  date: string;
+  revenue: number;
+  revenueGrowth: number;
+}
+export interface TopSellingProduct {
+  year: number;
+  month: number;
+  id: number;
+  name: string;
+  total_quantity: string;
+  total_revenue: string;
+  growth_rate: string;
+}
+
+export interface TopSellingResponse {
+  message: string;
+  data: {
+    [key: string]: TopSellingProduct[];
+  };
+}
+export interface RevenueStats {
+  date: string;
+  revenue: number;
+  revenueGrowth: number;
+}
+
+export interface StatisticData {
+  totalUsers: number;
+  totalOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  completionRate: number;
+  cancellationRate: number;
+  userGrowth: string;
+  orderGrowth: string;
+  totalRevenue: number;
+  revenueGrowth: number;
+}
+export interface MonthlyData {
+  "Người dùng": UserStatistic[];
+  "Tổng đơn hàng": OrderStatistic[];
+}
