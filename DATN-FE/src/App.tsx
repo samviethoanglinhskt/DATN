@@ -29,7 +29,7 @@ import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
 import MyInfo from "./pages/client/MyInfo";
-
+import Support from "./components/Home/Support";
 
 const routeConfig = [
   {
@@ -43,6 +43,10 @@ const routeConfig = [
       {
         path: "blog",
         element: <Blog />,
+      },
+      {
+        path: "support",
+        element: <Support />,
       },
       {
         path: "about",
@@ -82,20 +86,20 @@ const routeConfig = [
       },
       {
         path: "love",
-        element: <FavoritesPage />
+        element: <FavoritesPage />,
       },
       {
         path: "myoder",
-        element: <MyOrders />
+        element: <MyOrders />,
       },
       {
         path: "payment-success",
-        element: <PaymentSuccess />
+        element: <PaymentSuccess />,
       },
       {
         path: "payment-failure",
-        element: <PaymentFailure />
-      }
+        element: <PaymentFailure />,
+      },
     ],
   },
   {
@@ -116,8 +120,8 @@ const routeConfig = [
         element: <ProductEdit />,
       },
       {
-        path: '/admin/product',
-        element: <ProductListMain />
+        path: "/admin/product",
+        element: <ProductListMain />,
       },
       {
         path: "order",
@@ -129,29 +133,28 @@ const routeConfig = [
       },
       {
         path: "color",
-        element: <ColorManagement />
+        element: <ColorManagement />,
       },
       {
         path: "banner",
-        element: <LogoBannerManagement />
+        element: <LogoBannerManagement />,
       },
       {
         path: "size",
-        element: <SizeManagement />
+        element: <SizeManagement />,
       },
       {
         path: "brand",
-        element: <BrandManagement />
+        element: <BrandManagement />,
       },
       {
         path: "discount",
-        element: <Discount />
+        element: <Discount />,
       },
       {
         path: "dashboard",
-        element: <Dashboard />
+        element: <Dashboard />,
       },
-
     ],
   },
 ];
@@ -159,10 +162,7 @@ const routeConfig = [
 function App() {
   const routes = useRoutes(routeConfig);
 
-  return (
-    <main>{routes}
-    </main>
-  );
+  return <main>{routes}</main>;
 }
 
 export default App;
