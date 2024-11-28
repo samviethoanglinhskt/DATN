@@ -30,6 +30,7 @@ import {
   getDailyStatsColumns,
   getTopProductColumns,
 } from "./TableColums";
+import { Column, Bar, Pie } from "@ant-design/plots";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -229,7 +230,6 @@ const Dashboard: React.FC = () => {
               </Card>
             </Col>
           </Row>
-
           <Card
             title={getStatsTitle()}
             className="mb-4"
@@ -252,22 +252,103 @@ const Dashboard: React.FC = () => {
               </Space>
             }
           >
-            <Table
-              columns={getDailyStatsColumns()}
-              dataSource={dailyStats}
-              pagination={false}
-              rowKey="date"
-              loading={isLoading}
-            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              {/* Biểu đồ cột */}
+              <div style={{ width: "60%", paddingRight: "20px" }}>
+                <Column
+                  data={dailyStats}
+                  xField="date" 
+                  yField="revenue" 
+                  label={{
+                    position: "middle",
+                    style: {
+                      fill: "#FFFFFF",
+                      fontSize: 12,
+                      fontWeight: 500,
+                    },
+                  }}
+                  tooltip={{
+                    formatter: (datum) => ({
+                      name: "Doanh thu",
+                      value: formatCurrency(datum.revenue),
+                    }),
+                  }}
+                  columnStyle={{
+                    radius: [4, 4, 0, 0],
+                    shadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }}
+                  color="#4CAF50" 
+                  animation={{
+                    appear: {
+                      animation: "wave-in",
+                      duration: 1000,
+                    },
+                  }}
+                />
+              </div>
+              <div style={{ width: "35%" }}>
+                <Table
+                  columns={getDailyStatsColumns()}
+                  dataSource={dailyStats}
+                  pagination={false}
+                  rowKey="date"
+                  loading={isLoading}
+                />
+              </div>
+            </div>
           </Card>
 
-          <Card title="Top sản phẩm bán chạy">
-            <Table
-              columns={getTopProductColumns()}
-              dataSource={topProducts}
-              pagination={false}
-              rowKey="id"
-            />
+          <Card title="Top sản phẩm bán chạy" className="shadow-lg">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ width: "60%" }}>
+                <Table
+                  columns={getTopProductColumns()}
+                  dataSource={topProducts}
+                  pagination={false}
+                  rowKey="id"
+                />
+              </div>
+
+              <div style={{ width: "35%" }}>
+                <Pie
+                  data={topProducts}
+                  angleField="sales" 
+                  colorField="name" 
+                  radius={0.8}
+                  label={{
+                    type: "outer",
+                    content: "{name} {percentage}",
+                  }}
+                  tooltip={{
+                    formatter: (datum) => ({
+                      name: datum.name,
+                      value: `${datum.sales} sản phẩm - ${formatCurrency(
+                        datum.revenue
+                      )}`,
+                    }),
+                  }}
+                  interactions={[{ type: "element-active" }]}
+                  animation={{
+                    appear: {
+                      animation: "fade-in",
+                      duration: 1000,
+                    },
+                  }}
+                />
+              </div>
+            </div>
           </Card>
 
           {data && (

@@ -150,12 +150,13 @@ const LayoutAdmin: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh",backgroundColor: "#fff" }}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         style={{
+          backgroundColor:"white",
           overflow: "auto",
           height: "100vh",
           position: "fixed",
@@ -183,9 +184,9 @@ const LayoutAdmin: React.FC = () => {
           />
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={["0"]} // Đặt phần thống kê là mặc định được chọn
           items={menuItems}
           style={{ borderRight: 0 }}
         />
@@ -221,7 +222,6 @@ const LayoutAdmin: React.FC = () => {
               height: 64,
             }}
           />
-
           <div
             style={{
               position: "absolute",
@@ -237,7 +237,6 @@ const LayoutAdmin: React.FC = () => {
               style={{ height: "60px", width: "80px" }}
             />
           </div>
-
           <Space size="large">
             <Badge count={5} dot>
               <BellOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
