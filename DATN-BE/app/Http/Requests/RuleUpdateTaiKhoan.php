@@ -25,7 +25,7 @@ class RuleUpdateTaiKhoan extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'password' => 'required|confirmed|string|min:6',
+            // 'password' => 'required|confirmed|string|min:6',
             'phone' => 'required|string|regex:/^0\d{9}$/',
             'email' => 'required|email',
         ];
@@ -38,9 +38,9 @@ class RuleUpdateTaiKhoan extends FormRequest
             'phone.string' => 'Số điện thoại không hợp lệ',
             'email.required' => 'Vui lòng nhập email',
             'email.email' => 'Email không hợp lệ.',
-            'password.required' => 'Vui lòng nhập mật khẩu',
-            'password.min' => 'Mật khẩu phải chứa ít nhất :min ký tự.',
-            'password.confirmed' => 'Mật khẩu nhập lại không khớp',
+            // 'password.required' => 'Vui lòng nhập mật khẩu',
+            // 'password.min' => 'Mật khẩu phải chứa ít nhất :min ký tự.',
+            // 'password.confirmed' => 'Mật khẩu nhập lại không khớp',
         ];
     }
 

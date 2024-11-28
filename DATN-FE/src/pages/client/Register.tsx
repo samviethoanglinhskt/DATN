@@ -4,6 +4,23 @@ import { User } from "src/types/user";
 import { message } from "antd";
 import axiosInstance from "src/config/axiosInstance";
 import "../../assets/css/Register.css";
+import { useEffect, useState } from "react";
+import { getProvinces, getDistrictsByProvinceCode, getWardsByDistrictCode } from "vn-provinces";
+
+interface IProvince {
+  code: string; // mã tỉnh
+  name: string; // tên tỉnh
+}
+
+interface IDistrict {
+  code: string; // mã huyện
+  name: string; // tên huyện
+}
+
+interface IWard {
+  code: string; // mã xã
+  name: string; // tên xã
+}
 
 const Register = () => {
   const {
@@ -17,9 +34,61 @@ const Register = () => {
   const navigate = useNavigate();
   const password = watch("password");
 
+  const [provinces, setProvinces] = useState<IProvince[]>([]);
+  const [districts, setDistricts] = useState<IDistrict[]>([]);
+  const [wards, setWards] = useState<IWard[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState("");
+
+  useEffect(() => {
+    // Lấy danh sách tỉnh
+    const provincesData = getProvinces();
+    setProvinces(provincesData);
+  }, []);
+
+  const handleProvinceChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const provinceCode = e.target.value;
+    const province = provinces.find((p) => p.code === provinceCode);
+    if (province) {
+      const districtsData = getDistrictsByProvinceCode(provinceCode);
+      setDistricts(districtsData);
+      setWards([]);
+      updateAddress(province.name, "province");
+    }
+  };
+
+  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const districtCode = e.target.value;
+    const district = districts.find((d) => d.code === districtCode);
+    if (district) {
+      const wardsData = getWardsByDistrictCode(districtCode);
+      setWards(wardsData);
+      updateAddress(district.name, "district");
+    }
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const wardCode = e.target.value;
+    const ward = wards.find((w) => w.code === wardCode);
+    if (ward) {
+      updateAddress(ward.name, "ward");
+    }
+  };
+
+  const updateAddress = (value: string, level: "province" | "district" | "ward") => {
+    const parts = selectedAddress.split(", ");
+    if (level === "province") {
+      setSelectedAddress(`${value}`);
+    } else if (level === "district") {
+      setSelectedAddress(`${parts[0]}, ${value}`);
+    } else if (level === "ward") {
+      setSelectedAddress(`${parts[0]}, ${parts[1]}, ${value}`);
+    }
+  };
+
   const onSubmit: SubmitHandler<User & { password_confirmation: string }> = async (data) => {
     try {
       const hide = message.loading("Đang xử lý đăng ký...", 0);
+      data.address = selectedAddress; // Gán địa chỉ đã chọn vào dữ liệu form
       const response = await axiosInstance.post("/api/register", data);
       hide();
 
@@ -33,6 +102,7 @@ const Register = () => {
           navigate("/login");
         }, 1500);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error({
         content: error.response?.data?.message || "Đăng ký thất bại",
@@ -124,20 +194,67 @@ const Register = () => {
                 )}
               </div>
 
+              <div className="form-row">
+                {/* Tỉnh/Thành phố */}
+                <div className="form-group col-md-4">
+                  <label htmlFor="province">Tỉnh/Thành phố</label>
+                  <select id="province" className="form-control" onChange={handleProvinceChange}>
+                    <option value="">Chọn tỉnh/thành</option>
+                    {provinces.map((province) => (
+                      <option key={province.code} value={province.code}>
+                        {province.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Quận/Huyện */}
+                <div className="form-group col-md-4">
+                  <label htmlFor="district">Quận/Huyện</label>
+                  <select
+                    id="district"
+                    className="form-control"
+                    onChange={handleDistrictChange}
+                    disabled={!districts.length}
+                  >
+                    <option value="">Chọn quận/huyện</option>
+                    {districts.map((district) => (
+                      <option key={district.code} value={district.code}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Phường/Xã */}
+                <div className="form-group col-md-4">
+                  <label htmlFor="ward">Phường/Xã</label>
+                  <select
+                    id="ward"
+                    className="form-control"
+                    onChange={handleWardChange}
+                    disabled={!wards.length}
+                  >
+                    <option value="">Chọn phường/xã</option>
+                    {wards.map((ward) => (
+                      <option key={ward.code} value={ward.code}>
+                        {ward.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               {/* Địa chỉ */}
               <div className="form-floating mb-3">
                 <input
+                  value={selectedAddress}
                   type="text"
                   className={`form-control register-input ${errors.address ? 'is-invalid' : ''}`}
                   id="addressInput"
                   placeholder="Địa chỉ"
-                  {...register("address", {
-                    required: "Vui lòng nhập địa chỉ",
-                    minLength: {
-                      value: 5,
-                      message: "Địa chỉ phải có ít nhất 5 ký tự"
-                    }
-                  })}
+                  {...register("address")}
+                  readOnly
                 />
                 <label htmlFor="addressInput" className="register-label">
                   <i className="fas fa-map-marker-alt me-2"></i>
@@ -145,6 +262,26 @@ const Register = () => {
                 </label>
                 {errors.address && (
                   <div className="register-feedback">{errors.address.message}</div>
+                )}
+              </div>
+
+              {/* Địa chỉ cụ thể*/}
+              <div className="form-floating mb-3">
+                <input
+                  type="text"
+                  className={`form-control register-input ${errors.address_detail ? 'is-invalid' : ''}`}
+                  id="addressInput"
+                  placeholder="Địa chỉ cụ thể"
+                  {...register("address_detail", {
+                    required: "Vui lòng nhập địa chỉ cụ thể",
+                  })}
+                />
+                <label htmlFor="addressInput" className="register-label">
+                  <i className="fas fa-map-marker-alt me-2"></i>
+                  Địa chỉ cụ thể
+                </label>
+                {errors.address_detail && (
+                  <div className="register-feedback">{errors.address_detail.message}</div>
                 )}
               </div>
 
@@ -160,10 +297,6 @@ const Register = () => {
                     minLength: {
                       value: 6,
                       message: "Mật khẩu phải có ít nhất 6 ký tự",
-                    },
-                    pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
-                      message: "Mật khẩu phải chứa chữ hoa, chữ thường và số",
                     },
                   })}
                 />
@@ -201,8 +334,8 @@ const Register = () => {
               </div>
 
               {/* Nút đăng ký */}
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="register-button"
                 disabled={isSubmitting}
               >
