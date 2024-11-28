@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
 import instance from "src/config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -16,7 +16,6 @@ const NewProduct = () => {
     INITIAL_VISIBLE_PRODUCTS
   );
   const [isExpanded, setIsExpanded] = useState(false);
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   // Query products
@@ -52,6 +51,7 @@ const NewProduct = () => {
         });
         console.log("Response data:", response.data);
         return response.data;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error("Lỗi từ server:", error.response?.data || error.message);
         throw new Error(
@@ -63,6 +63,7 @@ const NewProduct = () => {
       message.success("Đã thêm vào danh sách yêu thích!");
       // queryClient.invalidateQueries(["favorites"]);
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       message.error(error.message || "Có lỗi xảy ra!");
     },
@@ -128,7 +129,9 @@ const NewProduct = () => {
                   </button>
                 </div>
                 <div className="card-body text-center">
-                  <h5 className="card-title product-name">{product.name}</h5>
+                  <Link to={`/product/${product.id}`} className="product-link">
+                    <h5 className="product-title">{product.name}</h5>
+                  </Link>
                   <p className="product-price fw-bold">
                     ${product.variants[0]?.price}
                   </p>
@@ -140,12 +143,11 @@ const NewProduct = () => {
         {products.data.length > INITIAL_VISIBLE_PRODUCTS && (
           <div className="text-center mt-5">
             <button
-              className={`btn ${
-                isExpanded ? "btn-outline-danger" : "btn-outline-dark"
-              } px-4 py-2`}
+              className={`btn ${isExpanded ? "btn-outline-danger" : "btn-outline-dark"
+                } px-4 py-2`}
               onClick={handleToggleProducts}
             >
-              {isExpanded ? "Show Less" : "Show More"}
+              {isExpanded ? "Thu gọn" : "Xem thêm"}
             </button>
           </div>
         )}

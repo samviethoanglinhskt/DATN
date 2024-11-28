@@ -1,7 +1,9 @@
 import { Box, Typography, Button, Container } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { useUser } from "src/context/User";
 
 const PaymentSuccess = () => {
+    const { user } = useUser();
     return (
         <Container
             maxWidth="sm"
@@ -22,14 +24,15 @@ const PaymentSuccess = () => {
                 Cảm ơn bạn đã mua hàng! Giao dịch của bạn đã hoàn tất thành công.
             </Typography>
             <Box mt={4}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ mr: 2 }}
-                    onClick={() => window.location.href = "/myoder"}
-                >
-                    Xem đơn hàng của tôi
-                </Button>
+                {user &&
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ mr: 2 }}
+                        onClick={() => window.location.href = "/myoder"}
+                    >
+                        Xem đơn hàng của tôi
+                    </Button>}
                 <Button
                     variant="outlined"
                     color="secondary"

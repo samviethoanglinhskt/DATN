@@ -5,22 +5,7 @@ import { useUser } from 'src/context/User';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { Address } from 'src/types/user';
 import { getDistrictsByProvinceCode, getProvinces, getWardsByDistrictCode } from 'vn-provinces';
-import axiosInstance from 'src/config/axiosInstance';
-
-interface IProvince {
-    code: string; // mã tỉnh
-    name: string; // tên tỉnh
-}
-
-interface IDistrict {
-    code: string; // mã huyện
-    name: string; // tên huyện
-}
-
-interface IWard {
-    code: string; // mã xã
-    name: string; // tên xã
-}
+import { IDistrict, IProvince, IWard } from 'src/types/address';
 
 const SidebarContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -161,8 +146,7 @@ const Profile = () => {
 
 // Component danh sách địa chỉ
 const AddressList = () => {
-    const { user } = useUser();
-    const [addresses, setAddresses] = useState<Address[]>([]);
+    const { user, addresses, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useUser();
     const [open, setOpen] = useState(false);
     const [newAddress, setNewAddress] = useState({
         address: '',
@@ -175,84 +159,38 @@ const AddressList = () => {
     const [addressToUpdate, setAddressToUpdate] = useState<Address | null>(null);
 
     useEffect(() => {
-        setAddresses(user?.data.address);
-    }, [user]);
+        // Chỉ cập nhật selectedAddress nếu là cập nhật địa chỉ từ user
+        if (user && !addressToUpdate) {
+            setSelectedAddress(user?.data?.address?.[0]?.address || '');
+        }
+    }, [user, addressToUpdate]);
+
 
     const handleClickOpen = (address?: Address) => {
-        setAddressToUpdate(address || null); // Nếu có địa chỉ được chọn để cập nhật thì set vào state
-        setNewAddress({
-            address: address ? address.address : '',
-            address_detail: address ? address.address_detail : '',
-        });
+        setAddressToUpdate(address || null);
+
+        if (address) {
+            // Nếu là cập nhật, hiển thị dữ liệu của địa chỉ đó
+            setNewAddress({
+                address: address.address,
+                address_detail: address.address_detail,
+            });
+            setSelectedAddress(address.address);  // Hiển thị địa chỉ chính xác khi cập nhật
+        } else {
+            // Nếu là thêm mới, đặt lại mọi trường thành trống
+            setNewAddress({
+                address: '',
+                address_detail: '',
+            });
+            setSelectedAddress('');  // Đặt lại địa chỉ trống khi thêm mới
+        }
+
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
         setAddressToUpdate(null);
-    };
-
-    const handleAddAddress = async () => {
-        try {
-            // Tạo đối tượng dữ liệu gửi lên API
-            const newAddressData = {
-                address: newAddress.address,
-                address_detail: newAddress.address_detail,
-            };
-            console.log(newAddressData);
-            const response = await axiosInstance.post('/api/address', newAddressData, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-
-            if (response.data.success) {
-                // Cập nhật lại địa chỉ sau khi thêm thành công
-                setAddresses([...addresses, response.data.data]);
-                setNewAddress({
-                    address: '',
-                    address_detail: '',
-                });
-                handleClose();
-            } else {
-                alert('Thêm địa chỉ không thành công');
-            }
-        } catch (error) {
-            console.error('Lỗi khi thêm địa chỉ:', error);
-            alert('Đã xảy ra lỗi khi thêm địa chỉ');
-        }
-    };
-
-    const handleUpdateAddress = async () => {
-        if (addressToUpdate) {
-            try {
-                const updatedAddressData = {
-                    address: newAddress.address,
-                    address_detail: newAddress.address_detail,
-                };
-
-                const response = await axiosInstance.put(`/api/address/${addressToUpdate.id}`, updatedAddressData, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (response.data.success) {
-                    // Cập nhật địa chỉ trong state
-                    const updatedAddresses = addresses.map((address) =>
-                        address.id === addressToUpdate.id ? { ...address, ...updatedAddressData } : address
-                    );
-                    setAddresses(updatedAddresses);
-                    setNewAddress({ address: '', address_detail: '' });
-                    handleClose();
-                } else {
-                    alert('Cập nhật địa chỉ không thành công');
-                }
-            } catch (error) {
-                console.error('Lỗi khi cập nhật địa chỉ:', error);
-                alert('Đã xảy ra lỗi khi cập nhật địa chỉ');
-            }
-        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -276,7 +214,7 @@ const AddressList = () => {
             const districtsData = getDistrictsByProvinceCode(provinceCode);
             setDistricts(districtsData);
             setWards([]);
-            updateAddress(province.name, "province");
+            updateSelectedAddress(province.name, "province");
         }
     };
 
@@ -286,7 +224,7 @@ const AddressList = () => {
         if (district) {
             const wardsData = getWardsByDistrictCode(districtCode);
             setWards(wardsData);
-            updateAddress(district.name, "district");
+            updateSelectedAddress(district.name, "district");
         }
     };
 
@@ -294,11 +232,11 @@ const AddressList = () => {
         const wardCode = e.target.value;
         const ward = wards.find((w) => w.code === wardCode);
         if (ward) {
-            updateAddress(ward.name, "ward");
+            updateSelectedAddress(ward.name, "ward");
         }
     };
 
-    const updateAddress = (value: string, level: "province" | "district" | "ward") => {
+    const updateSelectedAddress = (value: string, level: "province" | "district" | "ward") => {
         const parts = selectedAddress.split(", ");
         let newSelectedAddress = "";
 
@@ -311,42 +249,44 @@ const AddressList = () => {
         }
 
         setSelectedAddress(newSelectedAddress);
-
-        // Cập nhật vào state newAddress
         setNewAddress((prev) => ({
             ...prev,
             address: newSelectedAddress,
         }));
     };
 
-    const handleSetDefault = async (id: number) => {
+    const handleAddAddress = async () => {
         try {
-            await axiosInstance.put(`/api/address-default`, { id }, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
+            const newAddressData = {
+                address: newAddress.address,
+                address_detail: newAddress.address_detail,
+            };
+            await addAddress(newAddressData);
+            setNewAddress({
+                address: '',
+                address_detail: '',
             });
-
-            const defaultAddress = addresses.find((address) => address.id === id);
-            const otherAddresses = addresses.filter((address) => address.id !== id);
-            if (defaultAddress) {
-                // Đặt is_default = true cho địa chỉ được chọn
-                defaultAddress.is_default = true;
-
-                // Đặt is_default = false cho các địa chỉ khác
-                const updatedAddresses = [
-                    defaultAddress,
-                    ...otherAddresses.map((address) => ({
-                        ...address,
-                        is_default: false,
-                    })),
-                ];
-
-                setAddresses(updatedAddresses);
-            }
+            handleClose();
         } catch (error) {
-            console.error('Lỗi khi đặt địa chỉ mặc định:', error);
-            alert('Đã xảy ra lỗi khi cập nhật địa chỉ mặc định.');
+            console.error('Lỗi khi thêm địa chỉ:', error);
+            alert('Đã xảy ra lỗi khi thêm địa chỉ');
+        }
+    };
+
+    const handleUpdateAddress = async () => {
+        if (addressToUpdate) {
+            try {
+                const updatedAddressData = {
+                    address: newAddress.address,
+                    address_detail: newAddress.address_detail,
+                };
+                await updateAddress(addressToUpdate.id, updatedAddressData);
+                setNewAddress({ address: '', address_detail: '' });
+                handleClose();
+            } catch (error) {
+                console.error('Lỗi khi cập nhật địa chỉ:', error);
+                alert('Đã xảy ra lỗi khi cập nhật địa chỉ');
+            }
         }
     };
 
@@ -355,21 +295,21 @@ const AddressList = () => {
         if (!confirmDelete) return;
 
         try {
-            axiosInstance.delete(`/api/address/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-
-            // Xóa địa chỉ khỏi danh sách
-            const updatedAddresses = addresses.filter((address) => address.id !== id);
-            setAddresses(updatedAddresses);
+            await deleteAddress(id);
         } catch (error) {
             console.error("Lỗi khi xóa địa chỉ:", error);
             alert("Đã xảy ra lỗi khi xóa địa chỉ. Vui lòng thử lại.");
         }
     };
 
+    const handleSetDefault = async (id: number) => {
+        try {
+            await setDefaultAddress(id);
+        } catch (error) {
+            console.error('Lỗi khi đặt địa chỉ mặc định:', error);
+            alert('Đã xảy ra lỗi khi cập nhật địa chỉ mặc định.');
+        }
+    };
 
     return (
         <Box p={3} bgcolor="#f9f9f9" borderRadius={2} width={1000}>
@@ -389,46 +329,48 @@ const AddressList = () => {
                     Thêm địa chỉ mới
                 </button>
 
-                {addresses.map((address) => (
-                    <Paper elevation={3} sx={{ p: 2, mb: 2, borderRadius: 2 }} key={address.id}>
-                        <Typography fontSize={18} fontWeight={'normal'}> <LocationOnOutlinedIcon />{address.address_detail}</Typography>
-                        <Typography fontSize={18} fontWeight={'bold'}> {address.address}</Typography>
-                        {address.is_default == true && (
-                            <Typography
-                                sx={{
-                                    display: "inline-block",
-                                    padding: "5px 10px",
-                                    border: "1px solid #1998E2",
-                                    color: "#1998E2",
-                                    borderRadius: "4px",
-                                    marginTop: 1
-                                }}
-                            >
-                                Mặc định
-                            </Typography>
-                        )}
-                        <Box mt={2}>
-                            <Button variant="text" color="secondary" onClick={() => handleClickOpen(address)}>
-                                Cập nhật
-                            </Button>
-                            {!address.is_default &&
-                                <Button variant="text" color="error" onClick={() => handleDeleteAddress(address.id)}>
-                                    Xóa
+                {addresses
+                    .sort((a, b) => (b.is_default ? 1 : 0) - (a.is_default ? 1 : 0))
+                    .map((address) => (
+                        <Paper elevation={3} sx={{ p: 2, mb: 2, borderRadius: 2 }} key={address.id}>
+                            <Typography fontSize={18} fontWeight={'normal'}> <LocationOnOutlinedIcon />{address.address_detail}</Typography>
+                            <Typography fontSize={18} fontWeight={'bold'}> {address.address}</Typography>
+                            {address.is_default == true && (
+                                <Typography
+                                    sx={{
+                                        display: "inline-block",
+                                        padding: "5px 10px",
+                                        border: "1px solid #1998E2",
+                                        color: "#1998E2",
+                                        borderRadius: "4px",
+                                        marginTop: 1
+                                    }}
+                                >
+                                    Mặc định
+                                </Typography>
+                            )}
+                            <Box mt={2}>
+                                <Button variant="text" color="secondary" onClick={() => handleClickOpen(address)}>
+                                    Cập nhật
                                 </Button>
-                            }
+                                {!address.is_default &&
+                                    <Button variant="text" color="error" onClick={() => handleDeleteAddress(address.id)}>
+                                        Xóa
+                                    </Button>
+                                }
 
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                sx={{ ml: 2 }}
-                                onClick={() => handleSetDefault(address.id)}
-                                disabled={!!address.is_default}
-                            >
-                                Đặt làm mặc định
-                            </Button>
-                        </Box>
-                    </Paper>
-                ))}
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    sx={{ ml: 2 }}
+                                    onClick={() => handleSetDefault(address.id)}
+                                    disabled={!!address.is_default}
+                                >
+                                    Đặt làm mặc định
+                                </Button>
+                            </Box>
+                        </Paper>
+                    ))}
             </Box>
 
             {/* Modal thêm địa chỉ mới */}

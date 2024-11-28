@@ -48,6 +48,7 @@ const ProductDetail = () => {
       }
     };
 
+
     const fetchReviews = async (page: number) => {
       try {
         const response = await axiosInstance.get(`/api/reviews/product/${id}`, {
@@ -68,6 +69,8 @@ const ProductDetail = () => {
       fetchReviews(currentPage);
     }
   }, [id, currentPage]);
+  console.log(product);
+
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -99,7 +102,7 @@ const ProductDetail = () => {
     } else if (product?.colors && product.colors.length > 0) {
       updateVariant(null, newOptionId);
     }
-    console.log("newOptionId:", newOptionId);
+    // console.log("newOptionId:", newOptionId);
   };
 
   const handleQuantityChange = (operation: "increase" | "decrease") => {
