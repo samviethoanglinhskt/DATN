@@ -105,8 +105,8 @@ class ProductController extends Controller
             foreach ($request->variants ?? [] as $variant) {
                 $new_variant = tb_variant::query()->create([
                     'tb_product_id' => $product->id,
-                    'tb_size_id' => $variant['tb_size_id'],
-                    'tb_color_id' => $variant['tb_color_id'],
+                    'tb_size_id' => $variant['tb_size_id'] ?? null,
+                    'tb_color_id' => $variant['tb_color_id'] ?? null,
                     'sku' => $variant['sku'],
                     'price' => $variant['price'],
                     'quantity' => $variant['quantity'],
