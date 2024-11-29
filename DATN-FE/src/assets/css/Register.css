@@ -1,330 +1,162 @@
-/* Register.css */
 .register-container {
   min-height: 100vh;
-  background-image: url('https://hoanghamobile.com/tin-tuc/wp-content/webp-express/webp-images/uploads/2024/05/anh-mau-xanh-duong.jpg.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: #f5f8fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #EEF2FF 0%, #E8F1FF 100%);
+  padding: 2rem;
 }
 
 .register-content {
-  min-height: 100vh;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(5px);
-  display: flex;
-  flex-direction: column;
-  padding-top: 40px;
+  width: 100%;
+  max-width: 800px;
 }
 
-/* Breadcrumb */
-.register-breadcrumb {
-  padding: 10px 20px;
-  margin-bottom: 20px;
-}
-
-.breadcrumb-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  font-size: 14px;
-}
-
-.breadcrumb-btn:hover {
-  color: #007bff;
-}
-
-.breadcrumb-current {
-  color: #007bff;
-  font-size: 14px;
-}
-
-/* Form Container */
 .register-form-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  padding: 20px;
+  margin-left: 100px;
+  background: white;
+  border-radius: 24px;
+  width: 600px;
+  box-shadow: 0 4px 24px rgba(39, 24, 126, 0.08);
+  margin-top: 60px;
 }
 
 .register-form-box {
-  width: 100%;
-  max-width: 700px;
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  animation: slideInUp 0.5s ease-out;
+  padding: 2.5rem;
 }
 
 .register-title {
+  font-size: 2rem;
+  color: #27187E;
   text-align: center;
-  font-size: 28px;
-  color: #007bff;
-  margin-bottom: 30px;
-  font-weight: 600;
+  margin-bottom: 2rem;
 }
 
-/* Form Elements */
-/* Form Elements */
-.register-form .form-floating {
-  margin-bottom: 1.5rem;
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-floating {
   position: relative;
 }
 
 .register-input {
-  height: 55px !important;
-  border: 1px solid #ced4da;
-  padding: 1rem 1rem 1rem 2.5rem !important;
-  font-size: 16px;
   width: 100%;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  background: #F5F7FF;
+  transition: all 0.2s;
+  height: 3.5rem;
 }
 
 .register-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  outline: none;
 }
 
-.register-label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  padding: 1rem 0.75rem;
-  padding-left: 2.5rem !important;
-  color: #495057;
-  /* Màu đậm hơn cho label */
-  pointer-events: none;
-  border: 1px solid transparent;
-  transform-origin: 0 0;
-  transition: opacity .15s ease-in-out, transform .15s ease-in-out;
-  font-size: 16px;
-  line-height: 1.5;
-  font-weight: 500;
-  /* Thêm font-weight để text đậm hơn */
+
+
+
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-/* Label khi focus hoặc có nội dung */
-.register-input:focus~.register-label,
-.register-input:not(:placeholder-shown)~.register-label {
-  opacity: 1;
-  /* Tăng opacity lên 1 */
-  transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
-  color: #007bff;
-  background: white;
-  padding: 0 0.5rem;
-  height: auto;
-  border-radius: 4px;
-  font-weight: 600;
-  /* Tăng độ đậm khi active */
-  z-index: 1;
-  /* Đảm bảo label luôn hiện trên cùng */
-  box-shadow: 0 0 0 1px white;
-  /* Tạo viền trắng cho label */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-/* Icon trong label */
-.register-label i {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #495057;
-  /* Màu icon đậm hơn */
-  transition: color 0.2s ease;
-  font-size: 1.1em;
-  /* Icon to hơn một chút */
+.form-group label {
+  font-size: 0.875rem;
+  color: #6B7280;
 }
 
-/* Icon khi input focus */
-.register-input:focus~.register-label i {
-  color: #007bff;
+.form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  background: #F5F7FF;
 }
 
-/* Đảm bảo placeholder không che label */
-.register-input::placeholder {
-  color: transparent;
+.form-select:disabled {
+  background: #F3F4F6;
+  cursor: not-allowed;
 }
 
-.register-input:focus::placeholder {
-  color: #adb5bd;
-}
-
-/* Tăng độ tương phản cho error state */
-.register-input.is-invalid {
-  border-color: #dc3545;
-  box-shadow: none;
-}
-
-.register-input.is-invalid~.register-label {
-  color: #dc3545;
-  font-weight: 500;
-}
-
-.register-input.is-invalid:focus~.register-label {
-  color: #dc3545;
-}
-
-/* Error Feedback rõ ràng hơn */
-.register-feedback {
-  color: #dc3545;
-  font-size: 0.875em;
-  margin-top: 0.25rem;
-  position: absolute;
-  bottom: -20px;
-  font-weight: 500;
-}
-
-/* Hiệu ứng hover cho input */
-.register-input:hover {
-  border-color: #80bdff;
-}
-
-/* Responsive adjustments */
-@media (max-width: 576px) {
-  .register-input {
-    height: 50px !important;
-    font-size: 15px;
-  }
-
-  .register-label {
-    font-size: 15px;
-  }
-
-  .register-input:focus~.register-label,
-  .register-input:not(:placeholder-shown)~.register-label {
-    font-size: 13px;
-  }
-}
-
-/* Button styling */
 .register-button {
   width: 100%;
-  padding: 15px;
-  margin-top: 25px;
-  background: linear-gradient(45deg, #007bff, #0056b3);
+  padding: 1rem;
+  background: #27187E;
   color: white;
   border: none;
-  border-radius: 30px;
-  font-size: 16px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  gap: 0.5rem;
 }
 
-.register-button:hover:not(:disabled) {
-  background: linear-gradient(45deg, #0056b3, #007bff);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
-}
-
-.register-button:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+.register-button:hover {
+  background: #1E1067;
 }
 
 .register-button:disabled {
-  opacity: 0.7;
+  background: #9CA3AF;
   cursor: not-allowed;
-  background: linear-gradient(45deg, #ccc, #999);
-  box-shadow: none;
 }
 
-/* Link container */
+.register-feedback {
+  color: #DC2626;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
 .register-links {
-  margin-top: 20px;
   text-align: center;
-  padding: 10px 0;
-  position: relative;
+  margin-top: 1.5rem;
 }
 
-/* Login link styling */
 .register-login-link {
-  display: inline-block;
-  color: #007bff;
+  color: #27187E;
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  padding: 5px 10px;
-  border-radius: 15px;
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
 }
 
 .register-login-link:hover {
-  color: #0056b3;
-  background: rgba(0, 123, 255, 0.1);
-  transform: translateY(-1px);
+  color: #1E1067;
 }
 
-.register-login-link:active {
-  transform: translateY(0);
+.is-invalid {
+  border-color: #DC2626 !important;
 }
 
-/* Optional: Add divider */
-.register-links::before {
-  content: '';
-  display: block;
-  height: 1px;
-  width: 60%;
-  background: linear-gradient(to right, transparent, rgba(0, 123, 255, 0.2), transparent);
-  margin: 0 auto 15px;
+.spinner-border {
+  width: 1rem;
+  height: 1rem;
+  border: 0.2em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
 }
 
-/* Loading spinner for button */
-.register-button .spinner-border {
-  width: 1.2rem;
-  height: 1.2rem;
-  margin-right: 8px;
-}
-
-/* Icon styling in button */
-.register-button i {
-  margin-right: 8px;
-  font-size: 18px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 576px) {
-  .register-button {
-    padding: 12px;
-    font-size: 15px;
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
   }
-
-  .register-login-link {
-    font-size: 14px;
-  }
-}
-
-/* Optional: Add subtle hover animation for link */
-@keyframes pulseLink {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.register-login-link:hover {
-  animation: pulseLink 1s infinite;
 }

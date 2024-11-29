@@ -186,7 +186,7 @@ const LayoutAdmin: React.FC = () => {
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={["0"]} // Đặt phần thống kê là mặc định được chọn
+          defaultSelectedKeys={["0"]}
           items={menuItems}
           style={{ borderRight: 0 }}
         />

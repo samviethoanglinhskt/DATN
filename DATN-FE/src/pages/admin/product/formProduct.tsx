@@ -10,9 +10,14 @@ import {
   message,
   Space,
   InputNumber,
+  GetProp,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import type { UploadFile, UploadChangeParam } from "antd/es/upload";
+import type {
+  UploadFile,
+  UploadChangeParam,
+  UploadProps,
+} from "antd/es/upload";
 import axiosInstance from "src/config/axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -27,7 +32,7 @@ interface IVariant {
   status: string;
   images?: any[];
 }
-
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const ProductSteps: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [productForm] = Form.useForm();
@@ -38,7 +43,7 @@ const ProductSteps: React.FC = () => {
   const [sizes, setSizes] = useState<any[]>([]);
   const [colors, setColors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [productImage, setProductImage] = useState<File | null>(null);
+  const [productImage, setProductImage] = useState<UploadFile[]>([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -66,12 +71,12 @@ const ProductSteps: React.FC = () => {
     }
   };
 
-  const handleProductImageChange = (info: UploadChangeParam<UploadFile>) => {
-    const { fileList } = info;
-    if (fileList?.[0]?.originFileObj) {
-      setProductImage(fileList[0].originFileObj);
-    }
-  };
+  // const handleProductImageChange = (info: UploadChangeParam<UploadFile>) => {
+  //   const { fileList } = info;
+  //   if (fileList?.[0]?.originFileObj) {
+  //     setProductImage(fileList[0].originFileObj);
+  //   }
+  // };
 
   const validateVariant = (values: any) => {
     // Check if variant with same size/color combination exists
@@ -83,11 +88,6 @@ const ProductSteps: React.FC = () => {
 
     if (existingVariant) {
       throw new Error("A variant with this combination already exists");
-    }
-
-    // Validate that at least one attribute (size or color) is selected
-    if (!values.tb_size_id && !values.tb_color_id) {
-      throw new Error("Please select at least size or color");
     }
 
     return values;
@@ -147,7 +147,7 @@ const ProductSteps: React.FC = () => {
       formData.append("tb_brand_id", productValues.tb_brand_id);
       formData.append("name", productValues.name);
       formData.append("status", productValues.status);
-      formData.append("image", productImage);
+      formData.append("image", productImage[0]?.originFileObj);      
 
       // Add variants with null handling
       variants.forEach((variant: IVariant, index) => {
@@ -264,13 +264,16 @@ const ProductSteps: React.FC = () => {
               listType="picture-card"
               maxCount={1}
               beforeUpload={() => false}
-              onChange={handleProductImageChange}
+              onChange={({ fileList }) => setProductImage(fileList)}
               accept="image/*"
+              fileList={productImage}
             >
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
+              {productImage.length === 0 && (
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
             </Upload>
           </Form.Item>
         </Form>
