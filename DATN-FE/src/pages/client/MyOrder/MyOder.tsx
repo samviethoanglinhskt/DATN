@@ -106,7 +106,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                 <div className={styles.productContent}>
                   <div className={styles.productImage}>
                     <Image
-                      src="https://images2.thanhnien.vn/528068263637045248/2024/1/25/428059e47aeafb68640f168d615371dc-65a11b038315c880-1706156293087602824781.jpg"
+                      src={`http://127.0.0.1:8000/storage/${detail.product.image}`}
                       alt={detail.product.name}
                       className={styles.productImg}
                       fallback="/placeholder.png"

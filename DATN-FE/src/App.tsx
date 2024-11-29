@@ -28,6 +28,7 @@ import PaymentSuccess from "./pages/client/PaymentSuccess";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
+import MyInfo from "./pages/client/MyInfo";
 
 
 const routeConfig = [
@@ -58,6 +59,10 @@ const routeConfig = [
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "myinfo",
+        element: <MyInfo />,
       },
       {
         path: "product/:id",

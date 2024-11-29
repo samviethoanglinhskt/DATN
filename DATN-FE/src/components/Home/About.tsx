@@ -22,41 +22,40 @@ const About = () => {
             <div className="col-md-7 col-lg-8">
               <div className="p-t-7 p-r-85 p-r-15-lg p-r-0-md">
                 <h3 className="mtext-111 cl2 p-b-16">
-                  Câu Chuyện Của Chúng Tôi
+                  Hành Trình Bắt Đầu Bán Mỹ Phẩm Online
                 </h3>
 
                 <p className="stext-113 cl6 p-b-26">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Mauris consequat consequat enim, non auctor massa ultrices
-                  non. Morbi sed odio massa. Quisque at vehicula tellus, sed
-                  tincidunt augue. Orci varius natoque penatibus et magnis dis
-                  parturient montes, nascetur ridiculus mus. Maecenas varius
-                  egestas diam, eu sodales metus scelerisque congue.
-                  Pellentesque habitant morbi tristique senectus et netus et
-                  malesuada fames ac turpis egestas. Maecenas gravida justo eu
-                  arcu egestas convallis. Nullam eu erat bibendum, tempus ipsum
-                  eget, dictum enim. Donec non neque ut enim dapibus tincidunt
-                  vitae nec augue. Suspendisse potenti. Proin ut est diam. Donec
-                  condimentum euismod tortor, eget facilisis diam faucibus et.
-                  Morbi a tempor elit.
-                </p>
-
-                <p className="stext-113 cl6 p-b-26">
-                  Donec gravida lorem elit, quis condimentum ex semper sit amet.
-                  Fusce eget ligula magna. Aliquam aliquam imperdiet sodales. Ut
-                  fringilla turpis in vehicula vehicula. Pellentesque congue ac
-                  orci ut gravida. Aliquam erat volutpat. Donec iaculis lectus a
-                  arcu facilisis, eu sodales lectus sagittis. Etiam
-                  pellentesque, magna vel dictum rutrum, neque justo eleifend
-                  elit, vel tincidunt erat arcu ut sem. Sed rutrum, turpis ut
-                  commodo efficitur, quam velit convallis ipsum, et maximus enim
-                  ligula ac ligula.
-                </p>
-
-                <p className="stext-113 cl6 p-b-26">
-                  Có câu hỏi nào không? Hãy đến cửa hàng của chúng tôi tại tầng
-                  8, 379 Hudson St, New York, NY 10018 hoặc gọi cho chúng tôi
-                  qua số (+1) 96 716 6879.
+                  Ngày ấy, tôi là một cô gái trẻ, vừa tốt nghiệp đại học và đang
+                  loay hoay tìm hướng đi cho bản thân. Trong suốt quãng thời
+                  gian là sinh viên, tôi luôn cảm thấy tự ti về làn da mụn của
+                  mình. Dù đã thử nhiều sản phẩm, từ rẻ đến đắt tiền, nhưng kết
+                  quả lại không như mong đợi. Điều đó thôi thúc tôi nghiên cứu
+                  về thành phần mỹ phẩm và học cách chăm sóc da đúng cách. Dần
+                  dần, làn da tôi cải thiện rõ rệt, và bạn bè xung quanh cũng
+                  bắt đầu nhờ tôi tư vấn. Một ngày nọ, khi đang trò chuyện với
+                  một người bạn, cô ấy nói: "Sao cậu không thử bán mỹ phẩm? Cậu
+                  am hiểu, lại có uy tín nữa mà!" Ban đầu, tôi chỉ cười xòa,
+                  nghĩ rằng mình không đủ khả năng để kinh doanh. Nhưng rồi ý
+                  tưởng ấy cứ lẩn quẩn trong đầu tôi. Tôi nhớ lại cảm giác tuyệt
+                  vọng khi không tìm được sản phẩm phù hợp và mong muốn giúp
+                  những người như tôi ngày ấy. Thế là, tôi quyết định bắt đầu.
+                  Tôi mượn chút tiền từ gia đình để nhập lô hàng đầu tiên. Đó là
+                  những sản phẩm tôi từng dùng qua và thấy hiệu quả. Tôi dành cả
+                  ngày để tìm hiểu cách bán hàng online, từ cách chụp ảnh sản
+                  phẩm, viết bài quảng cáo, đến cách trả lời khách hàng. Ban
+                  đầu, tôi gặp không ít khó khăn: khách hàng ít, doanh thu không
+                  ổn định, và nhiều lúc muốn bỏ cuộc. Nhưng những tin nhắn cảm
+                  ơn từ khách hàng khi sản phẩm giúp họ cải thiện làn da đã tiếp
+                  thêm động lực cho tôi. Tôi nhận ra, bán mỹ phẩm không chỉ là
+                  kinh doanh mà còn là chia sẻ giá trị. Từng bước một, tôi mở
+                  rộng danh mục sản phẩm, học thêm về chăm sóc da và xu hướng
+                  làm đẹp. Ngày hôm nay, nhìn lại hành trình đã qua, tôi không
+                  chỉ có một công việc ổn định mà còn xây dựng được lòng tin với
+                  hàng nghìn khách hàng. Điều khiến tôi tự hào nhất là hành
+                  trình này bắt đầu từ chính câu chuyện của tôi – một câu chuyện
+                  về lòng tin, sự nỗ lực và mong muốn lan tỏa vẻ đẹp cho tất cả
+                  mọi người.
                 </p>
               </div>
             </div>
@@ -82,33 +81,37 @@ const About = () => {
           <div className="row">
             <div className="order-md-2 col-md-7 col-lg-8 p-b-30">
               <div className="p-t-7 p-l-85 p-l-15-lg p-l-0-md">
-                <h3 className="mtext-111 cl2 p-b-16">Sứ Mệnh Của Chúng Tôi</h3>
+                <h3 className="mtext-111 cl2 p-b-16">
+                  Sứ Mệnh Của Chúng Tôi - Mỹ Phẩm Hoàn Thiện Vẻ Đẹp
+                </h3>
 
                 <p className="stext-113 cl6 p-b-26">
-                  Mauris non lacinia magna. Sed nec lobortis dolor. Vestibulum
-                  rhoncus dignissim risus, sed consectetur erat. Pellentesque
-                  habitant morbi tristique senectus et netus et malesuada fames
-                  ac turpis egestas. Nullam maximus mauris sit amet odio
-                  convallis, in pharetra magna gravida. Praesent sed nunc
-                  fermentum mi molestie tempor. Morbi vitae viverra odio.
-                  Pellentesque ac velit egestas, luctus arcu non, laoreet
-                  mauris. Sed in ipsum tempor, consequat odio in, porttitor
-                  ante. Ut mauris ligula, volutpat in sodales in, porta non
-                  odio. Pellentesque tempor urna vitae mi vestibulum, nec
-                  venenatis nulla lobortis. Proin at gravida ante. Mauris auctor
-                  purus at lacus maximus euismod. Pellentesque vulputate massa
-                  ut nisl hendrerit, eget elementum libero iaculis.
+                  Sứ mệnh của chúng tôi là mang đến những sản phẩm mỹ phẩm chất
+                  lượng, an toàn và hiệu quả, giúp mọi người tự tin thể hiện vẻ
+                  đẹp tự nhiên và độc đáo của mình. Chúng tôi tin rằng, mỗi cá
+                  nhân đều sở hữu nét đẹp riêng biệt, và mỹ phẩm không chỉ là
+                  công cụ làm đẹp mà còn là người bạn đồng hành, tôn vinh sự tự
+                  tin và phong cách sống của bạn. Với cam kết sử dụng các thành
+                  phần tự nhiên, công nghệ tiên tiến và quy trình sản xuất thân
+                  thiện với môi trường, chúng tôi hướng tới việc xây dựng một
+                  cộng đồng làm đẹp bền vững. Từ các sản phẩm chăm sóc da, trang
+                  điểm đến dưỡng tóc, chúng tôi luôn đặt sức khỏe của khách hàng
+                  lên hàng đầu, đảm bảo rằng mỗi sản phẩm không chỉ làm đẹp mà
+                  còn nuôi dưỡng từ bên trong. Chúng tôi không ngừng nỗ lực
+                  nghiên cứu, sáng tạo và cải tiến để mang đến những giải pháp
+                  làm đẹp vượt trội, phù hợp với mọi nhu cầu và phong cách cá
+                  nhân. Hành trình làm đẹp không chỉ là thay đổi vẻ bề ngoài, mà
+                  còn là sự nâng tầm giá trị bản thân. Cùng chúng tôi, bạn không
+                  chỉ đẹp hơn mà còn mạnh mẽ hơn trong chính con người mình.
                 </p>
 
                 <div className="bor16 p-l-29 p-b-9 m-t-22">
                   <p className="stext-114 cl6 p-r-40 p-b-11">
-                    Creativity is just connecting things. When you ask creative
-                    people how they did something, they feel a little guilty
-                    because they didn't really do it, they just saw something.
-                    It seemed obvious to them after a while.
+                    "Mỹ phẩm không chỉ làm đẹp, mà còn là lời khẳng định bản
+                    thân trong mỗi bước bạn đi."
                   </p>
 
-                  <span className="stext-111 cl8">- Steve Job’s</span>
+                  <span className="stext-111 cl8">- Imperial Beauty</span>
                 </div>
               </div>
             </div>

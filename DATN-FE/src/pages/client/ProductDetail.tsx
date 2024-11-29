@@ -1,10 +1,17 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
 import { Product, Variant } from "src/types/product";
-import iconUser from "src/assets/images/icons/user.png"
+import iconUser from "src/assets/images/icons/user.png";
+import ProductLQ from "src/components/Home/ProductLQ";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,14 +19,13 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reviews, setReviews] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const reviewsPerPage = 3; // Số đánh giá mỗi trang
+  const reviewsPerPage = 3;
   const navigate = useNavigate();
-
 
   // Gọi API để lấy thông tin sản phẩm
   useEffect(() => {
@@ -28,20 +34,26 @@ const ProductDetail = () => {
         const response = await axiosInstance.get(`/api/product/${id}`);
         const productData = response.data;
         setProduct(productData);
+        setCurrentImage(productData.image);
 
-        // Cài đặt giá trị mặc định cho Size hoặc Color nếu có
         if (productData.sizes && productData.sizes.length > 0) {
           setSelectedOption(String(productData.sizes[0].id));
-          updateVariant(String(productData.sizes[0].id), null);
-          setCurrentVariant(productData.variants[0])
+          const variant = productData.variants.find(
+            (v: any) => String(v.tb_size_id) === String(productData.sizes[0].id)
+          );
+          setCurrentVariant(variant || null);
+          setCurrentImage(variant?.image || productData.image);
         } else if (productData.colors && productData.colors.length > 0) {
           setSelectedOption(String(productData.colors[0].id));
-          updateVariant(null, String(productData.colors[0].id));
-          setCurrentVariant(productData.variants[0])
-
+          const variant = productData.variants.find(
+            (v: any) =>
+              String(v.tb_color_id) === String(productData.colors[0].id)
+          );
+          setCurrentVariant(variant || null);
+          setCurrentImage(variant?.image || productData.image);
         } else {
-          // Nếu không có size và color, hiển thị mặc định
           setCurrentVariant(productData?.variants[0]);
+          setCurrentImage(productData?.variants[0]?.image || productData.image);
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
@@ -75,10 +87,6 @@ const ProductDetail = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(reviews);
-  // })
-
   const updateVariant = (sizeId: string | null, colorId: string | null) => {
     if (!product) return;
 
@@ -108,8 +116,8 @@ const ProductDetail = () => {
         operation === "increase"
           ? quantity + 1
           : operation === "decrease" && quantity > 1
-            ? quantity - 1
-            : quantity;
+          ? quantity - 1
+          : quantity;
       // Kiểm tra số lượng sản phẩm có lớn hơn số lượng còn lại trong variant không
       if (newQuantity <= currentVariant.quantity) {
         setQuantity(newQuantity);
@@ -124,21 +132,24 @@ const ProductDetail = () => {
     }
 
     const cartItem = {
-      tb_product_id: product?.id ?? 0,  // Add tb_product_id to the cart item
+      tb_product_id: product?.id ?? 0, // Add tb_product_id to the cart item
       name: product?.name,
       sku: currentVariant.sku,
       price: currentVariant.price,
       quantity,
       products: null,
-      size: product?.sizes ? product.variants.find(s => String(s.tb_size_id) === selectedOption) : null,
-      color: product?.colors ? product.variants.find(c => String(c.tb_color_id) === selectedOption) : null,
-      tb_variant_id: currentVariant.id,  // Lưu biến thể được chọn
-      variant: currentVariant,  // Thêm thuộc tính variant vào đây
+      size: product?.sizes
+        ? product.variants.find((s) => String(s.tb_size_id) === selectedOption)
+        : null,
+      color: product?.colors
+        ? product.variants.find((c) => String(c.tb_color_id) === selectedOption)
+        : null,
+      tb_variant_id: currentVariant.id, // Lưu biến thể được chọn
+      variant: currentVariant, // Thêm thuộc tính variant vào đây
     };
     // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
     addToCart(cartItem);
-  }
-
+  };
 
   const handleBuyNow = () => {
     if (!currentVariant) {
@@ -153,22 +164,22 @@ const ProductDetail = () => {
       price: currentVariant.price,
       quantity,
       image: product?.image,
-      size: product?.sizes?.find((s) => String(s.id) === selectedOption) || null,
-      color: product?.colors?.find((c) => String(c.id) === selectedOption) || null,
+      size:
+        product?.sizes?.find((s) => String(s.id) === selectedOption) || null,
+      color:
+        product?.colors?.find((c) => String(c.id) === selectedOption) || null,
       tb_variant_id: currentVariant.id,
       variant: currentVariant,
     };
 
-
     navigate("/checkout", {
       state: {
-        cartItem
+        cartItem,
       },
     });
 
     console.log(cartItem);
-
-  }
+  };
 
   if (!product) {
     return <div>Loading...</div>; // Hiển thị Loading nếu chưa có dữ liệu
@@ -183,9 +194,7 @@ const ProductDetail = () => {
             Trang chủ
             <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
           </a>
-          <span className="stext-109 cl4">
-            Sản phẩm
-          </span>
+          <span className="stext-109 cl4">Sản phẩm</span>
         </div>
       </div>
 
@@ -199,9 +208,20 @@ const ProductDetail = () => {
                   <div className="wrap-slick3-dots" />
                   <div className="wrap-slick3-arrows flex-sb-m flex-w" />
                   <div className="slick3 gallery-lb">
-                    <div className="item-slick3" data-thumb={`http://127.0.0.1:8000/storage/${product.image}`}>
+                    <div
+                      className="item-slick3"
+                      data-thumb={`http://127.0.0.1:8000/storage/${
+                        currentImage || product?.image
+                      }`}
+                    >
                       <div className="wrap-pic-w pos-relative">
-                        <img src={`http://127.0.0.1:8000/storage/${product.image}`} alt="IMG-PRODUCT" height={500} />
+                        <img
+                          src={`http://127.0.0.1:8000/storage/${
+                            currentImage || product?.image
+                          }`}
+                          alt="IMG-PRODUCT"
+                          height={500}
+                        />
                       </div>
                     </div>
                   </div>
@@ -218,50 +238,57 @@ const ProductDetail = () => {
                     Thương hiệu: {product.brand.name} |
                   </span>
                   <span style={{ fontSize: 13, margin: "0 5px" }}>
-                    SKU: {currentVariant?.sku || product.variants[0].sku || "N/A"} |
+                    SKU:{" "}
+                    {currentVariant?.sku || product.variants[0].sku || "N/A"} |
                   </span>
                   <span style={{ fontSize: 13 }}>
-                    SL: {currentVariant?.quantity || product.variants[0].quantity || "N/A"}
+                    SL:{" "}
+                    {currentVariant?.quantity ||
+                      product.variants[0].quantity ||
+                      "N/A"}
                   </span>
                 </div>
                 <span className="mtext-106 cl2">
-                  ${currentVariant ? currentVariant.price.toFixed(2) : product.variants[0].price.toFixed(2)}
+                  $
+                  {currentVariant
+                    ? currentVariant.price.toFixed(2)
+                    : product.variants[0].price.toFixed(2)}
                 </span>
                 {/*  */}
                 <div className="p-t-33">
-
                   {/* Conditionally Render Size Selector */}
                   {product.sizes && product.sizes.length > 0 && (
                     <div className="flex-w flex-r-m p-b-10">
-                      <div className="size-203 flex-c-m respon6">
-                        Size
-                      </div>
-                      <FormControl variant="outlined" sx={{ width: 300, marginRight: "50px" }}>
+                      <div className="size-203 flex-c-m respon6">Size</div>
+                      <FormControl
+                        variant="outlined"
+                        sx={{ width: 300, marginRight: "50px" }}
+                      >
                         <InputLabel>Choose an option</InputLabel>
                         <Select
                           value={selectedOption || ""}
                           onChange={handleChangeOption}
                           label="Size"
                           sx={{
-                            borderRadius: '2px',
-                            borderColor: '#e6e6e6',
-                            backgroundColor: '#fff',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#e6e6e6',
+                            borderRadius: "2px",
+                            borderColor: "#e6e6e6",
+                            backgroundColor: "#fff",
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#e6e6e6",
                             },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#b3b3b3',
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#b3b3b3",
                             },
                           }}
                           MenuProps={{
                             PaperProps: {
                               sx: {
-                                '& .MuiMenuItem-root': {
-                                  '&.Mui-selected': {
-                                    backgroundColor: '#6C7AE0',
-                                    color: '#fff',
-                                    '&:hover': {
-                                      backgroundColor: '#6C7AE0',
+                                "& .MuiMenuItem-root": {
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#6C7AE0",
+                                    color: "#fff",
+                                    "&:hover": {
+                                      backgroundColor: "#6C7AE0",
                                     },
                                   },
                                 },
@@ -270,7 +297,16 @@ const ProductDetail = () => {
                           }}
                         >
                           {product.sizes.map((size) => (
-                            <MenuItem sx={{ '&:hover': { backgroundColor: '#6C7AE0', color: '#fff', } }} key={size.id} value={String(size.id)}>
+                            <MenuItem
+                              sx={{
+                                "&:hover": {
+                                  backgroundColor: "#6C7AE0",
+                                  color: "#fff",
+                                },
+                              }}
+                              key={size.id}
+                              value={String(size.id)}
+                            >
                               {size.name}
                             </MenuItem>
                           ))}
@@ -282,35 +318,36 @@ const ProductDetail = () => {
                   {/* Conditionally Render Size Selector */}
                   {product.colors && product.colors.length > 0 && (
                     <div className="flex-w flex-r-m p-b-10">
-                      <div className="size-203 flex-c-m respon6">
-                        Color
-                      </div>
-                      <FormControl variant="outlined" sx={{ width: 300, marginRight: "50px" }}>
+                      <div className="size-203 flex-c-m respon6">Color</div>
+                      <FormControl
+                        variant="outlined"
+                        sx={{ width: 300, marginRight: "50px" }}
+                      >
                         <InputLabel>Choose an option</InputLabel>
                         <Select
                           value={selectedOption || ""}
                           onChange={handleChangeOption}
                           label="Color"
                           sx={{
-                            borderRadius: '2px',
-                            borderColor: '#e6e6e6',
-                            backgroundColor: '#fff',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#e6e6e6',
+                            borderRadius: "2px",
+                            borderColor: "#e6e6e6",
+                            backgroundColor: "#fff",
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#e6e6e6",
                             },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#b3b3b3',
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#b3b3b3",
                             },
                           }}
                           MenuProps={{
                             PaperProps: {
                               sx: {
-                                '& .MuiMenuItem-root': {
-                                  '&.Mui-selected': {
-                                    backgroundColor: '#6C7AE0',
-                                    color: '#fff',
-                                    '&:hover': {
-                                      backgroundColor: '#6C7AE0',
+                                "& .MuiMenuItem-root": {
+                                  "&.Mui-selected": {
+                                    backgroundColor: "#6C7AE0",
+                                    color: "#fff",
+                                    "&:hover": {
+                                      backgroundColor: "#6C7AE0",
                                     },
                                   },
                                 },
@@ -319,7 +356,16 @@ const ProductDetail = () => {
                           }}
                         >
                           {product.colors.map((color) => (
-                            <MenuItem sx={{ '&:hover': { backgroundColor: '#6C7AE0', color: '#fff', } }} key={color.id} value={String(color.id)}>
+                            <MenuItem
+                              sx={{
+                                "&:hover": {
+                                  backgroundColor: "#6C7AE0",
+                                  color: "#fff",
+                                },
+                              }}
+                              key={color.id}
+                              value={String(color.id)}
+                            >
                               {color.name}
                             </MenuItem>
                           ))}
@@ -330,41 +376,78 @@ const ProductDetail = () => {
 
                   <div className="flex-w flex-r-m p-b-10">
                     <div className="size-204 flex-w flex-m respon6-next">
-                      <div className="wrap-num-product flex-w m-r-20 m-tb-10" style={{ marginLeft: "22px" }}>
-                        <button onClick={() => handleQuantityChange("decrease")} className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                      <div
+                        className="wrap-num-product flex-w m-r-20 m-tb-10"
+                        style={{ marginLeft: "22px" }}
+                      >
+                        <button
+                          onClick={() => handleQuantityChange("decrease")}
+                          className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
+                        >
                           <i className="fs-16 zmdi zmdi-minus" />
                         </button>
-                        <input className="mtext-104 cl3 txt-center num-product" type="text" name="num-product" readOnly value={quantity} />
-                        <button onClick={() => handleQuantityChange("increase")} className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                        <input
+                          className="mtext-104 cl3 txt-center num-product"
+                          type="text"
+                          name="num-product"
+                          readOnly
+                          value={quantity}
+                        />
+                        <button
+                          onClick={() => handleQuantityChange("increase")}
+                          className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
+                        >
                           <i className="fs-16 zmdi zmdi-plus" />
                         </button>
                       </div>
-                      <div style={{ display: 'flex', marginTop: "10px" }}>
-                        <button onClick={handleAddToCart} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" style={{ width: "250px", margin: "0 20px 0 -100px" }}>
+                      <div style={{ display: "flex", marginTop: "10px" }}>
+                        <button
+                          onClick={handleAddToCart}
+                          className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
+                          style={{ width: "250px", margin: "0 20px 0 -100px" }}
+                        >
                           Thêm vào giỏ hàng
                         </button>
-                        <button onClick={handleBuyNow} className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                        <button
+                          onClick={handleBuyNow}
+                          className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
+                        >
                           Mua ngay
                         </button>
                       </div>
-
                     </div>
                   </div>
                 </div>
                 {/*  */}
                 <div className="flex-w flex-m p-l-100 p-t-40 respon7">
                   <div className="flex-m bor9 p-r-10 m-r-11">
-                    <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
+                    <a
+                      href="#"
+                      className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
+                      data-tooltip="Add to Wishlist"
+                    >
                       <i className="zmdi zmdi-favorite" />
                     </a>
                   </div>
-                  <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
+                  <a
+                    href="#"
+                    className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                    data-tooltip="Facebook"
+                  >
                     <i className="fa fa-facebook" />
                   </a>
-                  <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
+                  <a
+                    href="#"
+                    className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                    data-tooltip="Twitter"
+                  >
                     <i className="fa fa-twitter" />
                   </a>
-                  <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
+                  <a
+                    href="#"
+                    className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                    data-tooltip="Google Plus"
+                  >
                     <i className="fa fa-google-plus" />
                   </a>
                 </div>
@@ -377,18 +460,34 @@ const ProductDetail = () => {
             <div className="tab01">
               <ul className="nav nav-tabs" role="tablist">
                 <li className="nav-item p-b-10">
-                  <a className="nav-link active" data-toggle="tab" href="#description" role="tab">Mô tả</a>
+                  <a
+                    className="nav-link active"
+                    data-toggle="tab"
+                    href="#description"
+                    role="tab"
+                  >
+                    Mô tả
+                  </a>
                 </li>
                 <li className="nav-item p-b-10">
-                  <a className="nav-link" data-toggle="tab" href="#reviews" role="tab">Đánh giá</a>
+                  <a
+                    className="nav-link"
+                    data-toggle="tab"
+                    href="#reviews"
+                    role="tab"
+                  >
+                    Đánh giá
+                  </a>
                 </li>
               </ul>
               <div className="tab-content p-t-43">
-                <div className="tab-pane fade show active" id="description" role="tabpanel">
+                <div
+                  className="tab-pane fade show active"
+                  id="description"
+                  role="tabpanel"
+                >
                   <div className="how-pos2 p-lr-15-md">
-                    <p className="stext-102 cl6">
-                      {product.description}
-                    </p>
+                    <p className="stext-102 cl6">{product.description}</p>
                   </div>
                 </div>
 
@@ -398,9 +497,16 @@ const ProductDetail = () => {
                       <div className="p-b-30 m-lr-15-sm">
                         {reviews.length > 0 ? (
                           reviews.map((review) => (
-                            <div className="flex-w flex-t p-b-68" key={review.id}>
+                            <div
+                              className="flex-w flex-t p-b-68"
+                              key={review.id}
+                            >
                               <div className="wrap-pic-s size-109 bor0 of-hidden m-r-18 m-t-6">
-                                <img src={iconUser} alt="User Icon" style={{ width: 50, height: 50 }} />
+                                <img
+                                  src={iconUser}
+                                  alt="User Icon"
+                                  style={{ width: 50, height: 50 }}
+                                />
                               </div>
                               <div className="size-207">
                                 <div className="flex-w flex-sb-m p-b-17">
@@ -408,21 +514,30 @@ const ProductDetail = () => {
                                     {review.user.name}
                                   </span>
                                   <span className="fs-18 cl11">
-                                    {Array.from({ length: 5 }).map((_, index) => (
-                                      <i
-                                        key={index}
-                                        className={`zmdi ${index < review.rating ? "zmdi-star" : "zmdi-star-outline"
+                                    {Array.from({ length: 5 }).map(
+                                      (_, index) => (
+                                        <i
+                                          key={index}
+                                          className={`zmdi ${
+                                            index < review.rating
+                                              ? "zmdi-star"
+                                              : "zmdi-star-outline"
                                           }`}
-                                      />
-                                    ))}
+                                        />
+                                      )
+                                    )}
                                   </span>
                                 </div>
-                                <p className="stext-102 cl6">{review.comment}</p>
+                                <p className="stext-102 cl6">
+                                  {review.comment}
+                                </p>
                               </div>
                             </div>
                           ))
                         ) : (
-                          <p className="stext-102 cl6">Không có đánh giá nào cho sản phẩm này.</p>
+                          <p className="stext-102 cl6">
+                            Không có đánh giá nào cho sản phẩm này.
+                          </p>
                         )}
                       </div>
                       <div className="flex-w flex-c-m m-t-20">
@@ -450,12 +565,13 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
-
         </div>
       </section>
-
+      <div>
+        <ProductLQ />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductDetail
+export default ProductDetail;

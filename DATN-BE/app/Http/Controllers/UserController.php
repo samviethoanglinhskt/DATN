@@ -6,16 +6,18 @@ use Exception;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\tb_address_user;
 use App\Http\Requests\RuleLogin;
+use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\RuleRegister;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\RuleUpdateTaiKhoan;
-use App\Models\tb_address_user;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\DB;
+
 class UserController extends Controller
 {
     /**
@@ -70,38 +72,39 @@ class UserController extends Controller
     public function register(RuleRegister $request)
     {
         try {
-            // Bắt đầu transaction 
+            // Bắt đầu transaction
             DB::beginTransaction();
 
-            // Tạo người dùng mới 
-            $account = User::create([ 
-                'name' => $request->name, 
-                'tb_role_id' => 2, 
-                'password' => Hash::make($request->password), 
-                'phone' => $request->phone, 
-                'email' => $request->email, 
+            // Tạo người dùng mới
+            $account = User::create([
+                'name' => $request->name,
+                'tb_role_id' => 2,
+                'password' => Hash::make($request->password),
+                'phone' => $request->phone,
+                'email' => $request->email,
             ]);
 
-            // Lưu địa chỉ người dùng vào bảng tb_address_users 
-            $address = tb_address_user::create([ 
-                'user_id' => $account->id, 
-                'address' => $request->address, 
-                'address_detail' => $request->address_detail, 
+            // Lưu địa chỉ người dùng vào bảng tb_address_users
+            $address = tb_address_user::create([
+                'user_id' => $account->id,
+                'address' => $request->address,
+                'address_detail' => $request->address_detail,
+                'is_default' => true,
             ]);
 
-            // Commit transaction 
+            // Commit transaction
             DB::commit();
             // Trả về phản hồi thành công
-            return response()->json([ 
-                'success' => true, 
-                'message' => 'Đăng ký thành công!', 
-                'data' => [ 
-                    'account' => $account, 
-                    'address' => $address, 
-                    ] 
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng ký thành công!',
+                'data' => [
+                    'account' => $account,
+                    'address' => $address,
+                    ]
                 ], 201); // 201 Created
         } catch (\Exception $e) {
-            \Log::error('Registration error: ' . $e->getMessage());
+            Log::error('Registration error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
@@ -245,7 +248,7 @@ class UserController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
         } catch (Exception $e) {
-            \Log::error('Registration error: ' . $e->getMessage());
+            Log::error('Registration error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
@@ -274,7 +277,7 @@ class UserController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
         } catch (Exception $e) {
-            \Log::error('Registration error: ' . $e->getMessage());
+            Log::error('Registration error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
