@@ -146,7 +146,6 @@ const ProductEdit: React.FC = () => {
   const handleProductUpdate = async () => {
     try {
       setLoading(true);
-
       const formData = new FormData();
       formData.append("name", productForm.getFieldValue("name"));
       formData.append(
@@ -168,21 +167,32 @@ const ProductEdit: React.FC = () => {
         formData.append("image", productImage);
       }
 
+      // Handle variants data
       variants.forEach((variant: any, index) => {
-        formData.append(`variants[${index}][tb_size_id]`, variant.tb_size_id);
-        formData.append(`variants[${index}][tb_color_id]`, variant.tb_color_id);
-        formData.append(`variants[${index}][sku]`, variant.sku);
-        formData.append(`variants[${index}][price]`, variant.price);
-        formData.append(`variants[${index}][quantity]`, variant.quantity);
+        formData.append(`variants[${index}][id]`, variant.id.toString());
+        formData.append(
+          `variants[${index}][tb_size_id]`,
+          variant.tb_size_id?.toString() || ""
+        );
+        formData.append(
+          `variants[${index}][tb_color_id]`,
+          variant.tb_color_id?.toString() || ""
+        );
+        formData.append(`variants[${index}][sku]`, variant.sku.toString());
+        formData.append(`variants[${index}][price]`, variant.price.toString());
+        formData.append(
+          `variants[${index}][quantity]`,
+          variant.quantity.toString()
+        );
         formData.append(`variants[${index}][status]`, variant.status);
 
-        if (variant.images && variant.images.length > 0) {
+        // Handle variant images
+        if (variant.images) {
           variant.images.forEach((image: any, imgIndex: number) => {
             if (image.originFileObj) {
               formData.append(
                 `variants[${index}][images][${imgIndex}][name_image]`,
-                image.originFileObj,
-                image.originFileObj.name
+                image.originFileObj
               );
             }
           });
@@ -202,13 +212,12 @@ const ProductEdit: React.FC = () => {
         navigate("/admin/product");
       }
     } catch (error: any) {
-      console.log("Lỗi cập nhật sản phẩm:", error);
+      console.error("Lỗi cập nhật sản phẩm:", error);
       message.error(error.message || "Cập nhật sản phẩm thất bại");
     } finally {
       setLoading(false);
     }
   };
-
   const handleVariantEdit = (variant: IVariant) => {
     setCurrentVariant(variant);
 
@@ -250,7 +259,6 @@ const ProductEdit: React.FC = () => {
       const formData = new FormData();
       formData.append("_method", "PUT");
 
-      // Add all variant fields
       const variantIndex = variants.findIndex(
         (v) => v.id === currentVariant.id
       );
@@ -260,12 +268,11 @@ const ProductEdit: React.FC = () => {
         if (key !== "images") {
           formData.append(
             `variants[${variantIndex}][${key}]`,
-            values[key].toString()
+            values[key]?.toString() || ""
           );
         }
       });
 
-      // Handle new images
       if (values.images) {
         values.images.forEach((image: any, imageIndex: number) => {
           if (image.originFileObj) {
@@ -288,7 +295,6 @@ const ProductEdit: React.FC = () => {
       if (response.data?.product) {
         message.success("Cập nhật variant thành công");
         setIsEditingVariant(false);
-        // Update local variants state
         const updatedVariants = [...variants];
         updatedVariants[variantIndex] = {
           ...updatedVariants[variantIndex],
@@ -362,27 +368,26 @@ const ProductEdit: React.FC = () => {
               <Form.Item name="description" label="Description">
                 <TextArea rows={4} />
               </Form.Item>
-              </div>
-              <Form.Item
-                label="Product Image"
-                required
-                tooltip="Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP"
+            </div>
+            <Form.Item
+              label="Product Image"
+              required
+              tooltip="Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP"
+            >
+              <Upload
+                listType="picture-card"
+                fileList={fileList}
+                onChange={handleProductImageChange}
+                beforeUpload={() => false}
               >
-                <Upload
-                  listType="picture-card"
-                  fileList={fileList}
-                  onChange={handleProductImageChange}
-                  beforeUpload={() => false}
-                >
-                  {fileList.length >= 1 ? null : (
-                    <div>
-                      <PlusOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                  )}
-                </Upload>
-              </Form.Item>
-            
+                {fileList.length >= 1 ? null : (
+                  <div>
+                    <PlusOutlined />
+                    <div style={{ marginTop: 8 }}>Upload</div>
+                  </div>
+                )}
+              </Upload>
+            </Form.Item>
           </div>
         </Form>
       ),
@@ -504,12 +509,8 @@ const ProductEdit: React.FC = () => {
         width={800}
       >
         <Form form={variantForm} layout="vertical">
-          <Form.Item
-            name="tb_size_id"
-            label="Size"
-            rules={[{ required: true }]}
-          >
-            <Select>
+          <Form.Item name="tb_size_id" label="Size">
+            <Select allowClear>
               {sizes.map((size) => (
                 <Select.Option key={size.id} value={size.id}>
                   {size.name}
@@ -518,12 +519,8 @@ const ProductEdit: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="tb_color_id"
-            label="Color"
-            rules={[{ required: true }]}
-          >
-            <Select>
+          <Form.Item name="tb_color_id" label="Color">
+            <Select allowClear>
               {colors.map((color) => (
                 <Select.Option key={color.id} value={color.id}>
                   {color.name}
