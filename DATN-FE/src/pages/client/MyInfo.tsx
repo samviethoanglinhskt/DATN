@@ -75,9 +75,11 @@ const Profile = () => {
     };
 
     const handleSave = async () => {
-        if (!validate()) return; // Không thực hiện nếu có lỗi
+        if (!validate()) return;
         try {
-            await updateUser({ name, phone, email });
+            const response = await updateUser({ name, phone, email });
+            console.log(response);
+
             alert("Cập nhật thông tin thành công!");
         } catch (error) {
             console.error("Cập nhật thông tin thất bại:", error);
@@ -381,7 +383,7 @@ const AddressList = () => {
                         {/* Tỉnh/Thành phố */}
                         <div className="form-group col-md-4">
                             <label htmlFor="province">Tỉnh/Thành phố</label>
-                            <select id="province" className="form-control" onChange={handleProvinceChange}>
+                            <select style={{ width: 150 }} id="province" className="form-control" onChange={handleProvinceChange}>
                                 <option value="">Chọn tỉnh/thành</option>
                                 {provinces.map((province) => (
                                     <option key={province.code} value={province.code}>
@@ -395,6 +397,7 @@ const AddressList = () => {
                         <div className="form-group col-md-4">
                             <label htmlFor="district">Quận/Huyện</label>
                             <select
+                                style={{ width: 150, marginTop: 20 }}
                                 id="district"
                                 className="form-control"
                                 onChange={handleDistrictChange}
@@ -413,6 +416,7 @@ const AddressList = () => {
                         <div className="form-group col-md-4">
                             <label htmlFor="ward">Phường/Xã</label>
                             <select
+                                style={{ width: 150, marginTop: 20 }}
                                 id="ward"
                                 className="form-control"
                                 onChange={handleWardChange}

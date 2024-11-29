@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
 import instance from "src/config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "src/assets/css/NewProduct.css";
+import "src/components/css/NewProduct.css";
 
 // Types
 import { Product } from "src/types/product";
@@ -133,7 +133,7 @@ const NewProduct = () => {
                     <h5 className="product-title">{product.name}</h5>
                   </Link>
                   <p className="product-price fw-bold">
-                    ${product.variants[0]?.price}
+                    {product.variants[0]?.price.toLocaleString("vi-VN")}đ
                   </p>
                 </div>
               </div>

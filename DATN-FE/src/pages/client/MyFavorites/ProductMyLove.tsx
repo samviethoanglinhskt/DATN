@@ -207,9 +207,6 @@ const FavoritesPage: React.FC = () => {
   });
 
   // Filter products
-  console.log("Products Before Filtering:", favoriteProducts);
-  console.log("Search Term:", searchTerm);
-  console.log("Selected Brand ID:", selectedBrand);
   const filteredProducts = React.useMemo(() => {
     if (!favoriteProducts) return [];
 
@@ -256,14 +253,8 @@ const FavoritesPage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="auth-container">
+      <div className="auth-container" style={{ margin: 200 }}>
         <h2>Vui lòng đăng nhập để xem danh sách yêu thích</h2>
-        <button
-          className="btn btn-primary btn-lg mt-3"
-          onClick={() => navigate("/login")}
-        >
-          Đăng nhập
-        </button>
       </div>
     );
   }
