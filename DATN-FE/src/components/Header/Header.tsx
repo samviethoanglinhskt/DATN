@@ -8,12 +8,10 @@ import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
 import logo from "src/assets/images/icons/logo-01.png";
 import { useCart } from "src/context/Cart";
-import {
-  LogoutOutlined,
-} from "@mui/icons-material";
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import { LogoutOutlined } from "@mui/icons-material";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 // Cache constants
 const CACHE_KEYS = {
   CATEGORIES: "cached_categories",
@@ -148,7 +146,6 @@ const Header: React.FC = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-
   }, []);
 
   if (isLoading) return <div>Loading...</div>;
@@ -163,8 +160,9 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
-          }`}
+        className={`container-menu-desktop ${
+          isFixed ? "fix-menu-desktop" : ""
+        }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -367,6 +365,9 @@ const Header: React.FC = () => {
                 <li>
                   <Link to="/contact">Liên hệ</Link>
                 </li>
+                <li>
+                  <Link to="/support">Chính sách đổi trả</Link>
+                </li>
               </ul>
             </div>
 
@@ -386,6 +387,7 @@ const Header: React.FC = () => {
               <a
                 href="/love"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+                data-notify="0"
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
               </a>
@@ -486,6 +488,9 @@ const Header: React.FC = () => {
           </li>
           <li>
             <Link to="/contact">Liên hệ</Link>
+          </li>
+          <li>
+            <Link to="/support">Chính sách đổi trả</Link>
           </li>
         </ul>
       </div>

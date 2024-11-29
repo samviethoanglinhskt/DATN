@@ -24,6 +24,7 @@ interface IWard {
  name: string;
 }
 
+
 const Register = () => {
  const {
    register,
