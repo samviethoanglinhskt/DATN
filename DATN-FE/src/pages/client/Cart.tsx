@@ -144,7 +144,7 @@ const ShoppingCart: React.FC = () => {
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.price !== undefined && item.variant.price !== null ? `$${item.variant.price}` : "Loading..."}
+                                {item.variant.price !== undefined && item.variant.price !== null ? `${(item.variant.price).toLocaleString("vi-VN")}đ` : "Loading..."}
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
@@ -192,7 +192,7 @@ const ShoppingCart: React.FC = () => {
 
                               <td style={{ padding: "0 20px" }}>
                                 {item.variant.price !== undefined && item.quantity !== undefined
-                                  ? `$${(item.variant.price * item.quantity)}`
+                                  ? `${(item.variant.price * item.quantity).toLocaleString("vi-VN")}đ`
                                   : "Loading..."}
                               </td>
 
@@ -239,7 +239,7 @@ const ShoppingCart: React.FC = () => {
                       </div>
                       <div className="size-209 p-t-1">
                         <span className="mtext-110 cl2">
-                          {calculateSelectedTotal()}đ
+                          {calculateSelectedTotal().toLocaleString("vi-VN")}đ
                         </span>
                       </div>
                     </div>

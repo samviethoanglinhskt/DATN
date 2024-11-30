@@ -1,0 +1,147 @@
+.product-card {
+  transition: all 0.3s ease;
+
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  padding-top: 100%;
+}
+
+.product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+  opacity: 1;
+}
+
+.buy-button {
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .buy-button {
+  transform: translateY(0);
+}
+
+.product-item {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
+
+.product-item.fade-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.product-item.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-item.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-item.fade-exit-active {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.product-name {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.product-description {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.wishlist-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn i {
+  transition: transform 0.3s ease;
+}
+
+.btn:hover i.fa-chevron-down {
+  transform: translateY(2px);
+}
+
+.btn:hover i.fa-chevron-up {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .product-name {
+    font-size: 0.9rem;
+  }
+
+  .product-description {
+    font-size: 0.8rem;
+  }
+
+  .product-price {
+    font-size: 1rem;
+  }
+}
+
+.bg-light {
+  background-color: rgba(120, 167, 218, 0.5) !important;
+}

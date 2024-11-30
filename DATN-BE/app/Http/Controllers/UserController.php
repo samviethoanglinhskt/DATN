@@ -101,8 +101,8 @@ class UserController extends Controller
                 'data' => [
                     'account' => $account,
                     'address' => $address,
-                    ]
-                ], 201); // 201 Created
+                ]
+            ], 201); // 201 Created
         } catch (\Exception $e) {
             Log::error('Registration error: ' . $e->getMessage());
             return response()->json([
@@ -161,7 +161,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Hiển thị thông tin người dùng thành công',
-                'data' => [ 'user' => $user, 'address' => $address, ],
+                'data' => ['user' => $user, 'address' => $address,],
             ], 200); // 200 OK
         } catch (\Exception $e) {
             return response()->json([
@@ -222,7 +222,7 @@ class UserController extends Controller
         }
     }
 
-    public function updateUser(RuleUpdateTaiKhoan $request, string $id)
+    public function updateUser(RuleUpdateTaiKhoan $request)
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -233,12 +233,11 @@ class UserController extends Controller
                 ], 404);
             }
             $user->update([
-                'name' => $user->name,
-                'tb_role_id' => $user->id,
-                'phone' => $user->phone,
-                'address' => $user->address,
-                'email' => $user->email,
-                'password' => Hash::make($user->password),
+                'name' => $request->name,
+                'tb_role_id' => 2,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'password' => $user->password,
             ]);
 
             return response()->json([
