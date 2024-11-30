@@ -10,6 +10,7 @@ use App\Models\tb_product;
 use App\Models\tb_variant;
 use http\Env\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -288,6 +289,22 @@ class CartController extends Controller
             $variant->quantity -= $request->quantity;
             $variant->save();
 
+            Mail::send('emails.mail_order_user', [
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'address' => $request->address_detail . ', ' . $request->address,
+                'orderCode' => $order->order_code,
+                'orderStatus' =>$order->order_status,
+                'orderDetail' => $oderDetail,
+                'orderDate' => $order->order_date,
+                'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
+                'size' => $oderDetail->variant->size->name ?? '',
+                'color' => $oderDetail->variant->color->name ?? ''
+            ], function ($message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Imperial Beauty xin thông báo');
+            });
             return response()->json([
                 'success' => true,
                 'message' => 'Lấy sản phẩm thành công!',
@@ -430,7 +447,6 @@ class CartController extends Controller
                 'order' => $order,
                 'orderDetail' => $orderDetails,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Lỗi khi đặt hàng: ' . $e->getMessage());
 
@@ -475,6 +491,21 @@ class CartController extends Controller
                     foreach ($order as $orders) {
                         $orders->update(['order_status' => 'Đã thanh toán']);
                     }
+                    $oder = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->first();
+
+                    if($oder->user_id ==1){
+                        Mail::send('emails.mail_order_vnpay_user', [
+                            'name' => $oder->name,
+                            'orderCode' => $oder->order_code,
+                            'orderStatus' =>$oder->order_status,
+                            'orderDate' => $oder->order_date,
+                        ], function ($message) use ($oder) {
+                            $message->to($oder->email)
+                                ->subject('Imperial Beauty xin thông báo');
+                        });
+                        return redirect('http://localhost:5173/payment-success');
+                    }
+
                     // echo "GD Thanh cong";
                     return redirect('http://localhost:5173/payment-success');
                 }
@@ -482,9 +513,9 @@ class CartController extends Controller
                 $order = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->get();
                 if ($order->isNotEmpty()) {
                     foreach ($order as $orders) {
-                        // Xóa các chi tiết đơn hàng liên quan 
+                        // Xóa các chi tiết đơn hàng liên quan
                         tb_oderdetail::where('tb_oder_id', $orders->id)->delete();
-                        // Xóa đơn hàng 
+                        // Xóa đơn hàng
                         $orders->delete();
                     }
                 }
@@ -641,6 +672,8 @@ class CartController extends Controller
                 $order->order_code = 'ORD-' . $order->id;
                 $order->total_amount = $totalOrder;
                 $order->save();
+                $variant->quantity -= $request->quantity;
+                $variant->save();
                 // $orderCode = 'ORD-ONLINE' . strtoupper(uniqid());
                 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
                 $vnp_Returnurl = route('vnpay.ipn');
@@ -779,6 +812,22 @@ class CartController extends Controller
                 $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
                 $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
             }
+            Mail::send('emails.mail_order_user', [
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'address' => $request->address_detail . ', ' . $request->address,
+                'orderCode' => $order->order_code,
+                'orderStatus' =>$order->order_status,
+                'orderDetail' => $oderDetail,
+                'orderDate' => $order->order_date,
+                'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
+                'size' => $oderDetail->variant->size->name ?? '',
+                'color' => $oderDetail->variant->color->name ?? ''
+            ], function ($message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Imperial Beauty xin thông báo');
+            });
             return response()->json([
                 'success' => true,
                 'vnpay_url' => $vnp_Url,
