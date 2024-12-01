@@ -46,7 +46,7 @@ class ProductController extends Controller
 
             $product = tb_product::with('variants.images', 'colors', 'sizes')
                 ->orderBy('id', 'desc')
-                ->limit(5)
+                ->limit(10)
                 ->get();
 
             // Nếu không tìm thấy sản phẩm
@@ -68,6 +68,36 @@ class ProductController extends Controller
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi!',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getTopsellingProduct()
+    {
+        try {
+            $topProducts = tb_product::with([
+                'variants.images',  // Lấy ảnh của từng biến thể
+                'colors',           // Lấy màu sắc
+                'sizes'             // Lấy kích thước và giá
+            ])
+                ->select('tb_products.*', DB::raw('SUM(tb__oderdetail.quantity) as total_quantity'),  DB::raw('SUM(tb__oderdetail.quantity * tb__oderdetail.price) as total_revenue'))
+                ->join('tb__oderdetail', 'tb_products.id', '=', 'tb__oderdetail.tb_product_id')
+                ->join('tb_oders', 'tb__oderdetail.tb_oder_id', '=', 'tb_oders.id')
+                ->where('tb_oders.order_status', 'Đã Hoàn Thành')
+                ->groupBy('tb_products.id') // nhóm tất cả lại theo thằng id sản phẩm
+                ->orderBy('total_quantity', 'desc')
+                ->limit(10)
+                ->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Top 10 sản phẩm bán chạy',
+                'data' => $topProducts
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $th->getMessage()
             ], 500);
         }
     }
