@@ -132,7 +132,7 @@ class CartController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Số lượng sản phẩm đã được cập nhật!',
+                'message' => 'Số lượng sản phẩm đã được cập nhật !',
                 'data' => $cart,
             ], 200); // 200 OK
 
@@ -156,14 +156,25 @@ class CartController extends Controller
                 ], 404);
             }
 
-            // $product = tb_product::find($request->tb_product_id);
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
                 ->where('id', $request->id)
                 ->first();
-            // Cập nhật số lượng
-            $cart->quantity += $request->quantity;
-            $cart->save();
+            $variant = tb_variant::find($cart->tb_variant_id);
+
+
+            if ($variant->quantity >= $cart->quantity + $request->quantity) {
+                // Cập nhật số lượng
+                $cart->quantity += $request->quantity;
+                $cart->save();
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số lượng yêu cầu vượt quá số lượng tồn kho của biến thể!',
+                    'số lượng biến thể' => $variant->quantity,
+                ], 400);
+            }
+
 
             return response()->json([
                 'success' => true,
@@ -287,6 +298,9 @@ class CartController extends Controller
             $order->total_amount = $totalOrder;
             $order->save();
             $variant->quantity -= $request->quantity;
+            if ($variant->quantity <= 0) {
+                $variant->status = 'Hết hàng';
+            }
             $variant->save();
 
             Mail::send('emails.mail_order_user', [
@@ -363,6 +377,9 @@ class CartController extends Controller
                 $order->total_amount = $totalOrder;
                 $order->save();
                 $variant->quantity -= $request->quantity;
+                if ($variant->quantity <= 0) {
+                    $variant->status = 'Hết hàng';
+                }
                 $variant->save();
             } else {
                 $user = JWTAuth::parseToken()->authenticate();
@@ -426,7 +443,11 @@ class CartController extends Controller
 
                     //Cập nhật lại số lượng của sản phẩm
                     $variant->quantity -= $item->quantity;
+                    if ($variant->quantity <= 0) {
+                        $variant->status = 'Hết hàng';
+                    }
                     $variant->save();
+
                     //Xóa giỏ hàng khi thêm đơn thành công
                     $item->delete();
                 }
@@ -648,10 +669,10 @@ class CartController extends Controller
                     'tb_discount_id' => 1,
                     'order_date' => now(),
                     'order_status' => 'Chờ xử lý',
-                    'name' => $user->name,
-                    'phone' => $user->phone,
+                    'name' => $request->name,
+                    'phone' => $request->phone,
                     'address' => $request->address_detail . ', ' . $request->address,
-                    'email' => $user->email,
+                    'email' => $request->email,
                 ]);
                 foreach ($selectedItems as $item) {
                     $variant = tb_variant::find($item->tb_variant_id);
