@@ -67,6 +67,7 @@ Route::resource('order', OderController::class);
 Route::apiResource('image', ImagesController::class);
 Route::get('/product_new', [ProductController::class, 'getLatestProduct'])->name('product_new');
 Route::get('/product-list', [ProductController::class, 'getListProduct'])->name('product_list');
+Route::get('/product-top', [ProductController::class, 'getTopsellingProduct']);
 
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
