@@ -61,7 +61,7 @@ Route::resource('logo_banner', LogoBannerController::class);
 Route::post('/upload-image', [LogoBannerController::class, 'storeImage'])->name('uploat_image');
 Route::post('/update-image/{id}', [LogoBannerController::class, 'updateImage'])->name('update_image');
 Route::resource('contact', ContactController::class);
-
+Route::resource('order', OderController::class);
 
 //Route::apiResource('variants', VariantsController::class);
 Route::apiResource('image', ImagesController::class);
@@ -93,14 +93,10 @@ Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay
 Route::post('/payment-online', [CartController::class, 'vnpay'])->name('payment.online');
 Route::post('/payment-guest', [CartController::class, 'vnpay_guest'])->name('payment.guest');
 //oder
-Route::resource('order', OderController::class);
 Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
 Route::get('/list-oder-admin', [OderController::class, 'listOderAdmin'])->name('list_oder_admin');
 Route::get('/show-oder-detail/{id}', [OderController::class, 'showOrderDetails'])->name('show_oder_detail');
 Route::put('/destroy-order-client', [OderController::class, 'destroyOrder'])->name('destroy_order_client');
-Route::put('/confirm-order-client', [OderController::class, 'confirmOrder'])->name('confirm_order_client');
-Route::put('/fail-order-client', [OderController::class, 'failOrder'])->name('fail_order_client');
-
 
 //contact
 Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');

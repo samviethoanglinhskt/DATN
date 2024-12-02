@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('order:auto-update')->everyMinute(); // Chạy mỗi phút
+        // $schedule->command('inspire')->hourly();
     }
 
     /**
