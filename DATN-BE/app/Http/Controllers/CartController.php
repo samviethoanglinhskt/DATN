@@ -80,6 +80,8 @@ class CartController extends Controller
                     'tb_variant_id' => $request->tb_variant_id
                 ], 404);
             }
+            // Kiểm tra số lượng tồn kho
+            $availableStock = $variant->quantity;
             // Thêm sản phẩm vào giỏ hàng
             $cart = tb_cart::firstOrCreate(
                 [
@@ -91,7 +93,14 @@ class CartController extends Controller
             );
 
             // Cập nhật số lượng
-            $cart->quantity += $request->quantity;
+            $newQuantity = $cart->quantity + $request->quantity;
+            if ($newQuantity > $availableStock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số lượng sản phẩm vượt quá tồn kho. Số lượng tối đa có thể thêm là ' . ($availableStock - $cart->quantity) . '.',
+                ], 400);
+            }
+            $cart->quantity = $newQuantity;
             $cart->save();
 
             return response()->json([
@@ -309,7 +318,7 @@ class CartController extends Controller
                 'email' => $request->email,
                 'address' => $request->address_detail . ', ' . $request->address,
                 'orderCode' => $order->order_code,
-                'orderStatus' =>$order->order_status,
+                'orderStatus' => $order->order_status,
                 'orderDetail' => $oderDetail,
                 'orderDate' => $order->order_date,
                 'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
@@ -514,11 +523,11 @@ class CartController extends Controller
                     }
                     $oder = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->first();
 
-                    if($oder->user_id ==1){
+                    if ($oder->user_id == 1) {
                         Mail::send('emails.mail_order_vnpay_user', [
                             'name' => $oder->name,
                             'orderCode' => $oder->order_code,
-                            'orderStatus' =>$oder->order_status,
+                            'orderStatus' => $oder->order_status,
                             'orderDate' => $oder->order_date,
                         ], function ($message) use ($oder) {
                             $message->to($oder->email)
@@ -839,7 +848,7 @@ class CartController extends Controller
                 'email' => $request->email,
                 'address' => $request->address_detail . ', ' . $request->address,
                 'orderCode' => $order->order_code,
-                'orderStatus' =>$order->order_status,
+                'orderStatus' => $order->order_status,
                 'orderDetail' => $oderDetail,
                 'orderDate' => $order->order_date,
                 'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
