@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "src/types/user";
 import axiosInstance from "src/config/axiosInstance";
 import { message } from "antd";
-import "../../assets/css/Login.css";
+import "src/pages/client/css/Login.css";
 import {
   MailOutlined,
   LockOutlined,

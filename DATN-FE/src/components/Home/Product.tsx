@@ -22,6 +22,7 @@ import {
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
 import "./Productlist.css";
+import { FavoriteButton } from "./FavoriteButton";
 
 const { Option } = Select;
 
@@ -58,15 +59,15 @@ const ProductList = () => {
   // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
     ? allProducts.filter(
-      (product: Product) => product.tb_category_id === Number(id)
-    )
+        (product: Product) => product.tb_category_id === Number(id)
+      )
     : [];
 
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? filteredProductsByCategory.filter((product: Product) =>
-        selectedBrands.includes(product.tb_brand_id)
-      )
+          selectedBrands.includes(product.tb_brand_id)
+        )
       : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
@@ -118,9 +119,15 @@ const ProductList = () => {
       <div className="products-header">
         <div style={{ marginTop: 10 }}>
           <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-            <button onClick={() => navigate("/")} className="stext-109 cl8 hov-cl1 trans-04">
+            <button
+              onClick={() => navigate("/")}
+              className="stext-109 cl8 hov-cl1 trans-04"
+            >
               Trang chủ
-              <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+              <i
+                className="fa fa-angle-right m-l-9 m-r-10"
+                aria-hidden="true"
+              ></i>
             </button>
             <span className="stext-109 cl4">Danh mục</span>
           </div>
@@ -201,7 +208,6 @@ const ProductList = () => {
             {paginatedProducts.length > 0 ? (
               paginatedProducts.map((product: Product) => (
                 <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
-
                   <Card
                     className="product-card"
                     cover={
@@ -220,7 +226,10 @@ const ProductList = () => {
                             </Tooltip>
                             <Tooltip title="Thêm vào yêu thích">
                               <button className="action-button">
-                                <HeartOutlined />
+                                <FavoriteButton
+                                  productId={product.id}
+                               
+                                />
                               </button>
                             </Tooltip>
                           </div>

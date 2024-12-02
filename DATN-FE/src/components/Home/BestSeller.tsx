@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Product } from "src/types/product";
 import axiosInstance from "../../config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "src/assets/css/StoreOverview.css";
+import "src/components/css/BestSeller.css";
+import { FavoriteButton } from "./FavoriteButton";
 
 // Hàm lưu dữ liệu vào localStorage
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,7 +44,7 @@ const StoreOverView = () => {
 
       // Gọi API nếu không có cache
       try {
-        const response = await axiosInstance.get("/api/product-list");
+        const response = await axiosInstance.get("/api/product-top");
         const data = response.data;
 
         // Lưu dữ liệu vào localStorage
@@ -86,12 +87,19 @@ const StoreOverView = () => {
                       alt={product.name}
                     />
                   </div>
+                  <FavoriteButton 
+                    productId={product.id} 
+                    className="position-absolute top-0 end-0 m-2"
+                  />
                   <div className="product-info">
-                    <Link to={`/product/${product.id}`} className="product-link">
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="product-link"
+                    >
                       <h5 className="product-title">{product.name}</h5>
                     </Link>
                     <p className="product-price">
-                      ${product.variants[0]?.price}
+                      {product.variants[0]?.price.toLocaleString("vi-VN")}đ
                     </p>
                   </div>
                 </div>

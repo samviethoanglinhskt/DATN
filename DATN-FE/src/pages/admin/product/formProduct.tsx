@@ -10,16 +10,11 @@ import {
   message,
   Space,
   InputNumber,
-  GetProp,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import type {
-  UploadFile,
-  UploadChangeParam,
-  UploadProps,
-} from "antd/es/upload";
+import type { UploadFile } from "antd/es/upload";
 import axiosInstance from "src/config/axiosInstance";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { TextArea } = Input;
 
@@ -32,7 +27,6 @@ interface IVariant {
   status: string;
   images?: any[];
 }
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const ProductSteps: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [productForm] = Form.useForm();
@@ -45,7 +39,6 @@ const ProductSteps: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [productImage, setProductImage] = useState<UploadFile[]>([]);
   const navigate = useNavigate();
-  const { id } = useParams();
 
   useEffect(() => {
     fetchInitialData();
@@ -70,14 +63,6 @@ const ProductSteps: React.FC = () => {
       message.error("Failed to fetch initial data");
     }
   };
-
-  // const handleProductImageChange = (info: UploadChangeParam<UploadFile>) => {
-  //   const { fileList } = info;
-  //   if (fileList?.[0]?.originFileObj) {
-  //     setProductImage(fileList[0].originFileObj);
-  //   }
-  // };
-
   const validateVariant = (values: any) => {
     // Check if variant with same size/color combination exists
     const existingVariant = variants.find(
@@ -130,6 +115,7 @@ const ProductSteps: React.FC = () => {
       setLoading(true);
       const productValues = productForm.getFieldsValue(true);
 
+      // Kiểm tra các trường bắt buộc
       if (
         !productValues.name ||
         !productValues.tb_category_id ||
@@ -142,14 +128,14 @@ const ProductSteps: React.FC = () => {
 
       const formData = new FormData();
 
-      // Add product info
+      // Thêm thông tin sản phẩm
       formData.append("tb_category_id", productValues.tb_category_id);
       formData.append("tb_brand_id", productValues.tb_brand_id);
       formData.append("name", productValues.name);
       formData.append("status", productValues.status);
-      formData.append("image", productImage[0]?.originFileObj);      
+      formData.append("image", productImage[0]?.originFileObj);
 
-      // Add variants with null handling
+      // Thêm các biến thể (variant) với việc kiểm tra null
       variants.forEach((variant: IVariant, index) => {
         if (variant.tb_size_id) {
           formData.append(
@@ -171,6 +157,7 @@ const ProductSteps: React.FC = () => {
         );
         formData.append(`variants[${index}][status]`, variant.status);
 
+        // Thêm hình ảnh cho biến thể
         if (variant.images && variant.images.length > 0) {
           variant.images.forEach((image: any, imgIndex: number) => {
             if (image.originFileObj) {
@@ -183,17 +170,49 @@ const ProductSteps: React.FC = () => {
         }
       });
 
+      // Gửi yêu cầu POST để thêm sản phẩm mới
       const response = await axiosInstance.post("/api/product", formData);
 
-      if (response.data.success) {
-        message.success("Product created successfully");
-        navigate("/products");
+      // In ra toàn bộ response để kiểm tra
+      console.log("Response từ API:", response);
+
+      // Kiểm tra nếu API trả về message thành công
+      if (
+        response.data &&
+        response.data.message === "Tạo sản phẩm thành công"
+      ) {
+        // Reset tất cả các form và state
+        productForm.resetFields(); // Đảm bảo reset form chính xác
+        variantForm.resetFields(); // Reset biến thể form
+        setVariants([]); // Reset variants
+        setProductImage([]); // Reset hình ảnh sản phẩm
+        setCurrentStep(0); // Đặt lại bước hiện tại
+
+        // Hiển thị thông báo thành công
+        message.success({
+          content: "Thêm sản phẩm thành công!",
+          className: "custom-message-success", // Kiểm tra lại class này
+          duration: 3, // Hiển thị trong 3 giây
+          // onClick: () => navigate("/products"),
+        });
+
+        // Delay chuyển hướng sau khi thông báo
+        // setTimeout(() => {
+        //   navigate("/products");
+        // }, 3000); // Chuyển hướng sau 3 giây
+      } else {
+        // Nếu message khác "Tạo sản phẩm thành công", báo lỗi
+        console.error("API Response không thành công:", response.data);
+        message.error("Thêm sản phẩm thất bại");
       }
     } catch (error) {
       console.error(error);
-      message.error(
-        error instanceof Error ? error.message : "Failed to save product"
-      );
+      // In lỗi trong catch để kiểm tra nguyên nhân
+      message.error({
+        content:
+          error instanceof Error ? error.message : "Thêm sản phẩm thất bại",
+        duration: 5,
+      });
     } finally {
       setLoading(false);
     }
@@ -201,7 +220,7 @@ const ProductSteps: React.FC = () => {
 
   const steps = [
     {
-      title: "Product Information",
+      title: "Thông tin sản phẩm",
       content: (
         <Form
           form={productForm}
@@ -210,16 +229,16 @@ const ProductSteps: React.FC = () => {
         >
           <Form.Item
             name="name"
-            label="Product Name"
-            rules={[{ required: true, message: "Please enter product name" }]}
+            label="Tên sản phẩm"
+            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm" }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
             name="tb_category_id"
-            label="Category"
-            rules={[{ required: true, message: "Please select category" }]}
+            label="Danh mục"
+            rules={[{ required: true, message: "Vui lòng nhập tên danh mục" }]}
           >
             <Select>
               {categories.map((category) => (
@@ -232,8 +251,10 @@ const ProductSteps: React.FC = () => {
 
           <Form.Item
             name="tb_brand_id"
-            label="Brand"
-            rules={[{ required: true, message: "Please select brand" }]}
+            label="Thương hiệu"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên thương hiệu" },
+            ]}
           >
             <Select>
               {brands.map((brand) => (
@@ -244,19 +265,23 @@ const ProductSteps: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+          <Form.Item
+            name="status"
+            label="Trạng thái"
+            rules={[{ required: true }]}
+          >
             <Select>
-              <Select.Option value="còn hàng">In Stock</Select.Option>
-              <Select.Option value="hết hàng">Out of Stock</Select.Option>
+              <Select.Option value="còn hàng">Còn hàng</Select.Option>
+              <Select.Option value="hết hàng">Hết hàng</Select.Option>
             </Select>
           </Form.Item>
 
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="Mô tả">
             <TextArea rows={4} />
           </Form.Item>
 
           <Form.Item
-            label="Product Image"
+            label="Ảnh sản phẩm"
             required
             validateTrigger={["onChange", "onBlur"]}
           >
@@ -280,14 +305,14 @@ const ProductSteps: React.FC = () => {
       ),
     },
     {
-      title: "Variants",
+      title: "Thông tin biến thể",
       content: (
         <div>
           <Form form={variantForm} layout="vertical">
             <Space style={{ width: "100%" }} size="large">
               <Form.Item
                 name="tb_size_id"
-                label="Size"
+                label="Kích thước"
                 style={{ width: "100%" }}
               >
                 <Select
@@ -295,7 +320,7 @@ const ProductSteps: React.FC = () => {
                   placeholder="Select size"
                   defaultValue={null}
                 >
-                  <Select.Option value={null}>No Size</Select.Option>
+                  <Select.Option value={null}>Không chọn</Select.Option>
                   {sizes.map((size) => (
                     <Select.Option key={size.id} value={size.id}>
                       {size.name}
@@ -306,7 +331,7 @@ const ProductSteps: React.FC = () => {
 
               <Form.Item
                 name="tb_color_id"
-                label="Color"
+                label="Màu sắc"
                 style={{ width: "100%" }}
               >
                 <Select
@@ -314,7 +339,7 @@ const ProductSteps: React.FC = () => {
                   placeholder="Select color"
                   defaultValue={null}
                 >
-                  <Select.Option value={null}>No Color</Select.Option>
+                  <Select.Option value={null}>Không chọn</Select.Option>
                   {colors.map((color) => (
                     <Select.Option key={color.id} value={color.id}>
                       {color.name}
@@ -327,7 +352,7 @@ const ProductSteps: React.FC = () => {
             <Space style={{ width: "100%" }} size="large">
               <Form.Item
                 name="sku"
-                label="SKU"
+                label="Mã hàng"
                 rules={[{ required: true, message: "Please enter SKU" }]}
                 style={{ width: "100%" }}
               >
@@ -336,7 +361,7 @@ const ProductSteps: React.FC = () => {
 
               <Form.Item
                 name="price"
-                label="Price"
+                label="giá biến thể"
                 rules={[{ required: true, message: "Please enter price" }]}
                 style={{ width: "100%" }}
               >
@@ -345,7 +370,7 @@ const ProductSteps: React.FC = () => {
 
               <Form.Item
                 name="quantity"
-                label="Quantity"
+                label="Số lượng"
                 rules={[{ required: true, message: "Please enter quantity" }]}
                 style={{ width: "100%" }}
               >
@@ -355,17 +380,17 @@ const ProductSteps: React.FC = () => {
 
             <Form.Item
               name="status"
-              label="Status"
+              label="Trạng thái"
               initialValue="còn hàng"
               rules={[{ required: true }]}
             >
               <Select>
-                <Select.Option value="còn hàng">In Stock</Select.Option>
-                <Select.Option value="hết hàng">Out of Stock</Select.Option>
+                <Select.Option value="còn hàng">Còn hàng</Select.Option>
+                <Select.Option value="hết hàng">Hết hàng</Select.Option>
               </Select>
             </Form.Item>
 
-            <Form.Item name="images" label="Variant Images">
+            <Form.Item name="images" label="Ảnh biến thể">
               <Upload
                 listType="picture-card"
                 multiple
@@ -380,52 +405,141 @@ const ProductSteps: React.FC = () => {
               </Upload>
             </Form.Item>
 
-            <Button type="primary" onClick={handleVariantAdd}>
-              Add Variant
+            <Button className="mb-4" type="primary" onClick={handleVariantAdd}>
+              Thêm biến thể
             </Button>
           </Form>
-
           {variants.length > 0 && (
-            <Card title="Added Variants" className="mt-4">
+            <Card title="Biến thể đã thêm" className="mt-4 shadow-sm mb-4">
               {variants.map((variant, index) => (
-                <Card.Grid key={index} style={{ width: "100%" }}>
-                  <div className="flex justify-between">
-                    <div>
-                      {variant.tb_size_id && (
-                        <p>
-                          Size:{" "}
-                          {sizes.find((s) => s.id === variant.tb_size_id)?.name}
-                        </p>
+                <Card.Grid
+                  key={index}
+                  style={{ width: "100%" }}
+                  className="p-4 hover:bg-light"
+                >
+                  <div className="d-flex">
+                    {/* Cột hình ảnh bên trái */}
+                    <div className="me-4" style={{ width: "120px" }}>
+                      {variant.images && variant.images.length > 0 && (
+                        <div className="position-relative">
+                          <img
+                            src={variant.images[0].url}
+                            alt="Main variant"
+                            className="rounded w-100 mb-2 shadow-sm"
+                            style={{ aspectRatio: "1/1", objectFit: "cover" }}
+                          />
+                          {variant.images.length > 1 && (
+                            <div className="d-flex gap-1 overflow-auto">
+                              {variant.images
+                                .slice(1)
+                                .map((image: any, imgIndex: number) => (
+                                  <img
+                                    key={imgIndex}
+                                    src={image.url}
+                                    alt={`Variant ${imgIndex + 1}`}
+                                    className="rounded shadow-sm"
+                                    style={{
+                                      width: "35px",
+                                      height: "35px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                ))}
+                            </div>
+                          )}
+                        </div>
                       )}
-                      {variant.tb_color_id && (
-                        <p>
-                          Color:{" "}
-                          {
-                            colors.find((c) => c.id === variant.tb_color_id)
-                              ?.name
-                          }
-                        </p>
-                      )}
-                      <p>SKU: {variant.sku}</p>
-                      <p>Price: {variant.price}</p>
-                      <p>Quantity: {variant.quantity}</p>
                     </div>
-                    <Button danger onClick={() => handleRemoveVariant(index)}>
-                      Remove
-                    </Button>
+
+                    {/* Cột thông tin bên phải */}
+                    <div className="flex-grow-1">
+                      <div className="d-flex justify-content-between align-items-start">
+                        <div className="row w-100">
+                          <div className="col-md-6">
+                            {variant.tb_size_id && (
+                              <div className="mb-2 d-flex">
+                                <span
+                                  className="text-muted me-2"
+                                  style={{ width: "100px" }}
+                                >
+                                  Kích thước:
+                                </span>
+                                <span className="fw-medium">
+                                  {
+                                    sizes.find(
+                                      (s) => s.id === variant.tb_size_id
+                                    )?.name
+                                  }
+                                </span>
+                              </div>
+                            )}
+                            {variant.tb_color_id && (
+                              <div className="mb-2 d-flex">
+                                <span
+                                  className="text-muted me-2"
+                                  style={{ width: "100px" }}
+                                >
+                                  Màu sắc:
+                                </span>
+                                <span className="fw-medium">
+                                  {
+                                    colors.find(
+                                      (c) => c.id === variant.tb_color_id
+                                    )?.name
+                                  }
+                                </span>
+                              </div>
+                            )}
+                            <div className="mb-2 d-flex">
+                              <span
+                                className="text-muted me-2"
+                                style={{ width: "100px" }}
+                              >
+                                Mã hàng:
+                              </span>
+                              <span className="fw-medium">{variant.sku}</span>
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+                            <div className="mb-2 d-flex">
+                              <span
+                                className="text-muted me-2"
+                                style={{ width: "100px" }}
+                              >
+                                Giá:
+                              </span>
+                              <span className="fw-medium text-primary">
+                                {new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(variant.price)}
+                              </span>
+                            </div>
+                            <div className="mb-2 d-flex">
+                              <span
+                                className="text-muted me-2"
+                                style={{ width: "100px" }}
+                              >
+                                Số lượng:
+                              </span>
+                              <span className="fw-medium">
+                                {variant.quantity}
+                              </span>
+                            </div>
+                            <div className="mt-3">
+                              <Button
+                                danger
+                                size="small"
+                                onClick={() => handleRemoveVariant(index)}
+                              >
+                                Xóa biến thể
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  {variant.images && variant.images.length > 0 && (
-                    <div className="flex gap-2 mt-2">
-                      {variant.images.map((image: any, imgIndex: number) => (
-                        <img
-                          key={imgIndex}
-                          src={image.url}
-                          alt={`Variant ${imgIndex}`}
-                          style={{ width: 50, height: 50, objectFit: "cover" }}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </Card.Grid>
               ))}
             </Card>
@@ -443,16 +557,20 @@ const ProductSteps: React.FC = () => {
 
         <div className="flex justify-between mt-6">
           <Button onClick={() => navigate("/admin/product")}>
-            Back to List
+            Trang danh sách
           </Button>
           <Space>
             {currentStep > 0 && (
-              <Button onClick={() => setCurrentStep((step) => step - 1)}>
-                Previous
+              <Button
+                className="ml-4"
+                onClick={() => setCurrentStep((step) => step - 1)}
+              >
+                Quay lại
               </Button>
             )}
             {currentStep < steps.length - 1 ? (
               <Button
+                className="ml-4"
                 type="primary"
                 onClick={async () => {
                   try {
@@ -468,11 +586,11 @@ const ProductSteps: React.FC = () => {
                   }
                 }}
               >
-                Next
+                Tiếp tục
               </Button>
             ) : (
               <Button type="primary" onClick={handleSubmit} loading={loading}>
-                Create Product
+                Thêm sản phẩm
               </Button>
             )}
           </Space>

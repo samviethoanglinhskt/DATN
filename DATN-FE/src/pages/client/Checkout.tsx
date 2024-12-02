@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from 'src/context/User';
 import { Variant } from 'src/types/product';
-import logoVoucher from 'src/assets/images/logo/z6049078466357_4627467cef3023a6ad0594fd0cfdc81e-removebg-preview.png';
+import logoVoucher from 'src/assets/images/logo/logodiscount.png';
 import axiosInstance from 'src/config/axiosInstance';
 import { Discount } from 'src/types/discount';
 import { Address } from 'src/types/user';
@@ -353,7 +353,7 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({
           {/* Tỉnh/Thành phố */}
           <div className="form-group col-md-4">
             <label htmlFor="province">Tỉnh/Thành phố</label>
-            <select id="province" className="form-control" onChange={onProvinceChange}>
+            <select style={{ width: 150 }} id="province" className="form-control" onChange={onProvinceChange}>
               <option value="">Chọn tỉnh/thành</option>
               {provinces.map((province) => (
                 <option key={province.code} value={province.code}>
@@ -367,6 +367,7 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({
           <div className="form-group col-md-4">
             <label htmlFor="district">Quận/Huyện</label>
             <select
+              style={{ width: 150, marginTop: 20 }}
               id="district"
               className="form-control"
               onChange={onDistrictChange}
@@ -385,6 +386,7 @@ const AddressFormModal: React.FC<AddressFormModalProps> = ({
           <div className="form-group col-md-4">
             <label htmlFor="ward">Phường/Xã</label>
             <select
+              style={{ width: 150, marginTop: 20 }}
               id="ward"
               className="form-control"
               onChange={onWardChange}
@@ -768,7 +770,7 @@ const CheckoutPage: React.FC = () => {
                   <label className="form-label">Họ tên</label>
                   <input
                     type="text"
-                    className={`form-control bg-light ${nameError ? 'is-invalid' : ''}`}
+                    className={`form-control ${nameError ? 'is-invalid' : ''}`}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -779,7 +781,7 @@ const CheckoutPage: React.FC = () => {
                   <label className="form-label">Email</label>
                   <input
                     type="text"
-                    className={`form-control bg-light ${emailError ? 'is-invalid' : ''}`}
+                    className={`form-control ${emailError ? 'is-invalid' : ''}`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -790,7 +792,7 @@ const CheckoutPage: React.FC = () => {
                   <label className="form-label">Số điện thoại</label>
                   <input
                     type="tel"
-                    className={`form-control bg-light ${phoneError ? 'is-invalid' : ''}`}
+                    className={`form-control ${phoneError ? 'is-invalid' : ''}`}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
@@ -801,7 +803,7 @@ const CheckoutPage: React.FC = () => {
                   {/* Tỉnh/Thành phố */}
                   <div className="form-group col-md-4">
                     <label htmlFor="province">Tỉnh/Thành phố</label>
-                    <select id="province" className="form-control" onChange={handleProvinceChange}>
+                    <select style={{ width: 200 }} id="province" className="form-control" onChange={handleProvinceChange}>
                       <option value="">Chọn tỉnh/thành</option>
                       {provinces.map((province) => (
                         <option key={province.code} value={province.code}>
@@ -815,6 +817,7 @@ const CheckoutPage: React.FC = () => {
                   <div className="form-group col-md-4">
                     <label htmlFor="district">Quận/Huyện</label>
                     <select
+                      style={{ width: 200, marginTop: 20 }}
                       id="district"
                       className="form-control"
                       onChange={handleDistrictChange}
@@ -833,6 +836,7 @@ const CheckoutPage: React.FC = () => {
                   <div className="form-group col-md-4">
                     <label htmlFor="ward">Phường/Xã</label>
                     <select
+                      style={{ width: 200, marginTop: 20 }}
                       id="ward"
                       className="form-control"
                       onChange={handleWardChange}
@@ -938,7 +942,7 @@ const CheckoutPage: React.FC = () => {
                           <small>SL: {item.quantity}</small>
                         ) : null}
                       </div>
-                      <span>{item.variant?.price}đ</span>
+                      <span>{item.variant?.price.toLocaleString("vi-VN")}đ</span>
                     </div>
                   </div>
                 ))}
@@ -960,7 +964,7 @@ const CheckoutPage: React.FC = () => {
                           <small>SL: {cartItem.quantity}</small>
                         ) : null}
                       </div>
-                      <span>{cartItem.price}đ</span>
+                      <span>{cartItem.price?.toLocaleString("vi-VN")}đ</span>
                     </div>
                   </div>
                 )}
@@ -969,39 +973,39 @@ const CheckoutPage: React.FC = () => {
               {selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Tạm tính</span>
-                  <span>{subtotal}đ</span>
+                  <span>{subtotal.toLocaleString("vi-VN")}đ</span>
                 </div>
               )}
               {cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Tạm tính</span>
-                  <span>{subtotalCartItem}đ</span>
+                  <span>{subtotalCartItem.toLocaleString("vi-VN")}đ</span>
                 </div>
               )}
 
               {selectedVoucher && selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Giảm giá ({selectedVoucher.code})</span>
-                  <span>-{(subtotal * selectedVoucher.discount) / 100}đ</span>
+                  <span>-{((subtotal * selectedVoucher.discount) / 100).toLocaleString("vi-VN")}đ</span>
                 </div>
               )}
               {selectedVoucher && cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Giảm giá ({selectedVoucher.code})</span>
-                  <span>-{(subtotalCartItem * selectedVoucher.discount) / 100}đ</span>
+                  <span>-{((subtotalCartItem * selectedVoucher.discount) / 100).toLocaleString("vi-VN")}đ</span>
                 </div>
               )}
 
               {selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span><strong>Tổng cộng</strong></span>
-                  <span><strong>{Number(totalWithDiscount)}đ</strong></span>
+                  <span><strong>{Number(totalWithDiscount).toLocaleString("vi-VN")}đ</strong></span>
                 </div>
               )}
               {cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span><strong>Tổng cộng</strong></span>
-                  <span><strong>{Number(totalCartItem)}đ</strong></span>
+                  <span><strong>{Number(totalCartItem).toLocaleString("vi-VN")}đ</strong></span>
                 </div>
               )}
 

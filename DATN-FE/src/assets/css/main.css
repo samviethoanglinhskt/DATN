@@ -288,7 +288,6 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
   height: 84px;
   top: 40px;
   left: 0px;
-
   -webkit-transition: height 0.3s, background-color 0.3s;
   -o-transition: height 0.3s, background-color 0.3s;
   -moz-transition: height 0.3s, background-color 0.3s;
@@ -627,8 +626,9 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 [ Fixed menu desktop ]*/
 
 .fix-menu-desktop .wrap-menu-desktop {
-  height: 70px;
+  height: 80px;
   margin-top: -40px;
+  line-height: 20px;
   background-color: rgba(255, 255, 255, 1);
   box-shadow: 0 0px 3px 0px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 0px 3px 0px rgba(0, 0, 0, 0.2);

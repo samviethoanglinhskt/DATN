@@ -42,6 +42,18 @@ export const STATUS_CONFIG = {
     bgColor: "bg-emerald-50",
     textColor: "text-emerald-600",
   },
+  "Giao hàng thất bại": {
+    color: "error",
+    icon: <CloseCircleOutlined />,
+    bgColor: "bg-red-50",
+    textColor: "text-red-600",
+  },
+  "Đã giao hàng": {
+    color: "error",
+    icon: <CloseCircleOutlined />,
+    bgColor: "bg-red-50",
+    textColor: "text-red-600",
+  },
   "Đã hủy đơn hàng": {
     color: "error",
     icon: <CloseCircleOutlined />,

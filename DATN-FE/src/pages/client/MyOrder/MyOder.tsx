@@ -510,8 +510,8 @@ const MyOrder: React.FC = () => {
       title: "Sản phẩm",
       key: "products",
       render: (record: Order) => {
-        const firstDetail = record.oder_details?.[0]; // Lấy sản phẩm đầu tiên
-        const remainingCount = record.oder_details?.length - 1; // Số sản phẩm còn lại
+        const firstDetail = record.oder_details?.[0]; 
+        const remainingCount = record.oder_details?.length - 1;
         if (firstDetail) {
           console.log(
             "Image URL: ",

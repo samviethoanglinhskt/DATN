@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
-import logo from "src/assets/images/icons/logo-01.png";
+import logo from "src/assets/images/logo/logo.svg";
 import { useCart } from "src/context/Cart";
 import { LogoutOutlined } from "@mui/icons-material";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -54,7 +54,7 @@ const Header: React.FC = () => {
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
+  const [favoriteCount, setFavoriteCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFixed, setIsFixed] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
@@ -64,7 +64,9 @@ const Header: React.FC = () => {
       setName(user.data.user.name);
     }
   }, [user]); // Chỉ chạy khi `user` thay đổi
-
+  const handleAddToFavorites = () => {
+    setFavoriteCount((prevCount) => prevCount + 1);
+  };
   // Enhanced categories query with caching
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
@@ -204,32 +206,35 @@ const Header: React.FC = () => {
                         },
                       }}
                     >
-                      <MenuItem
-                        onClick={() => navigate("/admin")}
-                        sx={{
-                          padding: "10px 16px",
-                          borderRadius: "8px",
-                          gap: "12px",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            background:
-                              "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
-                            color: "#717FE0",
-                            "& .menu-icon": {
-                              transform: "scale(1.1)",
-                              color: "#717FE0",
-                            },
-                          },
-                        }}
-                      >
-                        <AdminPanelSettingsIcon
-                          style={{
-                            fontSize: "18px",
+                      {(user.data.user.tb_role_id == 1 ||
+                        user.data.user.tb_role_id == 3) && (
+                        <MenuItem
+                          onClick={() => navigate("/admin")}
+                          sx={{
+                            padding: "10px 16px",
+                            borderRadius: "8px",
+                            gap: "12px",
                             transition: "all 0.3s ease",
+                            "&:hover": {
+                              background:
+                                "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                              color: "#717FE0",
+                              "& .menu-icon": {
+                                transform: "scale(1.1)",
+                                color: "#717FE0",
+                              },
+                            },
                           }}
-                        />
-                        Admin
-                      </MenuItem>
+                        >
+                          <AdminPanelSettingsIcon
+                            style={{
+                              fontSize: "18px",
+                              transition: "all 0.3s ease",
+                            }}
+                          />
+                          Admin
+                        </MenuItem>
+                      )}
 
                       <MenuItem
                         onClick={() => navigate("/myinfo")}
@@ -332,7 +337,11 @@ const Header: React.FC = () => {
           <nav className="limiter-menu-desktop container">
             {/* Logo desktop */}
             <a href="/" className="logo">
-              <img src={logo} alt="IMG-LOGO" />
+              <img
+                src={logo}
+                alt="IMG-LOGO"
+                style={{ transform: "scale(2.5)", transformOrigin: "center" }}
+              />
             </a>
 
             {/* Menu desktop */}
@@ -352,9 +361,6 @@ const Header: React.FC = () => {
                       </li>
                     ))}
                   </ul>
-                </li>
-                <li>
-                  <a href="shoping-cart.html">Thương hiệu</a>
                 </li>
                 <li>
                   <Link to="/about">Giới thiệu</Link>
@@ -377,9 +383,9 @@ const Header: React.FC = () => {
                 <i className="zmdi zmdi-search"></i>
               </div>
               <a
-                href=""
+                // href=""
                 onClick={handleCartClick}
-                className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+                className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti "
                 data-notify={totalQuantity}
               >
                 <i className="zmdi zmdi-shopping-cart"></i>
@@ -387,9 +393,13 @@ const Header: React.FC = () => {
               <a
                 href="/love"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-                data-notify="0"
+                data-notify={favoriteCount}
+                onClick={handleAddToFavorites} // Gọi hàm khi nhấn nút
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
+                {favoriteCount > 0 && (
+                  <span className="notification-count">{favoriteCount}</span> // Hiển thị số lượng yêu thích
+                )}
               </a>
             </div>
           </nav>
@@ -401,7 +411,11 @@ const Header: React.FC = () => {
         {/* Logo moblie */}
         <div className="logo-mobile">
           <a href="/">
-            <img src="src/assets/images/icons/logo-01.png" alt="IMG-LOGO" />
+            <img
+              src={logo}
+              alt="IMG-LOGO"
+              style={{ transform: "scale(2.5)", transformOrigin: "center" }}
+            />
           </a>
         </div>
 

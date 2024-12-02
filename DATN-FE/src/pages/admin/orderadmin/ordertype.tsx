@@ -49,6 +49,8 @@ export type OrderStatus =
   | "Chưa thanh toán"
   | "Đã thanh toán"
   | "Đã hoàn thành"
+  | "Giao hàng thất bại"
+  | "Đã giao hàng"
   | "Đã hủy đơn hàng";
 
 export interface ApiResponse {
