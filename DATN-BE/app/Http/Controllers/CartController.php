@@ -80,6 +80,8 @@ class CartController extends Controller
                     'tb_variant_id' => $request->tb_variant_id
                 ], 404);
             }
+            // Kiểm tra số lượng tồn kho
+            $availableStock = $variant->quantity;
             // Thêm sản phẩm vào giỏ hàng
             $cart = tb_cart::firstOrCreate(
                 [
@@ -91,7 +93,14 @@ class CartController extends Controller
             );
 
             // Cập nhật số lượng
-            $cart->quantity += $request->quantity;
+            $newQuantity = $cart->quantity + $request->quantity;
+            if ($newQuantity > $availableStock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số lượng sản phẩm vượt quá tồn kho. Số lượng tối đa có thể thêm là ' . ($availableStock - $cart->quantity) . '.',
+                ], 400);
+            }
+            $cart->quantity = $newQuantity;
             $cart->save();
 
             return response()->json([
@@ -132,7 +141,7 @@ class CartController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Số lượng sản phẩm đã được cập nhật!',
+                'message' => 'Số lượng sản phẩm đã được cập nhật !',
                 'data' => $cart,
             ], 200); // 200 OK
 
@@ -156,14 +165,25 @@ class CartController extends Controller
                 ], 404);
             }
 
-            // $product = tb_product::find($request->tb_product_id);
             //tìm giỏ hàng
             $cart = tb_cart::where('user_id', $user->id)
                 ->where('id', $request->id)
                 ->first();
-            // Cập nhật số lượng
-            $cart->quantity += $request->quantity;
-            $cart->save();
+            $variant = tb_variant::find($cart->tb_variant_id);
+
+
+            if ($variant->quantity >= $cart->quantity + $request->quantity) {
+                // Cập nhật số lượng
+                $cart->quantity += $request->quantity;
+                $cart->save();
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số lượng yêu cầu vượt quá số lượng tồn kho của biến thể!',
+                    'số lượng biến thể' => $variant->quantity,
+                ], 400);
+            }
+
 
             return response()->json([
                 'success' => true,
@@ -287,6 +307,9 @@ class CartController extends Controller
             $order->total_amount = $totalOrder;
             $order->save();
             $variant->quantity -= $request->quantity;
+            if ($variant->quantity <= 0) {
+                $variant->status = 'Hết hàng';
+            }
             $variant->save();
 
             Mail::send('emails.mail_order_user', [
@@ -295,7 +318,7 @@ class CartController extends Controller
                 'email' => $request->email,
                 'address' => $request->address_detail . ', ' . $request->address,
                 'orderCode' => $order->order_code,
-                'orderStatus' =>$order->order_status,
+                'orderStatus' => $order->order_status,
                 'orderDetail' => $oderDetail,
                 'orderDate' => $order->order_date,
                 'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
@@ -363,6 +386,9 @@ class CartController extends Controller
                 $order->total_amount = $totalOrder;
                 $order->save();
                 $variant->quantity -= $request->quantity;
+                if ($variant->quantity <= 0) {
+                    $variant->status = 'Hết hàng';
+                }
                 $variant->save();
             } else {
                 $user = JWTAuth::parseToken()->authenticate();
@@ -426,7 +452,11 @@ class CartController extends Controller
 
                     //Cập nhật lại số lượng của sản phẩm
                     $variant->quantity -= $item->quantity;
+                    if ($variant->quantity <= 0) {
+                        $variant->status = 'Hết hàng';
+                    }
                     $variant->save();
+
                     //Xóa giỏ hàng khi thêm đơn thành công
                     $item->delete();
                 }
@@ -493,11 +523,11 @@ class CartController extends Controller
                     }
                     $oder = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->first();
 
-                    if($oder->user_id ==1){
+                    if ($oder->user_id == 1) {
                         Mail::send('emails.mail_order_vnpay_user', [
                             'name' => $oder->name,
                             'orderCode' => $oder->order_code,
-                            'orderStatus' =>$oder->order_status,
+                            'orderStatus' => $oder->order_status,
                             'orderDate' => $oder->order_date,
                         ], function ($message) use ($oder) {
                             $message->to($oder->email)
@@ -648,10 +678,10 @@ class CartController extends Controller
                     'tb_discount_id' => 1,
                     'order_date' => now(),
                     'order_status' => 'Chờ xử lý',
-                    'name' => $user->name,
-                    'phone' => $user->phone,
+                    'name' => $request->name,
+                    'phone' => $request->phone,
                     'address' => $request->address_detail . ', ' . $request->address,
-                    'email' => $user->email,
+                    'email' => $request->email,
                 ]);
                 foreach ($selectedItems as $item) {
                     $variant = tb_variant::find($item->tb_variant_id);
@@ -818,7 +848,7 @@ class CartController extends Controller
                 'email' => $request->email,
                 'address' => $request->address_detail . ', ' . $request->address,
                 'orderCode' => $order->order_code,
-                'orderStatus' =>$order->order_status,
+                'orderStatus' => $order->order_status,
                 'orderDetail' => $oderDetail,
                 'orderDate' => $order->order_date,
                 'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
