@@ -102,8 +102,16 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
         alert("Thêm thành công");
       }
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      // Xử lý lỗi trả về từ backend
+      if (error.response && error.response.status === 400) {
+        const errorMessage = error.response.data.message || "Đã xảy ra lỗi.";
+        alert(`Không thể thêm sản phẩm: ${errorMessage}`);
+      } else {
+        console.error("Error adding item to cart:", error);
+        alert("Đã xảy ra lỗi, vui lòng thử lại sau.");
+      }
     }
   };
 

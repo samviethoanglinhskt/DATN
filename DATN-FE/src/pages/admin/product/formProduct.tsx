@@ -147,7 +147,7 @@ const ProductSteps: React.FC = () => {
       formData.append("tb_brand_id", productValues.tb_brand_id);
       formData.append("name", productValues.name);
       formData.append("status", productValues.status);
-      formData.append("image", productImage[0]?.originFileObj);      
+      formData.append("image", productImage[0]?.originFileObj);
 
       // Add variants with null handling
       variants.forEach((variant: IVariant, index) => {
@@ -381,7 +381,7 @@ const ProductSteps: React.FC = () => {
             </Form.Item>
 
             <Button type="primary" onClick={handleVariantAdd}>
-              Add Variant
+              Thêm Biến Thể
             </Button>
           </Form>
 
@@ -443,12 +443,12 @@ const ProductSteps: React.FC = () => {
 
         <div className="flex justify-between mt-6">
           <Button onClick={() => navigate("/admin/product")}>
-            Back to List
+            Danh sách
           </Button>
           <Space>
             {currentStep > 0 && (
               <Button onClick={() => setCurrentStep((step) => step - 1)}>
-                Previous
+                Quay lại
               </Button>
             )}
             {currentStep < steps.length - 1 ? (
@@ -468,7 +468,7 @@ const ProductSteps: React.FC = () => {
                   }
                 }}
               >
-                Next
+                Tiếp Tục
               </Button>
             ) : (
               <Button type="primary" onClick={handleSubmit} loading={loading}>
