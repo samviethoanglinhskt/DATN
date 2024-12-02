@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "src/context/Cart";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { Box, Checkbox, IconButton } from "@mui/material";
@@ -130,9 +130,11 @@ const ShoppingCart: React.FC = () => {
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />
-                                  <div style={{ fontSize: "13px", display: "inline" }}>{item.products.name}</div>
+                                  <Link to={`/product/${item.products.id}`} className="product-link">
+                                    <div style={{ fontSize: "13px" }}>{item.products.name}</div>
+                                  </Link>
                                 </div>
-                                <div style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</div>
+                                <span style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</span>
                               </td>
 
                               <td style={{ padding: "0 20px", fontSize: "13px" }}>
@@ -149,11 +151,12 @@ const ShoppingCart: React.FC = () => {
 
                               <td style={{ padding: "0 20px" }}>
                                 <div className="wrap-num-product flex-w m-l-auto m-r-0">
+                                  {/* Nút giảm số lượng */}
                                   <button
                                     type="button"
                                     onClick={() => {
                                       if (item.id !== undefined && item.quantity) {
-                                        reduceCartItemQuantity(item.id, item.quantity - 1);
+                                        reduceCartItemQuantity(item.id, Math.max(item.quantity - 1, 1));
                                       }
                                     }}
                                     disabled={item.quantity === undefined || item.quantity <= 1}
@@ -161,6 +164,8 @@ const ShoppingCart: React.FC = () => {
                                   >
                                     <i className="fs-16 zmdi zmdi-minus"></i>
                                   </button>
+
+                                  {/* Hiển thị số lượng */}
                                   {item.quantity !== undefined && item.quantity !== null ? (
                                     <input
                                       type="text"
@@ -171,18 +176,21 @@ const ShoppingCart: React.FC = () => {
                                   ) : (
                                     <input
                                       type="text"
-                                      value={1}  // Temporary fallback, or consider leaving empty until quantity is defined
+                                      value={1} // Temporary fallback, or consider leaving empty until quantity is defined
                                       readOnly
                                       className="mtext-104 cl3 txt-center num-product"
                                     />
                                   )}
+
+                                  {/* Nút tăng số lượng */}
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      if (item.id !== undefined && item.quantity) {
+                                      if (item.id !== undefined && item.quantity !== undefined && item.quantity < item.variant.quantity) {
                                         upCartItemQuantity(item.id, item.quantity + 1);
                                       }
                                     }}
+                                    disabled={item.quantity === undefined || item.quantity >= item.variant.quantity}
                                     className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                                   >
                                     <i className="fs-16 zmdi zmdi-plus"></i>
