@@ -212,7 +212,112 @@ class OderController extends Controller
             ], 500);
         }
     }
+    
+    public function failAdminOrder(Request $request)
+    { // Hủy đơn hàng của người dùng
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            $order = tb_oder::where('id', $request->id)
+                ->where('user_id', $user->id)
+                ->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đơn hàng không tồn tại',
+                ], 404);
+            }
+            // Lấy danh sách chi tiết sản phẩm trong đơn hàng
+            $orderDetails = tb_oderdetail::where('tb_oder_id', $order->id)->get();
 
+            // Cập nhật số lượng sản phẩm
+            foreach ($orderDetails as $detail) {
+                $variant = tb_variant::find($detail->tb_variant_id);
+                if ($variant) {
+                    // Cộng lại số lượng sản phẩm
+                    $variant->quantity += $detail->quantity;
+
+                    // Kiểm tra trạng thái (nếu số lượng > 0 thì cập nhật thành "còn hàng")
+                    if ($variant->quantity > 0) {
+                        $variant->status = 'Còn hàng'; // Giả sử cột trạng thái là "status"
+                    }
+
+                    $variant->save();
+                }
+            }
+            $order->order_status = 'Giao hàng thất bại';
+            $order->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Hoàn đơn hàng thành công',
+                'data' => $order,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'hoàn đơn hàng thất bại',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function destroyAdminOrder(Request $request)
+    { // Hủy đơn hàng của người dùng
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            $order = tb_oder::where('id', $request->id)
+                ->where('user_id', $user->id)
+                ->first();
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đơn hàng không tồn tại',
+                ], 404);
+            }
+
+            // Lấy danh sách chi tiết sản phẩm trong đơn hàng
+            $orderDetails = tb_oderdetail::where('tb_oder_id', $order->id)->get();
+
+            // Cập nhật số lượng sản phẩm
+            foreach ($orderDetails as $detail) {
+                $variant = tb_variant::find($detail->tb_variant_id);
+                if ($variant) {
+                    // Cộng lại số lượng sản phẩm
+                    $variant->quantity += $detail->quantity;
+
+                    // Kiểm tra trạng thái (nếu số lượng > 0 thì cập nhật thành "còn hàng")
+                    if ($variant->quantity > 0) {
+                        $variant->status = 'Còn hàng'; // Giả sử cột trạng thái là "status"
+                    }
+
+                    $variant->save();
+                }
+            }
+            $order->order_status = 'Đã hủy đơn hàng';
+            $order->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Hủy đơn hàng thành công',
+                'data' => $order,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hủy đơn hàng thất bại',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function destroyOrder(Request $request)
     { // Hủy đơn hàng của người dùng
