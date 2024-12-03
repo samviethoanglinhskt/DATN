@@ -151,6 +151,12 @@ const OrderMain: React.FC = () => {
     orderId: number,
     newStatus: OrderStatus
   ) => {
+    if (newStatus === "Giao hàng thất bại") {
+      setSelectedOrderForFailure(orderId);
+      setFailureModalVisible(true);
+      return;
+    }
+
     if (newStatus === "Đã hủy đơn hàng") {
       Modal.confirm({
         title: "Xác nhận hủy đơn hàng",
@@ -203,6 +209,7 @@ const OrderMain: React.FC = () => {
       setLoading(false);
     }
   };
+
   const handleDeliveryFailure = async (feedback: string) => {
     if (!selectedOrderForFailure) return;
 
