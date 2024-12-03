@@ -151,9 +151,36 @@ const OrderMain: React.FC = () => {
     orderId: number,
     newStatus: OrderStatus
   ) => {
-    if (newStatus === "Giao hàng thất bại") {
-      setSelectedOrderForFailure(orderId);
-      setFailureModalVisible(true);
+    if (newStatus === "Đã hủy đơn hàng") {
+      Modal.confirm({
+        title: "Xác nhận hủy đơn hàng",
+        content: "Bạn có chắc chắn muốn hủy đơn hàng này không?",
+        okText: "Xác nhận",
+        cancelText: "Hủy",
+        onOk: async () => {
+          setLoading(true);
+          try {
+            await axios.put(`http://127.0.0.1:8000/api/destroy-order-admin`, {
+              id: orderId,
+              status: "Đã hủy đơn hàng",
+            });
+
+            setOrders((prevOrders) =>
+              prevOrders.map((order) =>
+                order.id === orderId
+                  ? { ...order, order_status: "Đã hủy đơn hàng" }
+                  : order
+              )
+            );
+            message.success("Đã hủy đơn hàng thành công");
+          } catch (error) {
+            console.error("Error cancelling order:", error);
+            message.error("Hủy đơn hàng thất bại");
+          } finally {
+            setLoading(false);
+          }
+        },
+      });
       return;
     }
 
@@ -181,7 +208,7 @@ const OrderMain: React.FC = () => {
 
     setFailureLoading(true);
     try {
-      await axios.put("http://127.0.0.1:8000/api/fail-order-client", {
+      await axios.put("http://127.0.0.1:8000/api/fail-order-admin", {
         id: selectedOrderForFailure,
         feedback: feedback,
       });
