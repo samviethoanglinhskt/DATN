@@ -132,8 +132,14 @@ Route::post('/reviews', [ReviewController::class, 'store']);
 // thống kê
 // doanh thu  theo ngày, tháng , năm
 Route::get('/statistics/revenue', [StatisticsController::class, 'revenueByDay']);
-// top 10 sản phẩm bán chạy
-Route::get('/statistics/top-selling-products', [StatisticsController::class, 'topSellingProductsByMonth']);
-// tổng đơn hàng, tổng tài khoản, tỉ lệ thành công,hủy của đơn hàng
+// top 10 sản phẩm bán chạy theo tuần, tháng, quý , năm
+Route::get('/statistics/top-selling-products', [StatisticsController::class, 'topSellingProducts']);
+// top 3 thương hiệu bán chạy theo tuần, tháng, quý , năm
+Route::get('/statistics/top-brand', [StatisticsController::class, 'brandStatistics']);
+
 Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatistics']);
 
+//tổng tài khoản theo tuần tháng quý năm
+Route::get('/statistics/user', [StatisticsController::class, 'userStatistics']);
+// tổng đơn hàng,  tỉ lệ thành công,hủy của đơn hàng theo ngày, tuần ,tháng , quý ,năm
+Route::get('/statistics/order', [StatisticsController::class, 'orderStatistics']);
