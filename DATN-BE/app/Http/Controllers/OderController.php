@@ -243,6 +243,7 @@ class OderController extends Controller
                 }
             }
             $order->order_status = 'Giao hàng thất bại';
+            $order->feedback = $request->feedback;
             $order->save();
             return response()->json([
                 'success' => true,
