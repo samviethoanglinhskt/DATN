@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -25,9 +25,8 @@ import "./Productlist.css";
 
 const { Option } = Select;
 
-const ProductList = () => {
+const AllProduct = () => {
   // Giữ nguyên các state và logic cũ
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,25 +55,21 @@ const ProductList = () => {
   });
 
   // Giữ nguyên logic lọc
-  const filteredProductsByCategory = Array.isArray(allProducts)
-    ? allProducts.filter(
-        (product: Product) => product.tb_category_id === Number(id)
-      )
-    : [];
-
   const filteredProductsByBrand =
     selectedBrands.length > 0
-      ? filteredProductsByCategory.filter((product: Product) =>
+      ? (allProducts || []).filter((product: Product) =>
           selectedBrands.includes(product.tb_brand_id)
         )
-      : filteredProductsByCategory;
+      : allProducts || [];
 
-  const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
-    const price = product.variants?.[0]?.price || 0;
-    return price >= priceRange[0] && price <= priceRange[1];
-  });
+  const filteredByPrice = (filteredProductsByBrand || []).filter(
+    (product: Product) => {
+      const price = product.variants?.[0]?.price || 0;
+      return price >= priceRange[0] && price <= priceRange[1];
+    }
+  );
 
-  const searchedProducts = filteredByPrice.filter((product: Product) =>
+  const searchedProducts = (filteredByPrice || []).filter((product: Product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -269,4 +264,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default AllProduct;

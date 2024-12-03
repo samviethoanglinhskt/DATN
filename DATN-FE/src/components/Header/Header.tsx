@@ -160,8 +160,9 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
-          }`}
+        className={`container-menu-desktop ${
+          isFixed ? "fix-menu-desktop" : ""
+        }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -203,7 +204,8 @@ const Header: React.FC = () => {
                         },
                       }}
                     >
-                      {(user.data.user.tb_role_id == 1 || user.data.user.tb_role_id == 3) &&
+                      {(user.data.user.tb_role_id == 1 ||
+                        user.data.user.tb_role_id == 3) && (
                         <MenuItem
                           onClick={() => navigate("/admin")}
                           sx={{
@@ -230,7 +232,7 @@ const Header: React.FC = () => {
                           />
                           Admin
                         </MenuItem>
-                      }
+                      )}
 
                       <MenuItem
                         onClick={() => navigate("/myinfo")}
@@ -333,7 +335,11 @@ const Header: React.FC = () => {
           <nav className="limiter-menu-desktop container">
             {/* Logo desktop */}
             <a href="/" className="logo">
-              <img src={logo} alt="IMG-LOGO" style={{ transform: "scale(2.5)", transformOrigin: "center" }} />
+              <img
+                src={logo}
+                alt="IMG-LOGO"
+                style={{ transform: "scale(2.5)", transformOrigin: "center" }}
+              />
             </a>
 
             {/* Menu desktop */}
@@ -343,7 +349,7 @@ const Header: React.FC = () => {
                   <a href="/">Trang chủ</a>
                 </li>
                 <li>
-                  <a href="#">Sản phẩm</a>
+                  <a href="/product">Sản phẩm</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
                       <li key={category.id}>
@@ -399,7 +405,11 @@ const Header: React.FC = () => {
         {/* Logo moblie */}
         <div className="logo-mobile">
           <a href="/">
-            <img src={logo} alt="IMG-LOGO" style={{ transform: "scale(2.5)", transformOrigin: "center" }} />
+            <img
+              src={logo}
+              alt="IMG-LOGO"
+              style={{ transform: "scale(2.5)", transformOrigin: "center" }}
+            />
           </a>
         </div>
 
