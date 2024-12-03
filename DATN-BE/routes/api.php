@@ -136,6 +136,8 @@ Route::get('/statistics/revenue', [StatisticsController::class, 'revenueByDay'])
 Route::get('/statistics/top-selling-products', [StatisticsController::class, 'topSellingProducts']);
 // top 3 thương hiệu bán chạy theo tuần, tháng, quý , năm
 Route::get('/statistics/top-brand', [StatisticsController::class, 'brandStatistics']);
+// top 10 sản phẩm đánh giá cao theo tuần tháng quý năm
+Route::get('/statistics/top-rate', [StatisticsController::class, 'topRatedProducts']);
 
 Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatistics']);
 
