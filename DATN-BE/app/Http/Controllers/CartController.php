@@ -310,6 +310,9 @@ class CartController extends Controller
             if ($variant->quantity <= 0) {
                 $variant->status = 'Hết hàng';
             }
+            else {
+                $variant->status = 'Còn hàng';
+            }
             $variant->save();
 
             Mail::send('emails.mail_order_user', [
@@ -454,6 +457,9 @@ class CartController extends Controller
                     $variant->quantity -= $item->quantity;
                     if ($variant->quantity <= 0) {
                         $variant->status = 'Hết hàng';
+                    }
+                    else {
+                        $variant->status = 'Còn hàng';
                     }
                     $variant->save();
 
