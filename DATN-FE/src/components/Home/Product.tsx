@@ -22,6 +22,7 @@ import {
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
 import "./Productlist.css";
+import { FavoriteButton } from "./FavoriteButton";
 
 const { Option } = Select;
 
@@ -225,7 +226,10 @@ const ProductList = () => {
                             </Tooltip>
                             <Tooltip title="Thêm vào yêu thích">
                               <button className="action-button">
-                                <HeartOutlined />
+                                <FavoriteButton
+                                  productId={product.id}
+                               
+                                />
                               </button>
                             </Tooltip>
                           </div>

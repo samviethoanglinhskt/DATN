@@ -1,32 +1,19 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Product } from "src/types/product";
-import axiosInstance from "../../config/axiosInstance";
+import { Link } from "react-router-dom";
+import instance from "src/config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "src/components/css/BestSeller.css";
+import "src/components/css/NewProduct.css";
+import { FavoriteButton } from "./FavoriteButton";
 
-// Hàm lưu dữ liệu vào localStorage
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const saveToLocalStorage = (key: string, data: any) => {
-  localStorage.setItem(key, JSON.stringify(data));
-  localStorage.setItem(`${key}_updated_at`, Date.now().toString());
-};
+// Types
+import { Product } from "src/types/product";
 
-// Hàm lấy dữ liệu từ localStorage
-const getFromLocalStorage = (key: string, maxAge: number) => {
-  const cachedData = localStorage.getItem(key);
-  const updatedAt = localStorage.getItem(`${key}_updated_at`);
+const NewProduct = () => {
+  const INITIAL_VISIBLE_PRODUCTS = 4;
+  const [visibleProducts, setVisibleProducts] = useState(INITIAL_VISIBLE_PRODUCTS);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  if (cachedData && updatedAt) {
-    const age = Date.now() - parseInt(updatedAt, 10);
-    if (age < maxAge) {
-      return JSON.parse(cachedData);
-    }
-  }
-  return null;
-};
-
-const StoreOverView = () => {
   const {
     data: products,
     isLoading,
@@ -35,24 +22,8 @@ const StoreOverView = () => {
   } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      // Kiểm tra dữ liệu cache trước
-      const cachedProducts = getFromLocalStorage("products", 1000 * 60 * 60); // 1 giờ
-      if (cachedProducts) {
-        return cachedProducts;
-      }
-
-      // Gọi API nếu không có cache
-      try {
-        const response = await axiosInstance.get("/api/product-new");
-        const data = response.data;
-
-        // Lưu dữ liệu vào localStorage
-        saveToLocalStorage("products", data);
-        return data;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
+      const response = await instance.get("/api/product_new");
+      return response.data;
     },
   });
 
@@ -64,44 +35,62 @@ const StoreOverView = () => {
       </div>
     );
 
-  return (
-    <section className="product-section py-5">
-      <div className="container">
-        <div className="text-center mb-5">
-          <h2 className="section-title" style={{ textDecoration: "none" }}>
-            Top 10 Sản Phẩm Mới Nhất
-          </h2>
-          <div className="title-underline"></div>
-        </div>
+  const handleToggleProducts = () => {
+    if (isExpanded) {
+      setVisibleProducts(INITIAL_VISIBLE_PRODUCTS);
+      setIsExpanded(false);
+    } else {
+      setVisibleProducts(products.data.length);
+      setIsExpanded(true);
+    }
+  };
 
-        <div className="slider">
-          <div className="slide-track">
-            {products.data.map((product: Product) => (
-              <div key={product.id} className="slide">
-                <div className="product-inner">
+  return (
+    <section className="py-5 bg-light">
+      <div className="container">
+        <h3 className="text-center mb-5">Sản Phẩm Yêu Thích Nhất</h3>
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+          {products.data.slice(0, visibleProducts).map((product: Product) => (
+            <div key={product.id} className="col product-item">
+              <div className="card h-100 product-card border-0">
+                <div className="position-relative">
                   <div className="product-image-wrapper">
                     <img
                       src={`http://127.0.0.1:8000/storage/${product.image}`}
-                      className="product-image"
+                      className="card-img-top product-image"
                       alt={product.name}
                     />
                   </div>
-                  <div className="product-info">
-                    <Link to={`/product/${product.id}`} className="product-link">
-                      <h5 className="product-title">{product.name}</h5>
-                    </Link>
-                    <p className="product-price">
-                      {product.variants[0]?.price.toLocaleString("vi-VN")}đ
-                    </p>
-                  </div>
+                  <FavoriteButton 
+                    productId={product.id} 
+                    className="position-absolute top-0 end-0 m-2"
+                  />
+                </div>
+                <div className="card-body text-center">
+                  <Link to={`/product/${product.id}`} className="product-link">
+                    <h5 className="product-title">{product.name}</h5>
+                  </Link>
+                  <p className="product-price fw-bold">
+                    {product.variants[0]?.price.toLocaleString("vi-VN")}đ
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
+        {products.data.length > INITIAL_VISIBLE_PRODUCTS && (
+          <div className="text-center mt-5">
+            <button
+              className={`btn ${isExpanded ? "btn-outline-danger" : "btn-outline-dark"}`}
+              onClick={handleToggleProducts}
+            >
+              {isExpanded ? "Thu gọn" : "Xem thêm"}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
 };
 
-export default StoreOverView;
+export default NewProduct;

@@ -54,7 +54,7 @@ const Header: React.FC = () => {
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
+  const [favoriteCount, setFavoriteCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFixed, setIsFixed] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
@@ -64,7 +64,9 @@ const Header: React.FC = () => {
       setName(user.data.user.name);
     }
   }, [user]); // Chỉ chạy khi `user` thay đổi
-
+  const handleAddToFavorites = () => {
+    setFavoriteCount((prevCount) => prevCount + 1);
+  };
   // Enhanced categories query with caching
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
@@ -391,9 +393,13 @@ const Header: React.FC = () => {
               <a
                 href="/love"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-                data-notify="0"
+                data-notify={favoriteCount}
+                onClick={handleAddToFavorites} // Gọi hàm khi nhấn nút
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
+                {favoriteCount > 0 && (
+                  <span className="notification-count">{favoriteCount}</span> // Hiển thị số lượng yêu thích
+                )}
               </a>
             </div>
           </nav>

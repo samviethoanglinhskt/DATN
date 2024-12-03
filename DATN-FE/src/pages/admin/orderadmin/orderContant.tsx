@@ -43,6 +43,18 @@ export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
     bgColor: "bg-emerald-50",
     textColor: "text-emerald-600",
   },
+  "Giao hàng thất bại": {
+    color: "success",
+    icon: <CheckCircleOutlined />,
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
+  },
+  "Đã giao hàng": {
+    color: "success",
+    icon: <CheckCircleOutlined />,
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
+  },
   "Đã hủy đơn hàng": {
     color: "error",
     icon: <CloseCircleOutlined />,

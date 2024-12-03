@@ -12,20 +12,19 @@ export const columns = ({
   handleViewDetail
 }: TableColumnProps) => [
   {
-    title: "Name",
+    title: "Tên sản phẩm",
     dataIndex: "name",
     key: "name",
-    render: (text: string, record: IProduct) => (
+    render: (text: string) => (
       <span
         className="text-blue-600 cursor-pointer hover:underline"
-        onClick={() => handleEdit(record.id)}
       >
         {text}
       </span>
     ),
   },
   {
-    title: "Image",
+    title: "Ảnh sản phẩm",
     dataIndex: "image",
     key: "image",
     width: 120,
@@ -36,21 +35,21 @@ export const columns = ({
     ),
   },
   {
-    title: "Category",
+    title: "Danh mục",
     dataIndex: "tb_category_id",
     key: "category",
     render: (categoryId: number) =>
       categories.find((c) => c.id === categoryId)?.name || "-",
   },
   {
-    title: "Brand",
+    title: "Thương hiệu",
     dataIndex: "tb_brand_id",
     key: "brand",
     render: (brandId: number) =>
       brands.find((b) => b.id === brandId)?.name || "-",
   },
   {
-    title: "Status",
+    title: "Trạng thái",
     dataIndex: "status",
     key: "status",
     render: (status: string) => (
@@ -66,7 +65,7 @@ export const columns = ({
     ),
   },
   {
-    title: "Actions",
+    title: "Thao tác",
     key: "actions",
     align: "center" as const,
     render: (_: any, record: IProduct) => (
@@ -80,7 +79,7 @@ export const columns = ({
           }}
           style={{ backgroundColor: "#8c8c8c" }}
         >
-          View
+         
         </Button>
         <Button
           type="primary"
@@ -90,17 +89,17 @@ export const columns = ({
             handleEdit(record.id);
           }}
         >
-          Edit
+         
         </Button>
         <Popconfirm
-          title="Delete Product"
-          description="Are you sure to delete this product?"
+          title="Xóa sản phẩm"
+          description="Bạn có muốn xóa sản phẩm này không?"
           onConfirm={(e) => {
             e?.stopPropagation();
             handleDelete(record.id);
           }}
-          okText="Yes"
-          cancelText="No"
+          okText="Đồng ý"
+          cancelText="Không"
           okButtonProps={{ danger: true }}
         >
           <Button
@@ -109,7 +108,7 @@ export const columns = ({
             icon={<DeleteOutlined />}
             onClick={(e) => e.stopPropagation()}
           >
-            Delete
+          
           </Button>
         </Popconfirm>
       </Space>

@@ -60,6 +60,7 @@ const Dashboard: React.FC = () => {
 
   const dailyStats = data?.dailyStats ?? [];
   const topProducts = data?.topProducts ?? [];
+  console.log(dailyStats);
 
   const getStatsTitle = () => {
     switch (timeType) {
@@ -263,8 +264,8 @@ const Dashboard: React.FC = () => {
               <div style={{ width: "60%", paddingRight: "20px" }}>
                 <Column
                   data={dailyStats}
-                  xField="date" 
-                  yField="revenue" 
+                  xField="date" // Trường dữ liệu của trục X (ngày)
+                  yField="revenue" // Trường dữ liệu của trục Y (doanh thu)
                   label={{
                     position: "middle",
                     style: {
@@ -276,14 +277,14 @@ const Dashboard: React.FC = () => {
                   tooltip={{
                     formatter: (datum) => ({
                       name: "Doanh thu",
-                      value: formatCurrency(datum.revenue),
+                      value: formatCurrency(datum.revenue), // Đảm bảo formatCurrency hoạt động chính xác
                     }),
                   }}
                   columnStyle={{
                     radius: [4, 4, 0, 0],
                     shadow: "0 2px 4px rgba(0,0,0,0.1)",
                   }}
-                  color="#4CAF50" 
+                  color="#4CAF50"
                   animation={{
                     appear: {
                       animation: "wave-in",
@@ -292,6 +293,7 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </div>
+
               <div style={{ width: "35%" }}>
                 <Table
                   columns={getDailyStatsColumns()}
@@ -324,8 +326,8 @@ const Dashboard: React.FC = () => {
               <div style={{ width: "35%" }}>
                 <Pie
                   data={topProducts}
-                  angleField="sales" 
-                  colorField="name" 
+                  angleField="sales"
+                  colorField="name"
                   radius={0.8}
                   label={{
                     type: "outer",
@@ -356,7 +358,7 @@ const Dashboard: React.FC = () => {
               open={modalVisible}
               onClose={() => setModalVisible(false)}
               type={modalType}
-              data={data} // Pass entire data object instead of trying to destructure
+              data={data}
             />
           )}
         </Spin>
