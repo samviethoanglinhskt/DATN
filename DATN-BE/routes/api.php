@@ -100,7 +100,8 @@ Route::get('/show-oder-detail/{id}', [OderController::class, 'showOrderDetails']
 Route::put('/destroy-order-client', [OderController::class, 'destroyOrder'])->name('destroy_order_client');
 Route::put('/confirm-order-client', [OderController::class, 'confirmOrder'])->name('confirm_order_client');
 Route::put('/fail-order-client', [OderController::class, 'failOrder'])->name('fail_order_client');
-
+Route::put('/destroy-order-admin', [OderController::class, 'destroyAdminOrder'])->name('destroy_order_admin');
+Route::put('/fail-order-admin', [OderController::class, 'failAdminOrder'])->name('fail_order_admin');
 
 //contact
 Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');
