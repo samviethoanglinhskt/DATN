@@ -8,8 +8,7 @@ const About = () => {
       <section
         className="bg-img1 txt-center p-lr-15 p-tb-92"
         style={{
-          backgroundImage:
-            "url('https://via.placeholder.com/1200x400?text=Background')",
+          backgroundImage: `url('http://127.0.0.1:8000/storage/images/uk1SLXbqSr1fN3dGoW3MdrT1WaAEViQiY97yZuRK.png')`,
         }}
       >
         <h2 className="ltext-105 cl0 txt-center">Giới Thiệu</h2>
@@ -64,7 +63,7 @@ const About = () => {
               <div className="how-bor1">
                 <div className="hov-img0">
                   <img
-                    src="https://via.placeholder.com/400x300?text=About+Image+1"
+                    src="http://127.0.0.1:8000/storage/images/uk1SLXbqSr1fN3dGoW3MdrT1WaAEViQiY97yZuRK.png"
                     alt="Giới thiệu"
                     style={{
                       width: "100%",
@@ -120,7 +119,7 @@ const About = () => {
               <div className="how-bor2">
                 <div className="hov-img0">
                   <img
-                    src="https://via.placeholder.com/400x300?text=About+Image+2"
+                    src="http://127.0.0.1:8000/storage/images/uk1SLXbqSr1fN3dGoW3MdrT1WaAEViQiY97yZuRK.png"
                     alt="Sứ mệnh"
                     style={{
                       width: "100%",

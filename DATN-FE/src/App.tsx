@@ -30,6 +30,7 @@ import Register from "./pages/client/Register";
 import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
 import MyInfo from "./pages/client/MyInfo";
 import Support from "./components/Home/Support";
+import AllProduct from "./components/Home/AllProduct";
 
 const routeConfig = [
   {
@@ -75,6 +76,10 @@ const routeConfig = [
       {
         path: "category/:id",
         element: <ProductList />,
+      },
+      {
+        path: "product",
+        element: <AllProduct />,
       },
       {
         path: "cart",
