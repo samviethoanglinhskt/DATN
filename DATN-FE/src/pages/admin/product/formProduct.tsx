@@ -405,8 +405,8 @@ const ProductSteps: React.FC = () => {
               </Upload>
             </Form.Item>
 
-            <Button className="mb-4" type="primary" onClick={handleVariantAdd}>
-              Thêm biến thể
+            <Button type="primary" onClick={handleVariantAdd}>
+              Add Variant
             </Button>
           </Form>
           {variants.length > 0 && (
@@ -557,15 +557,12 @@ const ProductSteps: React.FC = () => {
 
         <div className="flex justify-between mt-6">
           <Button onClick={() => navigate("/admin/product")}>
-            Trang danh sách
+            Back to List
           </Button>
           <Space>
             {currentStep > 0 && (
-              <Button
-                className="ml-4"
-                onClick={() => setCurrentStep((step) => step - 1)}
-              >
-                Quay lại
+              <Button onClick={() => setCurrentStep((step) => step - 1)}>
+                Previous
               </Button>
             )}
             {currentStep < steps.length - 1 ? (
@@ -586,7 +583,7 @@ const ProductSteps: React.FC = () => {
                   }
                 }}
               >
-                Tiếp tục
+                Next
               </Button>
             ) : (
               <Button type="primary" onClick={handleSubmit} loading={loading}>

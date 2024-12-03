@@ -351,7 +351,7 @@ const Header: React.FC = () => {
                   <a href="/">Trang chủ</a>
                 </li>
                 <li>
-                  <a href="#">Sản phẩm</a>
+                  <a href="/product">Sản phẩm</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
                       <li key={category.id}>

@@ -20,7 +20,9 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {}
+    public function index()
+    {
+    }
     public function getListProduct()
     {
 
@@ -80,13 +82,13 @@ class ProductController extends Controller
                 'colors',           // Lấy màu sắc
                 'sizes'             // Lấy kích thước và giá
             ])
-                ->select('tb_products.*', DB::raw('SUM(tb__oderdetail.quantity) as total_quantity'),  DB::raw('SUM(tb__oderdetail.quantity * tb__oderdetail.price) as total_revenue'))
+                ->select('tb_products.*', DB::raw('SUM(tb__oderdetail.quantity) as total_quantity'), DB::raw('SUM(tb__oderdetail.quantity * tb__oderdetail.price) as total_revenue'))
                 ->join('tb__oderdetail', 'tb_products.id', '=', 'tb__oderdetail.tb_product_id')
                 ->join('tb_oders', 'tb__oderdetail.tb_oder_id', '=', 'tb_oders.id')
                 ->where('tb_oders.order_status', 'Đã Hoàn Thành')
                 ->groupBy('tb_products.id') // nhóm tất cả lại theo thằng id sản phẩm
                 ->orderBy('total_quantity', 'desc')
-                ->limit(10)
+                ->limit(8)
                 ->get();
             return response()->json([
                 'success' => true,
