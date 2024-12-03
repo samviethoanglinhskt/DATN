@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -300,10 +300,30 @@ const CancellationModal: React.FC<CancellationModalProps> = ({
   onConfirm,
   orderId,
   loading,
+  orderStatus,
 }) => {
   const [feedback, setFeedback] = useState("");
-
+  useEffect(() => {
+    if (orderStatus === "Đã xử lí" && visible) {
+      message.info("Đơn hàng đã được xác nhận và không thể hủy");
+      setFeedback("");
+      onClose();
+    }
+  }, [orderStatus, visible, onClose]);
+  useEffect(() => {
+    if (visible && orderStatus === "Đã xử lí") {
+      message.info("Đơn hàng đã được xác nhận và không thể hủy");
+      onClose();
+    }
+  }, [visible, orderStatus, onClose]);
   const handleConfirm = () => {
+    // Double check status before confirming
+    if (orderStatus === "Đã xử lí") {
+      message.info("Đơn hàng đã được xác nhận và không thể hủy");
+      onClose();
+      return;
+    }
+
     if (orderId) {
       onConfirm(orderId, feedback);
     }
@@ -312,7 +332,7 @@ const CancellationModal: React.FC<CancellationModalProps> = ({
   return (
     <Modal
       title="Hủy đơn hàng"
-      open={visible}
+      open={visible && orderStatus !== "Đã xử lí"}
       onCancel={() => {
         setFeedback("");
         onClose();
@@ -330,10 +350,16 @@ const CancellationModal: React.FC<CancellationModalProps> = ({
           rows={4}
           placeholder="Nhập lý do hủy đơn hàng..."
           value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
+          onChange={(e) => {
+            // Only allow input if order is not confirmed
+            if (orderStatus !== "Đã xử lí") {
+              setFeedback(e.target.value);
+            }
+          }}
           className="w-full"
           maxLength={500}
           showCount
+          disabled={orderStatus === "Đã xử lí"}
         />
       </div>
     </Modal>
@@ -510,8 +536,8 @@ const MyOrder: React.FC = () => {
       title: "Sản phẩm",
       key: "products",
       render: (record: Order) => {
-        const firstDetail = record.oder_details?.[0]; 
-        const remainingCount = record.oder_details?.length - 1;
+        const firstDetail = record.oder_details?.[0]; // Lấy sản phẩm đầu tiên
+        const remainingCount = record.oder_details?.length - 1; // Số sản phẩm còn lại
         if (firstDetail) {
           console.log(
             "Image URL: ",
@@ -732,6 +758,7 @@ const MyOrder: React.FC = () => {
           onConfirm={handleCancelOrder}
           orderId={selectedOrderId}
           loading={cancelLoading}
+          orderStatus=""
         />
 
         <RatingModal
