@@ -216,15 +216,7 @@ class OderController extends Controller
     public function failAdminOrder(Request $request)
     { // Hủy đơn hàng của người dùng
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Người dùng không tồn tại',
-                ], 404);
-            }
             $order = tb_oder::where('id', $request->id)
-                ->where('user_id', $user->id)
                 ->first();
             if (!$order) {
                 return response()->json([
@@ -268,15 +260,8 @@ class OderController extends Controller
     public function destroyAdminOrder(Request $request)
     { // Hủy đơn hàng của người dùng
         try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Người dùng không tồn tại',
-                ], 404);
-            }
+           
             $order = tb_oder::where('id', $request->id)
-                ->where('user_id', $user->id)
                 ->first();
             if (!$order) {
                 return response()->json([
