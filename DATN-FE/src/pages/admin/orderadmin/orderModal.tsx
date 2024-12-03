@@ -136,9 +136,13 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                         <span className="fw-medium">Địa chỉ:</span>{" "}
                         {orderDetail.address}
                       </p>
-                      <p className="mb-0">
+                      <p className="mb-2">
                         <span className="fw-medium">Email:</span>{" "}
                         {orderDetail.email}
+                      </p>
+                      <p className="mb-0">
+                        <span className="fw-medium">Lý do hủy:</span>{" "}
+                        {orderDetail.feedback || "Không có"}
                       </p>
                     </div>
                   </td>
@@ -174,7 +178,6 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                           const target = e.target as HTMLImageElement;
                           target.src = "/placeholder.png";
                         }}
-
                       />
                     </div>
                     <div className="flex-grow-1">
