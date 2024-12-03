@@ -9,6 +9,7 @@ import {
   message,
   Tabs,
   Tooltip,
+  Modal,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -25,10 +26,57 @@ import dayjs from "dayjs";
 import "dayjs/locale/vi";
 
 import OrderDetailModal from "./orderModal";
-import { Order, OrderStatus } from "./ordertype";
+import { FailureModalProps, Order, OrderStatus } from "./ordertype";
 import { API_ENDPOINTS, STATUS_CONFIG } from "./orderContant";
+import TextArea from "antd/es/input/TextArea";
 
 dayjs.locale("vi");
+
+const FailureModal: React.FC<FailureModalProps> = ({
+  visible,
+  onClose,
+  onConfirm,
+  loading,
+}) => {
+  const [feedback, setFeedback] = useState("");
+
+  const handleConfirm = () => {
+    if (!feedback.trim()) {
+      message.error("Vui lòng nhập lý do giao hàng thất bại!");
+      return;
+    }
+    onConfirm(feedback);
+  };
+
+  return (
+    <Modal
+      title="Lý do giao hàng thất bại"
+      open={visible}
+      onCancel={() => {
+        setFeedback("");
+        onClose();
+      }}
+      confirmLoading={loading}
+      okText="Xác nhận"
+      cancelText="Hủy"
+      onOk={handleConfirm}
+    >
+      <div className="space-y-4">
+        <p className="text-gray-600">
+          Vui lòng cho biết lý do giao hàng thất bại:
+        </p>
+        <TextArea
+          rows={4}
+          placeholder="Nhập lý do giao hàng thất bại..."
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          maxLength={500}
+          showCount
+        />
+      </div>
+    </Modal>
+  );
+};
 
 const OrderMain: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -40,6 +88,11 @@ const OrderMain: React.FC = () => {
   const [dateRange, setDateRange] = useState<
     [dayjs.Dayjs | null, dayjs.Dayjs | null]
   >([null, null]);
+  const [failureModalVisible, setFailureModalVisible] = useState(false);
+  const [selectedOrderForFailure, setSelectedOrderForFailure] = useState<
+    number | null
+  >(null);
+  const [failureLoading, setFailureLoading] = useState(false);
 
   const statusOptions = Object.keys(STATUS_CONFIG).map((status) => ({
     value: status,
@@ -98,6 +151,12 @@ const OrderMain: React.FC = () => {
     orderId: number,
     newStatus: OrderStatus
   ) => {
+    if (newStatus === "Giao hàng thất bại") {
+      setSelectedOrderForFailure(orderId);
+      setFailureModalVisible(true);
+      return;
+    }
+
     setLoading(true);
     try {
       await axios.put(`${API_ENDPOINTS.UPDATE_ORDER}/${orderId}`, {
@@ -117,7 +176,34 @@ const OrderMain: React.FC = () => {
       setLoading(false);
     }
   };
+  const handleDeliveryFailure = async (feedback: string) => {
+    if (!selectedOrderForFailure) return;
 
+    setFailureLoading(true);
+    try {
+      await axios.put("http://127.0.0.1:8000/api/fail-order-client", {
+        id: selectedOrderForFailure,
+        feedback: feedback,
+      });
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === selectedOrderForFailure
+            ? { ...order, order_status: "Giao hàng thất bại" }
+            : order
+        )
+      );
+
+      message.success("Đã cập nhật trạng thái giao hàng thất bại");
+      setFailureModalVisible(false);
+      setSelectedOrderForFailure(null);
+    } catch (error) {
+      console.error("Error updating failed delivery status:", error);
+      message.error("Cập nhật trạng thái thất bại");
+    } finally {
+      setFailureLoading(false);
+    }
+  };
   const exportToExcel = () => {
     const exportData = filteredOrders.map((order) => ({
       "Mã đơn hàng": order.order_code,
@@ -377,6 +463,15 @@ const OrderMain: React.FC = () => {
         onClose={() => {
           setIsModalVisible(false);
         }}
+      />
+      <FailureModal
+        visible={failureModalVisible}
+        onClose={() => {
+          setFailureModalVisible(false);
+          setSelectedOrderForFailure(null);
+        }}
+        onConfirm={handleDeliveryFailure}
+        loading={failureLoading}
       />
     </Card>
   );

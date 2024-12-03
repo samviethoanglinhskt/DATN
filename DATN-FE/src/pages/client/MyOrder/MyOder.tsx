@@ -17,7 +17,7 @@ import {
   TabsProps,
   Tabs,
 } from "antd";
-import { ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
 import {
   ApiResponse,
   CancellationModalProps,
@@ -391,6 +391,28 @@ const MyOrder: React.FC = () => {
     setIsRatingModalVisible(true);
   };
 
+  const handleConfirmDelivery = async (orderId: number) => {
+    try {
+      await axios.put(
+        "http://127.0.0.1:8000/api/confirm-order-client",
+        {
+          id: orderId,
+          status: "Đã hoàn thành",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      message.success("Xác nhận đã nhận hàng thành công!");
+      // Refresh the orders list
+      window.location.reload();
+    } catch (error) {
+      console.error("Error confirming delivery:", error);
+      message.error("Có lỗi xảy ra khi xác nhận. Vui lòng thử lại!");
+    }
+  };
   const handleRatingSubmit = async (rating: number, comment: string) => {
     if (!currentProduct) return;
 
@@ -619,6 +641,16 @@ const MyOrder: React.FC = () => {
             >
               Chi tiết
             </Button>
+            {record.order_status === "Đã giao hàng" && (
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+                className="bg-green-500 hover:bg-green-600"
+                onClick={() => handleConfirmDelivery(record.id)}
+              >
+                Xác nhận nhận hàng
+              </Button>
+            )}
             {record.order_status === "Đã hoàn thành" &&
               hasUnreviewedProducts && (
                 <Button
