@@ -8,6 +8,8 @@ use App\Models\tb_oder;
 use App\Models\tb_oderdetail;
 use App\Models\tb_product;
 use App\Models\tb_variant;
+use App\Models\TbOderdetailTemp;
+use App\Models\TbOderTemp;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -309,8 +311,7 @@ class CartController extends Controller
             $variant->quantity -= $request->quantity;
             if ($variant->quantity <= 0) {
                 $variant->status = 'Hết hàng';
-            }
-            else {
+            } else {
                 $variant->status = 'Còn hàng';
             }
             $variant->save();
@@ -457,8 +458,7 @@ class CartController extends Controller
                     $variant->quantity -= $item->quantity;
                     if ($variant->quantity <= 0) {
                         $variant->status = 'Hết hàng';
-                    }
-                    else {
+                    } else {
                         $variant->status = 'Còn hàng';
                     }
                     $variant->save();
@@ -521,42 +521,147 @@ class CartController extends Controller
 
         if ($secureHash == $vnp_SecureHash) {
             if ($_GET['vnp_ResponseCode'] == '00') {
-                $order = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->get();
-                if ($order->isNotEmpty()) {
+                $orderTemp  = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+                if ($orderTemp) {
                     // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
-                    foreach ($order as $orders) {
-                        $orders->update(['order_status' => 'Đã thanh toán']);
-                    }
-                    $oder = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->first();
+                    $orderReal = tb_oder::create([
+                        'user_id' => $orderTemp->user_id,
+                        'tb_discount_id' => $orderTemp->tb_discount_id,
+                        'order_code' => $orderTemp->order_code,
+                        'total_amount' => $orderTemp->total_amount,
+                        'order_status' => 'Đã thanh toán',
+                        'name' => $orderTemp->name,
+                        'phone' => $orderTemp->phone,
+                        'address' => $orderTemp->address,
+                        'email' => $orderTemp->email,
+                        'order_date' => $orderTemp->order_date,
+                        'order_type' => $orderTemp->order_type,
+                    ]);
+                    $orderDetailsTemp = TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->get();
+                    foreach ($orderDetailsTemp as $detailTemp) {
 
-                    if ($oder->user_id == 1) {
-                        Mail::send('emails.mail_order_vnpay_user', [
-                            'name' => $oder->name,
-                            'orderCode' => $oder->order_code,
-                            'orderStatus' => $oder->order_status,
-                            'orderDate' => $oder->order_date,
-                        ], function ($message) use ($oder) {
-                            $message->to($oder->email)
-                                ->subject('Imperial Beauty xin thông báo');
-                        });
-                        return redirect('http://localhost:5173/payment-success');
+                        tb_oderdetail::create([
+                            'tb_oder_id' => $orderReal->id,
+                            'tb_product_id' => $detailTemp->tb_product_id,
+                            'tb_variant_id' => $detailTemp->tb_variant_id,
+                            'quantity' => $detailTemp->quantity,
+                            'price' => $detailTemp->price,
+                        ]);
+                        $variant = tb_variant::find($detailTemp->tb_variant_id);
+                        $variant->quantity -= $detailTemp->quantity;
+                        if ($variant->quantity <= 0) {
+                            $variant->status = 'Hết hàng';
+                        } else {
+                            $variant->status = 'Còn hàng';
+                        }
+                        $variant->save();
                     }
+
+                    // Kiểm tra xem là mua ngay hay từ giỏ hàng
+                    if ($orderTemp->order_type == 'cart') {
+                        // Mua từ giỏ hàng -> Xóa giỏ hàng
+                        $orderDetailsTemp = TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->get();
+                        foreach ($orderDetailsTemp as $detailTemp) {
+                            tb_cart::where('user_id', $orderTemp->user_id)
+                                ->where('tb_product_id', $detailTemp->tb_product_id)
+                                ->where('tb_variant_id', $detailTemp->tb_variant_id)
+                                ->delete();
+                        }
+                        // tb_cart::where('user_id', $orderTemp->user_id)->delete();
+                    }
+                    // Xóa dữ liệu bảng tạm
+                    TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->delete();
+                    $orderTemp->delete();
+
+                    // $oder = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+
+                    // if ($oder->user_id == 1) {
+                    //     Mail::send('emails.mail_order_vnpay_user', [
+                    //         'name' => $oder->name,
+                    //         'orderCode' => $oder->order_code,
+                    //         'orderStatus' => $oder->order_status,
+                    //         'orderDate' => $oder->order_date,
+                    //     ], function ($message) use ($oder) {
+                    //         $message->to($oder->email)
+                    //             ->subject('Imperial Beauty xin thông báo');
+                    //     });
+                    //     return redirect('http://localhost:5173/payment-success');
+                    // }
 
                     // echo "GD Thanh cong";
                     return redirect('http://localhost:5173/payment-success');
                 }
             } else {
-                $order = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->get();
-                if ($order->isNotEmpty()) {
-                    foreach ($order as $orders) {
-                        // Xóa các chi tiết đơn hàng liên quan
-                        tb_oderdetail::where('tb_oder_id', $orders->id)->delete();
-                        // Xóa đơn hàng
-                        $orders->delete();
+                $orderTemp  = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+                if ($orderTemp) {
+                    // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
+                    $orderReal = tb_oder::create([
+                        'user_id' => $orderTemp->user_id,
+                        'tb_discount_id' => $orderTemp->tb_discount_id,
+                        'order_code' => $orderTemp->order_code,
+                        'total_amount' => $orderTemp->total_amount,
+                        'order_status' => 'Chưa thanh toán',
+                        'name' => $orderTemp->name,
+                        'phone' => $orderTemp->phone,
+                        'address' => $orderTemp->address,
+                        'email' => $orderTemp->email,
+                        'order_date' => $orderTemp->order_date,
+                        'order_type' => $orderTemp->order_type,
+                    ]);
+                    $orderDetailsTemp = TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->get();
+                    foreach ($orderDetailsTemp as $detailTemp) {
+
+                        tb_oderdetail::create([
+                            'tb_oder_id' => $orderReal->id,
+                            'tb_product_id' => $detailTemp->tb_product_id,
+                            'tb_variant_id' => $detailTemp->tb_variant_id,
+                            'quantity' => $detailTemp->quantity,
+                            'price' => $detailTemp->price,
+                        ]);
+                        $variant = tb_variant::find($detailTemp->tb_variant_id);
+                        $variant->quantity -= $detailTemp->quantity;
+                        if ($variant->quantity <= 0) {
+                            $variant->status = 'Hết hàng';
+                        } else {
+                            $variant->status = 'Còn hàng';
+                        }
+                        $variant->save();
                     }
+
+                    // Kiểm tra xem là mua ngay hay từ giỏ hàng
+                    if ($orderTemp->order_type == 'cart') {
+                        // Mua từ giỏ hàng -> Xóa giỏ hàng
+                        $orderDetailsTemp = TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->get();
+                        foreach ($orderDetailsTemp as $detailTemp) {
+                            tb_cart::where('user_id', $orderTemp->user_id)
+                                ->where('tb_product_id', $detailTemp->tb_product_id)
+                                ->where('tb_variant_id', $detailTemp->tb_variant_id)
+                                ->delete();
+                        }
+                        // tb_cart::where('user_id', $orderTemp->user_id)->delete();
+                    }
+                    // Xóa dữ liệu bảng tạm
+                    TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->delete();
+                    $orderTemp->delete();
+
+                    // $oder = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+
+                    // if ($oder->user_id == 1) {
+                    //     Mail::send('emails.mail_order_vnpay_user', [
+                    //         'name' => $oder->name,
+                    //         'orderCode' => $oder->order_code,
+                    //         'orderStatus' => $oder->order_status,
+                    //         'orderDate' => $oder->order_date,
+                    //     ], function ($message) use ($oder) {
+                    //         $message->to($oder->email)
+                    //             ->subject('Imperial Beauty xin thông báo');
+                    //     });
+                    //     return redirect('http://localhost:5173/payment-success');
+                    // }
+
+                    return redirect('http://localhost:5173/payment-failure');
                 }
-                // echo "GD Khong thanh cong";
-                return redirect('http://localhost:5173/payment-failure');
+              
             }
         } else {
             echo "Chu ky khong hop le";
@@ -574,34 +679,33 @@ class CartController extends Controller
                     $id_user = $user->id;
                 }
                 $totalOrder = 0;
-                $order = tb_oder::create([
+                $order = TbOderTemp::create([
                     'user_id' => $id_user,
                     'tb_discount_id' => $request->tb_discount_id,
                     'order_date' => now(),
-                    // 'total_amount' => $totalAmount,
+                    'order_type' => 'quick',
                     'order_status' => 'Chờ xử lý',
                     'name' => $request->name,
                     'phone' => $request->phone,
                     'address' => $request->address_detail . ', ' . $request->address,
                     'email' => $request->email,
+
                 ]);
                 $variant = tb_variant::find($request->tb_variant_id);
                 if ($variant) {
                     $totalOrder = $request->total_amount;
                 }
-                $oderDetail = tb_oderdetail::create([
-                    'tb_oder_id' => $order->id,
+                $oderDetail = TbOderdetailTemp::create([
+                    'tb_oder_temp_id' => $order->id,
                     'tb_product_id' => $request->tb_product_id,
                     'tb_variant_id' => $request->tb_variant_id,
                     'quantity' => $request->quantity,
                     'price' => $variant->price
                 ]);
 
-                $order->order_code = 'ORD-' . $order->id;
+                $order->order_code = 'ORD-OL' . $order->id;
                 $order->total_amount = $totalOrder;
                 $order->save();
-                $variant->quantity -= $request->quantity;
-                $variant->save();
                 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
                 $vnp_Returnurl = route('vnpay.ipn');
                 $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
@@ -679,10 +783,11 @@ class CartController extends Controller
                 $orderDetails = [];
                 $totalOrder = 0;
 
-                $order = tb_oder::create([
+                $order = TbOderTemp::create([
                     'user_id' => $user->id,
                     'tb_discount_id' => 1,
                     'order_date' => now(),
+                    'order_type' => 'cart',
                     'order_status' => 'Chờ xử lý',
                     'name' => $request->name,
                     'phone' => $request->phone,
@@ -695,8 +800,8 @@ class CartController extends Controller
                         $totalAmount = $variant->price * $item->quantity;
                         $totalOrder += $totalAmount;
                     }
-                    $oderDetail = tb_oderdetail::create([
-                        'tb_oder_id' => $order->id,
+                    $oderDetail = TbOderdetailTemp::create([
+                        'tb_oder_temp_id' => $order->id,
                         'tb_product_id' => $item->tb_product_id,
                         'tb_variant_id' => $item->tb_variant_id,
                         'quantity' => $item->quantity,
@@ -705,12 +810,10 @@ class CartController extends Controller
 
                     $orderDetails[] = $oderDetail;
                 }
-                $order->order_code = 'ORD-' . $order->id;
+                $order->order_code = 'ORD-OL' . $order->id;
                 $order->total_amount = $totalOrder;
                 $order->save();
-                $variant->quantity -= $request->quantity;
-                $variant->save();
-                // $orderCode = 'ORD-ONLINE' . strtoupper(uniqid());
+
                 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
                 $vnp_Returnurl = route('vnpay.ipn');
                 $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
@@ -876,27 +979,4 @@ class CartController extends Controller
             ], 500);
         }
     }
-
-    // public function execPostRequest($url, $data)
-    // {
-    //     $ch = curl_init($url);
-    //     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    //     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    //     curl_setopt(
-    //         $ch,
-    //         CURLOPT_HTTPHEADER,
-    //         array(
-    //             'Content-Type: application/json',
-    //             'Content-Length: ' . strlen($data)
-    //         )
-    //     );
-    //     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    //     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    //     //execute post
-    //     $result = curl_exec($ch);
-    //     //close connection
-    //     curl_close($ch);
-    //     return $result;
-    // }
 }

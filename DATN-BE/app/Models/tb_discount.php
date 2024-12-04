@@ -22,4 +22,7 @@ class tb_discount extends Model
     public function oder(){
         return $this->hasOne(tb_oder::class);
     }
+    public function oderTemp(){
+        return $this->hasOne(TbOderTemp::class);
+    }
 }
