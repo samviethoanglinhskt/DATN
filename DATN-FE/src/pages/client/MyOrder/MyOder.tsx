@@ -401,7 +401,7 @@ const MyOrder: React.FC = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );
@@ -428,7 +428,7 @@ const MyOrder: React.FC = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );
@@ -447,7 +447,7 @@ const MyOrder: React.FC = () => {
         "http://127.0.0.1:8000/api/list-oder-client",
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );
@@ -489,7 +489,7 @@ const MyOrder: React.FC = () => {
         method: "post",
         data: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },

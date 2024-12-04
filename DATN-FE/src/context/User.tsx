@@ -40,7 +40,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         if (token) {
           const response = await axiosInstance.get("/api/show-user", {
             headers: { Authorization: `Bearer ${token}` },
@@ -48,7 +48,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           });
           setUser(response.data);
           setAddresses(response.data.data.address || []);
-
         } else {
           setUser(null);
           setAddresses([]);
@@ -61,12 +60,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
     fetchUser();
   }, []);
-  console.log(user);
+  // console.log(user);
 
   // Hàm update thông tin người dùng
   const updateUser = async (updatedData: Partial<User>) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         throw new Error("Người dùng chưa đăng nhập.");
       }
@@ -88,7 +87,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const addAddress = async (newAddressData: Partial<Address>) => {
     try {
       const response = await axiosInstance.post("/api/address", newAddressData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       if (response.data.success) {
         setAddresses((prev) => [...prev, response.data.data]);
@@ -104,7 +103,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const updateAddress = async (id: number, updatedData: Partial<Address>) => {
     try {
       const response = await axiosInstance.put(`/api/address/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       if (response.data.success) {
         setAddresses((prev) =>
@@ -124,7 +123,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const deleteAddress = async (id: number) => {
     try {
       await axiosInstance.delete(`/api/address/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
       setAddresses((prev) => prev.filter((address) => address.id !== id));
     } catch (error) {
@@ -138,7 +137,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       await axiosInstance.put(
         `/api/address-default`,
         { id },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` } }
       );
       // Cập nhật lại danh sách địa chỉ trong state
       setAddresses((prev) =>

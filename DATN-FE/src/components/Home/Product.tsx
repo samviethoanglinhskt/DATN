@@ -14,7 +14,6 @@ import {
   Tooltip,
 } from "antd";
 import {
-  HeartOutlined,
   ShoppingCartOutlined,
   SearchOutlined,
   FilterOutlined,
@@ -59,15 +58,15 @@ const ProductList = () => {
   // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
     ? allProducts.filter(
-        (product: Product) => product.tb_category_id === Number(id)
-      )
+      (product: Product) => product.tb_category_id === Number(id)
+    )
     : [];
 
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? filteredProductsByCategory.filter((product: Product) =>
-          selectedBrands.includes(product.tb_brand_id)
-        )
+        selectedBrands.includes(product.tb_brand_id)
+      )
       : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
@@ -228,7 +227,7 @@ const ProductList = () => {
                               <button className="action-button">
                                 <FavoriteButton
                                   productId={product.id}
-                               
+
                                 />
                               </button>
                             </Tooltip>

@@ -17,12 +17,12 @@ const ShoppingCart: React.FC = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     navigate("/login");
+  //   }
+  // }, [navigate]);
 
   const handleSelectItem = (id: number | undefined) => {
     if (id === undefined) return; // Thêm kiểm tra undefined
@@ -32,12 +32,18 @@ const ShoppingCart: React.FC = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedItems.length === cartItems.length) {
-      setSelectedItems([]);
+    const selectableItems = cartItems
+      .filter((item) => item.variant.quantity > 0) // Chỉ chọn sản phẩm còn hàng
+      .map((item) => item.id)
+      .filter((id) => id !== undefined) as number[]; // Lọc các id hợp lệ
+
+    if (selectedItems.length === selectableItems.length) {
+      setSelectedItems([]); // Bỏ chọn tất cả nếu đã chọn hết
     } else {
-      setSelectedItems(cartItems.map((item) => item.id).filter((id) => id !== undefined) as number[]);
+      setSelectedItems(selectableItems); // Chọn tất cả các sản phẩm còn hàng
     }
   };
+
 
   const calculateSelectedTotal = () => {
     return cartItems
@@ -115,11 +121,12 @@ const ShoppingCart: React.FC = () => {
                                 <Checkbox
                                   sx={{
                                     "& .MuiSvgIcon-root": {
-                                      fontSize: 16, // Đặt kích thước của checkbox ở đây (40px)
+                                      fontSize: 16,
                                     },
                                   }}
                                   checked={item.id !== undefined && selectedItems.includes(item.id)}
                                   onChange={() => handleSelectItem(item.id)}
+                                  disabled={item.variant.quantity === 0}
                                 />
                               </td>
 
@@ -146,65 +153,75 @@ const ShoppingCart: React.FC = () => {
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.price !== undefined && item.variant.price !== null ? `${(item.variant.price).toLocaleString("vi-VN")}đ` : "Loading..."}
+                                {item.variant.quantity === 0 ? (
+                                  ""
+                                ) : (
+                                  item.variant.price !== undefined && item.variant.price !== null
+                                    ? `${(item.variant.price).toLocaleString("vi-VN")}đ`
+                                    : "Loading..."
+                                )}
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                <div className="wrap-num-product flex-w m-l-auto m-r-0">
-                                  {/* Nút giảm số lượng */}
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      if (item.id !== undefined && item.quantity) {
-                                        reduceCartItemQuantity(item.id, Math.max(item.quantity - 1, 1));
-                                      }
-                                    }}
-                                    disabled={item.quantity === undefined || item.quantity <= 1}
-                                    className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
-                                  >
-                                    <i className="fs-16 zmdi zmdi-minus"></i>
-                                  </button>
+                                {item.variant.quantity === 0 ? (
+                                  <span style={{ color: "red", fontWeight: "bold" }}>Sản phẩm đã hết hàng</span>
+                                ) : (
+                                  <div className="wrap-num-product flex-w m-l-auto m-r-0">
+                                    {/* Nút giảm số lượng */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (item.id !== undefined && item.quantity) {
+                                          reduceCartItemQuantity(item.id, Math.max(item.quantity - 1, 1));
+                                        }
+                                      }}
+                                      disabled={item.quantity === undefined || item.quantity <= 1}
+                                      className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
+                                    >
+                                      <i className="fs-16 zmdi zmdi-minus"></i>
+                                    </button>
 
-                                  {/* Hiển thị số lượng */}
-                                  {item.quantity !== undefined && item.quantity !== null ? (
+                                    {/* Hiển thị số lượng */}
                                     <input
                                       type="text"
                                       value={item.quantity}
                                       readOnly
                                       className="mtext-104 cl3 txt-center num-product"
                                     />
-                                  ) : (
-                                    <input
-                                      type="text"
-                                      value={1} // Temporary fallback, or consider leaving empty until quantity is defined
-                                      readOnly
-                                      className="mtext-104 cl3 txt-center num-product"
-                                    />
-                                  )}
 
-                                  {/* Nút tăng số lượng */}
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      if (item.id !== undefined && item.quantity !== undefined && item.quantity < item.variant.quantity) {
-                                        upCartItemQuantity(item.id, item.quantity + 1);
-                                      }
-                                    }}
-                                    disabled={item.quantity === undefined || item.quantity >= item.variant.quantity}
-                                    className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
-                                  >
-                                    <i className="fs-16 zmdi zmdi-plus"></i>
-                                  </button>
-                                </div>
+                                    {/* Nút tăng số lượng */}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (
+                                          item.id !== undefined &&
+                                          item.quantity !== undefined &&
+                                          item.quantity < item.variant.quantity
+                                        ) {
+                                          upCartItemQuantity(item.id, item.quantity + 1);
+                                        }
+                                      }}
+                                      disabled={item.quantity === undefined || item.quantity >= item.variant.quantity}
+                                      className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
+                                    >
+                                      <i className="fs-16 zmdi zmdi-plus"></i>
+                                    </button>
+                                  </div>
+                                )}
                               </td>
+
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.price !== undefined && item.quantity !== undefined
-                                  ? `${(item.variant.price * item.quantity).toLocaleString("vi-VN")}đ`
-                                  : "Loading..."}
+                                {item.variant.quantity === 0 ? (
+                                  ""
+                                ) : (
+                                  item.variant.price !== undefined && item.quantity !== undefined
+                                    ? `${(item.variant.price * item.quantity).toLocaleString("vi-VN")}đ`
+                                    : "Loading..."
+                                )}
                               </td>
 
-                              <td >
+                              <td>
                                 <IconButton onClick={() => {
                                   if (item.id !== undefined) {
                                     removeFromCart(item.id);
@@ -279,8 +296,24 @@ const ShoppingCart: React.FC = () => {
           </form>
         </div>
       ) : (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-          <h1>Giỏ hàng của bạn đang trống!</h1>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            textAlign: "center",
+          }}
+        >
+          <h1 style={{ marginBottom: "20px" }}>Giỏ hàng của bạn đang trống!</h1>
+          <button
+            onClick={() => navigate("/")}
+            className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+            style={{ width: 200 }}
+          >
+            Quay lại mua sắm
+          </button>
         </div>
       )}
 

@@ -597,7 +597,7 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => {
     console.log(user);
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       setLoadingUser(false);
     } else if (user?.data) {
@@ -651,7 +651,7 @@ const CheckoutPage: React.FC = () => {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       let url = token
         ? 'http://localhost:8000/api/cart/check-out-cart'
         : 'http://localhost:8000/api/cart/check-out-guest'
@@ -1025,7 +1025,7 @@ const CheckoutPage: React.FC = () => {
               <Dialog open={voucherDialogOpen} onClose={() => setVoucherDialogOpen(false)} maxWidth="sm" fullWidth>
                 <DialogTitle>Chọn giảm giá</DialogTitle>
                 <DialogContent>
-                  {localStorage.getItem('token') ? (
+                  {sessionStorage.getItem('token') ? (
                     <List>
                       {discounts.map((discount) => (
                         <ListItem

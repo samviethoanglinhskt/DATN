@@ -232,13 +232,17 @@ class UserController extends Controller
                     'message' => 'Người dùng không tồn tại',
                 ], 404);
             }
-            $user->update([
-                'name' => $request->name,
-                'tb_role_id' => 2,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'password' => $user->password,
-            ]);
+            // $user->update([
+            //     'name' => $request->name,
+            //     'tb_role_id' => $user->tb_role_id,
+            //     'phone' => $request->phone,
+            //     'email' => $request->email,
+            //     'password' => $user->password,
+            // ]);
+            $user->name = $request->name;
+            $user->phone = $request->phone;
+            $user->email = $request->email;
+            $user->save();
 
             return response()->json([
                 'message' => 'Sửa thành công',
