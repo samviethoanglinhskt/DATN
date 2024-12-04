@@ -41,7 +41,12 @@ export interface StatusConfig {
   bgColor: string;
   textColor: string;
 }
-
+export interface FailureModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onConfirm: (feedback: string) => void;
+  loading: boolean;
+}
 export type OrderStatus =
   | "Chờ xử lý"
   | "Đã xử lý"
@@ -49,6 +54,8 @@ export type OrderStatus =
   | "Chưa thanh toán"
   | "Đã thanh toán"
   | "Đã hoàn thành"
+  | "Giao hàng thất bại"
+  | "Đã giao hàng"
   | "Đã hủy đơn hàng";
 
 export interface ApiResponse {

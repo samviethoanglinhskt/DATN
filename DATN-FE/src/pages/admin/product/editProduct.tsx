@@ -312,12 +312,12 @@ const ProductEdit: React.FC = () => {
 
   const steps = [
     {
-      title: "Product Information",
+      title: "Thông tin sản phẩm",
       content: (
         <Form form={productForm} layout="vertical">
           <Form.Item
             name="name"
-            label="Product Name"
+            label="Tên sản phẩm"
             rules={[{ required: true, message: "Please enter product name" }]}
           >
             <Input />
@@ -356,7 +356,7 @@ const ProductEdit: React.FC = () => {
 
               <Form.Item
                 name="status"
-                label="Status"
+                label="Trạng thái"
                 rules={[{ required: true }]}
               >
                 <Select>
@@ -365,12 +365,12 @@ const ProductEdit: React.FC = () => {
                 </Select>
               </Form.Item>
 
-              <Form.Item name="description" label="Description">
+              <Form.Item name="description" label="Mô tả">
                 <TextArea rows={4} />
               </Form.Item>
             </div>
             <Form.Item
-              label="Product Image"
+              label="Ảnh sản phẩm"
               required
               tooltip="Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP"
             >
@@ -393,58 +393,84 @@ const ProductEdit: React.FC = () => {
       ),
     },
     {
-      title: "Variants",
+      title: "Thông tin biến thể",
       content: (
         <div>
           {variants.length > 0 && (
-            <Card title="Product Variants" className="mb-4">
+            <Card title="Biến thể sản phẩm" className="mb-4">
               {variants.map((variant) => (
                 <Card.Grid key={variant.id} style={{ width: "100%" }}>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p>
-                        Size:{" "}
-                        {sizes.find((s) => s.id === variant.tb_size_id)?.name}
-                      </p>
-                      <p>
-                        Color:{" "}
-                        {colors.find((c) => c.id === variant.tb_color_id)?.name}
-                      </p>
-                      <p>SKU: {variant.sku}</p>
-                      <p>Price: {variant.price}</p>
-                      <p>Quantity: {variant.quantity}</p>
-                      <p>Status: {variant.status}</p>
-                      <div className="flex gap-2 mt-2">
-                        {variant.images?.map((image: any, index: number) => (
-                          <img
-                            key={index}
-                            src={`http://127.0.0.1:8000/${
-                              typeof image === "string" ? image : image.url
-                            }`}
-                            alt={`Variant ${index}`}
-                            style={{
-                              width: 50,
-                              height: 50,
-                              objectFit: "cover",
-                            }}
-                          />
-                        ))}
+                  <div className="row">
+                    {/* Cột ảnh sản phẩm (Bên trái) */}
+                    <div className="col-md-4 d-flex justify-content-center align-items-center">
+                      {variant.images?.map((image: any, index: number) => (
+                        <img
+                          key={index}
+                          src={`http://127.0.0.1:8000/storage/${image.name_image}`}
+                          alt={`Variant Image ${index}`}
+                          style={{
+                            width: 100,
+                            height: 100,
+                            objectFit: "cover",
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Cột thông tin sản phẩm (Bên phải) */}
+                    <div className="col-md-8">
+                      <div className="d-flex">
+                        <div>
+                          <p>
+                            <strong> Kích thước: </strong>{" "}
+                            {
+                              sizes.find((s) => s.id === variant.tb_size_id)
+                                ?.name
+                            }
+                          </p>
+                          <p>
+                            <strong> Màu sắc:</strong>{" "}
+                            {
+                              colors.find((c) => c.id === variant.tb_color_id)
+                                ?.name
+                            }
+                          </p>
+                          <p>
+                            <strong> Mã hàng:</strong> {variant.sku}
+                          </p>
+                        </div>
+                        <div className="ml-5">
+                          <p>
+                            <strong> Giá sản phẩm: </strong> {variant.price}
+                          </p>
+                          <p>
+                            <strong>Số lượng: </strong>
+                            {variant.quantity}
+                          </p>
+                          <p>
+                            <strong>Trạng thái:</strong> {variant.status}
+                          </p>
+                        </div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Các nút Sửa và Xóa */}
+                  <div className="d-flex justify-content-between mt-2">
                     <Space>
                       <Button
                         type="primary"
                         icon={<EditOutlined />}
                         onClick={() => handleVariantEdit(variant)}
                       >
-                        Edit
+                        Sửa biến thể
                       </Button>
                       <Button
                         danger
                         icon={<DeleteOutlined />}
                         onClick={() => handleVariantDelete(variant.id)}
                       >
-                        Delete
+                        Xóa biến thể
                       </Button>
                     </Space>
                   </div>
@@ -473,12 +499,12 @@ const ProductEdit: React.FC = () => {
 
         <div className="flex justify-between mt-6">
           <Button onClick={() => navigate("/admin/product")}>
-            Back to List
+            Trang danh sách
           </Button>
           <Space>
             {currentStep > 0 && (
               <Button onClick={() => setCurrentStep((step) => step - 1)}>
-                Previous
+                Quay lại
               </Button>
             )}
             {currentStep < steps.length - 1 ? (
@@ -486,7 +512,7 @@ const ProductEdit: React.FC = () => {
                 type="primary"
                 onClick={() => setCurrentStep((step) => step + 1)}
               >
-                Next
+                Tiếp tục
               </Button>
             ) : (
               <Button
@@ -494,7 +520,7 @@ const ProductEdit: React.FC = () => {
                 onClick={handleProductUpdate}
                 loading={loading}
               >
-                Update Product
+                Cập nhật sản phẩm
               </Button>
             )}
           </Space>
@@ -502,14 +528,14 @@ const ProductEdit: React.FC = () => {
       </Card>
 
       <Modal
-        title="Edit Variant"
+        title="Sửa biến thể"
         open={isEditingVariant}
         onOk={handleVariantUpdate}
         onCancel={() => setIsEditingVariant(false)}
         width={800}
       >
         <Form form={variantForm} layout="vertical">
-          <Form.Item name="tb_size_id" label="Size">
+          <Form.Item name="tb_size_id" label="Kích thước">
             <Select allowClear>
               {sizes.map((size) => (
                 <Select.Option key={size.id} value={size.id}>
@@ -519,7 +545,7 @@ const ProductEdit: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="tb_color_id" label="Color">
+          <Form.Item name="tb_color_id" label="Màu sắc">
             <Select allowClear>
               {colors.map((color) => (
                 <Select.Option key={color.id} value={color.id}>
@@ -529,11 +555,15 @@ const ProductEdit: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="sku" label="SKU" rules={[{ required: true }]}>
+          <Form.Item name="sku" label="Mã hàng" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+          <Form.Item
+            name="price"
+            label="Giá biến thể"
+            rules={[{ required: true }]}
+          >
             <InputNumber
               min={0}
               style={{ width: "100%" }}
@@ -546,22 +576,26 @@ const ProductEdit: React.FC = () => {
 
           <Form.Item
             name="quantity"
-            label="Quantity"
+            label="Số lượng"
             rules={[{ required: true }]}
           >
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+          <Form.Item
+            name="status"
+            label="Trạng thái"
+            rules={[{ required: true }]}
+          >
             <Select>
-              <Select.Option value="còn hàng">In Stock</Select.Option>
-              <Select.Option value="hết hàng">Out of Stock</Select.Option>
+              <Select.Option value="còn hàng">Còn hàng</Select.Option>
+              <Select.Option value="hết hàng">Hết hàng</Select.Option>
             </Select>
           </Form.Item>
 
           <Form.Item
             name="images"
-            label="Variant Images"
+            label="Ảnh biến thể"
             valuePropName="fileList"
             getValueFromEvent={(e) => {
               if (Array.isArray(e)) {

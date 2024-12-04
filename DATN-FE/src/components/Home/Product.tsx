@@ -14,7 +14,6 @@ import {
   Tooltip,
 } from "antd";
 import {
-  HeartOutlined,
   ShoppingCartOutlined,
   SearchOutlined,
   FilterOutlined,
@@ -22,6 +21,7 @@ import {
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
 import "./Productlist.css";
+import { FavoriteButton } from "./FavoriteButton";
 
 const { Option } = Select;
 
@@ -58,15 +58,15 @@ const ProductList = () => {
   // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
     ? allProducts.filter(
-        (product: Product) => product.tb_category_id === Number(id)
-      )
+      (product: Product) => product.tb_category_id === Number(id)
+    )
     : [];
 
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? filteredProductsByCategory.filter((product: Product) =>
-          selectedBrands.includes(product.tb_brand_id)
-        )
+        selectedBrands.includes(product.tb_brand_id)
+      )
       : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
@@ -225,7 +225,10 @@ const ProductList = () => {
                             </Tooltip>
                             <Tooltip title="Thêm vào yêu thích">
                               <button className="action-button">
-                                <HeartOutlined />
+                                <FavoriteButton
+                                  productId={product.id}
+
+                                />
                               </button>
                             </Tooltip>
                           </div>

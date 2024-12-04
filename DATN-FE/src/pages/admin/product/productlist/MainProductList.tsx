@@ -57,10 +57,10 @@ const ProductListMain: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await ProductService.deleteProduct(id);
-      message.success("Product deleted successfully");
+      message.success("Xóa sản phẩm thành công");
       fetchInitialData();
     } catch (error) {
-      message.error("Failed to delete product");
+      message.error("Xóa sản phẩm thất bại");
     }
   };
 
@@ -82,7 +82,7 @@ const ProductListMain: React.FC = () => {
       setSelectedProduct(productDetail);
       setDetailModalVisible(true);
     } catch (error) {
-      message.error("Failed to fetch product details");
+      message.error("Không thể lấy thông tin chi tiết sản phẩm");
     } finally {
       setDetailLoading(false);
     }
@@ -110,7 +110,7 @@ const ProductListMain: React.FC = () => {
           icon={<PlusOneOutlined />}
           onClick={() => navigate("/admin/product/create")}
         >
-          Add Product
+          Thêm sản phẩm
         </Button>
       }
     >

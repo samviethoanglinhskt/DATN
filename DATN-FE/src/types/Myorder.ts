@@ -61,4 +61,5 @@ export interface CancellationModalProps {
   onConfirm: (orderId: number, feedback: string) => void;
   orderId: number | null;
   loading: boolean;
+  orderStatus: string;
 }

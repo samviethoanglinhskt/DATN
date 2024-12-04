@@ -100,27 +100,27 @@ const AppCategoryyy = () => {
       width: 80,
     },
     {
-      title: 'Name',
+      title: 'Twn Danh Mục',
       dataIndex: 'name',
       key: 'name',
       ellipsis: true,
     },
+    // {
+    //   title: 'Created At',
+    //   dataIndex: 'created_at',
+    //   key: 'created_at',
+    //   responsive: ['md'],
+    //   render: (date: string | null) => date ? new Date(date).toLocaleDateString() : '-'
+    // },
+    // {
+    //   title: 'Updated At',
+    //   dataIndex: 'updated_at',
+    //   key: 'updated_at',
+    //   responsive: ['lg'],
+    //   render: (date: string | null) => date ? new Date(date).toLocaleDateString() : '-'
+    // },
     {
-      title: 'Created At',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      responsive: ['md'],
-      render: (date: string | null) => date ? new Date(date).toLocaleDateString() : '-'
-    },
-    {
-      title: 'Updated At',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
-      responsive: ['lg'],
-      render: (date: string | null) => date ? new Date(date).toLocaleDateString() : '-'
-    },
-    {
-      title: 'Actions',
+      title: 'Thao Tác',
       key: 'actions',
       width: 150,
       render: (_: unknown, record: Category) => (
@@ -131,7 +131,7 @@ const AppCategoryyy = () => {
             size="small"
             onClick={() => handleEdit(record)}
           >
-            Edit
+        
           </Button>
           <Popconfirm
             title="Delete Category"
@@ -142,7 +142,7 @@ const AppCategoryyy = () => {
             icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
           >
             <Button type="primary" danger icon={<DeleteOutlined />} size="small">
-              Delete
+          
             </Button>
           </Popconfirm>
         </Space>
@@ -161,7 +161,7 @@ const AppCategoryyy = () => {
           setModalVisible(true);
         }}
       >
-        Add Category
+        Thêm danh mục
       </Button>
     }>
       <Table<Category>
@@ -178,7 +178,7 @@ const AppCategoryyy = () => {
       />
 
       <Modal
-        title={editingCategory ? 'Edit Category' : 'Add Category'}
+        title={editingCategory ? 'Sửa danh mục' : 'Thêm danh mục'}
         open={modalVisible}
         onCancel={() => {
           setModalVisible(false);
@@ -195,14 +195,14 @@ const AppCategoryyy = () => {
         >
           <Form.Item
             name="name"
-            label="Category Name"
+            label="Tên danh mục"
             rules={[
               { required: true, message: 'Please input category name!' },
               { min: 2, message: 'Name must be at least 2 characters!' },
               { max: 50, message: 'Name cannot be longer than 50 characters!' },
             ]}
           >
-            <Input placeholder="Enter category name" />
+            <Input placeholder="Nhập tên danh mục" />
           </Form.Item>
 
           <Form.Item className="mb-0">
@@ -212,10 +212,10 @@ const AppCategoryyy = () => {
                 setEditingCategory(null);
                 form.resetFields();
               }}>
-                Cancel
+                Bỏ qua
               </Button>
               <Button type="primary" htmlType="submit">
-                {editingCategory ? 'Update' : 'Create'}
+                {editingCategory ? 'Cập nhật' : 'Thêm mới'}
               </Button>
             </Space>
           </Form.Item>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -17,7 +17,7 @@ import {
   TabsProps,
   Tabs,
 } from "antd";
-import { ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
 import {
   ApiResponse,
   CancellationModalProps,
@@ -300,10 +300,30 @@ const CancellationModal: React.FC<CancellationModalProps> = ({
   onConfirm,
   orderId,
   loading,
+  orderStatus,
 }) => {
   const [feedback, setFeedback] = useState("");
-
+  useEffect(() => {
+    if (orderStatus === "Đã xử lí" && visible) {
+      message.info("Đơn hàng đã được xác nhận và không thể hủy");
+      setFeedback("");
+      onClose();
+    }
+  }, [orderStatus, visible, onClose]);
+  useEffect(() => {
+    if (visible && orderStatus === "Đã xử lí") {
+      message.info("Đơn hàng đã được xác nhận và không thể hủy");
+      onClose();
+    }
+  }, [visible, orderStatus, onClose]);
   const handleConfirm = () => {
+    // Double check status before confirming
+    if (orderStatus === "Đã xử lí") {
+      message.info("Đơn hàng đã được xác nhận và không thể hủy");
+      onClose();
+      return;
+    }
+
     if (orderId) {
       onConfirm(orderId, feedback);
     }
@@ -312,7 +332,7 @@ const CancellationModal: React.FC<CancellationModalProps> = ({
   return (
     <Modal
       title="Hủy đơn hàng"
-      open={visible}
+      open={visible && orderStatus !== "Đã xử lí"}
       onCancel={() => {
         setFeedback("");
         onClose();
@@ -330,10 +350,16 @@ const CancellationModal: React.FC<CancellationModalProps> = ({
           rows={4}
           placeholder="Nhập lý do hủy đơn hàng..."
           value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
+          onChange={(e) => {
+            // Only allow input if order is not confirmed
+            if (orderStatus !== "Đã xử lí") {
+              setFeedback(e.target.value);
+            }
+          }}
           className="w-full"
           maxLength={500}
           showCount
+          disabled={orderStatus === "Đã xử lí"}
         />
       </div>
     </Modal>
@@ -365,6 +391,28 @@ const MyOrder: React.FC = () => {
     setIsRatingModalVisible(true);
   };
 
+  const handleConfirmDelivery = async (orderId: number) => {
+    try {
+      await axios.put(
+        "http://127.0.0.1:8000/api/confirm-order-client",
+        {
+          id: orderId,
+          status: "Đã hoàn thành",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      message.success("Xác nhận đã nhận hàng thành công!");
+      // Refresh the orders list
+      window.location.reload();
+    } catch (error) {
+      console.error("Error confirming delivery:", error);
+      message.error("Có lỗi xảy ra khi xác nhận. Vui lòng thử lại!");
+    }
+  };
   const handleRatingSubmit = async (rating: number, comment: string) => {
     if (!currentProduct) return;
 
@@ -593,6 +641,16 @@ const MyOrder: React.FC = () => {
             >
               Chi tiết
             </Button>
+            {record.order_status === "Đã giao hàng" && (
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+                className="bg-green-500 hover:bg-green-600"
+                onClick={() => handleConfirmDelivery(record.id)}
+              >
+                Xác nhận nhận hàng
+              </Button>
+            )}
             {record.order_status === "Đã hoàn thành" &&
               hasUnreviewedProducts && (
                 <Button
@@ -732,6 +790,7 @@ const MyOrder: React.FC = () => {
           onConfirm={handleCancelOrder}
           orderId={selectedOrderId}
           loading={cancelLoading}
+          orderStatus=""
         />
 
         <RatingModal
