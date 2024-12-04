@@ -18,6 +18,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Events\ProductLocked;
 
 class CartController extends Controller
 {
@@ -354,6 +355,7 @@ class CartController extends Controller
     {
         $selectedItems = null; // Khởi tạo mặc định
         $orderDetails = null;
+        $oderDetail = null; // Khởi tạo mặc định
         try {
             if (isset($request->tb_product_id) && isset($request->tb_variant_id)) {
                 $user = JWTAuth::parseToken()->authenticate();
@@ -394,95 +396,93 @@ class CartController extends Controller
                     $variant->status = 'Hết hàng';
                 }
                 $variant->save();
-            } else {
-                $user = JWTAuth::parseToken()->authenticate();
-                if (!$user) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Người dùng không tồn tại',
-                    ], 404);
-                }
-
-                // Lấy danh sách product_ids từ yêu cầu
-                $productIds = $request->cart_items;
-                // $discountCode = $request->input('discount_code'); // Lấy mã giảm giá từ yêu cầu
-                if (empty($productIds)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Không có sản phẩm nào được chọn để thanh toán',
-                    ], 400);
-                }
-
-                // Lấy các sản phẩm từ giỏ hàng của user với các product_ids đã chọn
-                $selectedItems = tb_cart::where('user_id', $user->id)
-                    ->whereIn('id', $productIds)
-                    ->get();
-
-                if ($selectedItems->isEmpty()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Không tìm thấy sản phẩm nào trong giỏ hàng',
-                    ], 404);
-                }
-
-                // Tạo một mảng để lưu các đơn hàng đã tạo
-                $orderDetails = [];
-                $totalOrder = 0;
-                $order = tb_oder::create([
-                    'user_id' => $user->id,
-                    'tb_discount_id' => $request->tb_discount_id,
-                    'order_date' => now(),
-                    // 'total_amount' => $totalAmount,
-                    'order_status' => 'Chờ xử lý',
-                    'name' => $request->name,
-                    'phone' => $request->phone,
-                    'address' => $request->address_detail . ', ' . $request->address,
-                    'email' => $request->email,
-                ]);
-                foreach ($selectedItems as $item) {
-                    $variant = tb_variant::find($item->tb_variant_id);
-                    if ($variant) {
-                        $totalOrder += $item->total_amount;
-                    }
-                    $oderDetail = tb_oderdetail::create([
-                        'tb_oder_id' => $order->id,
-                        'tb_product_id' => $item->tb_product_id,
-                        'tb_variant_id' => $item->tb_variant_id,
-                        'quantity' => $item->quantity,
-                        'price' => $variant->price
-                    ]);
-
-                    $orderDetails[] = $oderDetail;
-
-                    //Cập nhật lại số lượng của sản phẩm
-                    $variant->quantity -= $item->quantity;
-                    if ($variant->quantity <= 0) {
-                        $variant->status = 'Hết hàng';
-                    } else {
-                        $variant->status = 'Còn hàng';
-                    }
-                    $variant->save();
-
-                    //Xóa giỏ hàng khi thêm đơn thành công
-                    $item->delete();
-                }
-                // Áp dụng giảm giá theo phần trăm nếu có mã giảm giá
-                // if ($tbDiscountId && isset($discount)) {
-                //     $discountValue = $discount->discount_value; // Giá trị phần trăm giảm giá
-                //     $totalOrder -= $totalOrder * ($discountValue / 100); // Áp dụng giảm giá theo phần trăm
-                // }
-
-                $order->order_code = 'ORD-' . $order->id;
-                $order->total_amount = $request->total_amount;
-                $order->save();
-            }
-            return response()->json([
-                'success' => true,
-                'message' => 'Lấy sản phẩm đã chọn thành công!',
-                'cart-checkout' => $selectedItems,
-                'order' => $order,
-                'orderDetail' => $orderDetails,
-            ]);
+            }else { 
+                $user = JWTAuth::parseToken()->authenticate(); 
+                if (!$user) { 
+                    return response()->json([ 
+                        'success' => false, 
+                        'message' => 'Người dùng không tồn tại', 
+                    ], 404); 
+                } 
+                // Lấy danh sách product_ids từ yêu cầu 
+                $productIds = $request->cart_items; 
+                if (empty($productIds)) { 
+                    return response()->json([ 
+                        'success' => false, 
+                        'message' => 'Không có sản phẩm nào được chọn để thanh toán', 
+                    ], 400); 
+                } 
+                    // Lấy các sản phẩm từ giỏ hàng của user với các product_ids đã chọn 
+                    $selectedItems = tb_cart::where('user_id', $user->id) ->whereIn('id', $productIds) ->get(); 
+                    if ($selectedItems->isEmpty()) { 
+                        return response()->json([ 
+                            'success' => false, 
+                            'message' => 'Không tìm thấy sản phẩm nào trong giỏ hàng', 
+                        ], 404); 
+                    } 
+                        // Tạo một mảng để lưu các đơn hàng đã tạo 
+                        $orderDetails = []; $totalOrder = 0; 
+                        // Tạo đơn hàng mới 
+                        $order = tb_oder::create([ 
+                            'user_id' => $user->id, 
+                            'tb_discount_id' => $request->tb_discount_id, 
+                            'order_date' => now(), 
+                            'order_status' => 'Chờ xử lý', 
+                            'name' => $request->name, 
+                            'phone' => $request->phone, 
+                            'address' => $request->address_detail . ', ' . $request->address, 
+                            'email' => $request->email, 
+                        ]); 
+                            // Sử dụng giao dịch để đảm bảo tính toàn vẹn dữ liệu 
+                            DB::transaction(function () use ($request, $selectedItems, &$order, &$orderDetails, &$totalOrder) { 
+                                foreach ($selectedItems as $item) { 
+                                    // Khóa bi quan để ngăn chặn người dùng khác thao tác trên biến thể sản phẩm này cùng lúc 
+                                    $variant = tb_variant::where('id', $item->tb_variant_id)->lockForUpdate()->first(); 
+                                    if ($variant && $variant->quantity >= $item->quantity) { 
+                                        // Phát sóng sự kiện thông báo sản phẩm bị khóa 
+                                        broadcast(new ProductLocked($variant)); 
+                                        $totalOrder += $item->quantity * $variant->price;
+                                        // Tạo chi tiết đơn hàng mới 
+                                        $oderDetail = tb_oderdetail::create([ 
+                                            'tb_oder_id' => $order->id, 
+                                            'tb_product_id' => $item->tb_product_id, 
+                                            'tb_variant_id' => $item->tb_variant_id, 
+                                            'quantity' => $item->quantity, 
+                                            'price' => $variant->price ]); 
+                                            $orderDetails[] = $oderDetail; 
+                                            // Cập nhật lại số lượng sản phẩm 
+                                            $variant->quantity -= $item->quantity; 
+                                            if ($variant->quantity <= 0) { 
+                                                $variant->status = 'Hết hàng'; 
+                                            } else { 
+                                                $variant->status = 'Còn hàng'; 
+                                            } 
+                                            $variant->save(); 
+                                            // Xóa giỏ hàng khi thêm đơn thành công 
+                                            $item->delete(); 
+                                        } else { 
+                                            throw new \Exception('Sản phẩm không đủ số lượng'); 
+                                        } 
+                                    } 
+                                    // Cập nhật thông tin đơn hàng 
+                                    $order->order_code = 'ORD-' . $order->id; 
+                                    $order->total_amount = $totalOrder; 
+                                    $order->save(); 
+                                }); return response()->json([ 
+                                    'success' => true, 
+                                    'message' => 'Đặt hàng thành công!', 
+                                    'cart-checkout' => $selectedItems, 
+                                    'order' => $order, 
+                                    'orderDetail' => $orderDetails, 
+                                ]); 
+                            } 
+                        } catch (\Exception $e) { 
+                            Log::error('Lỗi khi đặt hàng: ' . $e->getMessage()); 
+                            return response()->json([ 
+                                'success' => false, 
+                                'message' => 'Có lỗi xảy ra, vui lòng thử lại sau.', 'error' => $e->getMessage(), 
+                            ], 500
+                        );
         } catch (\Exception $e) {
             Log::error('Lỗi khi đặt hàng: ' . $e->getMessage());
 

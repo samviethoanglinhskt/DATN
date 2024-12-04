@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+Broadcast::channel('products', function ($user) {
+    return true; // hoặc kiểm tra quyền truy cập của người dùng nếu cần thiết
+});

@@ -31,6 +31,7 @@ import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
 import MyInfo from "./pages/client/MyInfo";
 import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
+import './echo.js'
 
 const routeConfig = [
   {
