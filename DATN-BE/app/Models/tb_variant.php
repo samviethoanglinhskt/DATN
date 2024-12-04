@@ -43,4 +43,7 @@ class tb_variant extends Model
     public function oderDetail(){
         return $this->hasMany(tb_oderdetail::class);
     }
+    public function oderDetailTemp(){
+        return $this->hasMany(TbOderdetailTemp::class);
+    }
 }
