@@ -147,7 +147,7 @@ const FavoritesPage: React.FC = () => {
       if (!user) return [];
       try {
         const favoritesResponse = await axiosInstance.get("/api/favorites", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
         });
 
         const favoriteIds = favoritesResponse.data.map(
@@ -159,7 +159,7 @@ const FavoritesPage: React.FC = () => {
             try {
               const { data } = await axiosInstance.get(`/api/product/${id}`, {
                 headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                 },
               });
               return {
@@ -193,7 +193,7 @@ const FavoritesPage: React.FC = () => {
   const removeFromFavorites = useMutation({
     mutationFn: async (favoriteId: number) => {
       return await axiosInstance.delete(`/api/favorites/${favoriteId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       });
     },
     onSuccess: () => {

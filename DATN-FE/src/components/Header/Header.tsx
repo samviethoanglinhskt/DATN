@@ -120,19 +120,11 @@ const Header: React.FC = () => {
     Object.values(CACHE_KEYS).forEach((key) => {
       localStorage.removeItem(key);
     });
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setUser(null);
     queryClient.clear();
     navigate("/login");
-    window.location.reload();
-  };
-
-  const handleCartClick = () => {
-    if (!user) {
-      alert("Bạn phải đăng nhập để vào giỏ hàng");
-    } else {
-      navigate("/cart");
-    }
+    // window.location.reload();
   };
 
   useEffect(() => {
@@ -160,9 +152,8 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${
-          isFixed ? "fix-menu-desktop" : ""
-        }`}
+        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
+          }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -204,35 +195,35 @@ const Header: React.FC = () => {
                         },
                       }}
                     >
-                      {(user.data.user.tb_role_id == 1 ||
-                        user.data.user.tb_role_id == 3) && (
-                        <MenuItem
-                          onClick={() => navigate("/admin")}
-                          sx={{
-                            padding: "10px 16px",
-                            borderRadius: "8px",
-                            gap: "12px",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              background:
-                                "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
-                              color: "#717FE0",
-                              "& .menu-icon": {
-                                transform: "scale(1.1)",
-                                color: "#717FE0",
-                              },
-                            },
-                          }}
-                        >
-                          <AdminPanelSettingsIcon
-                            style={{
-                              fontSize: "18px",
+                      {(user?.data?.user?.tb_role_id === 1 ||
+                        user?.data?.user?.tb_role_id === 3) && (
+                          <MenuItem
+                            onClick={() => navigate("/admin")}
+                            sx={{
+                              padding: "10px 16px",
+                              borderRadius: "8px",
+                              gap: "12px",
                               transition: "all 0.3s ease",
+                              "&:hover": {
+                                background:
+                                  "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                                color: "#717FE0",
+                                "& .menu-icon": {
+                                  transform: "scale(1.1)",
+                                  color: "#717FE0",
+                                },
+                              },
                             }}
-                          />
-                          Admin
-                        </MenuItem>
-                      )}
+                          >
+                            <AdminPanelSettingsIcon
+                              style={{
+                                fontSize: "18px",
+                                transition: "all 0.3s ease",
+                              }}
+                            />
+                            Admin
+                          </MenuItem>
+                        )}
 
                       <MenuItem
                         onClick={() => navigate("/myinfo")}
@@ -381,8 +372,7 @@ const Header: React.FC = () => {
                 <i className="zmdi zmdi-search"></i>
               </div>
               <a
-                href=""
-                onClick={handleCartClick}
+                href="/cart"
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti "
                 data-notify={totalQuantity}
               >

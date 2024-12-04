@@ -36,7 +36,7 @@ const Login = () => {
           ),
           duration: 2,
         });
-        localStorage.setItem("token", response.data.data.token);
+        sessionStorage.setItem("token", response.data.data.token);
         reset();
 
         // Sử dụng Promise để đảm bảo animation hoàn thành
