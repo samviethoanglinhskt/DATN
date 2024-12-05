@@ -13,7 +13,7 @@ export const FavoriteButton = ({ productId, className }: FavoriteButtonProps) =>
 
   const addToFavoriteMutation = useMutation({
     mutationFn: async (productId: number) => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         console.error("Token not found!");
         throw new Error("Vui lòng đăng nhập trước!");
@@ -50,7 +50,7 @@ export const FavoriteButton = ({ productId, className }: FavoriteButtonProps) =>
     e.preventDefault();
     e.stopPropagation();
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       message.warning("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
       navigate("/login");

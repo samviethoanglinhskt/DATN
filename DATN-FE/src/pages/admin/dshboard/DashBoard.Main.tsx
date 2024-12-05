@@ -33,6 +33,7 @@ import ModalUserStats from "./modaldashboard/Modalusser";
 import TopBrandComponent from "./TopBrand";
 import TopSellingProductsComponent from "./TopProduct";
 import "./style.css";
+import TopRatedProducts from "./TopRate";
 
 const { Title } = Typography;
 
@@ -277,6 +278,9 @@ const Dashboard: React.FC = () => {
 
           <Card title="Top sản phẩm bán chạy" className="shadow-lg">
             <TopBrandComponent />
+          </Card>
+          <Card>
+            <TopRatedProducts />
           </Card>
         </Spin>
       )}

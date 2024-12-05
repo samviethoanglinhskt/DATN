@@ -29,10 +29,12 @@ interface DashboardData {
 const ModalSuccess: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState("month");
+  const [timeRange, setTimeRange] = useState("month"); // Default time range is "month"
   const [modalVisible, setModalVisible] = useState(false);
   const [filteredData, setFilteredData] = useState<OrderStats[]>([]);
-  const [filterText, setFilterText] = useState(""); 
+  const [filterText, setFilterText] = useState(""); // Text input for filtering
+
+  // Fetch data with type as the time range (day, week, month, quarter, year)
   const fetchOrderStats = async (period: string = timeRange) => {
     try {
       setLoading(true);
@@ -42,7 +44,8 @@ const ModalSuccess: React.FC = () => {
       if (!response.ok) throw new Error("Failed to fetch order statistics");
       const result = await response.json();
       setData(result);
-      setFilteredData(result["Tổng đơn hàng"]);
+      setFilteredData(result["Tổng đơn hàng"]); // Set filtered data initially to all records
+ 
     } catch (error) {
       console.error("Error fetching data:", error);
       message.error("Không thể tải dữ liệu thống kê");
@@ -51,13 +54,15 @@ const ModalSuccess: React.FC = () => {
     }
   };
 
+  // Fetch data when the component mounts or when the time range changes
   useEffect(() => {
     fetchOrderStats();
   }, [timeRange]);
 
+  // Handle time range changes
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
-    fetchOrderStats(value);
+    fetchOrderStats(value); // Fetch data with new time range
   };
 
   const openModal = () => {
@@ -93,6 +98,8 @@ const ModalSuccess: React.FC = () => {
   if (!data) {
     return <div>Không có dữ liệu</div>;
   }
+
+  // Define columns for the table inside modal
   const columns = [
     {
       title: "Tháng/Năm",
@@ -130,7 +137,7 @@ const ModalSuccess: React.FC = () => {
       {/* Open Modal Button */}
       <Row justify="center">
         <Button type="primary" onClick={openModal}>
-          Xem chi tiết
+          Xem chi tiết tỷ lệ hoàn thành
         </Button>
       </Row>
 
@@ -151,7 +158,6 @@ const ModalSuccess: React.FC = () => {
             <Space>
               Thống kê theo:
               <Select
-              className="mb-2"
                 value={timeRange}
                 onChange={handleTimeRangeChange}
                 style={{ width: 120 }}

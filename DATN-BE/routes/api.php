@@ -27,6 +27,7 @@ use App\Http\Middleware\CheckAdmin;
 use App\Http\Middleware\CheckEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 /*
@@ -136,6 +137,8 @@ Route::get('/statistics/revenue', [StatisticsController::class, 'revenueByDay'])
 Route::get('/statistics/top-selling-products', [StatisticsController::class, 'topSellingProducts']);
 // top 3 thương hiệu bán chạy theo tuần, tháng, quý , năm
 Route::get('/statistics/top-brand', [StatisticsController::class, 'brandStatistics']);
+// top 10 sản phẩm đánh giá cao theo tuần tháng quý năm
+Route::get('/statistics/top-rate', [StatisticsController::class, 'topRatedProducts']);
 
 Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatistics']);
 
@@ -143,3 +146,14 @@ Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatisti
 Route::get('/statistics/user', [StatisticsController::class, 'userStatistics']);
 // tổng đơn hàng,  tỉ lệ thành công,hủy của đơn hàng theo ngày, tuần ,tháng , quý ,năm
 Route::get('/statistics/order', [StatisticsController::class, 'orderStatistics']);
+
+
+// api Realtime
+Route::get('verify-token', function (Request $request) {
+    try {
+        $user = JWTAuth::parseToken()->authenticate();
+        return response()->json(['user' => $user]);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Token không hợp lệ'], 401);
+    }
+});

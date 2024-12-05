@@ -91,11 +91,11 @@ const ProductDetail = () => {
         (colorId && String(v.tb_color_id) === colorId)
     );
     setCurrentVariant(variant || null);
-
+    setQuantity(1);
     // Đặt lại số lượng, đảm bảo không vượt quá số lượng của biến thể mới
-    if (variant) {
-      setQuantity(Math.min(quantity, variant.quantity));
-    }
+    // if (variant) {
+    //   setQuantity(Math.min(quantity, variant.quantity));
+    // }
   };
 
   const handleChangeOption = (event: SelectChangeEvent) => {
@@ -150,8 +150,8 @@ const ProductDetail = () => {
     };
     // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
     addToCart(cartItem);
-  }
 
+  }
 
   const handleBuyNow = () => {
     if (!currentVariant) {
@@ -363,9 +363,9 @@ const ProductDetail = () => {
                   <div className="flex-w flex-r-m p-b-10">
                     <div className="size-204 flex-w flex-m respon6-next">
                       {currentVariant?.quantity === 0 ? (
-                        <h3 style={{ color: "red", fontWeight: "bold" }}>
+                        <h5 style={{ color: "red", fontWeight: "bold" }}>
                           Sản phẩm đã hết hàng
-                        </h3>
+                        </h5>
                       ) :
                         (<div className="wrap-num-product flex-w m-r-20 m-tb-10" style={{ marginLeft: "22px" }}>
                           <button

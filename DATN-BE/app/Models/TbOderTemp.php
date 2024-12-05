@@ -5,12 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class tb_oder extends Model
+class TbOderTemp extends Model
 {
     use HasFactory;
-
-    protected $table = 'tb_oders';
-
+    protected $table = 'tb_oder_temps';
     protected $fillable = [
         'order_code',
         'user_id',
@@ -25,23 +23,18 @@ class tb_oder extends Model
         'address',
         'email'
     ];
-
-    // public function cart(){
-    //     return $this->belongsTo(tb_cart::class, 'tb_cart_id');
-    // }
-
-    public function user()
+    public function userTemp()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function discount()
+    public function discountTemp()
     {
         return $this->belongsTo(tb_discount::class, 'tb_discount_id', 'id');
     }
 
-    public function oderDetails()
+    public function oderDetailsTemp()
     {
-        return $this->hasMany(tb_oderdetail::class, 'tb_oder_id');
+        return $this->hasMany(TbOderdetailTemp::class, 'tb_oder_temp_id');
     }
 }

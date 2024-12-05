@@ -45,13 +45,16 @@ const ModalError: React.FC = () => {
       if (!response.ok) throw new Error("Failed to fetch order statistics");
       const result = await response.json();
       setData(result);
-      setFilteredData(result["Tổng đơn hàng"]); 
+      setFilteredData(result["Tổng đơn hàng"]); // Set filtered data initially to all records
     } catch (error) {
+      console.error("Error fetching data:", error);
       message.error("Không thể tải dữ liệu thống kê");
     } finally {
       setLoading(false);
     }
   };
+
+  // Fetch data when the component mounts or when the time range changes
   useEffect(() => {
     fetchOrderStats();
   }, [timeRange]);
@@ -104,6 +107,8 @@ const ModalError: React.FC = () => {
   if (!data) {
     return <div>Không có dữ liệu</div>;
   }
+
+  // Define columns for the table inside modal
   const columns = [
     {
       title: "Tháng/Năm",

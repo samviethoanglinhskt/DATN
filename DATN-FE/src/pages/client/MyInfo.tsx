@@ -79,8 +79,8 @@ const Profile = () => {
         try {
             const response = await updateUser({ name, phone, email });
             console.log(response);
-
             alert("Cập nhật thông tin thành công!");
+            window.location.reload();
         } catch (error) {
             console.error("Cập nhật thông tin thất bại:", error);
         }
