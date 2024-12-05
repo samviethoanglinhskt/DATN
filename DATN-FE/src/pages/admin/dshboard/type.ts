@@ -37,10 +37,14 @@ export interface StatisticData {
   totalOrders: number;
   completedOrders: number;
   cancelledOrders: number;
+  pendingOrders: number; // Added
+  failedDeliveryOrders: number; // Added
   completionRate: number;
   cancellationRate: number;
   userGrowth: string;
   orderGrowth: string;
+  totalRevenue: number;
+  revenueGrowth: number;
 }
 
 export interface DailyStats {
@@ -154,6 +158,21 @@ export interface StatisticData {
   revenueGrowth: number;
 }
 export interface MonthlyData {
+  "Người dùng": UserStatistic[];
+  "Tổng đơn hàng": OrderStatistic[];
+}
+export interface OrderStatsResponse {
+  message: string;
+  pending_orders: string;
+  failed_delivery_orders: string;
+  "Tổng tất cả đơn hàng chờ xử lý": number;
+  "Tổng tất cả đơn hàng giao hàng thất bại": number;
+}
+export interface DashboardData {
+  statistics: StatisticData;
+  dailyStats: DailyStats[];
+  topProducts: TopProduct[];
+  orderStats?: OrderStatsResponse; // Added
   "Người dùng": UserStatistic[];
   "Tổng đơn hàng": OrderStatistic[];
 }

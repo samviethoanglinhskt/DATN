@@ -7,11 +7,7 @@ import {
   FallOutlined 
 } from '@ant-design/icons';
 import { DailyStats, TopProduct } from './type';
-
-// Sử dụng Typography.Text
 const { Text } = Typography;
-
-// Format currency function
 export const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -19,7 +15,6 @@ export const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// Daily stats columns
 export const getDailyStatsColumns = () => [
   {
     title: 'Ngày',

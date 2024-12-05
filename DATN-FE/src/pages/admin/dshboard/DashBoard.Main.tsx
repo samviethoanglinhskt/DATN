@@ -6,8 +6,6 @@ import {
   Statistic,
   Progress,
   Spin,
-  Select,
-  Table,
   Typography,
   Badge,
   Space,
@@ -19,28 +17,29 @@ import {
   DollarCircleOutlined,
   BarChartOutlined,
   LoadingOutlined,
-  ReloadOutlined,
+  WarningOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDashboardData } from "./dashboardService";
-import StatisticsDetailModal from "./StatisticsDetailModal";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-  formatCurrency,
-  getDailyStatsColumns,
-  getTopProductColumns,
-} from "./TableColums";
-import { Column, Bar, Pie } from "@ant-design/plots";
+import { formatCurrency } from "./TableColums";
+import ModalSuccess from "./modaldashboard/ModalSuccess";
+import ModalError from "./modaldashboard/ModalError";
+import ModalDooble from "./modaldashboard/ModalThree";
+import RevenueModal from "./modaldashboard/ModalDoanhThu";
+import ModalAllOrder from "./modaldashboard/ModalAllOrder";
+import ModalUserStats from "./modaldashboard/Modalusser";
+import TopBrandComponent from "./TopBrand";
+import TopSellingProductsComponent from "./TopProduct";
+import "./style.css";
+import TopRatedProducts from "./TopRate";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 const Dashboard: React.FC = () => {
-  const [timeType, setTimeType] = useState<string>("day");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState<"users" | "orders">("users");
-
-  const { data, isLoading, error, refetch } = useQuery({
+  const [timeType] = useState<string>("day");
+  const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard", timeType],
     queryFn: () => fetchDashboardData(timeType),
     refetchOnWindowFocus: false,
@@ -50,41 +49,20 @@ const Dashboard: React.FC = () => {
     totalUsers: 0,
     totalOrders: 0,
     completedOrders: 0,
+    pendingOrders: 0,
     cancelledOrders: 0,
     completionRate: 0,
     cancellationRate: 0,
+    failedDeliveryOrders: 0,
     userGrowth: "0",
     orderGrowth: "0",
     revenueGrowth: "0",
-  };
-
-  const dailyStats = data?.dailyStats ?? [];
-  const topProducts = data?.topProducts ?? [];
-  console.log(dailyStats);
-
-  const getStatsTitle = () => {
-    switch (timeType) {
-      case "day":
-        return "Thống kê doanh thu theo ngày";
-      case "month":
-        return "Thống kê doanh thu theo tháng";
-      case "year":
-        return "Thống kê doanh thu theo năm";
-      default:
-        return "Thống kê doanh thu";
-    }
-  };
-
-  const handleCardClick = (type: "users" | "orders") => {
-    setModalType(type);
-    setModalVisible(true);
   };
   return (
     <div className="container-fluid py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Title level={2}>Dashboard - Thống kê</Title>
       </div>
-
       {error ? (
         <Alert
           message="Error"
@@ -96,11 +74,10 @@ const Dashboard: React.FC = () => {
         <Spin spinning={isLoading} indicator={<LoadingOutlined />}>
           <Row gutter={16}>
             <Col xs={24} sm={12} lg={8}>
-              <Card
-                hoverable
-                className="mb-4"
-                onClick={() => handleCardClick("users")}
-              >
+              <Card hoverable className="mb-4 card-hover-container">
+                <div className="revenue-modal-container">
+                  <ModalUserStats />
+                </div>
                 <Statistic
                   title={
                     <Space>
@@ -125,11 +102,10 @@ const Dashboard: React.FC = () => {
             </Col>
 
             <Col xs={24} sm={12} lg={8}>
-              <Card
-                hoverable
-                className="mb-4"
-                onClick={() => handleCardClick("orders")}
-              >
+              <Card hoverable className="mb-4 card-hover-container">
+                <div className="revenue-modal-container">
+                  <ModalAllOrder />
+                </div>
                 <Statistic
                   title={
                     <Space>
@@ -153,7 +129,11 @@ const Dashboard: React.FC = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card hoverable className="mb-4">
+              <Card hoverable className="mb-4 card-hover-container">
+                {/* Ẩn RevenueModal ban đầu và hiển thị khi hover vào Card */}
+                <div className="revenue-modal-container">
+                  <RevenueModal />
+                </div>
                 <Statistic
                   title={
                     <Space>
@@ -169,6 +149,7 @@ const Dashboard: React.FC = () => {
                   valueStyle={{ color: "#1890ff" }}
                   formatter={(value) => formatCurrency(Number(value))}
                 />
+
                 <Progress
                   percent={parseFloat(statistics.orderGrowth)}
                   size="small"
@@ -179,7 +160,10 @@ const Dashboard: React.FC = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card hoverable className="mb-4">
+              <Card hoverable className="mb-4 card-hover-container">
+                <div className="revenue-modal-container">
+                  <ModalSuccess />
+                </div>
                 <Statistic
                   title={
                     <Space>
@@ -204,9 +188,12 @@ const Dashboard: React.FC = () => {
                 />
               </Card>
             </Col>
-
             <Col xs={24} sm={12} lg={8}>
-              <Card hoverable className="mb-4">
+              <Card hoverable className="mb-4 card-hover-container">
+                <div className="revenue-modal-container">
+                  <ModalError />
+                </div>
+
                 <Statistic
                   title={
                     <Space>
@@ -230,137 +217,71 @@ const Dashboard: React.FC = () => {
                 />
               </Card>
             </Col>
-          </Row>
-          <Card
-            title={getStatsTitle()}
-            className="mb-4"
-            extra={
-              <Space>
-                <Select
-                  value={timeType}
-                  style={{ width: 150 }}
-                  onChange={setTimeType}
+            <Col xs={24} sm={12} lg={8}>
+              <Card hoverable className="mb-4 card-hover-container">
+                <div className="revenue-modal-container">
+                  <ModalDooble />
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <Option value="day">Theo ngày</Option>
-                  <Option value="month">Theo tháng</Option>
-                  <Option value="year">Theo năm</Option>
-                </Select>
-                <ReloadOutlined
-                  onClick={() => refetch()}
-                  spin={isLoading}
-                  style={{ fontSize: "18px", cursor: "pointer" }}
-                />
-              </Space>
-            }
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              {/* Biểu đồ cột */}
-              <div style={{ width: "60%", paddingRight: "20px" }}>
-                <Column
-                  data={dailyStats}
-                  xField="date" // Trường dữ liệu của trục X (ngày)
-                  yField="revenue" // Trường dữ liệu của trục Y (doanh thu)
-                  label={{
-                    position: "middle",
-                    style: {
-                      fill: "#FFFFFF",
-                      fontSize: 12,
-                      fontWeight: 500,
-                    },
-                  }}
-                  tooltip={{
-                    formatter: (datum) => ({
-                      name: "Doanh thu",
-                      value: formatCurrency(datum.revenue), // Đảm bảo formatCurrency hoạt động chính xác
-                    }),
-                  }}
-                  columnStyle={{
-                    radius: [4, 4, 0, 0],
-                    shadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  }}
-                  color="#4CAF50"
-                  animation={{
-                    appear: {
-                      animation: "wave-in",
-                      duration: 1000,
-                    },
-                  }}
-                />
-              </div>
+                  {/* Đơn hàng chờ xử lý */}
+                  <div style={{ flex: 1, marginRight: "8px" }}>
+                    <Statistic
+                      title={
+                        <Space>
+                          <span>Đơn hàng chờ xử lý</span>
+                          <Badge
+                            count={statistics.pendingOrders}
+                            style={{ backgroundColor: "#faad14" }}
+                          />
+                        </Space>
+                      }
+                      value={statistics.pendingOrders}
+                      prefix={<ClockCircleOutlined />}
+                      valueStyle={{ color: "#faad14" }}
+                    />
+                    <Progress
+                      percent={100}
+                      size="small"
+                      showInfo={false}
+                      strokeColor="#faad14"
+                    />
+                  </div>
 
-              <div style={{ width: "35%" }}>
-                <Table
-                  columns={getDailyStatsColumns()}
-                  dataSource={dailyStats}
-                  pagination={false}
-                  rowKey="date"
-                  loading={isLoading}
-                />
-              </div>
-            </div>
+                  {/* Đơn hàng giao thất bại */}
+                  <div style={{ flex: 1, marginLeft: "8px" }}>
+                    <Statistic
+                      title={
+                        <Space>
+                          <span>Đơn hàng giao thất bại</span>
+                        </Space>
+                      }
+                      value={statistics.failedDeliveryOrders}
+                      prefix={<WarningOutlined />}
+                      valueStyle={{ color: "#ff4d4f" }}
+                    />
+                    <Progress
+                      percent={100}
+                      size="small"
+                      showInfo={false}
+                      strokeColor="#ff4d4f"
+                    />
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+          <Card>
+            <TopSellingProductsComponent />
           </Card>
 
           <Card title="Top sản phẩm bán chạy" className="shadow-lg">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ width: "60%" }}>
-                <Table
-                  columns={getTopProductColumns()}
-                  dataSource={topProducts}
-                  pagination={false}
-                  rowKey="id"
-                />
-              </div>
-
-              <div style={{ width: "35%" }}>
-                <Pie
-                  data={topProducts}
-                  angleField="sales"
-                  colorField="name"
-                  radius={0.8}
-                  label={{
-                    type: "outer",
-                    content: "{name} {percentage}",
-                  }}
-                  tooltip={{
-                    formatter: (datum) => ({
-                      name: datum.name,
-                      value: `${datum.sales} sản phẩm - ${formatCurrency(
-                        datum.revenue
-                      )}`,
-                    }),
-                  }}
-                  interactions={[{ type: "element-active" }]}
-                  animation={{
-                    appear: {
-                      animation: "fade-in",
-                      duration: 1000,
-                    },
-                  }}
-                />
-              </div>
-            </div>
+            <TopBrandComponent />
           </Card>
-
-          {data && (
-            <StatisticsDetailModal
-              open={modalVisible}
-              onClose={() => setModalVisible(false)}
-              type={modalType}
-              data={data}
-            />
-          )}
+          <Card>
+            <TopRatedProducts />
+          </Card>
         </Spin>
       )}
     </div>
