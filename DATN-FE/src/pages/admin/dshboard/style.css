@@ -1,0 +1,62 @@
+.card-hover-container {
+    position: relative;
+    overflow: hidden; /* Ensure overlay does not overflow the card */
+    transition: all 0.3s ease; /* Smooth transition for card */
+  }
+  
+  .card-hover-container .card-overlay {
+    display: none; /* Initially hide overlay */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)); /* Gradient overlay */
+    z-index: 1; /* Keep overlay below modal */
+    transition: background 0.3s ease, opacity 0.3s ease; /* Smooth transition for background and opacity */
+  }
+  .card-hover-container .extra-content {
+    display: none; /* Hide the extra content below the button */
+  }
+  .card-hover-container .revenue-modal-container {
+    display: none; /* Initially hide modal */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9); /* Center and slightly shrink */
+    z-index: 2; /* Ensure modal is above the overlay */
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
+    border-radius: 12px; /* Softer rounded corners */
+    transition: all 0.4s ease; /* Smooth animation for modal */
+    opacity: 0; /* Initially hidden */
+  }
+  
+  .card-hover-container:hover .card-overlay {
+    display: block; /* Show overlay when hovered */
+    background: rgba(0, 0, 0, 0.7); /* Darker overlay */
+    opacity: 1; /* Fade in overlay */
+  }
+  
+  .card-hover-container:hover .revenue-modal-container {
+    display: block; /* Show modal when hovered */
+    transform: translate(-50%, -50%) scale(1); /* Expand modal */
+    opacity: 1; /* Make modal fully visible */
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.2); /* Increase shadow size when modal is active */
+    animation: bounceIn 0.5s ease-out; /* Apply bounce effect when modal appears */
+  }
+  
+  /* Keyframes for bounce effect */
+  @keyframes bounceIn {
+    0% {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.05); /* Slight over-shoot */
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1); /* Settle at normal size */
+    }
+  }
+  

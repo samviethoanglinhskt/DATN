@@ -217,7 +217,7 @@ const OrderMain: React.FC = () => {
     try {
       await axios.put("http://127.0.0.1:8000/api/fail-order-admin", {
         id: selectedOrderForFailure,
-        feedback: feedback,
+      
       });
 
       setOrders((prevOrders) =>
