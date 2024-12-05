@@ -27,6 +27,7 @@ use App\Http\Middleware\CheckAdmin;
 use App\Http\Middleware\CheckEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 /*
@@ -145,3 +146,14 @@ Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatisti
 Route::get('/statistics/user', [StatisticsController::class, 'userStatistics']);
 // tổng đơn hàng,  tỉ lệ thành công,hủy của đơn hàng theo ngày, tuần ,tháng , quý ,năm
 Route::get('/statistics/order', [StatisticsController::class, 'orderStatistics']);
+
+
+// api Realtime
+Route::get('verify-token', function (Request $request) {
+    try {
+        $user = JWTAuth::parseToken()->authenticate();
+        return response()->json(['user' => $user]);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Token không hợp lệ'], 401);
+    }
+});
