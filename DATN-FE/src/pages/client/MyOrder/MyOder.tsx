@@ -408,11 +408,11 @@ const MyOrder: React.FC = () => {
         },
       });
 
-      if (response.data.success) {
+      if (response.data.Message && response.data.Link) {
         Modal.confirm({
-          title: "Xác nhận thanh toán",
+          title: "Thông báo",
           content: response.data.Message,
-          okText: "Xác nhận",
+          okText: "Thanh toán",
           cancelText: "Hủy",
           onOk: () => {
             window.location.href = response.data.Link;
