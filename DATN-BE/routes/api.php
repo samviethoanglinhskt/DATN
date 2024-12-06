@@ -93,6 +93,10 @@ Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
 Route::post('/payment-online', [CartController::class, 'vnpay'])->name('payment.online');
 Route::post('/payment-guest', [CartController::class, 'vnpay_guest'])->name('payment.guest');
+
+// mua lại bằng vnpay 
+Route::post('/payment-reorder', [CartController::class, 'reOrder'])->name('payment.reorder');
+Route::get('/vnpay/ipn/reorder', [CartController::class, 'handleVnpayIpnReOrder'])->name('vnpay.ipn.reorder');
 //oder
 Route::resource('order', OderController::class);
 Route::get('/list-oder-client', [OderController::class, 'listOderClient'])->name('list_oder_client');
