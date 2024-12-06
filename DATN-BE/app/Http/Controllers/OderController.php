@@ -16,7 +16,7 @@ class OderController extends Controller
     public function listOderAdmin()
     {
         try {
-            $oder = tb_oder::all();
+            $oder = tb_oder::orderBy('id', 'desc')->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Hiển thị toàn bộ đơn hàng thành công',
@@ -41,7 +41,7 @@ class OderController extends Controller
                 ], 404);
             }
             $oder = tb_oder::with('oderDetails', 'oderDetails.product', 'oderDetails.variant', 'oderDetails.variant.size', 'oderDetails.variant.color', 'discount')
-                ->where('user_id', $user->id)
+                ->where('user_id', $user->id)->orderByDesc('id')
                 ->get();
             return response()->json([
                 'success' => true,
