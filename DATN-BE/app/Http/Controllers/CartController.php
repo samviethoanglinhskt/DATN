@@ -396,6 +396,7 @@ class CartController extends Controller
                         $order->order_code = 'ORD-' . $order->id;
                         $order->total_amount = $totalOrder;
                         $order->save();
+
                         // Cập nhật lại số lượng sản phẩm 
                         $variant->quantity -= $request->quantity;
                         if ($variant->quantity <= 0) {
@@ -487,9 +488,10 @@ class CartController extends Controller
                             throw new \Exception('Sản phẩm không đủ số lượng');
                         }
                     }
+
                     // Cập nhật thông tin đơn hàng 
                     $order->order_code = 'ORD-' . $order->id;
-                    $order->total_amount = $totalOrder;
+                    $order->total_amount = $request->total_amount;
                     $order->save();
                 });
                 return response()->json([
@@ -790,7 +792,7 @@ class CartController extends Controller
 
                 $order = TbOderTemp::create([
                     'user_id' => $user->id,
-                    'tb_discount_id' => 1,
+                    'tb_discount_id' => $request->tb_discount_id,
                     'order_date' => now(),
                     'order_type' => 'cart',
                     'order_status' => 'Chờ xử lý',
@@ -802,8 +804,7 @@ class CartController extends Controller
                 foreach ($selectedItems as $item) {
                     $variant = tb_variant::find($item->tb_variant_id);
                     if ($variant) {
-                        $totalAmount = $variant->price * $item->quantity;
-                        $totalOrder += $totalAmount;
+                        $totalOrder = $request->total_amount;
                     }
                     $oderDetail = TbOderdetailTemp::create([
                         'tb_oder_temp_id' => $order->id,
