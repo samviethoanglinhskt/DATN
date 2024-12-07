@@ -123,9 +123,9 @@ const TopSellingProductsComponent: React.FC = () => {
     if (timeRange === "year") {
       return year;
     } else if (timeRange === "month") {
-      return `${month}/${year}`;
+      return `Tháng ${month}-${year}`;
     } else if (timeRange === "week") {
-      return `Tuần ${week_in_month} - ${year}`;  // Week in month
+      return `Tuần ${week_in_month}-${month}/${year}`;  // Week in month
     } else if (timeRange === "quarter") {
       return `Quý ${quarter}, ${year}`;
     }

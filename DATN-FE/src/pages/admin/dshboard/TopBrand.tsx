@@ -86,14 +86,14 @@ const TopBrandComponent: React.FC = () => {
             timePeriod = item.year.toString();
             break;
           case "quarter":
-            timePeriod = item.quarter ? `Quý ${item.quarter}` : "Chưa xác định";
+            timePeriod = item.quarter ? `Quý ${item.quarter}-${item.year}` : "Chưa xác định";
             break;
           case "month":
-            timePeriod = `${item.month} tháng`;
+            timePeriod = `Tháng${item.month}-${item.year}`;
             break;
           case "week":
             timePeriod = item.week_in_month
-              ? `Tuần ${item.week_in_month}`
+              ? `Tuần ${item.week_in_month}-${item.month}/${item.year}`
               : "Chưa xác định";
             break;
           default:

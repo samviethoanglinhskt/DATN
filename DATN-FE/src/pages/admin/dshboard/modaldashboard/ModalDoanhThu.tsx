@@ -11,9 +11,11 @@ import {
   Input,
   message,
 } from "antd";
+
 interface OrderStats {
   year: number;
   month: number;
+  day?: number; // Add the day property
   total_revenue: string;
   growthPercentageRevenue: string;
 }
@@ -137,6 +139,17 @@ const RevenueModal: React.FC = () => {
         });
       }
 
+      if (timeRange === "day") {
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          // Lọc theo Ngày
+          return (
+            record.day?.toString().includes(value) ||
+            record.month.toString().includes(value) ||
+            record.year.toString().includes(value)
+          );
+        });
+      }
+
       setFilteredData(filtered || []);
     }
   };
@@ -155,9 +168,9 @@ const RevenueModal: React.FC = () => {
 
   const columns = [
     {
-      title: "Tháng/Năm",
-      dataIndex: "month",
-      key: "month",
+      title: "Ngày/Tháng/Năm",
+      dataIndex: "day", // Added day to show
+      key: "day",
       render: (text: any, record: OrderStats) => {
         if (timeRange === "year") {
           return `${record.year}`;
@@ -168,6 +181,8 @@ const RevenueModal: React.FC = () => {
           return `Tuần ${record.month} - ${record.year}`;
         } else if (timeRange === "month") {
           return `${record.month}/${record.year}`;
+        } else if (timeRange === "day") {
+          return `${record.day}/${record.month}/${record.year}`;
         }
         return null;
       },
@@ -229,6 +244,7 @@ const RevenueModal: React.FC = () => {
                 onChange={handleTimeRangeChange}
                 style={{ width: 120 }}
                 options={[
+                  { value: "day", label: "Ngày" }, // Added day option
                   { value: "week", label: "Tuần" },
                   { value: "month", label: "Tháng" },
                   { value: "quarter", label: "Quý" },
@@ -250,7 +266,9 @@ const RevenueModal: React.FC = () => {
                     ? "năm"
                     : timeRange === "quarter"
                     ? "quý"
-                    : "tuần"
+                    : timeRange === "week"
+                    ? "tuần"
+                    : "ngày" 
                 }`}
                 style={{ width: "100%" }}
               />
@@ -261,7 +279,7 @@ const RevenueModal: React.FC = () => {
           <Table
             columns={columns}
             dataSource={filteredData}
-            rowKey={(record) => `${record.month}-${record.year}`}
+            rowKey={(record) => `${record.day}-${record.month}-${record.year}`} // Changed key for day
             pagination={false}
             scroll={{ y: 240 }}
           />

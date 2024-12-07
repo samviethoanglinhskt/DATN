@@ -15,26 +15,34 @@ import {
 interface OrderStats {
   year: number;
   month?: number; // Make month optional
+  day?: number; // Add day as optional
   total_revenue: string;
   growthPercentageComplete: string;
   total_orders: number;
-  completed_orders: string;
+  completed_orders: string; // Keep as string to handle the response format
+  pending_orders: string;
+  failed_delivery_orders: string;
+  cancelled_orders: string;
+  growth_percentageOrder: string;
+  growthPercentageCancel: string;
+  growthPercentageRevenue: string;
+  growthPercentagePending: string;
+  growthPercentageFailDelivery: string;
 }
 
 interface DashboardData {
   "Tổng đơn hàng": OrderStats[];
-  "Tỉ lệ hoàn thành": number;
+  "Tỉ lệ hoàn thành": number; // You might not need this
 }
 
 const ModalSuccess: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState("month"); // Default time range is "month"
+  const [timeRange, setTimeRange] = useState("month");
   const [modalVisible, setModalVisible] = useState(false);
   const [filteredData, setFilteredData] = useState<OrderStats[]>([]);
-  const [filterText, setFilterText] = useState(""); // Text input for filtering
+  const [filterText, setFilterText] = useState("");
 
-  // Fetch data with type as the time range (day, week, month, quarter, year)
   const fetchOrderStats = async (period: string = timeRange) => {
     try {
       setLoading(true);
@@ -44,7 +52,7 @@ const ModalSuccess: React.FC = () => {
       if (!response.ok) throw new Error("Failed to fetch order statistics");
       const result = await response.json();
       setData(result);
-      setFilteredData(result["Tổng đơn hàng"]); // Set filtered data initially to all records
+      setFilteredData(result["Tổng đơn hàng"]);
     } catch (error) {
       console.error("Error fetching data:", error);
       message.error("Không thể tải dữ liệu thống kê");
@@ -53,15 +61,13 @@ const ModalSuccess: React.FC = () => {
     }
   };
 
-  // Fetch data when the component mounts or when the time range changes
   useEffect(() => {
     fetchOrderStats();
   }, [timeRange]);
 
-  // Handle time range changes
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
-    fetchOrderStats(value); // Fetch data with new time range
+    fetchOrderStats(value);
   };
 
   const openModal = () => {
@@ -72,7 +78,6 @@ const ModalSuccess: React.FC = () => {
     setModalVisible(false);
   };
 
-  // Handle text filter change
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFilterText(value);
@@ -80,7 +85,6 @@ const ModalSuccess: React.FC = () => {
     if (data) {
       let filtered: OrderStats[] = [];
 
-      // Lọc dữ liệu theo phạm vi thời gian
       if (timeRange === "month" || timeRange === "year") {
         filtered = data["Tổng đơn hàng"].filter(
           (record) =>
@@ -91,7 +95,6 @@ const ModalSuccess: React.FC = () => {
 
       if (timeRange === "quarter") {
         filtered = data["Tổng đơn hàng"].filter((record) => {
-          // Lọc theo Quý
           const quarter = Math.ceil((record.month || 1) / 3);
           return (
             `Quý ${quarter}`.includes(value) ||
@@ -102,7 +105,6 @@ const ModalSuccess: React.FC = () => {
 
       if (timeRange === "week") {
         filtered = data["Tổng đơn hàng"].filter((record) => {
-          // Lọc theo Tuần
           return (
             record.year.toString().includes(value) ||
             record.month?.toString().includes(value)
@@ -111,9 +113,8 @@ const ModalSuccess: React.FC = () => {
       }
 
       if (timeRange === "day") {
-        // Nếu cần lọc theo ngày, bạn có thể sử dụng logic lọc khác tùy theo định dạng ngày
         filtered = data["Tổng đơn hàng"].filter((record) =>
-          `${record.month}/${record.year}`.includes(value)
+          `${record.day}/${record.month}/${record.year}`.includes(value)
         );
       }
 
@@ -133,24 +134,35 @@ const ModalSuccess: React.FC = () => {
     return <div>Không có dữ liệu</div>;
   }
 
+  // Calculate completion rate if it's not provided in the API response
+  const calculateCompletionRate = (record: OrderStats) => {
+    const totalOrders = record.total_orders;
+    const completedOrders = parseInt(record.completed_orders, 10);
+
+    if (totalOrders > 0) {
+      return ((completedOrders / totalOrders) * 100).toFixed(2) + " %";
+    }
+    return "0 %"; // Return 0% if no total orders
+  };
+
   // Define columns for the table inside modal
   const columns = [
     {
-      title: "Tháng/Năm",
-      dataIndex: "month",
-      key: "month",
+      title: "Ngày/Tháng/Năm",
+      dataIndex: "day",
+      key: "day",
       render: (text: any, record: OrderStats) => {
         if (timeRange === "year") {
           return `${record.year}`;
         } else if (timeRange === "quarter") {
           const quarter = Math.ceil((record.month || 1) / 3);
-          return `Quý ${quarter} - ${record.year}`;
+          return `Quý ${quarter} - ${record.month}/${record.year}`;
         } else if (timeRange === "week") {
-          return `Tuần ${record.month} - ${record.year}`;
+          return `Tuần ${record.month} - ${record.month}/${record.year}`;
         } else if (timeRange === "month") {
-          return `${record.month}/${record.year}`;
+          return `Tháng ${record.month}/${record.year}`;
         } else if (timeRange === "day") {
-          return `Ngày ${record.month || ""}/${record.year}`;
+          return `Ngày ${record.day}/${record.month}/${record.year}`;
         }
         return null;
       },
@@ -169,10 +181,7 @@ const ModalSuccess: React.FC = () => {
       title: "Tỷ lệ hoàn thành",
       key: "completion_rate",
       render: (text: string, record: OrderStats) =>
-        `${(
-          (parseInt(record.completed_orders, 10) / record.total_orders) *
-          100
-        ).toFixed(2)} %`,
+        calculateCompletionRate(record), // Use function to calculate completion rate
     },
   ];
 
@@ -182,14 +191,12 @@ const ModalSuccess: React.FC = () => {
       size="large"
       style={{ width: "100%", padding: 24 }}
     >
-      {/* Open Modal Button */}
       <Row justify="center">
         <Button type="primary" onClick={openModal}>
-          Xem chi tiết tỷ lệ hoàn thành
+          Xem chi tiết
         </Button>
       </Row>
 
-      {/* Modal */}
       <Modal
         title="Chi tiết tỉ lệ hoàn thành"
         visible={modalVisible}
@@ -214,6 +221,7 @@ const ModalSuccess: React.FC = () => {
                 onChange={handleTimeRangeChange}
                 style={{ width: 120 }}
                 options={[
+                  { value: "day", label: "Ngày" }, // Add option for day
                   { value: "week", label: "Tuần" },
                   { value: "month", label: "Tháng" },
                   { value: "quarter", label: "Quý" },
@@ -223,7 +231,6 @@ const ModalSuccess: React.FC = () => {
             </Space>
           </Col>
 
-          {/* Filter Input Inside Modal */}
           <Row justify="start" style={{ marginBottom: 16 }}>
             <Col span={24}>
               <Input
@@ -245,11 +252,12 @@ const ModalSuccess: React.FC = () => {
             </Col>
           </Row>
 
-          {/* Table */}
           <Table
             columns={columns}
             dataSource={filteredData}
-            rowKey={(record) => `${record.month || record.year}-${record.year}`}
+            rowKey={(record) =>
+              `${record.day || record.month || record.year}-${record.year}`
+            }
             pagination={false}
             scroll={{ y: 240 }}
           />
