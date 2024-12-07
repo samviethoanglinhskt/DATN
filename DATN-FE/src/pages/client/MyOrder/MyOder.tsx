@@ -421,7 +421,7 @@ const MyOrder: React.FC = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      message.error("Đã xảy ra lỗi");
+      message.warning("Xin lỗi số lượng sản phẩm đã hết!");
     }
   };
 

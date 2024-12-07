@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Space, Select, Table, message, Typography, Spin } from "antd";
+import {
+  Row,
+  Col,
+  Space,
+  Select,
+  Table,
+  message,
+  Typography,
+  Spin,
+} from "antd";
 import { Pie } from "@ant-design/plots";
 import { ColumnGroupType, ColumnType } from "antd/es/table";
 
@@ -30,6 +39,8 @@ const TopBrandComponent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState("month");
   const [displayData, setDisplayData] = useState<BrandStats[]>([]);
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const pageSize = 5; // Page size of 5 items
 
   const fetchBrandStats = async (type: string) => {
     try {
@@ -38,13 +49,13 @@ const TopBrandComponent: React.FC = () => {
         `http://127.0.0.1:8000/api/statistics/top-brand?type=${type}`
       );
       if (!response.ok) throw new Error("Failed to fetch statistics");
-      
+
       const result: ApiResponse = await response.json();
       setApiData(result);
-      
-      // Process data based on time range
-      const latestPeriodData = processDataByTimeRange(result.data, type);
-      setDisplayData(latestPeriodData);
+
+      // Process data by time range without grouping by latest period
+      const allPeriodData = processDataByTimeRange(result.data, type);
+      setDisplayData(allPeriodData);
     } catch (error) {
       console.error("Error:", error);
       message.error("Không thể tải dữ liệu thống kê");
@@ -53,23 +64,73 @@ const TopBrandComponent: React.FC = () => {
     }
   };
 
-  const processDataByTimeRange = (data: Record<string, BrandStats[]>, type: string): BrandStats[] => {
+  const processDataByTimeRange = (
+    data: Record<string, BrandStats[]>,
+    type: string
+  ): BrandStats[] => {
+    // Lấy tất cả các thời gian từ API (tất cả các key của data)
     const periods = Object.keys(data).sort().reverse();
+
     if (periods.length === 0) return [];
 
-    const latestPeriod = periods[0];
-    return data[latestPeriod] || [];
+    // Duyệt qua tất cả các thời gian và lấy dữ liệu của từng thời gian
+    let allPeriodData: BrandStats[] = [];
+    periods.forEach((period) => {
+      const periodData = data[period] || [];
+
+      // Thêm cột "Thời gian" cho từng bản ghi trong thời gian đó
+      const dataWithTimePeriod = periodData.map((item) => {
+        let timePeriod = "";
+        switch (timeRange) {
+          case "year":
+            timePeriod = item.year.toString();
+            break;
+          case "quarter":
+            timePeriod = item.quarter ? `Quý ${item.quarter}` : "Chưa xác định";
+            break;
+          case "month":
+            timePeriod = `${item.month} tháng`;
+            break;
+          case "week":
+            timePeriod = item.week_in_month
+              ? `Tuần ${item.week_in_month}`
+              : "Chưa xác định";
+            break;
+          default:
+            timePeriod = "Chưa xác định";
+        }
+
+        return { ...item, timePeriod };
+      });
+
+      // Ghép dữ liệu của tất cả các thời gian lại
+      allPeriodData = allPeriodData.concat(dataWithTimePeriod);
+    });
+
+    return allPeriodData;
   };
 
   useEffect(() => {
     fetchBrandStats(timeRange);
   }, [timeRange]);
 
+  // Paginate the displayData based on the current page
+  const paginatedData = displayData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   const columns: (ColumnGroupType<BrandStats> | ColumnType<BrandStats>)[] = [
     {
       title: "Thương hiệu",
       dataIndex: "brand_name",
       key: "brand_name",
+    },
+    {
+      title: "Thời gian",
+      dataIndex: "timePeriod",
+      key: "timePeriod",
+      align: "center",
     },
     {
       title: "Doanh số",
@@ -111,17 +172,24 @@ const TopBrandComponent: React.FC = () => {
   }));
 
   if (loading) {
-    return <Spin size="large" className="flex justify-center items-center min-h-[400px]" />;
+    return (
+      <Spin
+        size="large"
+        className="flex justify-center items-center min-h-[400px]"
+      />
+    );
   }
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <Title level={4} className="mb-2">Thống kê thương hiệu bán chạy</Title>
+        <Title level={4} className="mb-2">
+          Thống kê Top 3 thương hiệu bán chạy
+        </Title>
         <Space>
           <span>Thống kê theo:</span>
           <Select
-          className="mb-2"
+            className="mb-2"
             value={timeRange}
             onChange={setTimeRange}
             style={{ width: 120 }}
@@ -139,16 +207,23 @@ const TopBrandComponent: React.FC = () => {
         <Col span={14}>
           <Table
             columns={columns}
-            dataSource={displayData}
+            dataSource={paginatedData}
             rowKey="brand_name"
-            pagination={false}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: displayData.length,
+              onChange: (page) => setCurrentPage(page),
+            }}
             className="shadow-sm rounded-lg"
             summary={() => (
               <Table.Summary fixed>
                 <Table.Summary.Row>
                   <Table.Summary.Cell index={0}>Tổng cộng</Table.Summary.Cell>
                   <Table.Summary.Cell index={1} align="right">
-                    {apiData?.["Tổng sản phẩm của tất cả thương hiệu bán chạy"]?.toLocaleString()}
+                    {apiData?.[
+                      "Tổng sản phẩm của tất cả thương hiệu bán chạy"
+                    ]?.toLocaleString()}
                   </Table.Summary.Cell>
                   <Table.Summary.Cell index={2} align="right">
                     {apiData?.["Tổng số lượng bán ra"]?.toLocaleString()}
