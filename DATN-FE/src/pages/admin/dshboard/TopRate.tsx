@@ -18,6 +18,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 
 const { Title } = Typography;
@@ -157,35 +158,40 @@ const TopRatedProducts: React.FC = () => {
 
       {/* Chart Section (Top Section) */}
       <Row gutter={24} style={{ marginBottom: "20px" }}>
-        <Col span={24}>
-          <Card className="shadow-sm rounded-lg">
-            <LineChart
-              width={1600}
-              height={500}
-              data={chartData}
-              margin={{ top: 5, left: 30, bottom: 50 }}
-            >
-              <CartesianGrid  strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="rating"
-                stroke="#8884d8"
-                name="Điểm đánh giá"
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="reviews"
-                stroke="#82ca9d"
-                name="Số lượt đánh giá"
-              />
-            </LineChart>
+        <Col span={24} className="w-full">
+          <Card className="shadow-sm rounded-lg w-full">
+            <ResponsiveContainer width="100%" height={500}>
+              <LineChart
+                data={chartData}
+                margin={{ top: 5, bottom: 50 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="name"
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
+                <Tooltip />
+                <Legend />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="rating"
+                  stroke="#8884d8"
+                  name="Điểm đánh giá"
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="reviews"
+                  stroke="#82ca9d"
+                  name="Số lượt đánh giá"
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </Card>
         </Col>
       </Row>
@@ -201,7 +207,7 @@ const TopRatedProducts: React.FC = () => {
               current: currentPage,
               pageSize: 5,
               total: totalProducts,
-              onChange: (page) => setCurrentPage(page), 
+              onChange: (page) => setCurrentPage(page),
             }}
             className="shadow-sm rounded-lg"
           />
