@@ -28,7 +28,10 @@
                     {{ $size }} {{ $color }}
                 </td>
                 <td style="border: 1px solid #ddd; padding: 10px;">{{ $orderDetail->quantity }}</td>
-                <td style="border: 1px solid #ddd; padding: 10px;">{{ $orderDetail->price }}</td>
+                <td style="border: 1px solid #ddd; padding: 10px;">{{ $orderDetail->price }} VND</td>
+            </tr>
+            <tr style="background-color: #f9f9f9; border: 1px solid">
+                Tổng tiền: {{ $totalAmount }} VND
             </tr>
         </tbody>
     </table>
