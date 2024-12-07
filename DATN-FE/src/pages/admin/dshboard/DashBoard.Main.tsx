@@ -276,7 +276,7 @@ const Dashboard: React.FC = () => {
             <TopSellingProductsComponent />
           </Card>
 
-          <Card title="Top sản phẩm bán chạy" className="shadow-lg">
+          <Card className="shadow-lg">
             <TopBrandComponent />
           </Card>
           <Card>

@@ -11,13 +11,14 @@ import {
   message,
   Select,
   Space,
+  Input,
 } from "antd";
 
 const { Title } = Typography;
 
 interface OrderStats {
   year: number;
-  month: number;
+  month?: number;
   total_revenue: string;
   growthPercentageComplete: string;
   total_orders: number;
@@ -38,28 +39,20 @@ const ModalDooble: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalFailureVisible, setModalFailureVisible] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [timeRange, setTimeRange] = useState("month");
+  const [filteredData, setFilteredData] = useState<OrderStats[]>([]);
+  const [filterText, setFilterText] = useState("");
 
-  const fetchOrderStats = async () => {
+  const fetchOrderStats = async (period: string = timeRange) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/api/statistics/order`
+        `http://127.0.0.1:8000/api/statistics/order?type=${period}`
       );
       if (!response.ok) throw new Error("Failed to fetch order statistics");
       const result = await response.json();
       setData(result);
-
-      // Set initial filter values
-      if (result["Tổng đơn hàng"].length > 0) {
-        const years = [
-          ...new Set(
-            result["Tổng đơn hàng"].map((item: OrderStats) => item.year)
-          ),
-        ] as number[];
-        setSelectedYear(Math.max(...years));
-      }
+      setFilteredData(result["Tổng đơn hàng"]);
     } catch (error) {
       console.error("Error fetching data:", error);
       message.error("Không thể tải dữ liệu thống kê");
@@ -70,29 +63,56 @@ const ModalDooble: React.FC = () => {
 
   useEffect(() => {
     fetchOrderStats();
-  }, []);
+  }, [timeRange]);
 
-  // Get unique years and months for filters
-  const years = data
-    ? [...new Set(data["Tổng đơn hàng"].map((item) => item.year))]
-    : [];
-  const months = data
-    ? [...new Set(data["Tổng đơn hàng"].map((item) => item.month))]
-    : [];
+  const handleTimeRangeChange = (value: string) => {
+    setTimeRange(value);
+    fetchOrderStats(value);
+  };
 
-  // Filter data based on selected year and month
-  const filteredData = data?.["Tổng đơn hàng"].filter((item) => {
-    if (selectedYear && selectedMonth) {
-      return item.year === selectedYear && item.month === selectedMonth;
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFilterText(value);
+
+    if (data) {
+      let filtered = data["Tổng đơn hàng"].filter((record) => {
+        if (timeRange === "year") {
+          return record.year.toString().includes(value);
+        } else if (timeRange === "quarter") {
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return (
+            `Quý ${quarter}`.includes(value) ||
+            record.year.toString().includes(value)
+          );
+        } else if (timeRange === "week") {
+          return (
+            `Tuần ${record.month}`.includes(value) ||
+            record.year.toString().includes(value)
+          );
+        } else {
+          return (
+            record.month?.toString().includes(value) ||
+            record.year.toString().includes(value)
+          );
+        }
+      });
+      setFilteredData(filtered);
     }
-    if (selectedYear) {
-      return item.year === selectedYear;
+  };
+
+  const renderTimeColumn = (record: OrderStats) => {
+    switch (timeRange) {
+      case "year":
+        return `Năm ${record.year}`;
+      case "quarter":
+        const quarter = Math.ceil((record.month || 1) / 3);
+        return `Quý ${quarter}/${record.year}`;
+      case "week":
+        return `Tuần ${record.month}/${record.year}`;
+      default:
+        return `Tháng ${record.month}/${record.year}`;
     }
-    if (selectedMonth) {
-      return item.month === selectedMonth;
-    }
-    return true;
-  });
+  };
 
   const pendingColumns = [
     {
@@ -107,9 +127,7 @@ const ModalDooble: React.FC = () => {
       align: "center" as const,
       width: 120,
       render: (_: any, record: OrderStats) => (
-        <div style={{ fontWeight: 500 }}>
-          Tháng {record.month}/{record.year}
-        </div>
+        <div style={{ fontWeight: 500 }}>{renderTimeColumn(record)}</div>
       ),
     },
     {
@@ -141,11 +159,7 @@ const ModalDooble: React.FC = () => {
       width: 120,
       render: (_: string, record: OrderStats) => (
         <div style={{ color: "#722ed1", fontWeight: 600 }}>
-          {(
-            (parseInt(record.pending_orders, 10) / record.total_orders) *
-            100
-          ).toFixed(2)}
-          %
+          {((parseInt(record.pending_orders, 10) / record.total_orders) * 100).toFixed(2)}%
         </div>
       ),
     },
@@ -164,9 +178,7 @@ const ModalDooble: React.FC = () => {
       align: "center" as const,
       width: 120,
       render: (_: any, record: OrderStats) => (
-        <div style={{ fontWeight: 500 }}>
-          Tháng {record.month}/{record.year}
-        </div>
+        <div style={{ fontWeight: 500 }}>{renderTimeColumn(record)}</div>
       ),
     },
     {
@@ -198,48 +210,45 @@ const ModalDooble: React.FC = () => {
       width: 120,
       render: (_: string, record: OrderStats) => (
         <div style={{ color: "#722ed1", fontWeight: 600 }}>
-          {(
-            (parseInt(record.failed_delivery_orders, 10) /
-              record.total_orders) *
-            100
-          ).toFixed(2)}
-          %
+          {((parseInt(record.failed_delivery_orders, 10) / record.total_orders) * 100).toFixed(2)}%
         </div>
       ),
     },
   ];
 
   const FilterSection = () => (
-    <Row justify="end" style={{ marginBottom: 16 }}>
-      <Space>
-        <Select
-          style={{ width: 120 }}
-          placeholder="Chọn năm"
-          allowClear
-          value={selectedYear}
-          onChange={setSelectedYear}
-          options={years.map((year) => ({ label: `Năm ${year}`, value: year }))}
+    <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+      <Col>
+        <Space>
+          Thống kê theo:
+          <Select
+            value={timeRange}
+            onChange={handleTimeRangeChange}
+            style={{ width: 120 }}
+            options={[
+              { value: "week", label: "Tuần" },
+              { value: "month", label: "Tháng" },
+              { value: "quarter", label: "Quý" },
+              { value: "year", label: "Năm" },
+            ]}
+          />
+        </Space>
+      </Col>
+      <Col span={8}>
+        <Input
+          value={filterText}
+          onChange={handleFilterChange}
+          placeholder={`Tìm kiếm theo ${
+            timeRange === "month"
+              ? "tháng"
+              : timeRange === "year"
+              ? "năm"
+              : timeRange === "quarter"
+              ? "quý"
+              : "tuần"
+          }`}
         />
-        <Select
-          style={{ width: 120 }}
-          placeholder="Chọn tháng"
-          allowClear
-          value={selectedMonth}
-          onChange={setSelectedMonth}
-          options={months.map((month) => ({
-            label: `Tháng ${month}`,
-            value: month,
-          }))}
-        />
-        <Button
-          onClick={() => {
-            setSelectedYear(null);
-            setSelectedMonth(null);
-          }}
-        >
-          Đặt lại
-        </Button>
-      </Space>
+      </Col>
     </Row>
   );
 
@@ -278,22 +287,10 @@ const ModalDooble: React.FC = () => {
               className="shadow-sm"
               title={
                 <div style={{ padding: "8px 0" }}>
-                  <div
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      color: "#1890ff",
-                    }}
-                  >
+                  <div style={{ fontSize: "16px", fontWeight: 600, color: "#1890ff" }}>
                     Đơn hàng chờ xử lý
                   </div>
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#666",
-                      marginTop: "4px",
-                    }}
-                  >
+                  <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
                     Pending Orders
                   </div>
                 </div>
@@ -313,10 +310,7 @@ const ModalDooble: React.FC = () => {
                 pagination={false}
                 scroll={{ y: 400 }}
                 size="middle"
-                style={{
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
-                  borderRadius: "8px",
-                }}
+                style={{ boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)", borderRadius: "8px" }}
               />
             </Card>
           </Col>
@@ -326,22 +320,10 @@ const ModalDooble: React.FC = () => {
               className="shadow-sm"
               title={
                 <div style={{ padding: "8px 0" }}>
-                  <div
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      color: "#f5222d",
-                    }}
-                  >
+                  <div style={{ fontSize: "16px", fontWeight: 600, color: "#f5222d" }}>
                     Đơn hàng giao thất bại
                   </div>
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#666",
-                      marginTop: "4px",
-                    }}
-                  >
+                  <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
                     Failed Deliveries
                   </div>
                 </div>
@@ -361,10 +343,7 @@ const ModalDooble: React.FC = () => {
                 pagination={false}
                 scroll={{ y: 400 }}
                 size="middle"
-                style={{
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
-                  borderRadius: "8px",
-                }}
+                style={{ boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)", borderRadius: "8px" }}
               />
             </Card>
           </Col>

@@ -140,10 +140,12 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                         <span className="fw-medium">Email:</span>{" "}
                         {orderDetail.email}
                       </p>
-                      <p className="mb-0">
-                        <span className="fw-medium">Lý do hủy:</span>{" "}
-                        {orderDetail.feedback || "Không có"}
-                      </p>
+                      {orderDetail.feedback && (
+                        <p className="mb-0">
+                          <span className="fw-medium">Nguyên nhân:</span>{" "}
+                          {orderDetail.feedback}
+                        </p>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -169,7 +171,11 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                       className="me-3"
                     >
                       <Image
-                        src="https://images2.thanhnien.vn/528068263637045248/2024/1/25/3b690baedbd9a609207c76684a3413d0-65a11b0a7e79d880-17061562931311973368410.jpg"
+                        src={
+                          detail.product.image
+                            ? `http://127.0.0.1:8000/storage/${detail.product.image}`
+                            : "/placeholder.png"
+                        }
                         alt={detail.product.name}
                         width={80}
                         height={80}
