@@ -14,7 +14,7 @@ import {
 
 interface OrderStats {
   year: number;
-  month?: number;  // Make month optional
+  month?: number; // Make month optional
   total_revenue: string;
   growthPercentageComplete: string;
   total_orders: number;
@@ -45,7 +45,6 @@ const ModalSuccess: React.FC = () => {
       const result = await response.json();
       setData(result);
       setFilteredData(result["Tổng đơn hàng"]); // Set filtered data initially to all records
- 
     } catch (error) {
       console.error("Error fetching data:", error);
       message.error("Không thể tải dữ liệu thống kê");
@@ -78,13 +77,48 @@ const ModalSuccess: React.FC = () => {
     const value = e.target.value;
     setFilterText(value);
 
-    // Filter based on the month or year
-    const filtered = data?.["Tổng đơn hàng"].filter(
-      (record) =>
-        record.month?.toString().includes(value) ||
-        record.year.toString().includes(value)
-    );
-    setFilteredData(filtered || []);
+    if (data) {
+      let filtered: OrderStats[] = [];
+
+      // Lọc dữ liệu theo phạm vi thời gian
+      if (timeRange === "month" || timeRange === "year") {
+        filtered = data["Tổng đơn hàng"].filter(
+          (record) =>
+            record.month?.toString().includes(value) ||
+            record.year.toString().includes(value)
+        );
+      }
+
+      if (timeRange === "quarter") {
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          // Lọc theo Quý
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return (
+            `Quý ${quarter}`.includes(value) ||
+            record.year.toString().includes(value)
+          );
+        });
+      }
+
+      if (timeRange === "week") {
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          // Lọc theo Tuần
+          return (
+            record.year.toString().includes(value) ||
+            record.month?.toString().includes(value)
+          );
+        });
+      }
+
+      if (timeRange === "day") {
+        // Nếu cần lọc theo ngày, bạn có thể sử dụng logic lọc khác tùy theo định dạng ngày
+        filtered = data["Tổng đơn hàng"].filter((record) =>
+          `${record.month}/${record.year}`.includes(value)
+        );
+      }
+
+      setFilteredData(filtered || []);
+    }
   };
 
   if (loading) {
@@ -105,10 +139,21 @@ const ModalSuccess: React.FC = () => {
       title: "Tháng/Năm",
       dataIndex: "month",
       key: "month",
-      render: (text: any, record: OrderStats) =>
-        timeRange === "year"
-          ? `${record.year}`
-          : `${record.month}/${record.year}`,
+      render: (text: any, record: OrderStats) => {
+        if (timeRange === "year") {
+          return `${record.year}`;
+        } else if (timeRange === "quarter") {
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return `Quý ${quarter} - ${record.year}`;
+        } else if (timeRange === "week") {
+          return `Tuần ${record.month} - ${record.year}`;
+        } else if (timeRange === "month") {
+          return `${record.month}/${record.year}`;
+        } else if (timeRange === "day") {
+          return `Ngày ${record.month || ""}/${record.year}`;
+        }
+        return null;
+      },
     },
     {
       title: "Tổng đơn hàng",
@@ -124,7 +169,10 @@ const ModalSuccess: React.FC = () => {
       title: "Tỷ lệ hoàn thành",
       key: "completion_rate",
       render: (text: string, record: OrderStats) =>
-        `${((parseInt(record.completed_orders, 10) / record.total_orders) * 100).toFixed(2)} %`,
+        `${(
+          (parseInt(record.completed_orders, 10) / record.total_orders) *
+          100
+        ).toFixed(2)} %`,
     },
   ];
 
@@ -150,7 +198,11 @@ const ModalSuccess: React.FC = () => {
         width={800}
       >
         <div>
-          <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+          <Row
+            justify="space-between"
+            align="middle"
+            style={{ marginBottom: 16 }}
+          >
             {/* You can add summary or statistics here */}
           </Row>
 
@@ -162,7 +214,6 @@ const ModalSuccess: React.FC = () => {
                 onChange={handleTimeRangeChange}
                 style={{ width: 120 }}
                 options={[
-                  { value: "day", label: "Ngày" },
                   { value: "week", label: "Tuần" },
                   { value: "month", label: "Tháng" },
                   { value: "quarter", label: "Quý" },
@@ -178,7 +229,17 @@ const ModalSuccess: React.FC = () => {
               <Input
                 value={filterText}
                 onChange={handleFilterChange}
-                placeholder="Tìm kiếm theo tháng/năm"
+                placeholder={`Tìm kiếm theo ${
+                  timeRange === "month"
+                    ? "tháng"
+                    : timeRange === "year"
+                    ? "năm"
+                    : timeRange === "quarter"
+                    ? "quý"
+                    : timeRange === "week"
+                    ? "tuần"
+                    : "ngày"
+                }`}
                 style={{ width: "100%" }}
               />
             </Col>

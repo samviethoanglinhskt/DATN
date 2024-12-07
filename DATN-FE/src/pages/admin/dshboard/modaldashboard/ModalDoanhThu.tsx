@@ -103,13 +103,42 @@ const RevenueModal: React.FC = () => {
     const value = e.target.value;
     setFilterText(value);
 
-    // Filter based on the month or year
-    const filtered = data?.["Tổng đơn hàng"].filter(
-      (record) =>
-        record.month.toString().includes(value) ||
-        record.year.toString().includes(value)
-    );
-    setFilteredData(filtered || []);
+    if (data) {
+      let filtered: OrderStats[] = [];
+
+      // Lọc dữ liệu theo các phạm vi thời gian
+      if (timeRange === "month" || timeRange === "year") {
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          return (
+            record.month.toString().includes(value) ||
+            record.year.toString().includes(value)
+          );
+        });
+      }
+
+      if (timeRange === "quarter") {
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          // Lọc theo Quý
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return (
+            `Quý ${quarter}`.includes(value) ||
+            record.year.toString().includes(value)
+          );
+        });
+      }
+
+      if (timeRange === "week") {
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          // Lọc theo Tuần
+          return (
+            record.year.toString().includes(value) ||
+            record.month.toString().includes(value)
+          );
+        });
+      }
+
+      setFilteredData(filtered || []);
+    }
   };
 
   if (loading) {
@@ -129,10 +158,19 @@ const RevenueModal: React.FC = () => {
       title: "Tháng/Năm",
       dataIndex: "month",
       key: "month",
-      render: (text: any, record: OrderStats) =>
-        timeRange === "year"
-          ? `${record.year}`
-          : `${record.month}/${record.year}`,
+      render: (text: any, record: OrderStats) => {
+        if (timeRange === "year") {
+          return `${record.year}`;
+        } else if (timeRange === "quarter") {
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return `Quý ${quarter} - ${record.year}`;
+        } else if (timeRange === "week") {
+          return `Tuần ${record.month} - ${record.year}`;
+        } else if (timeRange === "month") {
+          return `${record.month}/${record.year}`;
+        }
+        return null;
+      },
     },
     {
       title: "Doanh thu",
@@ -191,7 +229,6 @@ const RevenueModal: React.FC = () => {
                 onChange={handleTimeRangeChange}
                 style={{ width: 120 }}
                 options={[
-                  { value: "day", label: "Ngày" },
                   { value: "week", label: "Tuần" },
                   { value: "month", label: "Tháng" },
                   { value: "quarter", label: "Quý" },
@@ -206,7 +243,15 @@ const RevenueModal: React.FC = () => {
               <Input
                 value={filterText}
                 onChange={handleFilterChange}
-                placeholder="Tìm kiếm theo tháng/năm"
+                placeholder={`Tìm kiếm theo ${
+                  timeRange === "month"
+                    ? "tháng"
+                    : timeRange === "year"
+                    ? "năm"
+                    : timeRange === "quarter"
+                    ? "quý"
+                    : "tuần"
+                }`}
                 style={{ width: "100%" }}
               />
             </Col>
