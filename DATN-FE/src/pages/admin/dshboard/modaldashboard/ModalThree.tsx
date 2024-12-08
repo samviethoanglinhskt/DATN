@@ -17,6 +17,8 @@ import {
 const { Title } = Typography;
 
 interface OrderStats {
+  week_in_month:number;
+  day: number;
   year: number;
   month?: number;
   total_revenue: string;
@@ -78,6 +80,11 @@ const ModalDooble: React.FC = () => {
       let filtered = data["Tổng đơn hàng"].filter((record) => {
         if (timeRange === "year") {
           return record.year.toString().includes(value);
+        } else if (timeRange === "day") {
+          // Lọc theo ngày
+          filtered = data["Tổng đơn hàng"].filter((record) =>
+            `${record.day}/${record.month}/${record.year}`.includes(value)
+          );
         } else if (timeRange === "quarter") {
           const quarter = Math.ceil((record.month || 1) / 3);
           return (
@@ -86,7 +93,7 @@ const ModalDooble: React.FC = () => {
           );
         } else if (timeRange === "week") {
           return (
-            `Tuần ${record.month}`.includes(value) ||
+            `Tuần ${record.week_in_month}`.includes(value) ||
             record.year.toString().includes(value)
           );
         } else {
@@ -106,11 +113,13 @@ const ModalDooble: React.FC = () => {
         return `Năm ${record.year}`;
       case "quarter":
         const quarter = Math.ceil((record.month || 1) / 3);
-        return `Quý ${quarter}/${record.year}`;
+        return `Quý ${quarter}-${record.month}/${record.year}`;
       case "week":
-        return `Tuần ${record.month}/${record.year}`;
-      default:
+        return `Tuần ${record.week_in_month}-${record.month}/${record.year}`;
+      case "month":
         return `Tháng ${record.month}/${record.year}`;
+      default:
+        return `Ngày ${record.day}/${record.month}/${record.year}`;
     }
   };
 
@@ -159,7 +168,11 @@ const ModalDooble: React.FC = () => {
       width: 120,
       render: (_: string, record: OrderStats) => (
         <div style={{ color: "#722ed1", fontWeight: 600 }}>
-          {((parseInt(record.pending_orders, 10) / record.total_orders) * 100).toFixed(2)}%
+          {(
+            (parseInt(record.pending_orders, 10) / record.total_orders) *
+            100
+          ).toFixed(2)}
+          %
         </div>
       ),
     },
@@ -210,7 +223,12 @@ const ModalDooble: React.FC = () => {
       width: 120,
       render: (_: string, record: OrderStats) => (
         <div style={{ color: "#722ed1", fontWeight: 600 }}>
-          {((parseInt(record.failed_delivery_orders, 10) / record.total_orders) * 100).toFixed(2)}%
+          {(
+            (parseInt(record.failed_delivery_orders, 10) /
+              record.total_orders) *
+            100
+          ).toFixed(2)}
+          %
         </div>
       ),
     },
@@ -226,6 +244,7 @@ const ModalDooble: React.FC = () => {
             onChange={handleTimeRangeChange}
             style={{ width: 120 }}
             options={[
+              { value: "day", label: "Ngày" }, // New option
               { value: "week", label: "Tuần" },
               { value: "month", label: "Tháng" },
               { value: "quarter", label: "Quý" },
@@ -287,10 +306,22 @@ const ModalDooble: React.FC = () => {
               className="shadow-sm"
               title={
                 <div style={{ padding: "8px 0" }}>
-                  <div style={{ fontSize: "16px", fontWeight: 600, color: "#1890ff" }}>
+                  <div
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      color: "#1890ff",
+                    }}
+                  >
                     Đơn hàng chờ xử lý
                   </div>
-                  <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#666",
+                      marginTop: "4px",
+                    }}
+                  >
                     Pending Orders
                   </div>
                 </div>
@@ -310,7 +341,10 @@ const ModalDooble: React.FC = () => {
                 pagination={false}
                 scroll={{ y: 400 }}
                 size="middle"
-                style={{ boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)", borderRadius: "8px" }}
+                style={{
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
+                  borderRadius: "8px",
+                }}
               />
             </Card>
           </Col>
@@ -320,10 +354,22 @@ const ModalDooble: React.FC = () => {
               className="shadow-sm"
               title={
                 <div style={{ padding: "8px 0" }}>
-                  <div style={{ fontSize: "16px", fontWeight: 600, color: "#f5222d" }}>
+                  <div
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      color: "#f5222d",
+                    }}
+                  >
                     Đơn hàng giao thất bại
                   </div>
-                  <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#666",
+                      marginTop: "4px",
+                    }}
+                  >
                     Failed Deliveries
                   </div>
                 </div>
@@ -343,7 +389,10 @@ const ModalDooble: React.FC = () => {
                 pagination={false}
                 scroll={{ y: 400 }}
                 size="middle"
-                style={{ boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)", borderRadius: "8px" }}
+                style={{
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
+                  borderRadius: "8px",
+                }}
               />
             </Card>
           </Col>

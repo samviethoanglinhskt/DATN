@@ -95,6 +95,15 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
           </Descriptions.Item>
         </Descriptions>
 
+        {/* Feedback Section */}
+        {order.feedback && (
+          <Descriptions bordered column={1} className="mb-6">
+            <Descriptions.Item label="Nguyên nhân (Feedback)">
+              <span>{order.feedback}</span>
+            </Descriptions.Item>
+          </Descriptions>
+        )}
+
         <div className={styles.orderCard}>
           <div className={styles.cardHeader}>
             <div className={styles.headerTitle}>
