@@ -31,7 +31,7 @@ interface OrderStats {
 }
 
 interface DashboardData {
-  "Tổng đơn hàng": OrderStats[];
+  "Tổng đơn hàng": OrderStats[]; // Assuming the key is "Tổng đơn hàng" in the response
   "Tỉ lệ hoàn thành": number; // You might not need this
 }
 
@@ -134,18 +134,7 @@ const ModalSuccess: React.FC = () => {
     return <div>Không có dữ liệu</div>;
   }
 
-  // Calculate completion rate if it's not provided in the API response
-  const calculateCompletionRate = (record: OrderStats) => {
-    const totalOrders = record.total_orders;
-    const completedOrders = parseInt(record.completed_orders, 10);
-
-    if (totalOrders > 0) {
-      return ((completedOrders / totalOrders) * 100).toFixed(2) + " %";
-    }
-    return "0 %"; // Return 0% if no total orders
-  };
-
-  // Define columns for the table inside modal
+  // Define columns for the table inside modal (without "Tổng đơn hàng")
   const columns = [
     {
       title: "Ngày/Tháng/Năm",
@@ -168,20 +157,14 @@ const ModalSuccess: React.FC = () => {
       },
     },
     {
-      title: "Tổng đơn hàng",
-      dataIndex: "total_orders",
-      key: "total_orders",
-    },
-    {
       title: "Đơn hàng hoàn thành",
       dataIndex: "completed_orders",
       key: "completed_orders",
     },
     {
       title: "Tỷ lệ hoàn thành",
-      key: "completion_rate",
-      render: (text: string, record: OrderStats) =>
-        calculateCompletionRate(record), // Use function to calculate completion rate
+      dataIndex: "growthPercentageComplete", // Use the growthPercentageComplete directly
+      key: "growthPercentageComplete",
     },
   ];
 

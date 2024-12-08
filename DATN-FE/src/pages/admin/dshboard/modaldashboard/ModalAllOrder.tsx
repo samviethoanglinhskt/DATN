@@ -14,14 +14,13 @@ import {
 } from "antd";
 
 interface OrderStats {
-  week_in_month:number;
+  week_in_month: number;
   day?: number;
   year: number;
   month: number;
   total_revenue: string;
-  growthPercentageComplete: string;
+  growth_percentageOrder: string;
   total_orders: number;
-  completed_orders: string;
 }
 
 interface DashboardData {
@@ -59,15 +58,6 @@ const ModalAllOrder: React.FC = () => {
     fetchOrderStats();
   }, [timeRange]);
 
-  const calculateGrowth = (
-    currentValue: number,
-    previousValue: number
-  ): string => {
-    if (previousValue === 0) return "N/A";
-    const growth = ((currentValue - previousValue) / previousValue) * 100;
-    return `${growth.toFixed(2)} %`;
-  };
-
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
     fetchOrderStats(value);
@@ -87,7 +77,6 @@ const ModalAllOrder: React.FC = () => {
 
     if (data) {
       const filtered = data["Tổng đơn hàng"].filter((record) => {
-        // Filtering based on time range
         if (timeRange === "day") {
           return (
             record.day?.toString().includes(value) ||
@@ -104,7 +93,7 @@ const ModalAllOrder: React.FC = () => {
         if (timeRange === "quarter" || timeRange === "week") {
           return (
             record.year.toString().includes(value) &&
-            record.completed_orders.includes(value)
+            record.growth_percentageOrder.includes(value)
           );
         }
         return false;
@@ -143,8 +132,7 @@ const ModalAllOrder: React.FC = () => {
         } else if (timeRange === "quarter") {
           return `Quý ${Math.ceil((record.month || 1) / 3)} - ${record.month}/${record.year}`;
         } else if (timeRange === "week") {
-          // Correct the week display logic by using week_in_month
-          return `Tuần ${record.week_in_month}- ${record.month}/${record.year}`;
+          return `Tuần ${record.week_in_month} - ${record.month}/${record.year}`;
         } else if (timeRange === "year") {
           return `${record.year}`;
         }
@@ -157,30 +145,16 @@ const ModalAllOrder: React.FC = () => {
       key: "total_orders",
     },
     {
-      title: "Đơn hàng hoàn thành",
-      dataIndex: "completed_orders",
-      key: "completed_orders",
-    },
-    {
-      title: "Tỷ lệ hoàn thành",
-      key: "completion_rate",
+      title: "Tỷ lệ đơn hàng",
+      key: "growth_percentageOrder",
       render: (text: string, record: OrderStats) => {
-        const completedOrders = parseInt(record.completed_orders, 10);
-        const totalOrders = record.total_orders;
-        const completionRate = ((completedOrders / totalOrders) * 100).toFixed(
-          2
-        );
-        return `${completionRate} %`;
+        return `${record.growth_percentageOrder}`;
       },
     },
   ];
 
   return (
-    <Space
-      direction="vertical"
-      size="large"
-      style={{ width: "100%", padding: 24 }}
-    >
+    <Space direction="vertical" size="large" style={{ width: "100%", padding: 24 }}>
       <Row justify="center">
         <Button type="primary" onClick={openModal}>
           Xem chi tiết
@@ -188,23 +162,15 @@ const ModalAllOrder: React.FC = () => {
       </Row>
 
       <Modal
-        title="Chi tiết tỉ lệ hoàn thành"
+        title="Chi tiết tổng đơn hàng"
         visible={modalVisible}
         onCancel={closeModal}
         footer={null}
         width={800}
       >
-        <Row
-          justify="space-between"
-          align="middle"
-          style={{ marginBottom: 16 }}
-        >
+        <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
           <Col span={8}>
-            <Statistic
-              title="Tổng số đơn hàng"
-              value={totalOrders}
-              suffix="đơn"
-            />
+            <Statistic title="Tổng số đơn hàng" value={totalOrders} suffix="đơn" />
           </Col>
         </Row>
 
