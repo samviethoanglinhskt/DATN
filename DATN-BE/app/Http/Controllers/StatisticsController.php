@@ -274,7 +274,7 @@ class StatisticsController extends Controller
     public function brandStatistics(Request $request)
     {
         $type = $request->input('type', 'month'); // Mặc định là thống kê theo tháng
-    
+
         // Query dữ liệu hiện tại
         $query = DB::table('tb__oderdetail')
             ->join('tb_products', 'tb__oderdetail.tb_product_id', '=', 'tb_products.id')
@@ -286,7 +286,7 @@ class StatisticsController extends Controller
                 DB::raw('YEAR(tb__oderdetail.created_at) as year'),
                 DB::raw('SUM(tb__oderdetail.price * tb__oderdetail.quantity) as total_revenue')
             );
-    
+
         // Xử lý query theo loại thống kê
         if ($type == 'week') {
             $query->addSelect(
@@ -308,10 +308,10 @@ class StatisticsController extends Controller
                 ->groupBy('year', 'month', 'tb_brands.name')
                 ->orderByDesc('month');
         }
-    
+
         // Lấy dữ liệu hiện tại
         $brandStatistics = $query->get();
-    
+
         // Lấy dữ liệu trước đó để tính % tăng trưởng
         $previousDataQuery = clone $query;
         if ($type == 'week') {
@@ -324,11 +324,11 @@ class StatisticsController extends Controller
             $previousDataQuery->whereRaw('YEAR(tb__oderdetail.created_at) = YEAR(NOW()) - 1');
         }
         $previousData = $previousDataQuery->get();
-    
+
         // Tổng cộng giá trị tất cả thương hiệu
         $totalSales = $brandStatistics->sum('total_sales');
         $totalQuantity = $brandStatistics->sum('total_quantity');
-    
+
         // Tổ chức lại dữ liệu
         $data = [];
         foreach ($brandStatistics as $brand) {
@@ -336,7 +336,7 @@ class StatisticsController extends Controller
             $previousValue = $previousData->where('brand_name', $brand->brand_name)->first();
             $previousSales = $previousValue->total_sales ?? 0;
             $previousQuantity = $previousValue->total_quantity ?? 0;
-    
+
             if ($type == 'week') {
                 $timeKey = $brand->year . '-' . $brand->month . '-' . $brand->week_in_month;
             } elseif ($type == 'quarter') {
@@ -346,15 +346,15 @@ class StatisticsController extends Controller
             } else {
                 $timeKey = $brand->year . '-' . str_pad($brand->month, 2, '0', STR_PAD_LEFT);
             }
-    
+
             if (!isset($data[$timeKey])) {
                 $data[$timeKey] = [];
             }
-    
+
             // Tính tỷ lệ % của sản phẩm và số lượng
             $brandSalesPercentage = $this->calculatePercentage($brand->total_sales, $totalSales);
             $brandQuantityPercentage = $this->calculatePercentage($brand->total_quantity, $totalQuantity);
-    
+
             $data[$timeKey][] = [
                 'brand_name' => $brand->brand_name,
                 'total_sales' => $brand->total_sales,
@@ -368,7 +368,7 @@ class StatisticsController extends Controller
                 'week_in_month' => $brand->week_in_month ?? null,
             ];
         }
-    
+
         // Lọc Top 3 cho từng mốc thời gian
         foreach ($data as $timeKey => &$brands) {
             usort($brands, function ($a, $b) {
@@ -376,7 +376,7 @@ class StatisticsController extends Controller
             });
             $brands = array_slice($brands, 0, 3); // Lấy Top 3
         }
-    
+
         return response()->json([
             'message' => 'Thống kê thương hiệu bán chạy',
             'data' => $data,
@@ -384,7 +384,7 @@ class StatisticsController extends Controller
             'Tổng số lượng bán ra' => $totalQuantity,
         ], 200);
     }
-    
+
     // Hàm tính tỷ lệ % của sản phẩm và số lượng
     private function calculatePercentage($currentValue, $totalValue)
     {
@@ -393,7 +393,6 @@ class StatisticsController extends Controller
         }
         return round(($currentValue / $totalValue) * 100, 2) . ' %';
     }
-    
 
 
     // top sản phẩm bán chạy
@@ -625,10 +624,6 @@ class StatisticsController extends Controller
             'data' => $result
         ]);
     }
-
-
-
-
 
     // thống kê tỉ lệ hoàn thành, hủy
     public function monthlyStatistics()
@@ -957,6 +952,12 @@ class StatisticsController extends Controller
         $cancellationRate = $grandTotalOrder > 0
             ? round(($grandTotalCancel / $grandTotalOrder) * 100, 2) . ' %'
             : 'Không có dữ liệu';
+        $pendingRate = $grandTotalOrder > 0
+            ? round(($grandTotalPending / $grandTotalOrder) * 100, 2) . ' %'
+            : 'Không có dữ liệu';
+        $failRate = $grandTotalOrder > 0
+            ? round(($grandTotalFailedDelivery / $grandTotalOrder) * 100, 2) . ' %'
+            : 'Không có dữ liệu';
 
         return response()->json([
             'message' => 'Thống kê đơn hàng',
@@ -967,6 +968,8 @@ class StatisticsController extends Controller
             'Tổng tất cả đơn hàng chờ xử lý' => $grandTotalPending,
             'Tổng tất cả đơn hàng giao hàng thất bại' => $grandTotalFailedDelivery,
             'Tổng tỉ lệ hoàn thành đơn hàng' => $completionRate,
+            'Tổng tỉ lệ chờ xử lý' => $pendingRate,
+            'Tổng tỉ lệ thất bại' => $failRate,
             'Tổng tỉ lệ hủy đơn hàng' => $cancellationRate,
             'Tổng doanh thu' => $grandTotalRevenue,
         ], 200);
