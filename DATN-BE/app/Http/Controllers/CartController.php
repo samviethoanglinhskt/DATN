@@ -781,13 +781,103 @@ class CartController extends Controller
 
                     return redirect('http://localhost:5173/payment-failure');
                 }
-
             }
         } else {
             echo "Chu ky khong hop le";
         }
     }
+    public function handleVnpayIpnGuest(Request $request)
+    {
+        // Lấy tất cả các thông tin từ query string
+        $inputData = $request->all();
+        $vnp_HashSecret = "3LOZH2QK4LS8CW46G9X2ZULCL1SHRNRN"; // Chuỗi bí mật của bạn từ VNPay
 
+        // Tách mã kiểm tra (checksum) ra khỏi dữ liệu đầu vào
+        $vnp_SecureHash = $inputData['vnp_SecureHash'];
+        unset($inputData['vnp_SecureHash']);
+
+        // Sắp xếp dữ liệu theo thứ tự tăng dần của key để kiểm tra chữ ký
+        ksort($inputData);
+        $i = 0;
+        $hashData = "";
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashData = $hashData . '&' . urlencode($key) . "=" . urlencode($value);
+            } else {
+                $hashData = $hashData . urlencode($key) . "=" . urlencode($value);
+                $i = 1;
+            }
+        }
+
+        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+
+        if ($secureHash == $vnp_SecureHash) {
+            if ($_GET['vnp_ResponseCode'] == '00') {
+                $orderTemp = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+                if ($orderTemp) {
+                    // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
+                    $orderReal = tb_oder::create([
+                        'user_id' => $orderTemp->user_id,
+                        'tb_discount_id' => $orderTemp->tb_discount_id,
+                        'order_code' => $orderTemp->order_code,
+                        'total_amount' => $orderTemp->total_amount,
+                        'order_status' => 'Đã thanh toán',
+                        'name' => $orderTemp->name,
+                        'phone' => $orderTemp->phone,
+                        'address' => $orderTemp->address,
+                        'email' => $orderTemp->email,
+                        'order_date' => $orderTemp->order_date,
+                        'order_type' => $orderTemp->order_type,
+                    ]);
+                    $orderDetailsTemp = TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->get();
+                    foreach ($orderDetailsTemp as $detailTemp) {
+
+                        tb_oderdetail::create([
+                            'tb_oder_id' => $orderReal->id,
+                            'tb_product_id' => $detailTemp->tb_product_id,
+                            'tb_variant_id' => $detailTemp->tb_variant_id,
+                            'quantity' => $detailTemp->quantity,
+                            'price' => $detailTemp->price,
+                        ]);
+                        $variant = tb_variant::find($detailTemp->tb_variant_id);
+                        $variant->quantity -= $detailTemp->quantity;
+                        if ($variant->quantity <= 0) {
+                            $variant->status = 'Hết hàng';
+                        } else {
+                            $variant->status = 'Còn hàng';
+                        }
+                        $variant->save();
+                    }
+
+                    // Xóa dữ liệu bảng tạm
+                    TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->delete();
+                    $orderTemp->delete();
+
+                    // $oder = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+
+                    // if ($oder->user_id == 1) {
+                    //     Mail::send('emails.mail_order_vnpay_user', [
+                    //         'name' => $oder->name,
+                    //         'orderCode' => $oder->order_code,
+                    //         'orderStatus' => $oder->order_status,
+                    //         'orderDate' => $oder->order_date,
+                    //     ], function ($message) use ($oder) {
+                    //         $message->to($oder->email)
+                    //             ->subject('Imperial Beauty xin thông báo');
+                    //     });
+                    //     return redirect('http://localhost:5173/payment-success');
+                    // }
+
+                    // echo "GD Thanh cong";
+                    return redirect('http://localhost:5173/payment-success');
+                }
+            } else {
+                return redirect('http://localhost:5173/payment-failure');
+            }
+        } else {
+            echo "Chu ky khong hop le";
+        }
+    }
     public function vnpay(Request $request)
     {
         try {
@@ -1150,96 +1240,185 @@ class CartController extends Controller
     public function vnpay_guest(Request $request)
     {
         try {
-            $totalOrder = 0;
-            $order = tb_oder::create([
-                'user_id' => 1,
-                'tb_discount_id' => $request->tb_discount_id,
-                'order_date' => now(),
-                // 'total_amount' => $totalAmount,
-                'order_status' => 'Chờ xử lý',
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'address' => $request->address_detail . ', ' . $request->address,
-                'email' => $request->email,
-            ]);
-            $variant = tb_variant::find($request->tb_variant_id);
-            if ($variant) {
-                $totalOrder = $request->total_amount;
-            }
-            $oderDetail = tb_oderdetail::create([
-                'tb_oder_id' => $order->id,
-                'tb_product_id' => $request->tb_product_id,
-                'tb_variant_id' => $request->tb_variant_id,
-                'quantity' => $request->quantities,
-                'price' => $variant->price
-            ]);
-
-            $order->order_code = 'ORD-' . $order->id;
-            $order->total_amount = $totalOrder;
-            $order->save();
-            $variant->quantity -= $request->quantities;
-            $variant->save();
-            $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-            $vnp_Returnurl = route('vnpay.ipn');
-            $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
-            $vnp_HashSecret = "3LOZH2QK4LS8CW46G9X2ZULCL1SHRNRN"; //Chuỗi bí mật
-
-            $vnp_TxnRef = $order->order_code;
-            $vnp_OrderInfo = "Thanh toán hóa đơn";
-            $vnp_OrderType = "Imperial Beauty";
-            $vnp_Amount = $totalOrder * 100;
-            $vnp_Locale = "vn";
-            $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
-
-            $inputData = array(
-                "vnp_Version" => "2.1.0",
-                "vnp_TmnCode" => $vnp_TmnCode,
-                "vnp_Amount" => $vnp_Amount,
-                "vnp_Command" => "pay",
-                "vnp_CreateDate" => date('YmdHis'),
-                "vnp_CurrCode" => "VND",
-                "vnp_IpAddr" => $vnp_IpAddr,
-                "vnp_Locale" => $vnp_Locale,
-                "vnp_OrderInfo" => $vnp_OrderInfo,
-                "vnp_OrderType" => $vnp_OrderType,
-                "vnp_ReturnUrl" => $vnp_Returnurl,
-                "vnp_TxnRef" => $vnp_TxnRef
-            );
-            ksort($inputData);
-            $query = "";
-            $i = 0;
-            $hashdata = "";
-            foreach ($inputData as $key => $value) {
-                if ($i == 1) {
-                    $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-                } else {
-                    $hashdata .= urlencode($key) . "=" . urlencode($value);
-                    $i = 1;
+            if (isset($request->tb_product_id) && isset($request->tb_variant_id)) {
+                $totalOrder = 0;
+                $order = TbOderTemp::create([
+                    'user_id' => 1,
+                    'tb_discount_id' => $request->tb_discount_id,
+                    'order_date' => now(),
+                    'order_type' => 'quick',
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address_detail . ', ' . $request->address,
+                    'email' => $request->email,
+                ]);
+                $variant = tb_variant::find($request->tb_variant_id);
+                if ($variant) {
+                    $totalOrder = $request->total_amount;
                 }
-                $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                $oderDetail = TbOderdetailTemp::create([
+                    'tb_oder_temp_id' => $order->id,
+                    'tb_product_id' => $request->tb_product_id,
+                    'tb_variant_id' => $request->tb_variant_id,
+                    'quantity' => $request->quantities,
+                    'price' => $variant->price
+                ]);
+
+                $order->order_code = 'ORD-OL' . $order->id;
+                $order->total_amount = $totalOrder;
+                $order->save();
+                $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+                $vnp_Returnurl = route('vnpay.ipn.guest');
+                $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
+                $vnp_HashSecret = "3LOZH2QK4LS8CW46G9X2ZULCL1SHRNRN"; //Chuỗi bí mật
+
+                $vnp_TxnRef = $order->order_code;
+                $vnp_OrderInfo = "Thanh toán hóa đơn";
+                $vnp_OrderType = "Imperial Beauty";
+                $vnp_Amount = $totalOrder * 100;
+                $vnp_Locale = "vn";
+                $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
+
+                $inputData = array(
+                    "vnp_Version" => "2.1.0",
+                    "vnp_TmnCode" => $vnp_TmnCode,
+                    "vnp_Amount" => $vnp_Amount,
+                    "vnp_Command" => "pay",
+                    "vnp_CreateDate" => date('YmdHis'),
+                    "vnp_CurrCode" => "VND",
+                    "vnp_IpAddr" => $vnp_IpAddr,
+                    "vnp_Locale" => $vnp_Locale,
+                    "vnp_OrderInfo" => $vnp_OrderInfo,
+                    "vnp_OrderType" => $vnp_OrderType,
+                    "vnp_ReturnUrl" => $vnp_Returnurl,
+                    "vnp_TxnRef" => $vnp_TxnRef
+                );
+                ksort($inputData);
+                $query = "";
+                $i = 0;
+                $hashdata = "";
+                foreach ($inputData as $key => $value) {
+                    if ($i == 1) {
+                        $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                    } else {
+                        $hashdata .= urlencode($key) . "=" . urlencode($value);
+                        $i = 1;
+                    }
+                    $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                }
+
+                $vnp_Url = $vnp_Url . "?" . $query;
+                if (isset($vnp_HashSecret)) {
+                    $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                    $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+                }
+                // Mail::send('emails.mail_order_user', [
+                //     'name' => $request->name,
+                //     'phone' => $request->phone,
+                //     'email' => $request->email,
+                //     'address' => $request->address_detail . ', ' . $request->address,
+                //     'orderCode' => $order->order_code,
+                //     'orderStatus' => $order->order_status,
+                //     'orderDetail' => $oderDetail,
+                //     'orderDate' => $order->order_date,
+                //     'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
+                //     'size' => $oderDetail->variant->size->name ?? '',
+                //     'color' => $oderDetail->variant->color->name ?? ''
+                // ], function ($message) use ($request) {
+                //     $message->to($request->email)
+                //         ->subject('Imperial Beauty xin thông báo');
+                // });
+
+            } else {
+                $productIds = $request->quantities;
+                if (empty($productIds)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không có sản phẩm được chọn',
+                    ], 400);
+                }
+                $orderDetails = [];
+                $totalOrder = 0;
+
+                $order = TbOderTemp::create([
+                    'user_id' => 1,
+                    'tb_discount_id' => $request->tb_discount_id,
+                    'order_date' => now(),
+                    'order_type' => 'cart',
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address_detail . ', ' . $request->address,
+                    'email' => $request->email,
+                ]);
+                foreach ($productIds as $item) {
+                    $item = (object) $item;
+                    $variant = tb_variant::find($item->id);
+                    if ($variant) {
+                        $totalOrder = $request->total_amount;
+                    }
+                    $oderDetail = TbOderdetailTemp::create([
+                        'tb_oder_temp_id' => $order->id,
+                        'tb_product_id' => $variant->tb_product_id,
+                        'tb_variant_id' => $item->id,
+                        'quantity' => $item->quantity,
+                        'price' => $variant->price
+                    ]);
+
+                    $orderDetails[] = $oderDetail;
+                }
+                $order->order_code = 'ORD-OL' . $order->id;
+                $order->total_amount = $totalOrder;
+                $order->save();
+
+                $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+                $vnp_Returnurl = route('vnpay.ipn.guest');
+                $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
+                $vnp_HashSecret = "3LOZH2QK4LS8CW46G9X2ZULCL1SHRNRN"; //Chuỗi bí mật
+
+                $vnp_TxnRef = $order->order_code;
+                $vnp_OrderInfo = "Thanh toán hóa đơn";
+                $vnp_OrderType = "Imperial Beauty";
+                $vnp_Amount = $totalOrder * 100;
+                $vnp_Locale = "vn";
+                $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
+
+                $inputData = array(
+                    "vnp_Version" => "2.1.0",
+                    "vnp_TmnCode" => $vnp_TmnCode,
+                    "vnp_Amount" => $vnp_Amount,
+                    "vnp_Command" => "pay",
+                    "vnp_CreateDate" => date('YmdHis'),
+                    "vnp_CurrCode" => "VND",
+                    "vnp_IpAddr" => $vnp_IpAddr,
+                    "vnp_Locale" => $vnp_Locale,
+                    "vnp_OrderInfo" => $vnp_OrderInfo,
+                    "vnp_OrderType" => $vnp_OrderType,
+                    "vnp_ReturnUrl" => $vnp_Returnurl,
+                    "vnp_TxnRef" => $vnp_TxnRef
+                );
+                ksort($inputData);
+                $query = "";
+                $i = 0;
+                $hashdata = "";
+                foreach ($inputData as $key => $value) {
+                    if ($i == 1) {
+                        $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                    } else {
+                        $hashdata .= urlencode($key) . "=" . urlencode($value);
+                        $i = 1;
+                    }
+                    $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                }
+
+                $vnp_Url = $vnp_Url . "?" . $query;
+                if (isset($vnp_HashSecret)) {
+                    $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
+                    $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+                }
             }
 
-            $vnp_Url = $vnp_Url . "?" . $query;
-            if (isset($vnp_HashSecret)) {
-                $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret); //
-                $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-            }
-            Mail::send('emails.mail_order_user', [
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'address' => $request->address_detail . ', ' . $request->address,
-                'orderCode' => $order->order_code,
-                'orderStatus' => $order->order_status,
-                'orderDetail' => $oderDetail,
-                'orderDate' => $order->order_date,
-                'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
-                'size' => $oderDetail->variant->size->name ?? '',
-                'color' => $oderDetail->variant->color->name ?? ''
-            ], function ($message) use ($request) {
-                $message->to($request->email)
-                    ->subject('Imperial Beauty xin thông báo');
-            });
             return response()->json([
                 'success' => true,
                 'vnpay_url' => $vnp_Url,
