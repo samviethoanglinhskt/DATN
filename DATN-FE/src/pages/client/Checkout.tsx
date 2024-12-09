@@ -475,7 +475,7 @@ const CheckoutPage: React.FC = () => {
   const quantities = state?.quantities;
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
-  const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
+  const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number, max_price: number } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState('cod');
 
   const [newAddress, setNewAddress] = useState({
@@ -588,21 +588,22 @@ const CheckoutPage: React.FC = () => {
     return price * cartItem.quantity;
   };
 
-  const calculateTotal = (subtotal: number, discountPercent: number): number => {
-    const discount = subtotal * (discountPercent / 100);  // Tính số tiền giảm
-    return subtotal - discount;  // Tính tổng sau khi giảm giá
+  const calculateTotal = (subtotal: number, discountPercent: number, max_price: number = Number.MAX_VALUE): number => {
+    const discount = subtotal * (discountPercent / 100); // Tính số tiền giảm theo phần trăm
+    const finalDiscount = max_price ? Math.min(discount, max_price) : discount; // Áp dụng giới hạn giảm tối đa nếu có
+    return subtotal - finalDiscount; // Tính tổng sau khi giảm giá
   };
 
   const subtotalCartItem = cartItem ? calculateSubtotal(cartItem) : 0;
-  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, selectedVoucher?.discount || 0) : 0;
-  const totalWithDiscount = selectedProducts.length > 0 ? calculateTotal(subtotal, selectedVoucher?.discount || 0) : 0;
-  const handleApplyVoucher = (voucher: { id: number; code: string; discount: number }) => {
+  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, selectedVoucher?.discount || 0, selectedVoucher?.max_price) : 0;
+  const totalWithDiscount = selectedProducts.length > 0 ? calculateTotal(subtotal, selectedVoucher?.discount || 0, selectedVoucher?.max_price) : 0;
+  const handleApplyVoucher = (voucher: { id: number; code: string; discount: number; max_price: number }) => {
     setSelectedVoucher(voucher);
     setVoucherDialogOpen(false);
   };
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
 
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -717,7 +718,6 @@ const CheckoutPage: React.FC = () => {
       setLoading(false);
     }
   };
-
 
   // fetch giảm giá ở đây
   useEffect(() => {
@@ -999,13 +999,23 @@ const CheckoutPage: React.FC = () => {
               {selectedVoucher && selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Giảm giá ({selectedVoucher.code})</span>
-                  <span>-{((subtotal * selectedVoucher.discount) / 100).toLocaleString("vi-VN")}đ</span>
+                  <span>
+                    -{Math.min(
+                      (subtotal * selectedVoucher.discount) / 100,
+                      selectedVoucher.max_price ?? Number.MAX_VALUE
+                    ).toLocaleString("vi-VN")}đ
+                  </span>
                 </div>
               )}
               {selectedVoucher && cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Giảm giá ({selectedVoucher.code})</span>
-                  <span>-{((subtotalCartItem * selectedVoucher.discount) / 100).toLocaleString("vi-VN")}đ</span>
+                  <span>
+                    -{Math.min(
+                      (subtotalCartItem * selectedVoucher.discount) / 100,
+                      selectedVoucher.max_price ?? Number.MAX_VALUE
+                    ).toLocaleString("vi-VN")}đ
+                  </span>
                 </div>
               )}
 
@@ -1044,14 +1054,17 @@ const CheckoutPage: React.FC = () => {
                         <ListItem
                           key={discount.id}
                           divider
-                          onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value })}
+                          onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value, max_price: discount.max_price })}
                           sx={{ display: 'flex', justifyContent: 'space-between' }}
                         >
                           <img src={logoVoucher} alt="" width={150} />
                           <div style={{ marginLeft: -150 }}>
                             <Typography variant="subtitle1">{discount.discount_code}</Typography>
                             <Typography variant="body2" color="textSecondary">
-                              Giảm {discount.discount_value}% | HSD: {discount.end_day}
+                              Giảm {discount.discount_value}% | Giảm tối đa:{(Number(discount.max_price)).toLocaleString("vi-VN")}đ
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              HSD: {discount.end_day}
                             </Typography>
                           </div>
                           <Button variant="contained" size="small" sx={{ backgroundColor: "#717FE0" }}>
