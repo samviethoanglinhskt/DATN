@@ -49,11 +49,17 @@ interface CartItem {
   };
 }
 
+interface Quantity {
+  id: number;
+  quantity: number;
+}
+
 interface LocationState {
   selectedProducts: Product[];
   subtotal: number;
   cartId: number[];
   cartItem: CartItem;
+  quantities: Quantity[];
 }
 
 interface AddressModalProps {
@@ -466,6 +472,7 @@ const CheckoutPage: React.FC = () => {
   const subtotal = state?.subtotal ?? 0;
   const cartId = state?.cartId || [];
   const cartItem = state?.cartItem;
+  const quantities = state?.quantities;
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
@@ -665,7 +672,7 @@ const CheckoutPage: React.FC = () => {
       const totalAmount = selectedProducts.length > 0 ? totalWithDiscount : totalCartItem;
       const tbProductId = selectedProducts.length > 0 ? null : cartItem.tb_product_id;
       const tbVariantId = selectedProducts.length > 0 ? null : cartItem.tb_variant_id;
-      const quantity = selectedProducts.length > 0 ? null : cartItem.quantity;
+      const quantity = selectedProducts.length > 0 ? quantities : cartItem.quantity;
       const cart_items = selectedProducts.length > 0 ? cartId : null;
 
       const requestBody = {
@@ -674,7 +681,7 @@ const CheckoutPage: React.FC = () => {
         phone,
         address: selectedAddress,
         address_detail: newAddress.address_detail,
-        quantity: quantity,
+        quantities: quantity,
         tb_product_id: tbProductId,
         tb_variant_id: tbVariantId,
         total_amount: totalAmount,
@@ -769,10 +776,12 @@ const CheckoutPage: React.FC = () => {
                 <div className="mb-3">
                   <label className="form-label">Họ tên</label>
                   <input
+                    name='name'
                     type="text"
                     className={`form-control ${nameError ? 'is-invalid' : ''}`}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    autoComplete='name'
                   />
                   {nameError && <div className="invalid-feedback">{nameError}</div>}
                 </div>
@@ -780,10 +789,12 @@ const CheckoutPage: React.FC = () => {
                 <div className="mb-3">
                   <label className="form-label">Email</label>
                   <input
+                    name='email'
                     type="text"
                     className={`form-control ${emailError ? 'is-invalid' : ''}`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete='email'
                   />
                   {emailError && <div className="invalid-feedback">{emailError}</div>}
                 </div>
@@ -791,10 +802,12 @@ const CheckoutPage: React.FC = () => {
                 <div className="mb-3">
                   <label className="form-label">Số điện thoại</label>
                   <input
-                    type="tel"
+                    name='phone'
+                    type="text"
                     className={`form-control ${phoneError ? 'is-invalid' : ''}`}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    autoComplete='phone'
                   />
                   {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>

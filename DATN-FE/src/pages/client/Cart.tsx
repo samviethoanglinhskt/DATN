@@ -17,13 +17,6 @@ const ShoppingCart: React.FC = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (!token) {
-  //     navigate("/login");
-  //   }
-  // }, [navigate]);
-
   const handleSelectItem = (id: number | undefined) => {
     if (id === undefined) return; // Thêm kiểm tra undefined
     setSelectedItems((prev) =>
@@ -53,15 +46,19 @@ const ShoppingCart: React.FC = () => {
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
-    const selectedProducts = cartItems.filter((item) =>
-      item.id !== undefined && selectedItems.includes(item.id)
+    // Lọc các sản phẩm đã chọn
+    const selectedProducts = cartItems.filter(
+      (item) => item.id !== undefined && selectedItems.includes(item.id)
     );
-
     const subtotal = calculateSelectedTotal();
-    // Truyền thêm `cartId` vào navigation
-    const cartId = selectedItems;  // Giả sử tất cả các mục trong giỏ hàng có cùng cart_id
+    // Tạo danh sách số lượng từ các sản phẩm được chọn
+    const quantities = selectedProducts.map((item) => ({
+      id: item.id,
+      quantity: item.quantity,
+    }));
+
     navigate("/checkout", {
-      state: { selectedProducts, subtotal, cartId },
+      state: { selectedProducts, subtotal, cartId: selectedItems, quantities },
     });
   };
 
@@ -116,7 +113,7 @@ const ShoppingCart: React.FC = () => {
                         </thead>
                         <tbody>
                           {cartItems.map((item) => (
-                            <tr key={item.id} className="table_row">
+                            <tr key={item.tb_variant_id} className="table_row">
                               <td style={{ padding: "0 10px" }}>
                                 <Checkbox
                                   sx={{
@@ -129,28 +126,59 @@ const ShoppingCart: React.FC = () => {
                                   disabled={item.variant.quantity === 0}
                                 />
                               </td>
-
+                              {/* 
+                              {isGuest ?
+                                (
+                                  <td style={{ padding: "0 20px" }}>
+                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                      <img
+                                        src={`http://127.0.0.1:8000/storage/${item?.variant?.images[0]?.name_image}`}
+                                        width={70}
+                                        style={{ display: "flex", marginRight: "10px" }}
+                                      />
+                                      <Link to={`/product/${item.variant.tb_product_id}`} className="product-link">
+                                        <div style={{ fontSize: "13px" }}>{item.name}</div>
+                                      </Link>
+                                    </div>
+                                    <span style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</span>
+                                  </td>
+                                ) :
+                                ( */}
                               <td style={{ padding: "0 20px" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <img
-                                    src={`http://127.0.0.1:8000/storage/${item.products.image}`}
+                                    src={`http://127.0.0.1:8000/storage/${item?.products?.image}`}
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />
-                                  <Link to={`/product/${item.products.id}`} className="product-link">
-                                    <div style={{ fontSize: "13px" }}>{item.products.name}</div>
+                                  <Link to={`/product/${item?.products?.id}`} className="product-link">
+                                    <div style={{ fontSize: "13px" }}>{item?.products?.name}</div>
                                   </Link>
                                 </div>
-                                <span style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</span>
+                                <span style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item?.variant?.sku}</span>
                               </td>
+                              {/* )} */}
 
+                              {/* {isGuest ?
+                                (
+                                  <td style={{ padding: "0 20px", fontSize: "13px" }}>
+                                    {item.variant.tb_size_id !== null && item.variant.tb_size_id !== undefined
+                                      ? `${item.name}`
+                                      : item.variant.tb_color_id !== null && item.variant.tb_color_id !== undefined
+                                        ? `${item.name}`
+                                        : ""}
+                                  </td>
+                                ) :
+                                ( */}
                               <td style={{ padding: "0 20px", fontSize: "13px" }}>
-                                {item.variant.tb_size_id !== null && item.variant.tb_size_id !== undefined
-                                  ? `${item.variant.size.name}`
-                                  : item.variant.tb_color_id !== null && item.variant.tb_color_id !== undefined
-                                    ? `${item.variant.color.name}`
+                                {item?.variant?.tb_size_id !== null && item?.variant?.tb_size_id !== undefined
+                                  ? `${item?.variant?.size?.name}`
+                                  : item?.variant?.tb_color_id !== null && item?.variant?.tb_color_id !== undefined
+                                    ? `${item?.variant?.color?.name}`
                                     : ""}
                               </td>
+                              {/* )} */}
+
 
                               <td style={{ padding: "0 20px" }}>
                                 {item.variant.quantity === 0 ? (

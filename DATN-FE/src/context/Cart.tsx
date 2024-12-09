@@ -9,10 +9,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isGuest, setIsGuest] = useState<boolean>(false);
+  const [isGuest, setIsGuest] = useState<boolean>(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       setIsGuest(true);  // Nếu không có token, xem như là khách vãng lai
     } else {
@@ -24,7 +24,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     if (isGuest) {
       const localCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
       setCartItems(localCart);
-      setTotalQuantity(localCart.reduce((sum, item) => sum + item.quantity, 0));
+      setTotalQuantity(localCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0));
       setLoading(false);
     } else {
       const fetchCartItems = async () => {
@@ -68,9 +68,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
   const addToCart = async (item: CartItem) => {
     if (isGuest) {
+      const cartId = item.tb_variant_id;
       // Lấy danh sách sản phẩm từ localStorage
       const localCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-
       // Kiểm tra nếu sản phẩm đã tồn tại (dựa trên tb_product_id và tb_variant_id)
       const existingItemIndex = localCart.findIndex(
         (i: CartItem) =>
@@ -83,7 +83,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         localCart[existingItemIndex].quantity += item.quantity;
       } else {
         // Nếu sản phẩm chưa tồn tại, thêm vào
-        localCart.push(item);
+        const newItem = { ...item, id: cartId };
+        console.log("Added new item to cart:", newItem);
+        localCart.push(newItem);
       }
 
       // Lưu lại vào localStorage
@@ -95,8 +97,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         (sum: number, cartItem: CartItem) => sum + cartItem.quantity,
         0
       );
-      setTotalQuantity(newTotalQuantity);
 
+      setTotalQuantity(newTotalQuantity);
       alert("Sản phẩm đã được thêm vào giỏ hàng!");
       return;
     } else {
@@ -114,6 +116,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
         if (response.status === 200) {
           const newItem = response.data.data;
+          console.log(newItem);
 
           // Kiểm tra xem newItem có tồn tại không và có đầy đủ các thuộc tính không
           setCartItems((prevItems) => {
@@ -251,15 +254,15 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       setCartItems((prevItems) =>
         prevItems.map((item) =>
           item.id === id
-            ? { ...item, quantity: quantity + 1 }
+            ? { ...item, quantity: Math.max(1, quantity) }
             : item
         )
       );
-      setTotalQuantity((prevTotal) => prevTotal + 1); // Cập nhật tổng số lượng
+      setTotalQuantity((prevTotal) => prevTotal + 1); // Update total quantity
 
       const localCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
       const updatedCart = localCart.map((item: CartItem) =>
-        item.id === id ? { ...item, quantity: quantity + 1 } : item
+        item.id === id ? { ...item, quantity: quantity } : item
       );
       localStorage.setItem("guestCart", JSON.stringify(updatedCart));
       return;
@@ -329,6 +332,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         cartItems,
         totalQuantity,
         loading,
+        isGuest,
         addToCart,
         removeFromCart,
         clearCart,

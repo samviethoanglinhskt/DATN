@@ -2227,3 +2227,582 @@
 [2024-12-09 06:38:08] local.INFO: Order status updated successfully. {"order_id":505,"status":"Chờ xử lý"} 
 [2024-12-09 06:38:34] local.INFO: Order cancelled successfully. {"order_id":505} 
 [2024-12-09 06:38:40] local.INFO: Order status updated successfully. {"order_id":505,"status":"Đã xử lý"} 
+[2024-12-09 11:08:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:08:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:09:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:10:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:10:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:12:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:12:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:13:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:13:01] local.ERROR: Lỗi khi đặt hàng: Attempt to read property "id" on array  
+[2024-12-09 11:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:15:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:15:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:17:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:17:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:18:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:18:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:18:06] local.ERROR: Lỗi khi đặt hàng: Attempt to read property "quantity" on array  
+[2024-12-09 11:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:21:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:21:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:25:56] local.ERROR: Lỗi khi đặt hàng: Attempt to read property "id" on array  
+[2024-12-09 11:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:28:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:28:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:30:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:30:27] local.ERROR: Lỗi khi đặt hàng: Attempt to read property "id" on array  
+[2024-12-09 11:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:33:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:33:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:34:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:34:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:34:17] local.ERROR: Lỗi khi đặt hàng: Attempt to read property "id" on array  
+[2024-12-09 11:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:36:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:36:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:37:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:37:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:38:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:38:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:39:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:39:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:40:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:43:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:43:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:44:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:44:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:44:11] local.ERROR: Call to undefined method stdClass::delete() {"exception":"[object] (Error(code: 0): Call to undefined method stdClass::delete() at D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php:409)
+[stacktrace]
+#0 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Concerns\\ManagesTransactions.php(30): App\\Http\\Controllers\\CartController->App\\Http\\Controllers\\{closure}(Object(Illuminate\\Database\\MySqlConnection))
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\DatabaseManager.php(509): Illuminate\\Database\\Connection->transaction(Object(Closure))
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\DatabaseManager->__call('transaction', Array)
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(419): Illuminate\\Support\\Facades\\Facade::__callStatic('transaction', Array)
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->checkoutGuest(Object(Illuminate\\Http\\Request))
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('checkoutGuest', Array)
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'checkoutGuest')
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#42 {main}
+"} 
+[2024-12-09 11:45:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:45:41] local.ERROR: Call to undefined method stdClass::delete() {"exception":"[object] (Error(code: 0): Call to undefined method stdClass::delete() at D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php:409)
+[stacktrace]
+#0 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Concerns\\ManagesTransactions.php(30): App\\Http\\Controllers\\CartController->App\\Http\\Controllers\\{closure}(Object(Illuminate\\Database\\MySqlConnection))
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\DatabaseManager.php(509): Illuminate\\Database\\Connection->transaction(Object(Closure))
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\DatabaseManager->__call('transaction', Array)
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(419): Illuminate\\Support\\Facades\\Facade::__callStatic('transaction', Array)
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->checkoutGuest(Object(Illuminate\\Http\\Request))
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('checkoutGuest', Array)
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'checkoutGuest')
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#42 {main}
+"} 
+[2024-12-09 11:46:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:46:46] local.ERROR: Call to undefined method stdClass::delete() {"exception":"[object] (Error(code: 0): Call to undefined method stdClass::delete() at D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php:409)
+[stacktrace]
+#0 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Concerns\\ManagesTransactions.php(30): App\\Http\\Controllers\\CartController->App\\Http\\Controllers\\{closure}(Object(Illuminate\\Database\\MySqlConnection))
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\DatabaseManager.php(509): Illuminate\\Database\\Connection->transaction(Object(Closure))
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\DatabaseManager->__call('transaction', Array)
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(419): Illuminate\\Support\\Facades\\Facade::__callStatic('transaction', Array)
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->checkoutGuest(Object(Illuminate\\Http\\Request))
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('checkoutGuest', Array)
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'checkoutGuest')
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#42 {main}
+"} 
+[2024-12-09 11:47:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:47:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:48:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:48:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:49:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:49:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:51:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:51:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:51:26] local.ERROR: Call to undefined method stdClass::delete() {"exception":"[object] (Error(code: 0): Call to undefined method stdClass::delete() at D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php:410)
+[stacktrace]
+#0 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Concerns\\ManagesTransactions.php(30): App\\Http\\Controllers\\CartController->App\\Http\\Controllers\\{closure}(Object(Illuminate\\Database\\MySqlConnection))
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\DatabaseManager.php(509): Illuminate\\Database\\Connection->transaction(Object(Closure))
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\DatabaseManager->__call('transaction', Array)
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(420): Illuminate\\Support\\Facades\\Facade::__callStatic('transaction', Array)
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->checkoutGuest(Object(Illuminate\\Http\\Request))
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('checkoutGuest', Array)
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'checkoutGuest')
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#42 {main}
+"} 
+[2024-12-09 11:52:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:52:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:53:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:54:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:54:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:55:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:55:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:56:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:56:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:56:06] local.ERROR: Token has expired {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenExpiredException(code: 0): Token has expired at D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Expiration.php:31)
+[stacktrace]
+#0 [internal function]: Tymon\\JWTAuth\\Claims\\Expiration->validatePayload()
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(58): call_user_func_array(Array, Array)
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Collections\\Traits\\EnumeratesValues.php(240): Tymon\\JWTAuth\\Claims\\Collection->Tymon\\JWTAuth\\Claims\\{closure}(Object(Tymon\\JWTAuth\\Claims\\Expiration), 'exp')
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(61): Illuminate\\Support\\Collection->each(Object(Closure))
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(80): Tymon\\JWTAuth\\Claims\\Collection->validate('payload')
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(50): Tymon\\JWTAuth\\Validators\\PayloadValidator->validatePayload(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Payload.php(46): Tymon\\JWTAuth\\Validators\\PayloadValidator->check(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(180): Tymon\\JWTAuth\\Payload->__construct(Object(Tymon\\JWTAuth\\Claims\\Collection), Object(Tymon\\JWTAuth\\Validators\\PayloadValidator), false)
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(85): Tymon\\JWTAuth\\Factory->withClaims(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Manager.php(103): Tymon\\JWTAuth\\Factory->make()
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(194): Tymon\\JWTAuth\\Manager->decode(Object(Tymon\\JWTAuth\\Token))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWTAuth.php(63): Tymon\\JWTAuth\\JWT->getPayload()
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Tymon\\JWTAuth\\JWTAuth->authenticate()
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#48 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#49 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#50 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#51 {main}
+"} 
+[2024-12-09 11:56:11] local.ERROR: Token has expired {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenExpiredException(code: 0): Token has expired at D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Expiration.php:31)
+[stacktrace]
+#0 [internal function]: Tymon\\JWTAuth\\Claims\\Expiration->validatePayload()
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(58): call_user_func_array(Array, Array)
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Collections\\Traits\\EnumeratesValues.php(240): Tymon\\JWTAuth\\Claims\\Collection->Tymon\\JWTAuth\\Claims\\{closure}(Object(Tymon\\JWTAuth\\Claims\\Expiration), 'exp')
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(61): Illuminate\\Support\\Collection->each(Object(Closure))
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(80): Tymon\\JWTAuth\\Claims\\Collection->validate('payload')
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(50): Tymon\\JWTAuth\\Validators\\PayloadValidator->validatePayload(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Payload.php(46): Tymon\\JWTAuth\\Validators\\PayloadValidator->check(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(180): Tymon\\JWTAuth\\Payload->__construct(Object(Tymon\\JWTAuth\\Claims\\Collection), Object(Tymon\\JWTAuth\\Validators\\PayloadValidator), false)
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(85): Tymon\\JWTAuth\\Factory->withClaims(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Manager.php(103): Tymon\\JWTAuth\\Factory->make()
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(194): Tymon\\JWTAuth\\Manager->decode(Object(Tymon\\JWTAuth\\Token))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWTAuth.php(63): Tymon\\JWTAuth\\JWT->getPayload()
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Tymon\\JWTAuth\\JWTAuth->authenticate()
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#48 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#49 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#50 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#51 {main}
+"} 
+[2024-12-09 11:56:17] local.ERROR: Token has expired {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenExpiredException(code: 0): Token has expired at D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Expiration.php:31)
+[stacktrace]
+#0 [internal function]: Tymon\\JWTAuth\\Claims\\Expiration->validatePayload()
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(58): call_user_func_array(Array, Array)
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Collections\\Traits\\EnumeratesValues.php(240): Tymon\\JWTAuth\\Claims\\Collection->Tymon\\JWTAuth\\Claims\\{closure}(Object(Tymon\\JWTAuth\\Claims\\Expiration), 'exp')
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(61): Illuminate\\Support\\Collection->each(Object(Closure))
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(80): Tymon\\JWTAuth\\Claims\\Collection->validate('payload')
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(50): Tymon\\JWTAuth\\Validators\\PayloadValidator->validatePayload(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Payload.php(46): Tymon\\JWTAuth\\Validators\\PayloadValidator->check(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(180): Tymon\\JWTAuth\\Payload->__construct(Object(Tymon\\JWTAuth\\Claims\\Collection), Object(Tymon\\JWTAuth\\Validators\\PayloadValidator), false)
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(85): Tymon\\JWTAuth\\Factory->withClaims(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Manager.php(103): Tymon\\JWTAuth\\Factory->make()
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(194): Tymon\\JWTAuth\\Manager->decode(Object(Tymon\\JWTAuth\\Token))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWTAuth.php(63): Tymon\\JWTAuth\\JWT->getPayload()
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Tymon\\JWTAuth\\JWTAuth->authenticate()
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#48 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#49 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#50 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#51 {main}
+"} 
+[2024-12-09 11:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:58:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:58:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:59:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:59:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:00:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:00:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:00:15] local.ERROR: Token has expired {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenExpiredException(code: 0): Token has expired at D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Expiration.php:31)
+[stacktrace]
+#0 [internal function]: Tymon\\JWTAuth\\Claims\\Expiration->validatePayload()
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(58): call_user_func_array(Array, Array)
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Collections\\Traits\\EnumeratesValues.php(240): Tymon\\JWTAuth\\Claims\\Collection->Tymon\\JWTAuth\\Claims\\{closure}(Object(Tymon\\JWTAuth\\Claims\\Expiration), 'exp')
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(61): Illuminate\\Support\\Collection->each(Object(Closure))
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(80): Tymon\\JWTAuth\\Claims\\Collection->validate('payload')
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(50): Tymon\\JWTAuth\\Validators\\PayloadValidator->validatePayload(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Payload.php(46): Tymon\\JWTAuth\\Validators\\PayloadValidator->check(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(180): Tymon\\JWTAuth\\Payload->__construct(Object(Tymon\\JWTAuth\\Claims\\Collection), Object(Tymon\\JWTAuth\\Validators\\PayloadValidator), false)
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(85): Tymon\\JWTAuth\\Factory->withClaims(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Manager.php(103): Tymon\\JWTAuth\\Factory->make()
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(194): Tymon\\JWTAuth\\Manager->decode(Object(Tymon\\JWTAuth\\Token))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWTAuth.php(63): Tymon\\JWTAuth\\JWT->getPayload()
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Tymon\\JWTAuth\\JWTAuth->authenticate()
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#48 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#49 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#50 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#51 {main}
+"} 
+[2024-12-09 12:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:01:28] local.ERROR: Lỗi khi đặt hàng: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'quantity' cannot be null (Connection: mysql, SQL: insert into `tb__oderdetail` (`tb_oder_id`, `tb_product_id`, `tb_variant_id`, `quantity`, `price`, `updated_at`, `created_at`) values (413, 241, 254, ?, 170000, 2024-12-09 12:01:28, 2024-12-09 12:01:28))  
+[2024-12-09 12:02:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:02:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:03:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:03:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:05:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:06:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:06:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:10:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:11:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:11:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:12:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:12:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:13:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:13:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:15:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:15:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:16:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:16:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:17:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:17:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:18:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:18:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:19:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:19:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:22:02] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:22:02] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:23:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:23:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:24:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:24:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:27:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:28:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:28:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:29:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:29:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:30:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:30:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:32:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:33:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:33:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:33:10] local.INFO: Order status updated successfully. {"order_id":419,"status":"Đã giao hàng"} 
+[2024-12-09 12:34:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:34:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:35:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:35:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:36:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 12:36:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
