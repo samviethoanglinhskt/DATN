@@ -185,7 +185,7 @@ const LogoBannerManagement: React.FC = () => {
       width: 120,
       render: (image: string) => (
         <Image
-          src={image}
+        src={`http://localhost:8000/storage/${image}`} 
           alt="Logo"
           width={80}
           height={80}

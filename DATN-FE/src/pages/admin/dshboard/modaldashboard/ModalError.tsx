@@ -15,6 +15,7 @@ import {
 interface OrderStats {
   year: number;
   month: number;
+  day: number;
   total_revenue: string;
   growthPercentageComplete: string;
   total_orders: number;
@@ -71,7 +72,7 @@ const ModalError: React.FC = () => {
   // Handle time range changes
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
-    fetchOrderStats(value); // Fetch data with new time range
+    fetchOrderStats(value); 
   };
 
   const openModal = () => {
@@ -123,7 +124,7 @@ const ModalError: React.FC = () => {
       if (timeRange === "day") {
         // Lọc theo ngày
         filtered = data["Tổng đơn hàng"].filter((record) =>
-          `${record.month}/${record.year}`.includes(value)
+          `${record.day}/${record.month}/${record.year}`.includes(value)
         );
       }
 
@@ -146,21 +147,21 @@ const ModalError: React.FC = () => {
   // Define columns for the table inside modal
   const columns = [
     {
-      title: "Tháng/Năm",
-      dataIndex: "month",
-      key: "month",
+      title: "Thời gian",
+      dataIndex: "time",
+      key: "time",
       render: (text: any, record: OrderStats) => {
         if (timeRange === "year") {
           return `${record.year}`;
         } else if (timeRange === "quarter") {
           const quarter = Math.ceil((record.month || 1) / 3);
-          return `Quý ${quarter} - ${record.year}`;
+          return `Quý ${quarter} - ${record.month}/${record.year}`;
         } else if (timeRange === "week") {
-          return `Tuần ${record.month} - ${record.year}`;
+          return `Tuần ${record.month} - ${record.month}/${record.year}`;
         } else if (timeRange === "month") {
           return `${record.month}/${record.year}`;
         } else if (timeRange === "day") {
-          return `Ngày ${record.month || ""}/${record.year}`;
+          return `${record.day}/${record.month}/${record.year}`;
         }
         return null;
       },
@@ -177,7 +178,7 @@ const ModalError: React.FC = () => {
         calculateCancellationRate(record.cancelled_orders, record.total_orders),
     },
   ];
-  
+
   return (
     <Space
       direction="vertical"
@@ -257,7 +258,7 @@ const ModalError: React.FC = () => {
           <Table
             columns={columns}
             dataSource={filteredData}
-            rowKey={(record) => `${record.month}-${record.year}`}
+            rowKey={(record) => `${record.day}-${record.month}-${record.year}`}
             pagination={false}
             scroll={{ y: 240 }}
           />
