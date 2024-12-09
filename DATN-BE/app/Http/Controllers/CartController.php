@@ -279,7 +279,6 @@ class CartController extends Controller
 
     public function checkoutGuest(Request $request)
     { // khách vãng lai
-
         try {
             $totalOrder = 0;
             $order = tb_oder::create([
@@ -548,7 +547,7 @@ class CartController extends Controller
 
         if ($secureHash == $vnp_SecureHash) {
             if ($_GET['vnp_ResponseCode'] == '00') {
-                $orderTemp  = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+                $orderTemp = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
                 if ($orderTemp) {
                     // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
                     $orderReal = tb_oder::create([
@@ -619,7 +618,7 @@ class CartController extends Controller
                     return redirect('http://localhost:5173/payment-success');
                 }
             } else {
-                $orderTemp  = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
+                $orderTemp = TbOderTemp::where('order_code', $inputData['vnp_TxnRef'])->first();
                 if ($orderTemp) {
                     // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
                     $orderReal = tb_oder::create([
@@ -905,7 +904,7 @@ class CartController extends Controller
 
         if ($secureHash == $vnp_SecureHash) {
             if ($_GET['vnp_ResponseCode'] == '00') {
-                $orderTemp  = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->first();
+                $orderTemp = tb_oder::where('order_code', $inputData['vnp_TxnRef'])->first();
                 if ($orderTemp) {
                     $orderTemp->update(['order_status' => 'Đã thanh toán']);
                     $orderDetailsTemp = tb_oderdetail::where('tb_oder_id', $orderTemp->id)->get();

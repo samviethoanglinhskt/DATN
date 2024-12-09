@@ -7,8 +7,9 @@ export type Image = {
 };
 
 export type Variant = {
-  color: Color;
-  size: Size;
+  name: string;
+  color?: Color | null;
+  size?: Size | null;
   id: number;
   tb_product_id: number;
   tb_size_id: number;
