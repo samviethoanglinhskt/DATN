@@ -279,75 +279,160 @@ class CartController extends Controller
 
     public function checkoutGuest(Request $request)
     { // khách vãng lai
-
+        $orderDetails = null;
+        $oderDetail = null; // Khởi tạo mặc định
         try {
-            $totalOrder = 0;
-            $order = tb_oder::create([
-                'user_id' => 1,
-                'tb_discount_id' => null,
-                'order_date' => now(),
-                // 'total_amount' => $totalAmount,
-                'order_status' => 'Chờ xử lý',
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'address' => $request->address_detail . ', ' . $request->address,
-                'email' => $request->email,
-            ]);
-            $variant = tb_variant::find($request->tb_variant_id);
-            if ($variant) {
-                $totalAmount = $variant->price * $request->quantity;
-                $totalOrder = $totalAmount;
-            }
-            $oderDetail = tb_oderdetail::create([
-                'tb_oder_id' => $order->id,
-                'tb_product_id' => $request->tb_product_id,
-                'tb_variant_id' => $request->tb_variant_id,
-                'quantity' => $request->quantity,
-                'price' => $variant->price
-            ]);
+            if (isset($request->tb_product_id) && isset($request->tb_variant_id)) {
+                $user = JWTAuth::parseToken()->authenticate();
+                if (!$user) {
+                    $id_user = 1;
+                } else {
+                    $id_user = $user->id;
+                }
+                $totalOrder = 0;
+                $order = tb_oder::create([
+                    'user_id' => $id_user,
+                    'order_date' => now(),
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address_detail . ', ' . $request->address,
+                    'email' => $request->email,
+                ]);
+                // Sử dụng giao dịch để đảm bảo tính toàn vẹn dữ liệu
+                DB::transaction(function () use ($request, &$order, &$totalOrder, &$oderDetail) {
+                    // Khóa sản phẩm để tránh nhiều người dùng thay đổi số lượng cùng lúc
+                    $variant = tb_variant::where('id', $request->tb_variant_id)->lockForUpdate()->first();
 
-            $order->order_code = 'ORD-' . $order->id;
-            $order->total_amount = $totalOrder;
-            $order->save();
-            $variant->quantity -= $request->quantity;
-            if ($variant->quantity <= 0) {
-                $variant->status = 'Hết hàng';
+                    if ($variant) {
+                        // Kiểm tra số lượng sản phẩm còn lại
+                        if ($request->quantity > $variant->quantity) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Sản phẩm không đủ số lượng',
+                            ]);
+                        } else {
+                            // Tạo chi tiết đơn hàng
+                            $oderDetail = tb_oderdetail::create([
+                                'tb_oder_id' => $order->id,
+                                'tb_product_id' => $request->tb_product_id,
+                                'tb_variant_id' => $request->tb_variant_id,
+                                'quantity' => $request->quantity,
+                                'price' => $variant->price
+                            ]);
+                            // Cập nhật số lượng sản phẩm còn lại
+                            $variant->quantity -= $request->quantity;
+
+                            // Kiểm tra lại trạng thái sản phẩm và cập nhật
+                            if ($variant->quantity <= 0) {
+                                $variant->status = 'Hết hàng';
+                            } else {
+                                $variant->status = 'Còn hàng';
+                            }
+                            $variant->save();
+
+                            $totalOrder += $request->quantity * $variant->price;
+
+                            // Cập nhật thông tin đơn hàng
+                            $order->order_code = 'ORD-' . $order->id;
+                            $order->total_amount = $totalOrder;
+                            $order->save();
+
+                            // Phát sóng sự kiện thông báo sản phẩm bị khóa sau khi cập nhật thành công
+                            broadcast(new ProductLocked($variant, 1));
+                        }
+                    }else {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Sản phẩm không tồn tại',
+                        ]);
+                    }
+                });
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đặt hàng thành công!',
+                    'order' => $order,
+                    'orderDetail' => $oderDetail,
+                ]);
             } else {
-                $variant->status = 'Còn hàng';
+                // Lấy danh sách product_ids từ yêu cầu
+                $productIds = $request->quantity;
+                if (empty($productIds)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không có sản phẩm nào được chọn để thanh toán',
+                    ], 400);
+                }
+                // Tạo một mảng để lưu các đơn hàng đã tạo
+                $orderDetails = [];
+                $totalOrder = 0;
+                // Tạo đơn hàng mới
+                $order = tb_oder::create([
+                    'user_id' => 1,
+                    'tb_discount_id' => $request->tb_discount_id,
+                    'order_date' => now(),
+                    'order_status' => 'Chờ xử lý',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address_detail . ', ' . $request->address,
+                    'email' => $request->email,
+                ]);
+                // Sử dụng giao dịch để đảm bảo tính toàn vẹn dữ liệu
+                DB::transaction(function () use ($request, $productIds, &$order, &$orderDetails, &$totalOrder) {
+                    foreach ($productIds as $item) {
+                        // Khóa bi quan để ngăn chặn người dùng khác thao tác trên biến thể sản phẩm này cùng lúc
+                        $variant = tb_variant::where('id', $item->id)->lockForUpdate()->first();
+                        if ($variant && $variant->quantity >= $item->quantity) {
+                            // Phát sóng sự kiện thông báo sản phẩm bị khóa
+                            broadcast(new ProductLocked($variant, 1));
+                            $totalOrder += $item->quantity * $variant->price;
+                            // Tạo chi tiết đơn hàng mới
+                            $oderDetail = tb_oderdetail::create([
+                                'tb_oder_id' => $order->id,
+                                'tb_product_id' => $variant->tb_product_id,
+                                'tb_variant_id' => $item->id,
+                                'quantity' => $item->quantity,
+                                'price' => $variant->price
+                            ]);
+                            $orderDetails[] = $oderDetail;
+                            // Cập nhật lại số lượng sản phẩm
+                            $variant->quantity -= $item->quantity;
+                            if ($variant->quantity <= 0) {
+                                $variant->status = 'Hết hàng';
+                            } else {
+                                $variant->status = 'Còn hàng';
+                            }
+                            $variant->save();
+                            // Xóa giỏ hàng khi thêm đơn thành công
+                            $item->delete();
+                        } else {
+                            throw new \Exception('Sản phẩm không đủ số lượng');
+                        }
+                    }
+
+                    // Cập nhật thông tin đơn hàng
+                    $order->order_code = 'ORD-' . $order->id;
+                    $order->total_amount = $request->total_amount;
+                    $order->save();
+                });
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đặt hàng thành công!',
+                    'cart-checkout' => $productIds,
+                    'order' => $order,
+                    'orderDetail' => $orderDetails,
+                ]);
             }
-            $variant->save();
-
-            Mail::send('emails.mail_order_user', [
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'address' => $request->address_detail . ', ' . $request->address,
-                'orderCode' => $order->order_code,
-                'orderStatus' => $order->order_status,
-                'orderDetail' => $oderDetail,
-                'orderDate' => $order->order_date,
-                'productName' => $oderDetail->product->name ?? 'Không có tên sản phẩm',
-                'size' => $oderDetail->variant->size->name ?? '',
-                'color' => $oderDetail->variant->color->name ?? ''
-            ], function ($message) use ($request) {
-                $message->to($request->email)
-                    ->subject('Imperial Beauty xin thông báo');
-            });
-            return response()->json([
-                'success' => true,
-                'message' => 'Lấy sản phẩm thành công!',
-                'order' => $order,
-                'orderDetail' => $oderDetail,
-
-            ]);
         } catch (\Exception $e) {
             Log::error('Lỗi khi đặt hàng: ' . $e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra, vui lòng thử lại sau.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Có lỗi xảy ra, vui lòng thử lại sau.',
+                    'error' => $e->getMessage(),
+                ],
+                500
+            );
         }
     }
 
@@ -375,12 +460,12 @@ class CartController extends Controller
                     'address' => $request->address_detail . ', ' . $request->address,
                     'email' => $request->email,
                 ]);
-        
+
                 // Sử dụng giao dịch để đảm bảo tính toàn vẹn dữ liệu
                 DB::transaction(function () use ($request, &$order, &$totalOrder, &$oderDetail, $user) {
                     // Khóa sản phẩm để tránh nhiều người dùng thay đổi số lượng cùng lúc
                     $variant = tb_variant::where('id', $request->tb_variant_id)->lockForUpdate()->first();
-        
+
                     if ($variant) {
                         // Kiểm tra số lượng sản phẩm còn lại
                         if ($request->quantity > $variant->quantity) {
@@ -399,7 +484,7 @@ class CartController extends Controller
                             ]);
                             // Cập nhật số lượng sản phẩm còn lại
                             $variant->quantity -= $request->quantity;
-        
+
                             // Kiểm tra lại trạng thái sản phẩm và cập nhật
                             if ($variant->quantity <= 0) {
                                 $variant->status = 'Hết hàng';
@@ -409,13 +494,13 @@ class CartController extends Controller
                             $variant->save();
 
                             $totalOrder += $request->quantity * $variant->price;
-        
+
                             // Cập nhật thông tin đơn hàng
                             $order->order_code = 'ORD-' . $order->id;
                             $order->total_amount = $totalOrder;
                             $order->save();
-        
-                            // Phát sóng sự kiện thông báo sản phẩm bị khóa sau khi cập nhật thành công 
+
+                            // Phát sóng sự kiện thông báo sản phẩm bị khóa sau khi cập nhật thành công
                             broadcast(new ProductLocked($variant, $user->id));
                         }
                     }else {
@@ -525,7 +610,7 @@ class CartController extends Controller
                 ],
                 500
             );
-        } 
+        }
     }
 
     public function handleVnpayIpn(Request $request)
@@ -695,7 +780,7 @@ class CartController extends Controller
 
                     return redirect('http://localhost:5173/payment-failure');
                 }
-              
+
             }
         } else {
             echo "Chu ky khong hop le";
