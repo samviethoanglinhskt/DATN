@@ -126,28 +126,11 @@ const ShoppingCart: React.FC = () => {
                                   disabled={item.variant.quantity === 0}
                                 />
                               </td>
-                              {/* 
-                              {isGuest ?
-                                (
-                                  <td style={{ padding: "0 20px" }}>
-                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                      <img
-                                        src={`http://127.0.0.1:8000/storage/${item?.variant?.images[0]?.name_image}`}
-                                        width={70}
-                                        style={{ display: "flex", marginRight: "10px" }}
-                                      />
-                                      <Link to={`/product/${item.variant.tb_product_id}`} className="product-link">
-                                        <div style={{ fontSize: "13px" }}>{item.name}</div>
-                                      </Link>
-                                    </div>
-                                    <span style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item.variant.sku}</span>
-                                  </td>
-                                ) :
-                                ( */}
+
                               <td style={{ padding: "0 20px" }}>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                   <img
-                                    src={`http://127.0.0.1:8000/storage/${item?.products?.image}`}
+                                    src={`http://127.0.0.1:8000/storage/${item?.variant.images[0].name_image}`}
                                     width={70}
                                     style={{ display: "flex", marginRight: "10px" }}
                                   />
@@ -157,19 +140,7 @@ const ShoppingCart: React.FC = () => {
                                 </div>
                                 <span style={{ fontSize: "11px", fontWeight: 500, marginTop: "5px" }}>Sku:{item?.variant?.sku}</span>
                               </td>
-                              {/* )} */}
 
-                              {/* {isGuest ?
-                                (
-                                  <td style={{ padding: "0 20px", fontSize: "13px" }}>
-                                    {item.variant.tb_size_id !== null && item.variant.tb_size_id !== undefined
-                                      ? `${item.name}`
-                                      : item.variant.tb_color_id !== null && item.variant.tb_color_id !== undefined
-                                        ? `${item.name}`
-                                        : ""}
-                                  </td>
-                                ) :
-                                ( */}
                               <td style={{ padding: "0 20px", fontSize: "13px" }}>
                                 {item?.variant?.tb_size_id !== null && item?.variant?.tb_size_id !== undefined
                                   ? `${item?.variant?.size?.name}`
@@ -177,8 +148,6 @@ const ShoppingCart: React.FC = () => {
                                     ? `${item?.variant?.color?.name}`
                                     : ""}
                               </td>
-                              {/* )} */}
-
 
                               <td style={{ padding: "0 20px" }}>
                                 {item.variant.quantity === 0 ? (
