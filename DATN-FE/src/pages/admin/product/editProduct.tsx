@@ -63,6 +63,17 @@ const ProductEdit: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [isEditingVariant, setIsEditingVariant] = useState(false);
   const [currentVariant, setCurrentVariant] = useState<IVariant | null>(null);
+  const [isAddingVariant, setIsAddingVariant] = useState(false);
+  const [newVariant, setNewVariant] = useState<IVariant>({
+    id: 0,
+    tb_size_id: 0,
+    tb_color_id: 0,
+    sku: "",
+    price: 0,
+    quantity: 0,
+    status: "còn hàng",
+    images: [],
+  });
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -309,7 +320,150 @@ const ProductEdit: React.FC = () => {
       setLoading(false);
     }
   };
+  const handleAddVariant = () => {
+    // Kiểm tra thông tin biến thể hợp lệ
+    variantForm.validateFields().then((values) => {
+      const updatedVariants = [...variants, { ...newVariant, ...values }];
+      setVariants(updatedVariants);
+      setNewVariant({
+        id: 0,
+        tb_size_id: 0,
+        tb_color_id: 0,
+        sku: "",
+        price: 0,
+        quantity: 0,
+        status: "còn hàng",
+        images: [],
+      });
+      setIsAddingVariant(false); // Đóng form thêm biến thể
+      message.success("Đã thêm biến thể");
+    });
+  };
 
+  // Form thêm biến thể
+  const addVariantForm = (
+    <Form form={variantForm} layout="vertical" initialValues={newVariant}>
+      <Form.Item
+        name="tb_size_id"
+        label="Kích thước"
+        rules={[{ required: true, message: "Vui lòng chọn kích thước" }]}
+      >
+        <Select
+          placeholder="Chọn kích thước"
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, tb_size_id: value })
+          }
+        >
+          {sizes.map((size) => (
+            <Select.Option key={size.id} value={size.id}>
+              {size.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="tb_color_id"
+        label="Màu sắc"
+        rules={[{ required: true, message: "Vui lòng chọn màu sắc" }]}
+      >
+        <Select
+          placeholder="Chọn màu sắc"
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, tb_color_id: value })
+          }
+        >
+          {colors.map((color) => (
+            <Select.Option key={color.id} value={color.id}>
+              {color.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="sku"
+        label="SKU"
+        rules={[{ required: true, message: "Vui lòng nhập SKU" }]}
+      >
+        <Input
+          onChange={(e) =>
+            setNewVariant({ ...newVariant, sku: e.target.value })
+          }
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="price"
+        label="Giá"
+        rules={[{ required: true, message: "Vui lòng nhập giá" }]}
+      >
+        <InputNumber
+          style={{ width: "100%" }}
+          value={newVariant.price ?? 0}
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, price: value ?? 0 })
+          }
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="quantity"
+        label="Số lượng"
+        rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}
+      >
+        <InputNumber
+          style={{ width: "100%" }}
+          value={newVariant.quantity ?? 0}
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, quantity: value ?? 0})
+          }
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="status"
+        label="Trạng thái"
+        rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
+      >
+        <Select
+          value={newVariant.status}
+          onChange={(value) => setNewVariant({ ...newVariant, status: value })}
+        >
+          <Select.Option value="còn hàng">Còn hàng</Select.Option>
+          <Select.Option value="hết hàng">Hết hàng</Select.Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item label="Ảnh biến thể">
+        <Upload
+          listType="picture-card"
+          fileList={newVariant.images || []}
+          onChange={(info) => {
+            setNewVariant({
+              ...newVariant,
+              images: info.fileList,
+            });
+          }}
+          beforeUpload={() => false}
+        >
+          {newVariant.images?.length < 3 && (
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+          )}
+        </Upload>
+      </Form.Item>
+
+      <Space>
+        <Button onClick={() => setIsAddingVariant(false)}>Hủy</Button>
+        <Button type="primary" onClick={handleAddVariant}>
+          Thêm biến thể
+        </Button>
+      </Space>
+    </Form>
+  );
   const steps = [
     {
       title: "Thông tin sản phẩm",
@@ -409,6 +563,7 @@ const ProductEdit: React.FC = () => {
                           src={`http://127.0.0.1:8000/storage/${image.name_image}`}
                           alt={`Variant Image ${index}`}
                           style={{
+                            marginRight: 10,
                             width: 100,
                             height: 100,
                             objectFit: "cover",
@@ -496,7 +651,20 @@ const ProductEdit: React.FC = () => {
       <Card>
         <Steps current={currentStep} items={steps} className="mb-8" />
         {steps[currentStep].content}
+        <div className="mt-4">
+          {!isAddingVariant && (
+            <Button
+            style={{ marginBottom: 16 }}
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() => setIsAddingVariant(true)}
+            >
+              Thêm biến thể
+            </Button>
+          )}
 
+          {isAddingVariant && addVariantForm}
+        </div>
         <div className="flex justify-between mt-6">
           <Button onClick={() => navigate("/admin/product")}>
             Trang danh sách
