@@ -91,6 +91,7 @@ Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->na
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
+Route::get('/vnpay/ipn/guest', [CartController::class, 'handleVnpayIpnGuest'])->name('vnpay.ipn.guest');
 Route::post('/payment-online', [CartController::class, 'vnpay'])->name('payment.online');
 Route::post('/payment-guest', [CartController::class, 'vnpay_guest'])->name('payment.guest');
 
