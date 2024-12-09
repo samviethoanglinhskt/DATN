@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\tb_oderdetail;
 use App\Models\tb_variant;
-
+use App\Events\OrderStatusUpdated;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 class OderController extends Controller
 {
     /**
@@ -80,29 +82,48 @@ class OderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        try {
-            $order = tb_oder::findOrFail($id);
-            // Nếu trạng thái là "Đang giao hàng", ghi nhận thời gian giao
-            if ($request->status === 'Đã giao hàng') {
-                $order->delivered_at = now(); // Lưu thời gian hiện tại
+    public function update(Request $request, string $id) { 
+        try { 
+            // Bắt đầu transaction 
+            DB::beginTransaction(); 
+            // Khóa bi quan để ngăn ngừa cập nhật đồng thời 
+            $order = tb_oder::where('id', $id)->lockForUpdate()->firstOrFail(); 
+            // Kiểm tra trạng thái hiện tại của đơn hàng trước khi cập nhật 
+            if ($order->order_status === 'Đã hủy') { 
+                DB::rollBack(); 
+                return response()->json([ 
+                    'success' => false, 
+                    'message' => 'Không thể cập nhật trạng thái đơn hàng vì đơn hàng đã bị hủy.', 
+                ], 400); 
+            } 
+            // Nếu trạng thái là "Đã giao hàng", ghi nhận thời gian giao 
+            if ($request->status === 'Đã giao hàng') { 
+                $order->delivered_at = now(); 
+            } 
+            $order->order_status = $request->status; 
+            $order->save(); 
+            // Phát sóng sự kiện OrderStatusUpdated 
+            broadcast(new OrderStatusUpdated($order, $order->user_id)); 
+            // Ghi log thông tin cập nhật thành công 
+            Log::info('Order status updated successfully.', ['order_id' => $order->id, 'status' => $order->order_status]); 
+            // Hoàn thành transaction 
+            DB::commit(); 
+            return response()->json([ 
+                'success' => true, 
+                'message' => 'Cập nhật trạng thái đơn hàng thành công', 
+                'order' => $order, 
+            ], 200); 
+            } catch (\Exception $e) { 
+                // Rollback transaction nếu có lỗi 
+                DB::rollBack(); 
+                Log::error('Error updating order status: ' . $e->getMessage(), ['order_id' => $id]); 
+                return response()->json([ 
+                    'success' => false, 
+                    'message' => 'Cập nhật trạng thái đơn hàng thất bại', 
+                    'error' => $e->getMessage() 
+                ], 500); 
             }
-            $order->order_status = $request->status;
-            $order->save();
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật trạng thái đơn hàng thành công',
-                'order' => $order,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cập nhật trạng thái đơn hàng thất bại',
-                'error' => $e->getMessage()
-            ], 500);
         }
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -305,58 +326,77 @@ class OderController extends Controller
         }
     }
 
-    public function destroyOrder(Request $request)
-    { // Hủy đơn hàng của người dùng
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Người dùng không tồn tại',
-                ], 404);
-            }
-            $order = tb_oder::where('id', $request->id)
-                ->where('user_id', $user->id)
-                ->first();
-            if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Đơn hàng không tồn tại',
-                ], 404);
-            }
-
-            // Lấy danh sách chi tiết sản phẩm trong đơn hàng
-            $orderDetails = tb_oderdetail::where('tb_oder_id', $order->id)->get();
-
-            // Cập nhật số lượng sản phẩm
+    public function destroyOrder(Request $request) { 
+        try { 
+            // Bắt đầu transaction 
+            DB::beginTransaction(); 
+            // Xác thực người dùng 
+            $user = JWTAuth::parseToken()->authenticate(); 
+            if (!$user) { 
+                return response()->json([ 
+                    'success' => false, 
+                    'message' => 'Người dùng không tồn tại', 
+                ], 404); 
+            } 
+            // Khóa bi quan để ngăn ngừa cập nhật đồng thời 
+            $order = tb_oder::where('id', $request->id) 
+            ->where('user_id', $user->id) 
+            ->lockForUpdate() 
+            ->first(); 
+            if (!$order) { 
+                DB::rollBack(); 
+                return response()->json([ 
+                    'success' => false, 
+                    'message' => 'Đơn hàng không tồn tại', 
+                ], 404); 
+            } 
+            // Kiểm tra trạng thái hiện tại của đơn hàng trước khi hủy 
+            if ($order->order_status === 'Đã xử lý' || $order->order_status === 'Đang giao hàng' || $order->order_status === 'Đã giao hàng') { 
+                DB::rollBack(); 
+                return response()->json([ 
+                    'success' => false, 
+                    'message' => 'Không thể hủy đơn hàng vì trạng thái hiện tại của đơn hàng không cho phép.', 
+                ], 400); 
+            } 
+            // Lấy danh sách chi tiết sản phẩm trong đơn hàng 
+            $orderDetails = tb_oderdetail::where('tb_oder_id', $order->id)->get(); 
+            // Cập nhật số lượng sản phẩm 
             foreach ($orderDetails as $detail) {
-                $variant = tb_variant::find($detail->tb_variant_id);
-                if ($variant) {
-                    // Cộng lại số lượng sản phẩm
-                    $variant->quantity += $detail->quantity;
-
-                    // Kiểm tra trạng thái (nếu số lượng > 0 thì cập nhật thành "còn hàng")
-                    if ($variant->quantity > 0) {
-                        $variant->status = 'Còn hàng'; // Giả sử cột trạng thái là "status"
-                    }
-
-                    $variant->save();
-                }
-            }
-            $order->order_status = 'Đã hủy đơn hàng';
-            $order->feedback = $request->feedback;
-            $order->save();
-            return response()->json([
-                'success' => true,
-                'message' => 'Hủy đơn hàng thành công',
-                'data' => $order,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Hủy đơn hàng thất bại',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+                $variant = tb_variant::find($detail->tb_variant_id); 
+                if ($variant) { 
+                    // Cộng lại số lượng sản phẩm 
+                    $variant->quantity += $detail->quantity; 
+                    // Kiểm tra trạng thái (nếu số lượng > 0 thì cập nhật thành "Còn hàng") 
+                    if ($variant->quantity > 0) { 
+                        $variant->status = 'Còn hàng'; // Giả sử cột trạng thái là "status" 
+                    } 
+                    $variant->save(); 
+                } 
+            } 
+            // Cập nhật trạng thái đơn hàng thành "Đã hủy đơn hàng" 
+            $order->order_status = 'Đã hủy đơn hàng'; 
+            $order->feedback = $request->feedback; 
+            $order->save(); 
+            // Phát sóng sự kiện OrderStatusUpdated 
+            broadcast(new OrderStatusUpdated($order, $order->user_id)); 
+            // Ghi log thông tin hủy đơn hàng thành công 
+            Log::info('Order cancelled successfully.', ['order_id' => $order->id]); 
+            // Hoàn thành transaction 
+            DB::commit(); 
+            return response()->json([ 
+                'success' => true, 
+                'message' => 'Hủy đơn hàng thành công', 
+                'data' => $order, 
+            ], 200); 
+        } catch (\Exception $e) { 
+            // Rollback transaction nếu có lỗi 
+            DB::rollBack(); 
+            Log::error('Error cancelling order: ' . $e->getMessage(), ['order_id' => $request->id]); 
+            return response()->json([ 
+                'success' => false, 
+                'message' => 'Hủy đơn hàng thất bại', 
+                'error' => $e->getMessage() 
+            ], 500); 
+        } 
     }
 }
