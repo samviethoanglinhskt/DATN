@@ -18,6 +18,7 @@ interface UserStats {
   month: number;
   week_in_month: number;
   total_users: number;
+  quarter?: number;
   growth_percentage: string;
 }
 
@@ -57,7 +58,19 @@ const ModalUserStats: React.FC = () => {
   // Handle time range change
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
-    fetchUserStats(value); // Fetch data when the time range changes
+    if (data && data["Người dùng"]) {
+      let filtered = data["Người dùng"];
+      if (value === "week") {
+        filtered = filtered.filter((item) => item.week_in_month); // Lọc theo tuần
+      } else if (value === "month") {
+        filtered = filtered.filter((item) => item.month); // Lọc theo tháng
+      } else if (value === "quarter") {
+        filtered = filtered.filter((item) => item.quarter); // Lọc theo quý
+      } else if (value === "year") {
+        filtered = filtered.filter((item) => item.year); // Lọc theo năm
+      }
+      setFilteredData(filtered);
+    }
   };
 
   if (loading) {
@@ -76,26 +89,46 @@ const ModalUserStats: React.FC = () => {
       title: "Thời gian",
       dataIndex: "week_in_month",
       key: "week_in_month",
-      align: "center", // Corrected to use one of the valid AlignType values
-      render: (value: any, record: UserStats) => (
-        <div>
-          {record.month}/{record.year} - Tuần {record.week_in_month}
-        </div>
-      ),
+      align: "center",
+      render: (value: any, record: UserStats) => {
+        if (timeRange === "week") {
+          return (
+            <div>
+              {record.month}/{record.year} - Tuần {record.week_in_month}
+            </div>
+          );
+        } else if (timeRange === "month") {
+          return (
+            <div>
+              {record.month}/{record.year}
+            </div>
+          );
+        } else if (timeRange === "quarter") {
+          return (
+            <div>
+              Quý {record.quarter} - {record.year}
+            </div>
+          );
+        } else if (timeRange === "year") {
+          return <div>{record.year}</div>;
+        }
+        return null;
+      },
     },
     {
       title: "Số lượng người dùng",
       dataIndex: "total_users",
       key: "total_users",
-      align: "center", // Corrected
+      align: "center",
     },
     {
       title: "Tăng trưởng",
       dataIndex: "growth_percentage",
       key: "growth_percentage",
-      align: "center", // Corrected
+      align: "center",
     },
   ];
+
   return (
     <div style={{ padding: "24px" }}>
       <Button type="primary" onClick={() => setModalVisible(true)}>
@@ -124,7 +157,6 @@ const ModalUserStats: React.FC = () => {
               onChange={handleTimeRangeChange}
               style={{ width: 120 }}
               options={[
-                { value: "day", label: "Ngày" },
                 { value: "week", label: "Tuần" },
                 { value: "month", label: "Tháng" },
                 { value: "quarter", label: "Quý" },

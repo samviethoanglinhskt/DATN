@@ -1,0 +1,971 @@
+[2024-12-08 08:38:34] local.ERROR: Wrong number of segments {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenInvalidException(code: 0): Wrong number of segments at D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\TokenValidator.php:40)
+[stacktrace]
+#0 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\TokenValidator.php(26): Tymon\\JWTAuth\\Validators\\TokenValidator->validateStructure('null')
+#1 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Token.php(31): Tymon\\JWTAuth\\Validators\\TokenValidator->check('null')
+#2 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(291): Tymon\\JWTAuth\\Token->__construct('null')
+#3 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(182): Tymon\\JWTAuth\\JWT->setToken('null')
+#4 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Tymon\\JWTAuth\\JWT->parseToken()
+#5 D:\\DATNN\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Illuminate\\Support\\Facades\\Facade::__callStatic('parseToken', Array)
+#6 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#7 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#8 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#9 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#10 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#11 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#12 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#14 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#16 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#17 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#18 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#20 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#21 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#22 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#23 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#24 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#25 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#39 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#41 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#42 D:\\DATNN\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#43 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\DATNN\\\\DATN\\\\D...')
+#44 {main}
+"} 
+[2024-12-08 08:38:35] local.ERROR: Wrong number of segments {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenInvalidException(code: 0): Wrong number of segments at D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\TokenValidator.php:40)
+[stacktrace]
+#0 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\TokenValidator.php(26): Tymon\\JWTAuth\\Validators\\TokenValidator->validateStructure('null')
+#1 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Token.php(31): Tymon\\JWTAuth\\Validators\\TokenValidator->check('null')
+#2 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(291): Tymon\\JWTAuth\\Token->__construct('null')
+#3 D:\\DATNN\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(182): Tymon\\JWTAuth\\JWT->setToken('null')
+#4 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Tymon\\JWTAuth\\JWT->parseToken()
+#5 D:\\DATNN\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Illuminate\\Support\\Facades\\Facade::__callStatic('parseToken', Array)
+#6 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#7 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#8 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#9 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#10 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#11 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#12 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#13 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#14 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#16 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#17 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#18 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#20 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#21 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#22 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#23 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#24 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#25 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#39 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#41 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#42 D:\\DATNN\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#43 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\DATNN\\\\DATN\\\\D...')
+#44 {main}
+"} 
+[2024-12-08 08:38:35] local.ERROR: Please provide a valid cache path. {"exception":"[object] (InvalidArgumentException(code: 0): Please provide a valid cache path. at D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Compilers\\Compiler.php:67)
+[stacktrace]
+#0 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(102): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), false, '', true, 'php')
+#1 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(908): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build(Object(Closure))
+#3 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(961): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(946): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(168): Illuminate\\Foundation\\Application->make('blade.compiler')
+#7 [internal function]: Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}()
+#8 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\EngineResolver.php(55): call_user_func(Object(Closure))
+#9 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(310): Illuminate\\View\\Engines\\EngineResolver->resolve('blade')
+#10 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(274): Illuminate\\View\\Factory->getEngineFromPath('D:\\\\DATNN\\\\DATN\\\\D...')
+#11 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(146): Illuminate\\View\\Factory->viewInstance('errors::404', 'D:\\\\DATNN\\\\DATN\\\\D...', Array)
+#12 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ResponseFactory.php(88): Illuminate\\View\\Factory->make('errors::404', Array)
+#13 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(726): Illuminate\\Routing\\ResponseFactory->view('errors::404', Array, 404, Array)
+#14 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(650): Illuminate\\Foundation\\Exceptions\\Handler->renderHttpException(Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#15 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(556): Illuminate\\Foundation\\Exceptions\\Handler->prepareResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#16 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(473): Illuminate\\Foundation\\Exceptions\\Handler->renderExceptionResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#17 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Pipeline.php(51): Illuminate\\Foundation\\Exceptions\\Handler->render(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#18 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(146): Illuminate\\Routing\\Pipeline->handleException(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#19 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#35 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#36 D:\\DATNN\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#37 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\DATNN\\\\DATN\\\\D...')
+#38 {main}
+"} 
+[2024-12-08 08:38:36] local.ERROR: Please provide a valid cache path. {"exception":"[object] (InvalidArgumentException(code: 0): Please provide a valid cache path. at D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Compilers\\Compiler.php:67)
+[stacktrace]
+#0 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(102): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), false, '', true, 'php')
+#1 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(908): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build(Object(Closure))
+#3 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(961): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(946): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(168): Illuminate\\Foundation\\Application->make('blade.compiler')
+#7 [internal function]: Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}()
+#8 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\EngineResolver.php(55): call_user_func(Object(Closure))
+#9 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(310): Illuminate\\View\\Engines\\EngineResolver->resolve('blade')
+#10 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(274): Illuminate\\View\\Factory->getEngineFromPath('D:\\\\DATNN\\\\DATN\\\\D...')
+#11 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(146): Illuminate\\View\\Factory->viewInstance('errors::404', 'D:\\\\DATNN\\\\DATN\\\\D...', Array)
+#12 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ResponseFactory.php(88): Illuminate\\View\\Factory->make('errors::404', Array)
+#13 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(726): Illuminate\\Routing\\ResponseFactory->view('errors::404', Array, 404, Array)
+#14 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(650): Illuminate\\Foundation\\Exceptions\\Handler->renderHttpException(Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#15 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(556): Illuminate\\Foundation\\Exceptions\\Handler->prepareResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#16 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(473): Illuminate\\Foundation\\Exceptions\\Handler->renderExceptionResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#17 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Pipeline.php(51): Illuminate\\Foundation\\Exceptions\\Handler->render(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#18 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(146): Illuminate\\Routing\\Pipeline->handleException(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#19 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#35 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#36 D:\\DATNN\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#37 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\DATNN\\\\DATN\\\\D...')
+#38 {main}
+"} 
+[2024-12-08 08:38:37] local.ERROR: Please provide a valid cache path. {"exception":"[object] (InvalidArgumentException(code: 0): Please provide a valid cache path. at D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Compilers\\Compiler.php:67)
+[stacktrace]
+#0 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(102): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), false, '', true, 'php')
+#1 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(908): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build(Object(Closure))
+#3 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(961): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(946): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(168): Illuminate\\Foundation\\Application->make('blade.compiler')
+#7 [internal function]: Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}()
+#8 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\EngineResolver.php(55): call_user_func(Object(Closure))
+#9 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(310): Illuminate\\View\\Engines\\EngineResolver->resolve('blade')
+#10 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(274): Illuminate\\View\\Factory->getEngineFromPath('D:\\\\DATNN\\\\DATN\\\\D...')
+#11 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(146): Illuminate\\View\\Factory->viewInstance('errors::404', 'D:\\\\DATNN\\\\DATN\\\\D...', Array)
+#12 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ResponseFactory.php(88): Illuminate\\View\\Factory->make('errors::404', Array)
+#13 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(726): Illuminate\\Routing\\ResponseFactory->view('errors::404', Array, 404, Array)
+#14 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(650): Illuminate\\Foundation\\Exceptions\\Handler->renderHttpException(Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#15 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(556): Illuminate\\Foundation\\Exceptions\\Handler->prepareResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#16 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(473): Illuminate\\Foundation\\Exceptions\\Handler->renderExceptionResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#17 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Pipeline.php(51): Illuminate\\Foundation\\Exceptions\\Handler->render(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#18 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(146): Illuminate\\Routing\\Pipeline->handleException(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#19 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#35 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#36 D:\\DATNN\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#37 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\DATNN\\\\DATN\\\\D...')
+#38 {main}
+"} 
+[2024-12-08 08:38:37] local.ERROR: Please provide a valid cache path. {"exception":"[object] (InvalidArgumentException(code: 0): Please provide a valid cache path. at D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Compilers\\Compiler.php:67)
+[stacktrace]
+#0 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(102): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), false, '', true, 'php')
+#1 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(908): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(795): Illuminate\\Container\\Container->build(Object(Closure))
+#3 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(961): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(731): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(946): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(168): Illuminate\\Foundation\\Application->make('blade.compiler')
+#7 [internal function]: Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}()
+#8 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\EngineResolver.php(55): call_user_func(Object(Closure))
+#9 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(310): Illuminate\\View\\Engines\\EngineResolver->resolve('blade')
+#10 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(274): Illuminate\\View\\Factory->getEngineFromPath('D:\\\\DATNN\\\\DATN\\\\D...')
+#11 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Factory.php(146): Illuminate\\View\\Factory->viewInstance('errors::404', 'D:\\\\DATNN\\\\DATN\\\\D...', Array)
+#12 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ResponseFactory.php(88): Illuminate\\View\\Factory->make('errors::404', Array)
+#13 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(726): Illuminate\\Routing\\ResponseFactory->view('errors::404', Array, 404, Array)
+#14 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(650): Illuminate\\Foundation\\Exceptions\\Handler->renderHttpException(Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#15 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(556): Illuminate\\Foundation\\Exceptions\\Handler->prepareResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#16 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Exceptions\\Handler.php(473): Illuminate\\Foundation\\Exceptions\\Handler->renderExceptionResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#17 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Pipeline.php(51): Illuminate\\Foundation\\Exceptions\\Handler->render(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#18 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(146): Illuminate\\Routing\\Pipeline->handleException(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#19 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#35 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#36 D:\\DATNN\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#37 D:\\DATNN\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\DATNN\\\\DATN\\\\D...')
+#38 {main}
+"} 
+[2024-12-09 05:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 05:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 05:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 05:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 05:59:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 05:59:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:09:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:09:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:12:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:12:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:13:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:13:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:17:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:20:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:20:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:21:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:21:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:37:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:37:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:42:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:51:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:51:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:57:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:57:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 06:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:01:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:01:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:06:20] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:06:20] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:07:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:07:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:37:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:37:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:51:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:51:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 07:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:01:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:37:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:37:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:41:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:41:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:51:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:51:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:57:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:57:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 08:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:01:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:01:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:02:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:05:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:14:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:15:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:16:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:19:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:26:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:28:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:29:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:30:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:31:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:34:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:35:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:37:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:37:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:38:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:39:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:40:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:41:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:41:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:43:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:44:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:48:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:48:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:49:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:50:05] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:50:05] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:51:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:51:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:52:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:52:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:53:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:53:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:54:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:54:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:55:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:55:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:56:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:56:24] local.ERROR: Token has expired {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenExpiredException(code: 0): Token has expired at D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Expiration.php:31)
+[stacktrace]
+#0 [internal function]: Tymon\\JWTAuth\\Claims\\Expiration->validatePayload()
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(58): call_user_func_array(Array, Array)
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Collections\\Traits\\EnumeratesValues.php(240): Tymon\\JWTAuth\\Claims\\Collection->Tymon\\JWTAuth\\Claims\\{closure}(Object(Tymon\\JWTAuth\\Claims\\Expiration), 'exp')
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(61): Illuminate\\Support\\Collection->each(Object(Closure))
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(80): Tymon\\JWTAuth\\Claims\\Collection->validate('payload')
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(50): Tymon\\JWTAuth\\Validators\\PayloadValidator->validatePayload(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Payload.php(46): Tymon\\JWTAuth\\Validators\\PayloadValidator->check(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(180): Tymon\\JWTAuth\\Payload->__construct(Object(Tymon\\JWTAuth\\Claims\\Collection), Object(Tymon\\JWTAuth\\Validators\\PayloadValidator), false)
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(85): Tymon\\JWTAuth\\Factory->withClaims(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Manager.php(103): Tymon\\JWTAuth\\Factory->make()
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(194): Tymon\\JWTAuth\\Manager->decode(Object(Tymon\\JWTAuth\\Token))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWTAuth.php(63): Tymon\\JWTAuth\\JWT->getPayload()
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Tymon\\JWTAuth\\JWTAuth->authenticate()
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#48 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#49 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#50 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#51 {main}
+"} 
+[2024-12-09 09:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:57:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:58:24] local.ERROR: Token has expired {"exception":"[object] (Tymon\\JWTAuth\\Exceptions\\TokenExpiredException(code: 0): Token has expired at D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Expiration.php:31)
+[stacktrace]
+#0 [internal function]: Tymon\\JWTAuth\\Claims\\Expiration->validatePayload()
+#1 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(58): call_user_func_array(Array, Array)
+#2 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Collections\\Traits\\EnumeratesValues.php(240): Tymon\\JWTAuth\\Claims\\Collection->Tymon\\JWTAuth\\Claims\\{closure}(Object(Tymon\\JWTAuth\\Claims\\Expiration), 'exp')
+#3 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Claims\\Collection.php(61): Illuminate\\Support\\Collection->each(Object(Closure))
+#4 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(80): Tymon\\JWTAuth\\Claims\\Collection->validate('payload')
+#5 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Validators\\PayloadValidator.php(50): Tymon\\JWTAuth\\Validators\\PayloadValidator->validatePayload(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#6 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Payload.php(46): Tymon\\JWTAuth\\Validators\\PayloadValidator->check(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#7 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(180): Tymon\\JWTAuth\\Payload->__construct(Object(Tymon\\JWTAuth\\Claims\\Collection), Object(Tymon\\JWTAuth\\Validators\\PayloadValidator), false)
+#8 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Factory.php(85): Tymon\\JWTAuth\\Factory->withClaims(Object(Tymon\\JWTAuth\\Claims\\Collection))
+#9 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\Manager.php(103): Tymon\\JWTAuth\\Factory->make()
+#10 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWT.php(194): Tymon\\JWTAuth\\Manager->decode(Object(Tymon\\JWTAuth\\Token))
+#11 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\tymon\\jwt-auth\\src\\JWTAuth.php(63): Tymon\\JWTAuth\\JWT->getPayload()
+#12 D:\\laragon\\www\\DATN\\DATN-BE\\app\\Http\\Controllers\\CartController.php(264): Tymon\\JWTAuth\\JWTAuth->authenticate()
+#13 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\CartController->listCart()
+#14 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('listCart', Array)
+#15 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(260): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\CartController), 'listCart')
+#16 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#17 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(806): Illuminate\\Routing\\Route->run()
+#18 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#19 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(159): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(135): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequest(Object(Illuminate\\Http\\Request), Object(Closure), Array)
+#23 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php(87): Illuminate\\Routing\\Middleware\\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\\Http\\Request), Object(Closure), 'api', Object(Closure))
+#24 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\ThrottleRequests->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'api')
+#25 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#27 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#28 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#29 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#30 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#31 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#35 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#36 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#39 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#40 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#48 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#49 D:\\laragon\\www\\DATN\\DATN-BE\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#50 D:\\laragon\\www\\DATN\\DATN-BE\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('D:\\\\laragon\\\\www\\\\...')
+#51 {main}
+"} 
+[2024-12-09 09:59:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 09:59:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:02:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:02:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:03:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:04:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:05:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:05:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:06:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:07:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:08:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:09:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:10:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:11:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:12:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:13:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:14:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:14:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:15:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:15:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:16:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:16:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:17:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:18:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:19:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:19:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:20:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:21:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:22:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:23:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:24:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:25:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:26:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:26:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:27:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:28:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:28:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:29:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:29:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:30:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:30:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:31:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:32:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:33:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:34:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:34:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:35:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:35:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:36:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:37:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:37:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:38:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:39:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:39:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:40:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:40:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:41:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:42:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:43:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:44:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:44:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:45:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:46:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:47:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:48:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:49:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:49:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:50:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:51:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:51:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:52:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:53:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:54:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:55:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:56:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:56:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:57:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:57:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:58:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 10:59:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:00:00] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  
+[2024-12-09 11:01:01] local.INFO: Đã cập nhật trạng thái các đơn hàng quá hạn.  

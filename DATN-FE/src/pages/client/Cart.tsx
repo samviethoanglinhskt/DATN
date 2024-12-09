@@ -46,15 +46,21 @@ const ShoppingCart: React.FC = () => {
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
-    const selectedProducts = cartItems.filter((item) =>
-      item.id !== undefined && selectedItems.includes(item.id)
+    // Lọc các sản phẩm đã chọn
+    const selectedProducts = cartItems.filter(
+      (item) => item.id !== undefined && selectedItems.includes(item.id)
     );
-
     const subtotal = calculateSelectedTotal();
-    // Truyền thêm `cartId` vào navigation
-    const cartId = selectedItems;  // Giả sử tất cả các mục trong giỏ hàng có cùng cart_id
+    // Tạo danh sách số lượng từ các sản phẩm được chọn
+    const quantities = selectedProducts.map((item) => ({
+      id: item.id,
+      quantity: item.quantity,
+    }));
+    console.log(quantities);
+    console.log(selectedItems);
+
     navigate("/checkout", {
-      state: { selectedProducts, subtotal, cartId },
+      state: { selectedProducts, subtotal, cartId: selectedItems, quantities },
     });
   };
 

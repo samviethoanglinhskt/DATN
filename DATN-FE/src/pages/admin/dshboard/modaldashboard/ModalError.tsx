@@ -15,6 +15,7 @@ import {
 interface OrderStats {
   year: number;
   month: number;
+  day: number;
   total_revenue: string;
   growthPercentageComplete: string;
   total_orders: number;
@@ -24,7 +25,7 @@ interface OrderStats {
 
 interface DashboardData {
   "Tổng đơn hàng": OrderStats[];
-  "Tỉ lệ hủy đơn hàng": number; 
+  "Tỉ lệ hủy đơn hàng": number;
 }
 
 const ModalError: React.FC = () => {
@@ -33,9 +34,8 @@ const ModalError: React.FC = () => {
   const [timeRange, setTimeRange] = useState("month");
   const [modalVisible, setModalVisible] = useState(false);
   const [filteredData, setFilteredData] = useState<OrderStats[]>([]);
-  const [filterText, setFilterText] = useState(""); 
+  const [filterText, setFilterText] = useState("");
 
- 
   const fetchOrderStats = async (period: string = timeRange) => {
     try {
       setLoading(true);
@@ -68,10 +68,11 @@ const ModalError: React.FC = () => {
     const rate = (cancelled / total_orders) * 100;
     return `${rate.toFixed(2)} %`;
   };
+
   // Handle time range changes
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
-    fetchOrderStats(value); // Fetch data with new time range
+    fetchOrderStats(value); 
   };
 
   const openModal = () => {
@@ -87,13 +88,48 @@ const ModalError: React.FC = () => {
     const value = e.target.value;
     setFilterText(value);
 
-    // Filter based on the month or year
-    const filtered = data?.["Tổng đơn hàng"].filter(
-      (record) =>
-        record.month.toString().includes(value) ||
-        record.year.toString().includes(value)
-    );
-    setFilteredData(filtered || []);
+    if (data) {
+      let filtered: OrderStats[] = [];
+
+      if (timeRange === "month" || timeRange === "year") {
+        // Lọc theo tháng hoặc năm
+        filtered = data["Tổng đơn hàng"].filter(
+          (record) =>
+            record.month.toString().includes(value) ||
+            record.year.toString().includes(value)
+        );
+      }
+
+      if (timeRange === "quarter") {
+        // Lọc theo quý
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return (
+            `Quý ${quarter}`.includes(value) ||
+            record.year.toString().includes(value)
+          );
+        });
+      }
+
+      if (timeRange === "week") {
+        // Lọc theo tuần (tuần 1, tuần 2, ...)
+        filtered = data["Tổng đơn hàng"].filter((record) => {
+          return (
+            record.year.toString().includes(value) ||
+            record.month.toString().includes(value)
+          );
+        });
+      }
+
+      if (timeRange === "day") {
+        // Lọc theo ngày
+        filtered = data["Tổng đơn hàng"].filter((record) =>
+          `${record.day}/${record.month}/${record.year}`.includes(value)
+        );
+      }
+
+      setFilteredData(filtered || []);
+    }
   };
 
   if (loading) {
@@ -111,13 +147,24 @@ const ModalError: React.FC = () => {
   // Define columns for the table inside modal
   const columns = [
     {
-      title: "Tháng/Năm",
-      dataIndex: "month",
-      key: "month",
-      render: (text: any, record: OrderStats) =>
-        timeRange === "year"
-          ? `${record.year}`
-          : `${record.month}/${record.year}`,
+      title: "Thời gian",
+      dataIndex: "time",
+      key: "time",
+      render: (text: any, record: OrderStats) => {
+        if (timeRange === "year") {
+          return `${record.year}`;
+        } else if (timeRange === "quarter") {
+          const quarter = Math.ceil((record.month || 1) / 3);
+          return `Quý ${quarter} - ${record.month}/${record.year}`;
+        } else if (timeRange === "week") {
+          return `Tuần ${record.month} - ${record.month}/${record.year}`;
+        } else if (timeRange === "month") {
+          return `${record.month}/${record.year}`;
+        } else if (timeRange === "day") {
+          return `${record.day}/${record.month}/${record.year}`;
+        }
+        return null;
+      },
     },
     {
       title: "Đơn hàng đã hủy",
@@ -171,7 +218,7 @@ const ModalError: React.FC = () => {
             <Space>
               Thống kê theo:
               <Select
-              className="mb-2"
+                className="mb-2"
                 value={timeRange}
                 onChange={handleTimeRangeChange}
                 style={{ width: 120 }}
@@ -191,7 +238,17 @@ const ModalError: React.FC = () => {
               <Input
                 value={filterText}
                 onChange={handleFilterChange}
-                placeholder="Tìm kiếm theo tháng/năm"
+                placeholder={`Tìm kiếm theo ${
+                  timeRange === "month"
+                    ? "tháng"
+                    : timeRange === "year"
+                    ? "năm"
+                    : timeRange === "quarter"
+                    ? "quý"
+                    : timeRange === "week"
+                    ? "tuần"
+                    : "ngày"
+                }`}
                 style={{ width: "100%" }}
               />
             </Col>
@@ -201,7 +258,7 @@ const ModalError: React.FC = () => {
           <Table
             columns={columns}
             dataSource={filteredData}
-            rowKey={(record) => `${record.month}-${record.year}`}
+            rowKey={(record) => `${record.day}-${record.month}-${record.year}`}
             pagination={false}
             scroll={{ y: 240 }}
           />

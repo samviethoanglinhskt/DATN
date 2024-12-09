@@ -17,7 +17,11 @@ import {
   TabsProps,
   Tabs,
 } from "antd";
-import { CheckCircleOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  ShoppingCartOutlined,
+  ShoppingOutlined,
+} from "@ant-design/icons";
 import {
   ApiResponse,
   CancellationModalProps,
@@ -27,6 +31,7 @@ import {
 import { STATUS_CONFIG } from "./orderContant";
 import styles from "./OrderDetails.module.css";
 import axiosInstance from "src/config/axiosInstance";
+import ReorderButton from "./ReorderButton";
 const { TextArea } = Input;
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
@@ -89,6 +94,15 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
             </div>
           </Descriptions.Item>
         </Descriptions>
+
+        {/* Feedback Section */}
+        {order.feedback && (
+          <Descriptions bordered column={1} className="mb-6">
+            <Descriptions.Item label="Nguyên nhân (Feedback)">
+              <span>{order.feedback}</span>
+            </Descriptions.Item>
+          </Descriptions>
+        )}
 
         <div className={styles.orderCard}>
           <div className={styles.cardHeader}>
@@ -390,6 +404,35 @@ const MyOrder: React.FC = () => {
     });
     setIsRatingModalVisible(true);
   };
+  const handleReorder = async (clickOrder: number) => {
+    try {
+      const response = await axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/api/payment-reorder",
+        data: { clickOrder },
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.Message && response.data.Link) {
+        Modal.confirm({
+          title: "Thông báo",
+          content: response.data.Message,
+          okText: "Thanh toán",
+          cancelText: "Hủy",
+          onOk: () => {
+            window.location.href = response.data.Link;
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      message.warning("Xin lỗi số lượng sản phẩm đã hết!");
+    }
+  };
 
   const handleConfirmDelivery = async (orderId: number) => {
     try {
@@ -641,6 +684,15 @@ const MyOrder: React.FC = () => {
             >
               Chi tiết
             </Button>
+            {record.order_status === "Chưa thanh toán" && (
+              <Button
+                type="primary"
+                onClick={() => handleReorder(record.id)}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
+                Mua lại
+              </Button>
+            )}
             {record.order_status === "Đã giao hàng" && (
               <Button
                 type="primary"

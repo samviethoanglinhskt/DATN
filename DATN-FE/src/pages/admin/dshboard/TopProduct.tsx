@@ -32,6 +32,8 @@ interface ProductStats {
   year: number;
   month: number;
   growth_rate: string;
+  week_in_month?: number; // added for week-based filtering
+  quarter?: number; // added for quarter-based filtering
 }
 
 interface TopSellingProductsData {
@@ -44,7 +46,7 @@ const TopSellingProductsComponent: React.FC = () => {
   const [timeRange, setTimeRange] = useState("month"); // Default time range is "month"
   const [filteredData, setFilteredData] = useState<ProductStats[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(5);
+  const pageSize = 5; // Fixed page size of 5 products per page
   const [filterText, setFilterText] = useState(""); // Filter text for product names
 
   // Fetch product statistics based on selected time range
@@ -105,6 +107,7 @@ const TopSellingProductsComponent: React.FC = () => {
     return <div>Không có dữ liệu</div>;
   }
 
+  // Data slicing based on the current page and page size
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
 
@@ -112,6 +115,22 @@ const TopSellingProductsComponent: React.FC = () => {
     name: item.name,
     value: parseInt(item.growth_rate.replace("%", ""), 10),
   }));
+
+  // Determine the time period for each row based on the selected time range
+  const getTimePeriod = (record: ProductStats) => {
+    const { month, year, week_in_month, quarter } = record;
+
+    if (timeRange === "year") {
+      return year;
+    } else if (timeRange === "month") {
+      return `Tháng ${month}-${year}`;
+    } else if (timeRange === "week") {
+      return `Tuần ${week_in_month}-${month}/${year}`;  // Week in month
+    } else if (timeRange === "quarter") {
+      return `Quý ${quarter}, ${year}`;
+    }
+    return "";
+  };
 
   const columns: ColumnType<ProductStats>[] = [
     {
@@ -135,6 +154,12 @@ const TopSellingProductsComponent: React.FC = () => {
       title: "Tỷ lệ tăng trưởng",
       dataIndex: "growth_rate",
       key: "growth_rate",
+      align: "center",
+    },
+    {
+      title: "Thời gian",
+      key: "timePeriod",
+      render: (_: any, record: ProductStats) => getTimePeriod(record),
       align: "center",
     },
   ];
@@ -173,10 +198,9 @@ const TopSellingProductsComponent: React.FC = () => {
         </Col>
       </Row>
 
-      {/* Display table and column chart */}
+      {/* Display bar chart and table */}
       <Row gutter={24}>
-        {/* Left side: Column Chart */}
-        <Col span={12}>
+        <Col span={24}>
           <div
             style={{
               padding: "24px",
@@ -184,7 +208,7 @@ const TopSellingProductsComponent: React.FC = () => {
               borderRadius: "8px",
             }}
           >
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={500}>
               <BarChart data={columnData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -198,7 +222,7 @@ const TopSellingProductsComponent: React.FC = () => {
         </Col>
 
         {/* Right side: Table */}
-        <Col span={12}>
+        <Col span={24}>
           <Table
             columns={columns}
             dataSource={paginatedData}
@@ -207,7 +231,7 @@ const TopSellingProductsComponent: React.FC = () => {
               current: currentPage,
               pageSize: pageSize,
               total: filteredData.length,
-              onChange: handlePageChange,
+              onChange: handlePageChange, 
             }}
             style={{
               boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",

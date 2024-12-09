@@ -49,11 +49,17 @@ interface CartItem {
   };
 }
 
+interface Quantity {
+  id: number;
+  quantity: number;
+}
+
 interface LocationState {
   selectedProducts: Product[];
   subtotal: number;
   cartId: number[];
   cartItem: CartItem;
+  quantities: Quantity[];
 }
 
 interface AddressModalProps {
@@ -466,6 +472,7 @@ const CheckoutPage: React.FC = () => {
   const subtotal = state?.subtotal ?? 0;
   const cartId = state?.cartId || [];
   const cartItem = state?.cartItem;
+  const quantities = state?.quantities;
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
@@ -665,7 +672,7 @@ const CheckoutPage: React.FC = () => {
       const totalAmount = selectedProducts.length > 0 ? totalWithDiscount : totalCartItem;
       const tbProductId = selectedProducts.length > 0 ? null : cartItem.tb_product_id;
       const tbVariantId = selectedProducts.length > 0 ? null : cartItem.tb_variant_id;
-      const quantity = selectedProducts.length > 0 ? null : cartItem.quantity;
+      const quantity = selectedProducts.length > 0 ? quantities : cartItem.quantity;
       const cart_items = selectedProducts.length > 0 ? cartId : null;
 
       const requestBody = {
