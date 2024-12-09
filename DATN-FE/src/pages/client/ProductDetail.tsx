@@ -107,7 +107,7 @@ const ProductDetail = () => {
     } else if (product?.colors && product.colors.length > 0) {
       updateVariant(null, newOptionId);
     }
-    console.log("newOptionId:", newOptionId);
+    // console.log("newOptionId:", newOptionId);
   };
 
   const handleQuantityChange = (operation: "increase" | "decrease") => {
@@ -142,15 +142,21 @@ const ProductDetail = () => {
       sku: currentVariant.sku,
       price: currentVariant.price,
       quantity,
-      products: null,
+      products: {
+        image: product?.image
+      },
       size: product?.sizes ? product.variants.find(s => String(s.tb_size_id) === selectedOption) : null,
       color: product?.colors ? product.variants.find(c => String(c.tb_color_id) === selectedOption) : null,
       tb_variant_id: currentVariant.id,  // Lưu biến thể được chọn
-      variant: currentVariant,  // Thêm thuộc tính variant vào đây
+      variant: {
+        ...currentVariant,
+        size: currentVariant.tb_size_id ? product?.sizes.find(item => item.id === currentVariant.tb_size_id) : null,
+        color: currentVariant.tb_color_id ? product?.colors.find(item => item.id === currentVariant.tb_color_id) : null
+      },  // Thêm thuộc tính variant vào đây
     };
     // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
+    console.log(cartItem);
     addToCart(cartItem);
-
   }
 
   const handleBuyNow = () => {
@@ -180,7 +186,6 @@ const ProductDetail = () => {
     });
 
     console.log(cartItem);
-
   }
 
   if (!product) {
