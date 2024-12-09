@@ -681,7 +681,7 @@ const CheckoutPage: React.FC = () => {
         phone,
         address: selectedAddress,
         address_detail: newAddress.address_detail,
-        quantity: quantity,
+        quantities: quantity,
         tb_product_id: tbProductId,
         tb_variant_id: tbVariantId,
         total_amount: totalAmount,
@@ -776,10 +776,12 @@ const CheckoutPage: React.FC = () => {
                 <div className="mb-3">
                   <label className="form-label">Họ tên</label>
                   <input
+                    name='name'
                     type="text"
                     className={`form-control ${nameError ? 'is-invalid' : ''}`}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    autoComplete='name'
                   />
                   {nameError && <div className="invalid-feedback">{nameError}</div>}
                 </div>
@@ -787,10 +789,12 @@ const CheckoutPage: React.FC = () => {
                 <div className="mb-3">
                   <label className="form-label">Email</label>
                   <input
+                    name='email'
                     type="text"
                     className={`form-control ${emailError ? 'is-invalid' : ''}`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete='email'
                   />
                   {emailError && <div className="invalid-feedback">{emailError}</div>}
                 </div>
@@ -798,10 +802,12 @@ const CheckoutPage: React.FC = () => {
                 <div className="mb-3">
                   <label className="form-label">Số điện thoại</label>
                   <input
-                    type="tel"
+                    name='phone'
+                    type="text"
                     className={`form-control ${phoneError ? 'is-invalid' : ''}`}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    autoComplete='phone'
                   />
                   {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>

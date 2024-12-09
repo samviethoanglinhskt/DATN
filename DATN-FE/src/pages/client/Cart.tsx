@@ -56,8 +56,6 @@ const ShoppingCart: React.FC = () => {
       id: item.id,
       quantity: item.quantity,
     }));
-    console.log(quantities);
-    console.log(selectedItems);
 
     navigate("/checkout", {
       state: { selectedProducts, subtotal, cartId: selectedItems, quantities },
