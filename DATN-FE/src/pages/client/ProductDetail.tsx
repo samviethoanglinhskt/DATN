@@ -1,5 +1,5 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"
-import { useEffect, useState } from "react";
+import { Box, FormControl, Grid, ImageList, ImageListItem, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"
+import { SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
@@ -18,6 +18,7 @@ const ProductDetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const reviewsPerPage = 3; // Số đánh giá mỗi trang
+
   const navigate = useNavigate();
 
   // Tính toán trung bình số sao
@@ -36,15 +37,16 @@ const ProductDetail = () => {
         if (productData.sizes && productData.sizes.length > 0) {
           setSelectedOption(String(productData.sizes[0].id));
           updateVariant(String(productData.sizes[0].id), null);
-          setCurrentVariant(productData.variants[0])
+          // setCurrentVariant(productData.variants[0])
         } else if (productData.colors && productData.colors.length > 0) {
           setSelectedOption(String(productData.colors[0].id));
           updateVariant(null, String(productData.colors[0].id));
-          setCurrentVariant(productData.variants[0])
-
+          // setCurrentVariant(productData.variants[0])
         } else {
           // Nếu không có size và color, hiển thị mặc định
-          setCurrentVariant(productData?.variants[0]);
+          const defaultVariant = productData?.variants[0];
+          setCurrentVariant(defaultVariant);
+          setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
@@ -91,11 +93,9 @@ const ProductDetail = () => {
         (colorId && String(v.tb_color_id) === colorId)
     );
     setCurrentVariant(variant || null);
+    // Cập nhật ảnh đầu tiên của biến thể
+    setCurrentImage(variant?.images?.[0]?.name_image || "");
     setQuantity(1);
-    // Đặt lại số lượng, đảm bảo không vượt quá số lượng của biến thể mới
-    // if (variant) {
-    //   setQuantity(Math.min(quantity, variant.quantity));
-    // }
   };
 
   const handleChangeOption = (event: SelectChangeEvent) => {
@@ -125,6 +125,14 @@ const ProductDetail = () => {
     }
   };
 
+  const [currentImage, setCurrentImage] = useState(
+    currentVariant?.images?.[0]?.name_image || ""
+  );
+
+  const handleImageClick = (image: SetStateAction<string>) => {
+    setCurrentImage(image);
+  };
+
   const handleAddToCart = () => {
     if (!currentVariant) {
       alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
@@ -143,7 +151,9 @@ const ProductDetail = () => {
       price: currentVariant.price,
       quantity,
       products: {
-        image: product?.image
+        id: product?.id,
+        image: product?.image,
+        name: product?.name
       },
       size: product?.sizes ? product.variants.find(s => String(s.tb_size_id) === selectedOption) : null,
       color: product?.colors ? product.variants.find(c => String(c.tb_color_id) === selectedOption) : null,
@@ -184,8 +194,6 @@ const ProductDetail = () => {
         cartItem
       },
     });
-
-    console.log(cartItem);
   }
 
   if (!product) {
@@ -213,19 +221,83 @@ const ProductDetail = () => {
           <div className="row">
             <div className="col-md-6 col-lg-7 p-b-30">
               <div className="p-l-25 p-r-30 p-lr-0-lg">
-                <div className="wrap-slick3 flex-sb flex-w">
-                  <div className="wrap-slick3-dots" />
-                  <div className="wrap-slick3-arrows flex-sb-m flex-w" />
-                  <div className="slick3 gallery-lb">
-                    <div className="item-slick3" data-thumb={`http://127.0.0.1:8000/storage/${product.image}`}>
-                      <div className="wrap-pic-w pos-relative">
-                        <img src={`http://127.0.0.1:8000/storage/${product.image}`} alt="IMG-PRODUCT" height={500} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Grid container spacing={2}>
+                  {/* Slideshow ảnh nhỏ */}
+                  <Grid item xs={2}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        maxWidth: "100px",
+                        // height: "550px",
+                        overflowY: "auto",
+                        overflowX: "hidden", // Ẩn cuộn ngang
+                        '&::-webkit-scrollbar': {
+                          width: '5px', // Độ rộng của scrollbar
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          backgroundColor: '#f0f0f0', // Màu nền track scrollbar
+                          borderRadius: '8px', // Bo góc track
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          backgroundColor: '#1976d2', // Màu của thumb scrollbar
+                          borderRadius: '8px', // Bo góc thumb
+                          border: '2px solid #f0f0f0', // Viền xung quanh thumb
+                        },
+                      }}
+                    >
+                      <ImageList cols={1} gap={8}>
+                        {product?.variants.map((variant) =>
+                          variant.images?.map((image, index) => (
+                            <ImageListItem key={index} onClick={() => handleImageClick(image.name_image)}>
+                              <img
+                                src={`http://127.0.0.1:8000/storage/${image.name_image}`}
+                                alt={`Variant ${index}`}
+                                style={{
+                                  cursor: "pointer",
+                                  borderRadius: "8px",
+                                  border: currentImage === image.name_image ? "2px solid #1976d2" : "none",
+                                }}
+                              />
+                            </ImageListItem>
+                          ))
+                        )}
+                      </ImageList>
+                    </Box>
+                  </Grid>
+
+                  {/* Ảnh sản phẩm lớn */}
+                  <Grid item xs={10}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#f7f7f7",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                        overflow: "hidden",
+                        padding: "10px",
+                        maxWidth: 550,
+                        // height: 550
+                      }}
+                    >
+                      <img
+                        src={`http://127.0.0.1:8000/storage/${currentImage}`}
+                        alt="Selected Product"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: "4px",
+                        }}
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
               </div>
             </div>
+
             <div className="col-md-6 col-lg-5 p-b-30">
               <div className="p-r-50 p-t-5 p-lr-0-lg">
                 <h4 className="mtext-105 cl2 js-name-detail p-b-14">
