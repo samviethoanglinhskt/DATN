@@ -5,6 +5,7 @@ use App\Models\tb_discount;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DiscountController extends Controller
 {
@@ -30,17 +31,26 @@ class DiscountController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $request->validate([
-            'discount_code' => 'required|string|max:50',
-            'discount_value' => 'required|numeric',
-            'name' => 'required|string|max:255',
-            'start_day' => 'required|date',
-            'end_day' => 'required|date|after_or_equal:start_day'
-        ]);
 
         try {
-            $discount = tb_discount::create($request->all());
+            $request->validate([ 
+                'discount_code' => 'required|string|max:255', 
+                'discount_value' => 'required|numeric', 
+                'quantity' => 'required|integer', 
+                'max_price' => 'required|numeric', 
+                'name' => 'required|string|max:255', 
+                'start_day' => 'required|date', 
+                'end_day' => 'required|date', 
+            ]);
+            $discount = new tb_discount(); 
+            $discount->discount_code = $request->discount_code; 
+            $discount->discount_value = $request->discount_value; 
+            $discount->quantity = $request->quantity; 
+            $discount->max_price = $request->max_price; 
+            $discount->name = $request->name; 
+            $discount->start_day = $request->start_day; 
+            $discount->end_day = $request->end_day; 
+            $discount->save();
             return response()->json([
                 'message' => 'Tạo mới mã giảm giá thành công',
                 'data' => $discount
@@ -82,28 +92,44 @@ class DiscountController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-        $request->validate([
-            'discount_code' => 'sometimes|required|string|max:50',
-            'discount_value' => 'sometimes|required|numeric',
-            'name' => 'sometimes|required|string|max:255',
-            'start_day' => 'sometimes|required|date',
-            'end_day' => 'sometimes|required|date|after_or_equal:start_day'
-        ]);
-
-        try {
-            $discount = tb_discount::findOrFail($id);
-            $discount->update($request->all());
-
+        try { 
+            $request->validate([ 
+                'discount_code' => 'required|string|max:255', 
+                'discount_value' => 'required|numeric', 
+                'quantity' => 'required|integer', 
+                'max_price' => 'required|numeric', 
+                'name' => 'required|string|max:255', 
+                'start_day' => 'required|date', 
+                'end_day' => 'required|date', 
+            ]); 
+            $discount = tb_discount::find($id); 
+            if (!$discount) { 
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Giảm giá không tồn tại'
+                ], 404); 
+            } 
+            $discount->discount_code = $request->discount_code; 
+            $discount->discount_value = $request->discount_value; 
+            $discount->quantity = $request->quantity; 
+            $discount->max_price = $request->max_price;
+            $discount->name = $request->name; 
+            $discount->start_day = $request->start_day; 
+            $discount->end_day = $request->end_day; 
+            $discount->save(); 
             return response()->json([
-                'message' => 'Cập nhật mã giảm giá thành công',
+                'success' => true, 
+                'message' => 'Cập nhật giảm giá thành công', 
                 'data' => $discount
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Mã giảm giá không tồn tại'], 404);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể cập nhật mã giảm giá'], 500);
-        }
+            ], 200); 
+            } catch (\Exception $e) { 
+                Log::error('Error updating discount: ' . $e->getMessage()); 
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Cập nhật giảm giá thất bại', 
+                    'error' => $e->getMessage()
+                ], 500); 
+            }
     }
 
     /**
