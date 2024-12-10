@@ -31,7 +31,8 @@ import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
 import MyInfo from "./pages/client/MyInfo";
 import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
-import './echo.js'
+import "./echo.js";
+import ButtonZalo from "./components/Home/ButtonZalo.js";
 
 const routeConfig = [
   {
@@ -168,7 +169,18 @@ const routeConfig = [
 function App() {
   const routes = useRoutes(routeConfig);
 
-  return <main>{routes}</main>;
+  return (
+    <main>
+      {routes}
+      {/* Nút Zalo hiển thị trên tất cả các trang */}
+      <ButtonZalo
+        pageId="YOUR_ZALO_PAGE_ID"
+        theme="1"
+        width="400"
+        height="600"
+      />
+    </main>
+  );
 }
 
 export default App;
