@@ -293,9 +293,7 @@ class StatisticsController extends Controller
                 DB::raw('MONTH(tb__oderdetail.created_at) as month'),
                 DB::raw('FLOOR((DAY(tb__oderdetail.created_at) - 1) / 7) + 1 as week_in_month')
             )
-                ->groupBy('year', 'month', 'week_in_month', 'tb_brands.name')
-                ->orderByDesc('month')
-                ->orderByDesc('week_in_month');
+                ->groupBy('year', 'month', 'week_in_month', 'tb_brands.name');
         } elseif ($type == 'quarter') {
             $query->addSelect(
                 DB::raw('QUARTER(tb__oderdetail.created_at) as quarter')
@@ -305,13 +303,11 @@ class StatisticsController extends Controller
             $query->groupBy('year', 'tb_brands.name');
         } else {
             $query->addSelect(DB::raw('MONTH(tb__oderdetail.created_at) as month'))
-                ->groupBy('year', 'month', 'tb_brands.name')
-                ->orderByDesc('month');
+                ->groupBy('year', 'month', 'tb_brands.name');
         }
 
         // Lấy dữ liệu hiện tại
         $brandStatistics = $query->get();
-
         // Lấy dữ liệu trước đó để tính % tăng trưởng
         $previousDataQuery = clone $query;
         if ($type == 'week') {
@@ -368,13 +364,14 @@ class StatisticsController extends Controller
                 'week_in_month' => $brand->week_in_month ?? null,
             ];
         }
-
+        $data = collect($data)->sortKeysDesc()->toArray();
         // Lọc Top 3 cho từng mốc thời gian
         foreach ($data as $timeKey => &$brands) {
             usort($brands, function ($a, $b) {
                 return $b['total_sales'] <=> $a['total_sales']; // Sắp xếp giảm dần theo `total_sales`
             });
-            $brands = array_slice($brands, 0, 3); // Lấy Top 3
+            $brands = array_slice($brands, 0, 3);
+        
         }
 
         return response()->json([
@@ -432,10 +429,10 @@ class StatisticsController extends Controller
             default: // Mặc định là theo tháng
                 $query->addSelect(DB::raw('MONTH(tb_oders.created_at) as month'))
                     ->groupBy('year', 'month', 'tb_products.id', 'tb_products.name');
-                   
         }
 
-        $products = $query->orderBy('total_quantity', 'desc')->limit(10)->get();
+
+        $products = $query->orderBy('total_quantity', 'desc')->get();
 
         // Xử lý dữ liệu theo từng nhóm (tuần/tháng/quý/năm)
         $groupedData = $products->groupBy(function ($item) use ($type) {
@@ -451,6 +448,9 @@ class StatisticsController extends Controller
             }
         });
 
+
+        // Sắp xếp giảm dần theo khóa (tháng, quý, năm)
+        $groupedData = $groupedData->sortKeysDesc();
         // Tính tỷ lệ tăng trưởng
         $result = [];
         $previousData = []; // Dữ liệu của nhóm trước để tính tăng trưởng
@@ -468,9 +468,10 @@ class StatisticsController extends Controller
                 $product->growth_rate = round($growthRate, 2) . ' %';
                 return $product;
             });
-
+            // Lấy top 10 sản phẩm trong nhóm hiện tại
+            $topProducts = $productsWithGrowth->sortByDesc('total_quantity')->take(10);
             // Lưu kết quả vào mảng
-            $result[$group] = $productsWithGrowth;
+            $result[$group] = $topProducts;
 
             // Cập nhật dữ liệu hiện tại để dùng cho lần lặp tiếp theo
             $previousData = $currentData;
@@ -772,26 +773,26 @@ class StatisticsController extends Controller
             // Thống kê theo tuần
             $query->addSelect(DB::raw('MONTH(created_at) as month'), DB::raw('FLOOR((DAY(created_at) - 1) / 7) + 1 as week_in_month'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'), DB::raw('week_in_month'))
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc')
-                ->orderBy('week_in_month', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->orderBy('week_in_month', 'desc');
         } elseif ($type == 'quarter') {
             // Thống kê theo quý
             $query->addSelect(DB::raw('YEAR(created_at) as year'), DB::raw('QUARTER(created_at) as quarter'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('QUARTER(created_at)'))
-                ->orderBy('year', 'asc')
-                ->orderBy('quarter', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('quarter', 'desc');
         } elseif ($type == 'year') {
             // Thống kê theo năm
             $query->addSelect(DB::raw('YEAR(created_at) as year'))
                 ->groupBy(DB::raw('YEAR(created_at)'))
-                ->orderBy('year', 'asc');
+                ->orderBy('year', 'desc');
         } else {
             // Mặc định là thống kê theo tháng
             $query->addSelect(DB::raw('MONTH(created_at) as month'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc');
         }
 
         $listuser = $query->get();
@@ -848,34 +849,34 @@ class StatisticsController extends Controller
             // Thống kê theo ngày
             $query->addSelect(DB::raw('MONTH(created_at) as month'), DB::raw('DAY(created_at) as day'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'), DB::raw('DAY(created_at)'))
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc')
-                ->orderBy('day', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->orderBy('day', 'desc');
         } elseif ($type == 'week') {
             // Thống kê theo tuần
             $query->addSelect(DB::raw('MONTH(created_at) as month'), DB::raw('FLOOR((DAY(tb_oders.created_at) - 1) / 7) + 1 as week_in_month'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('week_in_month'), DB::raw('MONTH(created_at)'))
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc')
-                ->orderBy('week_in_month', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->orderBy('week_in_month', 'desc');
         } elseif ($type == 'quarter') {
             // Thống kê theo quý
             $query->addSelect(DB::raw('QUARTER(created_at) as quarter'), DB::raw('MONTH(created_at) as month'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('QUARTER(created_at)'), DB::raw('MONTH(created_at)'))
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc')
-                ->orderBy('quarter', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->orderBy('quarter', 'desc');
         } elseif ($type == 'year') {
             // Thống kê theo quý
             $query->addSelect(DB::raw('YEAR(created_at) as year'))
                 ->groupBy(DB::raw('YEAR(created_at)'))
-                ->orderBy('year', 'asc');
+                ->orderBy('year', 'desc');
         } else {
             // Mặc định là thống kê theo tháng
             $query->addSelect(DB::raw('MONTH(created_at) as month'))
                 ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc');
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc');
         }
 
         $orderStatistics = $query->get();
