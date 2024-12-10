@@ -417,29 +417,22 @@ class StatisticsController extends Controller
         switch ($type) {
             case 'week':
                 $query->addSelect(DB::raw(DB::raw('FLOOR((DAY(tb_oders.created_at) - 1) / 7) + 1 as week_in_month')), DB::raw('MONTH(tb_oders.created_at) as month'))
-                    ->groupBy('year', 'month', 'week_in_month', 'tb_products.id', 'tb_products.name')
-                    ->orderBy('year', 'asc')
-                    ->orderBy('month', 'asc')
-                    ->orderBy('week_in_month', 'asc');
+                    ->groupBy('year', 'month', 'week_in_month', 'tb_products.id', 'tb_products.name');
                 break;
 
             case 'quarter':
                 $query->addSelect(DB::raw('QUARTER(tb_oders.created_at) as quarter'))
-                    ->groupBy('year', 'quarter', 'tb_products.id', 'tb_products.name')
-                    ->orderBy('year', 'asc')
-                    ->orderBy('quarter', 'asc');
+                    ->groupBy('year', 'quarter', 'tb_products.id', 'tb_products.name');
                 break;
 
             case 'year':
-                $query->groupBy('year', 'tb_products.id', 'tb_products.name')
-                    ->orderBy('year', 'asc');
+                $query->groupBy('year', 'tb_products.id', 'tb_products.name');
                 break;
 
             default: // Mặc định là theo tháng
                 $query->addSelect(DB::raw('MONTH(tb_oders.created_at) as month'))
-                    ->groupBy('year', 'month', 'tb_products.id', 'tb_products.name')
-                    ->orderBy('year', 'asc')
-                    ->orderBy('month', 'asc');
+                    ->groupBy('year', 'month', 'tb_products.id', 'tb_products.name');
+                   
         }
 
         $products = $query->orderBy('total_quantity', 'desc')->limit(10)->get();
