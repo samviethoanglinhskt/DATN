@@ -1,0 +1,153 @@
+/* Cấu trúc chung cho section */
+.blog-section {
+  padding: 60px 0;
+  background-color: #f8f8f8;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Tiêu đề section */
+.section-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  color: white;
+  font-family: "Arial", sans-serif;
+  font-weight: bold;
+}
+
+/* Hiển thị bài viết */
+.posts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.post-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 350px;
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+}
+
+.post-cover {
+  position: relative;
+}
+
+.post-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.post-overlay {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  width: 100%;
+  padding: 10px;
+}
+
+.post-date {
+  font-size: 14px;
+  color: #bbb;
+}
+
+.post-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff !important;
+  margin-top: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.post-title:hover {
+  transform: scale(1.05);
+}
+
+.post-summary {
+  font-size: 14px;
+  color: #555;
+  margin: 10px;
+}
+
+.read-more-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.read-more-link:hover {
+  text-decoration: underline;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  max-width: 800px;
+  width: 100%;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.modal-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.modal-date {
+  font-size: 16px;
+  color: #777;
+}
+
+button.close-button {
+  padding: 10px 20px;
+  background-color: #1890ff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button.close-button:hover {
+  background-color: #40a9ff;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+}
