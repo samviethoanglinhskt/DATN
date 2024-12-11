@@ -32,6 +32,7 @@ import MyInfo from "./pages/client/MyInfo";
 import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
 import "./echo.js";
+import AuthContainer from "./pages/client/LoginNew/AuthContainer.js";
 
 const routeConfig = [
   {
@@ -105,6 +106,10 @@ const routeConfig = [
       {
         path: "payment-failure",
         element: <PaymentFailure />,
+      },
+      {
+        path: "loginnew",
+        element: <AuthContainer />,
       },
     ],
   },
