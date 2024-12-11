@@ -11,60 +11,50 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [isGuest, setIsGuest] = useState<boolean>(true);
 
-  useEffect(() => {
+  const fetchCartItems = async (): Promise<CartItem[]> => {
     const token = sessionStorage.getItem("token");
     if (!token) {
-      setIsGuest(true);  // Nếu không có token, xem như là khách vãng lai
-    } else {
-      setIsGuest(false); // Nếu có token, xem như là đã đăng nhập
+      return []; // Nếu không có token, trả về mảng rỗng
     }
+    try {
+      const response = await axiosInstance.get("api/cart", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.status === 200) {
+        const backendCart = response.data.data;
+        setCartItems(backendCart);
+        setTotalQuantity(
+          backendCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
+        );
+        return backendCart; // Trả về dữ liệu giỏ hàng từ backend
+      }
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+    return []; // Trả về mảng rỗng nếu không có giá trị trả về nào trước đó
+  };
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    setIsGuest(!token); // Nếu không có token, là khách vãng lai
   }, []);
 
   useEffect(() => {
     if (isGuest) {
       const localCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
       setCartItems(localCart);
-      setTotalQuantity(localCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0));
+      setTotalQuantity(
+        localCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
+      );
       setLoading(false);
     } else {
-      const fetchCartItems = async () => {
-        const token = sessionStorage.getItem("token");
-        try {
-          const response = await axiosInstance.get("api/cart", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (response.status === 200) {
-            const cartData = response.data.data;
-
-            const updatedCartItems = await Promise.all(
-              cartData.map(async (item: CartItem | null) => {
-                if (!item || !item.id) return null;
-
-                return {
-                  ...item,
-                  id: item.id,
-                  name: item.name,
-                  price: item.price,
-                };
-              })
-            );
-
-            const validCartItems = updatedCartItems.filter(Boolean) as CartItem[];
-            setCartItems(validCartItems);
-            setTotalQuantity(
-              validCartItems.reduce((sum, item) => sum + item.quantity, 0)
-            ); // Update total quantity
-          }
-        } catch (error) {
-          console.error("Error fetching cart items:", error);
-          setCartItems([]);
-        } finally {
-          setLoading(false); // Stop loading
-        }
-      };
       fetchCartItems();
     }
   }, [isGuest]);
+
 
   const addToCart = async (item: CartItem) => {
     if (isGuest) {
@@ -323,8 +313,70 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         console.error("Error clearing cart:", error);
       }
     }
-
   };
+
+  const mergeCarts = (localCart: CartItem[], backendCart: CartItem[]): CartItem[] => {
+    const mergedCart = [...backendCart];
+    localCart.forEach((localItem) => {
+      const existingItem = mergedCart.find(
+        (backendItem) =>
+          backendItem.tb_product_id === localItem.tb_product_id &&
+          backendItem.tb_variant_id === localItem.tb_variant_id
+      );
+
+      if (existingItem) {
+        existingItem.quantity += localItem.quantity; // Cộng dồn số lượng
+      } else {
+        mergedCart.push(localItem); // Thêm sản phẩm chưa có trong backend
+      }
+    });
+
+    return mergedCart;
+  };
+
+  const syncCartToBackend = async (mergedCart: CartItem[]) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const response = await axiosInstance.post(
+        "api/cart/sync",
+        { cart_items: mergedCart },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.status === 200) {
+        const syncedCart = response.data.data;
+        setCartItems(syncedCart);
+        setTotalQuantity(
+          syncedCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
+        );
+        localStorage.removeItem("guestCart");
+      }
+    } catch (error) {
+      console.error("Error syncing cart to backend:", error);
+    }
+  };
+
+  const handleLogin = async () => {
+    const localCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+
+    // Lấy giỏ hàng từ backend
+    const backendCart = await fetchCartItems();
+
+    // Hợp nhất hai giỏ hàng
+    const mergedCart = mergeCarts(localCart, backendCart);
+
+    // Đồng bộ giỏ hàng hợp nhất lên backend
+    await syncCartToBackend(mergedCart);
+
+    // Cập nhật state
+    setCartItems(mergedCart);
+    setTotalQuantity(
+      mergedCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
+    );
+  };
+
 
   return (
     <CartContext.Provider
@@ -338,6 +390,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         clearCart,
         reduceCartItemQuantity,
         upCartItemQuantity,
+        handleLogin,
       }}
     >
       {children}
