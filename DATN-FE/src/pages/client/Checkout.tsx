@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, List, ListItem, Radio, RadioGroup, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from 'src/context/User';
@@ -487,6 +487,9 @@ const CheckoutPage: React.FC = () => {
   const [provinces, setProvinces] = useState<IProvince[]>([]);
   const [districts, setDistricts] = useState<IDistrict[]>([]);
   const [wards, setWards] = useState<IWard[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
   const [selectedAddress, setSelectedAddress] = useState("");
   const [addressModalOpen, setAddressModalOpen] = useState(false);
 
@@ -530,8 +533,9 @@ const CheckoutPage: React.FC = () => {
     setProvinces(provincesData);
   }, []);
 
-  const handleProvinceChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleProvinceChange = async (e: SelectChangeEvent<string>) => {
     const provinceCode = e.target.value;
+    setSelectedProvince(provinceCode);
     const province = provinces.find((p) => p.code === provinceCode);
     if (province) {
       const districtsData = getDistrictsByProvinceCode(provinceCode);
@@ -541,8 +545,9 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDistrictChange = async (e: SelectChangeEvent<string>) => {
     const districtCode = e.target.value;
+    setSelectedDistrict(districtCode);
     const district = districts.find((d) => d.code === districtCode);
     if (district) {
       const wardsData = getWardsByDistrictCode(districtCode);
@@ -551,8 +556,9 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleWardChange = (e: SelectChangeEvent<string>) => {
     const wardCode = e.target.value;
+    setSelectedWard(wardCode);
     const ward = wards.find((w) => w.code === wardCode);
     if (ward) {
       updateSelectedAddress(ward.name, "ward");
@@ -815,58 +821,73 @@ const CheckoutPage: React.FC = () => {
                   {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>
 
-                <div className="form-row">
+                <Grid container spacing={2} sx={{ marginBottom: 2 }}>
                   {/* Tỉnh/Thành phố */}
-                  <div className="form-group col-md-4">
-                    <label htmlFor="province">Tỉnh/Thành phố</label>
-                    <select style={{ width: 200 }} id="province" className="form-control" onChange={handleProvinceChange}>
-                      <option value="">Chọn tỉnh/thành</option>
-                      {provinces.map((province) => (
-                        <option key={province.code} value={province.code}>
-                          {province.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth>
+                      <InputLabel id="province-label">Tỉnh/Thành phố</InputLabel>
+                      <Select
+                        labelId="province-label"
+                        id="province"
+                        onChange={handleProvinceChange}
+                        value={selectedProvince}
+                      >
+                        <MenuItem value="">
+                          <em>Chọn tỉnh/thành</em>
+                        </MenuItem>
+                        {provinces.map((province) => (
+                          <MenuItem key={province.code} value={province.code}>
+                            {province.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
                   {/* Quận/Huyện */}
-                  <div className="form-group col-md-4">
-                    <label htmlFor="district">Quận/Huyện</label>
-                    <select
-                      style={{ width: 200, marginTop: 20 }}
-                      id="district"
-                      className="form-control"
-                      onChange={handleDistrictChange}
-                      disabled={!districts.length}
-                    >
-                      <option value="">Chọn quận/huyện</option>
-                      {districts.map((district) => (
-                        <option key={district.code} value={district.code}>
-                          {district.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth disabled={!districts.length}>
+                      <InputLabel id="district-label">Quận/Huyện</InputLabel>
+                      <Select
+                        labelId="district-label"
+                        id="district"
+                        onChange={handleDistrictChange}
+                        value={selectedDistrict}
+                      >
+                        <MenuItem value="">
+                          <em>Chọn quận/huyện</em>
+                        </MenuItem>
+                        {districts.map((district) => (
+                          <MenuItem key={district.code} value={district.code}>
+                            {district.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
                   {/* Phường/Xã */}
-                  <div className="form-group col-md-4">
-                    <label htmlFor="ward">Phường/Xã</label>
-                    <select
-                      style={{ width: 200, marginTop: 20 }}
-                      id="ward"
-                      className="form-control"
-                      onChange={handleWardChange}
-                      disabled={!wards.length}
-                    >
-                      <option value="">Chọn phường/xã</option>
-                      {wards.map((ward) => (
-                        <option key={ward.code} value={ward.code}>
-                          {ward.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth disabled={!wards.length}>
+                      <InputLabel id="ward-label">Phường/Xã</InputLabel>
+                      <Select
+                        labelId="ward-label"
+                        id="ward"
+                        onChange={handleWardChange}
+                        value={selectedWard}
+                      >
+                        <MenuItem value="">
+                          <em>Chọn phường/xã</em>
+                        </MenuItem>
+                        {wards.map((ward) => (
+                          <MenuItem key={ward.code} value={ward.code}>
+                            {ward.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
 
                 {/* Địa chỉ */}
                 <div className="form-floating mb-3">
