@@ -126,7 +126,7 @@ const Header: React.FC = () => {
     setUser(null);
     queryClient.clear();
     navigate("/login");
-    // window.location.reload();
+    window.location.reload();
   };
 
   useEffect(() => {
