@@ -32,19 +32,21 @@ const ProductDetail = () => {
         const response = await axiosInstance.get(`/api/product/${id}`);
         const productData = response.data;
         setProduct(productData);
+        const defaultVariant = productData?.variants[0];
 
         // Cài đặt giá trị mặc định cho Size hoặc Color nếu có
         if (productData.sizes && productData.sizes.length > 0) {
           setSelectedOption(String(productData.sizes[0].id));
           updateVariant(String(productData.sizes[0].id), null);
-          // setCurrentVariant(productData.variants[0])
+          setCurrentVariant(defaultVariant);
+          setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         } else if (productData.colors && productData.colors.length > 0) {
           setSelectedOption(String(productData.colors[0].id));
           updateVariant(null, String(productData.colors[0].id));
-          // setCurrentVariant(productData.variants[0])
+          setCurrentVariant(defaultVariant);
+          setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         } else {
           // Nếu không có size và color, hiển thị mặc định
-          const defaultVariant = productData?.variants[0];
           setCurrentVariant(defaultVariant);
           setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         }
@@ -230,7 +232,6 @@ const ProductDetail = () => {
                         flexDirection: "column",
                         alignItems: "center",
                         maxWidth: "100px",
-                        // height: "550px",
                         overflowY: "auto",
                         overflowX: "hidden", // Ẩn cuộn ngang
                         '&::-webkit-scrollbar': {
@@ -280,18 +281,18 @@ const ProductDetail = () => {
                         overflow: "hidden",
                         padding: "10px",
                         maxWidth: 550,
-                        // height: 550
                       }}
                     >
-                      <img
-                        src={`http://127.0.0.1:8000/storage/${currentImage}`}
-                        alt="Selected Product"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "4px",
-                        }}
-                      />
+                      {currentImage ?
+                        (<img
+                          src={`http://127.0.0.1:8000/storage/${currentImage}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "4px",
+                          }}
+                        />) : "Hãy chọn ảnh"}
+
                     </Box>
                   </Grid>
                 </Grid>

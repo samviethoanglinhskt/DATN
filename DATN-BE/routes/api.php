@@ -89,6 +89,8 @@ Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
 Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->name('checkout');
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
+Route::post('/cart/sync', [CartController::class, 'syncCart'])->middleware('auth:api');//đồng bộ giỏ hàng vãng lai khi đăng nhập
+
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
 Route::get('/vnpay/ipn/guest', [CartController::class, 'handleVnpayIpnGuest'])->name('vnpay.ipn.guest');

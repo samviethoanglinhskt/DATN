@@ -32,6 +32,7 @@ export interface CartContextType {
   clearCart: () => void;
   reduceCartItemQuantity: (id: number, quantity: number) => void;
   upCartItemQuantity: (id: number, quantity: number) => void;
+  handleLogin: () => Promise<void>;
   loading: boolean;
   isGuest: boolean;
 }
