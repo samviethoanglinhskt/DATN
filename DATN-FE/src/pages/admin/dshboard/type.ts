@@ -27,8 +27,12 @@ export interface APIResponse {
   "Tổng tất cả đơn hàng": number;
   "Tổng tất cả đơn hàng thành công": number;
   "Tổng tất cả đơn hàng hủy": number;
+  "Tổng tất cả đơn hàng chờ xử lý": number;
+  "Tổng tất cả đơn hàng giao hàng thất bại": number;
   "Tổng tỉ lệ hoàn thành đơn hàng": string;
   "Tổng tỉ lệ hủy đơn hàng": string;
+  "Tổng tỉ lệ chờ xử lý": string; // Added key
+  "Tổng tỉ lệ thất bại": string; // Added key
   "Tổng doanh thu": number;
 }
 

@@ -133,6 +133,12 @@ const ProductSteps: React.FC = () => {
       formData.append("tb_brand_id", productValues.tb_brand_id);
       formData.append("name", productValues.name);
       formData.append("status", productValues.status);
+
+      // Thêm mô tả sản phẩm nếu có
+      if (productValues.description) {
+        formData.append("description", productValues.description); // Thêm mô tả sản phẩm
+      }
+
       formData.append("image", productImage[0]?.originFileObj);
 
       // Thêm các biến thể (variant) với việc kiểm tra null
@@ -191,17 +197,10 @@ const ProductSteps: React.FC = () => {
         // Hiển thị thông báo thành công
         message.success({
           content: "Thêm sản phẩm thành công!",
-          className: "custom-message-success", // Kiểm tra lại class này
-          duration: 3, // Hiển thị trong 3 giây
-          // onClick: () => navigate("/products"),
+          className: "custom-message-success",
+          duration: 3,
         });
-
-        // Delay chuyển hướng sau khi thông báo
-        // setTimeout(() => {
-        //   navigate("/products");
-        // }, 3000); // Chuyển hướng sau 3 giây
       } else {
-        // Nếu message khác "Tạo sản phẩm thành công", báo lỗi
         console.error("API Response không thành công:", response.data);
         message.error("Thêm sản phẩm thất bại");
       }

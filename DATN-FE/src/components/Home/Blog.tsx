@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Typography, Skeleton, Modal } from "antd";
-import { CalendarOutlined, ReadOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, FileTextOutlined } from "@ant-design/icons"; // Cập nhật icon
 import axios from "axios";
+import "./Blog.css";
 
 const { Title, Text } = Typography;
 
@@ -27,9 +28,9 @@ const Blog: React.FC = () => {
     fetchPosts();
   }, []);
 
-  // Hàm để cắt nội dung chỉ hiển thị 20 ký tự
+  // Hàm để cắt nội dung chỉ hiển thị 80 ký tự
   const truncateContent = (content: string) => {
-    return content.length > 20 ? content.substring(0, 20) + "..." : content;
+    return content.length > 80 ? content.substring(0, 80) + "..." : content;
   };
 
   // Hàm hiển thị modal với nội dung đầy đủ
@@ -44,16 +45,16 @@ const Blog: React.FC = () => {
   };
 
   return (
-    <section className="sec-blog bg0 p-t-60 p-b-90">
+    <section className="blog-section">
       <div className="container">
-        <div className="p-b-66">
-          <Title level={3} className="text-center">
+        <div className="section-header">
+          <Title level={2} className="text-center">
             Bài Viết Về Chúng Tôi
           </Title>
         </div>
         <Row gutter={[16, 16]}>
           {loading ? (
-            <>
+            <Row gutter={[16, 16]} style={{ width: "100%" }}>
               {/* Hiển thị skeleton khi đang tải dữ liệu */}
               <Col xs={24} sm={12} md={8}>
                 <Skeleton active />
@@ -64,71 +65,39 @@ const Blog: React.FC = () => {
               <Col xs={24} sm={12} md={8}>
                 <Skeleton active />
               </Col>
-            </>
+            </Row>
           ) : (
-            // Hiển thị dữ liệu từ API
             posts.map((post, index) => (
               <Col xs={24} sm={12} md={8} key={index}>
                 <Card
                   hoverable
                   cover={
-                    <div style={{ position: "relative" }}>
+                    <div className="post-cover">
                       <img
                         alt="blog-image"
                         src={post.image || "https://picsum.photos/200/200"}
-                        style={{
-                          width: "100%",
-                          height: "200px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                          transition: "transform 0.3s ease",
-                        }}
+                        className="post-image"
                       />
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "0",
-                          background: "rgba(0, 0, 0, 0.5)",
-                          color: "#fff",
-                          width: "100%",
-                          padding: "10px",
-                          transition: "all 0.3s ease",
-                          borderRadius: "0 0 8px 8px",
-                        }}
-                      >
-                        <Text>
-                          <CalendarOutlined
-                            style={{
-                              fontSize: "200%",
-                              paddingRight: "8px",
-                            }}
-                          />
-                          {`Ngày tạo: ${new Date(
-                            post.create_day
-                          ).toLocaleDateString()}`}
+                      <div className="post-overlay">
+                        <Text className="post-date">
+                          <ClockCircleOutlined />
+                          {` ${new Date(post.create_day).toLocaleDateString()}`}
                         </Text>
-                        <Title level={4} style={{ margin: 0, color: "#fff" }}>
-                          <ReadOutlined style={{ marginRight: "8px" }} />
+                        <Title level={4} className="post-title">
                           {post.title}
                         </Title>
                       </div>
                     </div>
                   }
                   onClick={() => showModal(post)}
-                  style={{
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                    transition: "transform 0.3s ease",
-                  }}
+                  className="post-card"
                 >
-                  <p>
-                    <ReadOutlined
-                      style={{ fontSize: "150%", paddingRight: "8px" }}
-                    />
+                  <p className="post-summary">
+                    <FileTextOutlined className="summary-icon" />
                     {truncateContent(post.content)}{" "}
                     <a
                       href="#"
-                      style={{ color: "#1890ff" }}
+                      className="read-more-link"
                       onClick={(e) => {
                         e.preventDefault();
                         showModal(post);
@@ -149,27 +118,20 @@ const Blog: React.FC = () => {
             onCancel={handleCancel}
             footer={null}
             width={800}
+            className="custom-modal"
           >
             <img
               alt="blog-image"
               src={selectedPost.image || "https://picsum.photos/200/200"}
-              style={{
-                width: "100%",
-                height: "300px",
-                objectFit: "cover",
-                marginBottom: "20px",
-                borderRadius: "8px",
-              }}
+              className="modal-image"
             />
-            <Text style={{ fontSize: "16px", fontWeight: "bold" }}>
-              <CalendarOutlined style={{ marginRight: "8px" }} />
+            <Text className="modal-date">
+              <ClockCircleOutlined />{" "}
               {`Ngày tạo: ${new Date(
                 selectedPost.create_day
               ).toLocaleDateString()}`}
             </Text>
-            <p style={{ fontSize: "16px", marginTop: "20px" }}>
-              {selectedPost.content}
-            </p>
+            <p className="modal-content">{selectedPost.content}</p>
           </Modal>
         )}
       </div>

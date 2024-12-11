@@ -63,6 +63,20 @@ const ProductEdit: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [isEditingVariant, setIsEditingVariant] = useState(false);
   const [currentVariant, setCurrentVariant] = useState<IVariant | null>(null);
+  const [isAddingVariant, setIsAddingVariant] = useState(false);
+  const [variantsToDelete, setVariantsToDelete] = useState<number[]>([]);
+  const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
+
+  const [newVariant, setNewVariant] = useState<IVariant>({
+    id: 0,
+    tb_size_id: 0,
+    tb_color_id: 0,
+    sku: "",
+    price: 0,
+    quantity: 0,
+    status: "còn hàng",
+    images: [],
+  });
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -89,7 +103,6 @@ const ProductEdit: React.FC = () => {
       setSizes(sizesRes.data);
       setColors(colorsRes.data);
 
-      // Đặt giá trị mặc định cho form nếu dữ liệu đã tải thành công
       productForm.setFieldsValue({
         name: productRes.data.name,
         tb_category_id: productRes.data.tb_category_id || null,
@@ -142,10 +155,11 @@ const ProductEdit: React.FC = () => {
       setProductImage(file);
     }
   };
-
   const handleProductUpdate = async () => {
     try {
-      setLoading(true);
+      setLoading(true); // Start loading
+
+      // Create a new FormData object
       const formData = new FormData();
       formData.append("name", productForm.getFieldValue("name"));
       formData.append(
@@ -163,12 +177,13 @@ const ProductEdit: React.FC = () => {
       );
       formData.append("_method", "PUT");
 
+      // Append the product image if it's updated
       if (productImage) {
         formData.append("image", productImage);
       }
 
-      // Handle variants data
-      variants.forEach((variant: any, index) => {
+      // Append variants data
+      variants.forEach((variant, index) => {
         formData.append(`variants[${index}][id]`, variant.id.toString());
         formData.append(
           `variants[${index}][tb_size_id]`,
@@ -186,10 +201,11 @@ const ProductEdit: React.FC = () => {
         );
         formData.append(`variants[${index}][status]`, variant.status);
 
-        // Handle variant images
+        // Append variant images
         if (variant.images) {
           variant.images.forEach((image: any, imgIndex: number) => {
             if (image.originFileObj) {
+              // Append new uploaded images
               formData.append(
                 `variants[${index}][images][${imgIndex}][name_image]`,
                 image.originFileObj
@@ -199,25 +215,42 @@ const ProductEdit: React.FC = () => {
         }
       });
 
+      // Append deleted variants
+      variantsToDelete.forEach((variantId, index) => {
+        formData.append(`variants_to_delete[${index}]`, variantId.toString());
+      });
+
+      // Append deleted images
+      imagesToDelete.forEach((imageId, index) => {
+        formData.append(`images_to_delete[${index}]`, imageId.toString());
+      });
+
+      // Make the request to the backend
       const response = await axiosInstance.post(
-        `/api/product/${id}`,
+        `/api/product/${id}`, // Endpoint for updating the product
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
         }
       );
 
+      // Check the response and show success message
       if (response.data?.product?.id) {
         message.success("Cập nhật sản phẩm thành công");
-        navigate("/admin/product");
+        // Fetch updated product data to refresh the UI
+        await fetchData();
       }
     } catch (error: any) {
       console.error("Lỗi cập nhật sản phẩm:", error);
-      message.error(error.message || "Cập nhật sản phẩm thất bại");
+      // Show error message
+      message.error(
+        error.response?.data?.message || "Cập nhật sản phẩm thất bại"
+      );
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading
     }
   };
+
   const handleVariantEdit = (variant: IVariant) => {
     setCurrentVariant(variant);
 
@@ -239,31 +272,31 @@ const ProductEdit: React.FC = () => {
 
     setIsEditingVariant(true);
   };
-
-  const handleVariantDelete = async (variantId: number) => {
-    try {
-      await axiosInstance.delete(`/api/variants/${variantId}`);
-      setVariants(variants.filter((v) => v.id !== variantId));
-      message.success("Variant deleted successfully");
-    } catch (error) {
-      console.error("Delete variant error:", error);
-      message.error("Failed to delete variant");
-    }
+  const handleVariantDelete = (variantId: number) => {
+    // Đánh dấu biến thể cần xóa
+    setVariantsToDelete([...variantsToDelete, variantId]);
+    setVariants(variants.filter((variant) => variant.id !== variantId));
+    message.success("Biến thể đã được đánh dấu để xóa");
   };
+
   const handleVariantUpdate = async () => {
     try {
       if (!currentVariant) return;
+
+      // Validate form fields
       const values = await variantForm.validateFields();
       setLoading(true);
 
       const formData = new FormData();
       formData.append("_method", "PUT");
 
+      // Find the index of the variant to update
       const variantIndex = variants.findIndex(
         (v) => v.id === currentVariant.id
       );
       if (variantIndex === -1) throw new Error("Variant not found");
 
+      // Append updated values to form data, excluding images
       Object.keys(values).forEach((key) => {
         if (key !== "images") {
           formData.append(
@@ -273,6 +306,7 @@ const ProductEdit: React.FC = () => {
         }
       });
 
+      // Handle images if provided
       if (values.images) {
         values.images.forEach((image: any, imageIndex: number) => {
           if (image.originFileObj) {
@@ -284,6 +318,7 @@ const ProductEdit: React.FC = () => {
         });
       }
 
+      // Send update request
       const response = await axiosInstance.post(
         `/api/product/${id}`,
         formData,
@@ -294,13 +329,17 @@ const ProductEdit: React.FC = () => {
 
       if (response.data?.product) {
         message.success("Cập nhật variant thành công");
-        setIsEditingVariant(false);
+
+        // Update the variant in the state without affecting deleted variants
         const updatedVariants = [...variants];
         updatedVariants[variantIndex] = {
           ...updatedVariants[variantIndex],
           ...values,
         };
+
+        // Update the state with the updated variant list
         setVariants(updatedVariants);
+        setIsEditingVariant(false);
       }
     } catch (error: any) {
       console.error("Lỗi cập nhật variant:", error);
@@ -309,7 +348,165 @@ const ProductEdit: React.FC = () => {
       setLoading(false);
     }
   };
+  const handleImageDelete = (imageId: number) => {
+    // Add the image ID to the delete queue
+    setImagesToDelete((prev) => [...prev, imageId]);
 
+    // Optionally, update the UI by filtering out the deleted image
+    setVariants((prevVariants) =>
+      prevVariants.map((variant) => ({
+        ...variant,
+        images: variant.images?.filter((img) => img.id !== imageId),
+      }))
+    );
+
+    message.success("Ảnh đã được đánh dấu để xóa");
+  };
+
+  const handleAddVariant = () => {
+    // Kiểm tra thông tin biến thể hợp lệ
+    variantForm.validateFields().then((values) => {
+      const updatedVariants = [...variants, { ...newVariant, ...values }];
+      setVariants(updatedVariants);
+      setNewVariant({
+        id: 0,
+        tb_size_id: 0,
+        tb_color_id: 0,
+        sku: "",
+        price: 0,
+        quantity: 0,
+        status: "còn hàng",
+        images: [],
+      });
+      setIsAddingVariant(false);
+      message.success("Đã thêm biến thể");
+    });
+  };
+
+  // Form thêm biến thể
+  const addVariantForm = (
+    <Form form={variantForm} layout="vertical" initialValues={newVariant}>
+      <Form.Item
+        name="tb_size_id"
+        label="Kích thước"
+        rules={[{ required: true, message: "Vui lòng chọn kích thước" }]}
+      >
+        <Select
+          placeholder="Chọn kích thước"
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, tb_size_id: value })
+          }
+        >
+          {sizes.map((size) => (
+            <Select.Option key={size.id} value={size.id}>
+              {size.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="tb_color_id"
+        label="Màu sắc"
+        rules={[{ required: true, message: "Vui lòng chọn màu sắc" }]}
+      >
+        <Select
+          placeholder="Chọn màu sắc"
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, tb_color_id: value })
+          }
+        >
+          {colors.map((color) => (
+            <Select.Option key={color.id} value={color.id}>
+              {color.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="sku"
+        label="SKU"
+        rules={[{ required: true, message: "Vui lòng nhập SKU" }]}
+      >
+        <Input
+          onChange={(e) =>
+            setNewVariant({ ...newVariant, sku: e.target.value })
+          }
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="price"
+        label="Giá"
+        rules={[{ required: true, message: "Vui lòng nhập giá" }]}
+      >
+        <InputNumber
+          style={{ width: "100%" }}
+          value={newVariant.price ?? 0}
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, price: value ?? 0 })
+          }
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="quantity"
+        label="Số lượng"
+        rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}
+      >
+        <InputNumber
+          style={{ width: "100%" }}
+          value={newVariant.quantity ?? 0}
+          onChange={(value) =>
+            setNewVariant({ ...newVariant, quantity: value ?? 0 })
+          }
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="status"
+        label="Trạng thái"
+        rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
+      >
+        <Select
+          value={newVariant.status}
+          onChange={(value) => setNewVariant({ ...newVariant, status: value })}
+        >
+          <Select.Option value="còn hàng">Còn hàng</Select.Option>
+          <Select.Option value="hết hàng">Hết hàng</Select.Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item label="Ảnh biến thể">
+        <Upload
+          listType="picture-card"
+          fileList={newVariant.images || []}
+          onChange={(info) => {
+            setNewVariant({
+              ...newVariant,
+              images: info.fileList,
+            });
+          }}
+          beforeUpload={() => false}
+        >
+          {newVariant.images?.length < 3 && (
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+          )}
+        </Upload>
+      </Form.Item>
+
+      <Space>
+        <Button onClick={() => setIsAddingVariant(false)}>Hủy</Button>
+        <Button type="primary" onClick={handleAddVariant}>
+          Thêm biến thể
+        </Button>
+      </Space>
+    </Form>
+  );
   const steps = [
     {
       title: "Thông tin sản phẩm",
@@ -404,16 +601,44 @@ const ProductEdit: React.FC = () => {
                     {/* Cột ảnh sản phẩm (Bên trái) */}
                     <div className="col-md-4 d-flex justify-content-center align-items-center">
                       {variant.images?.map((image: any, index: number) => (
-                        <img
+                        <div
                           key={index}
-                          src={`http://127.0.0.1:8000/storage/${image.name_image}`}
-                          alt={`Variant Image ${index}`}
                           style={{
-                            width: 100,
-                            height: 100,
-                            objectFit: "cover",
+                            position: "relative",
+                            marginRight: 10,
+                            display: "inline-block",
                           }}
-                        />
+                        >
+                          {/* Display the image */}
+                          <img
+                            src={`http://127.0.0.1:8000/storage/${image.name_image}`}
+                            alt={`Variant Image ${index}`}
+                            style={{
+                              width: 100,
+                              height: 100,
+                              objectFit: "cover",
+                            }}
+                          />
+
+                          {/* Delete button overlay */}
+                          <button
+                            onClick={() => handleImageDelete(image.id)} // Call handleImageDelete function
+                            style={{
+                              position: "absolute",
+                              top: 5,
+                              right: 5,
+                              background: "rgba(255, 0, 0, 0.8)",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "50%",
+                              width: 24,
+                              height: 24,
+                              cursor: "pointer",
+                            }}
+                          >
+                            X
+                          </button>
+                        </div>
                       ))}
                     </div>
 
@@ -496,7 +721,20 @@ const ProductEdit: React.FC = () => {
       <Card>
         <Steps current={currentStep} items={steps} className="mb-8" />
         {steps[currentStep].content}
+        <div className="mt-4">
+          {!isAddingVariant && (
+            <Button
+              style={{ marginBottom: 16 }}
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() => setIsAddingVariant(true)}
+            >
+              Thêm biến thể
+            </Button>
+          )}
 
+          {isAddingVariant && addVariantForm}
+        </div>
         <div className="flex justify-between mt-6">
           <Button onClick={() => navigate("/admin/product")}>
             Trang danh sách

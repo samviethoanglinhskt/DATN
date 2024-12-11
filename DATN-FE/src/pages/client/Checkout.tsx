@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, List, ListItem, Radio, RadioGroup, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from 'src/context/User';
@@ -20,6 +20,8 @@ interface Product {
     name: string;
   };
   variant: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    images: any;
     size?: { name: string };
     color?: { name: string };
     price: number;
@@ -475,7 +477,7 @@ const CheckoutPage: React.FC = () => {
   const quantities = state?.quantities;
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
-  const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number } | null>(null);
+  const [selectedVoucher, setSelectedVoucher] = useState<{ id: number; code: string; discount: number, max_price: number } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState('cod');
 
   const [newAddress, setNewAddress] = useState({
@@ -485,6 +487,9 @@ const CheckoutPage: React.FC = () => {
   const [provinces, setProvinces] = useState<IProvince[]>([]);
   const [districts, setDistricts] = useState<IDistrict[]>([]);
   const [wards, setWards] = useState<IWard[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
   const [selectedAddress, setSelectedAddress] = useState("");
   const [addressModalOpen, setAddressModalOpen] = useState(false);
 
@@ -528,8 +533,9 @@ const CheckoutPage: React.FC = () => {
     setProvinces(provincesData);
   }, []);
 
-  const handleProvinceChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleProvinceChange = async (e: SelectChangeEvent<string>) => {
     const provinceCode = e.target.value;
+    setSelectedProvince(provinceCode);
     const province = provinces.find((p) => p.code === provinceCode);
     if (province) {
       const districtsData = getDistrictsByProvinceCode(provinceCode);
@@ -539,8 +545,9 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDistrictChange = async (e: SelectChangeEvent<string>) => {
     const districtCode = e.target.value;
+    setSelectedDistrict(districtCode);
     const district = districts.find((d) => d.code === districtCode);
     if (district) {
       const wardsData = getWardsByDistrictCode(districtCode);
@@ -549,8 +556,9 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleWardChange = (e: SelectChangeEvent<string>) => {
     const wardCode = e.target.value;
+    setSelectedWard(wardCode);
     const ward = wards.find((w) => w.code === wardCode);
     if (ward) {
       updateSelectedAddress(ward.name, "ward");
@@ -588,21 +596,22 @@ const CheckoutPage: React.FC = () => {
     return price * cartItem.quantity;
   };
 
-  const calculateTotal = (subtotal: number, discountPercent: number): number => {
-    const discount = subtotal * (discountPercent / 100);  // Tính số tiền giảm
-    return subtotal - discount;  // Tính tổng sau khi giảm giá
+  const calculateTotal = (subtotal: number, discountPercent: number, max_price: number = Number.MAX_VALUE): number => {
+    const discount = subtotal * (discountPercent / 100); // Tính số tiền giảm theo phần trăm
+    const finalDiscount = max_price ? Math.min(discount, max_price) : discount; // Áp dụng giới hạn giảm tối đa nếu có
+    return subtotal - finalDiscount; // Tính tổng sau khi giảm giá
   };
 
   const subtotalCartItem = cartItem ? calculateSubtotal(cartItem) : 0;
-  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, selectedVoucher?.discount || 0) : 0;
-  const totalWithDiscount = selectedProducts.length > 0 ? calculateTotal(subtotal, selectedVoucher?.discount || 0) : 0;
-  const handleApplyVoucher = (voucher: { id: number; code: string; discount: number }) => {
+  const totalCartItem = cartItem ? calculateTotal(subtotalCartItem, selectedVoucher?.discount || 0, selectedVoucher?.max_price) : 0;
+  const totalWithDiscount = selectedProducts.length > 0 ? calculateTotal(subtotal, selectedVoucher?.discount || 0, selectedVoucher?.max_price) : 0;
+  const handleApplyVoucher = (voucher: { id: number; code: string; discount: number; max_price: number }) => {
     setSelectedVoucher(voucher);
     setVoucherDialogOpen(false);
   };
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
 
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -718,7 +727,6 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-
   // fetch giảm giá ở đây
   useEffect(() => {
     const fetchDiscounts = async () => {
@@ -748,6 +756,7 @@ const CheckoutPage: React.FC = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <div className="container py-5 mt-5">
@@ -812,58 +821,73 @@ const CheckoutPage: React.FC = () => {
                   {phoneError && <div className="invalid-feedback">{phoneError}</div>}
                 </div>
 
-                <div className="form-row">
+                <Grid container spacing={2} sx={{ marginBottom: 2 }}>
                   {/* Tỉnh/Thành phố */}
-                  <div className="form-group col-md-4">
-                    <label htmlFor="province">Tỉnh/Thành phố</label>
-                    <select style={{ width: 200 }} id="province" className="form-control" onChange={handleProvinceChange}>
-                      <option value="">Chọn tỉnh/thành</option>
-                      {provinces.map((province) => (
-                        <option key={province.code} value={province.code}>
-                          {province.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth>
+                      <InputLabel id="province-label">Tỉnh/Thành phố</InputLabel>
+                      <Select
+                        labelId="province-label"
+                        id="province"
+                        onChange={handleProvinceChange}
+                        value={selectedProvince}
+                      >
+                        <MenuItem value="">
+                          <em>Chọn tỉnh/thành</em>
+                        </MenuItem>
+                        {provinces.map((province) => (
+                          <MenuItem key={province.code} value={province.code}>
+                            {province.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
                   {/* Quận/Huyện */}
-                  <div className="form-group col-md-4">
-                    <label htmlFor="district">Quận/Huyện</label>
-                    <select
-                      style={{ width: 200, marginTop: 20 }}
-                      id="district"
-                      className="form-control"
-                      onChange={handleDistrictChange}
-                      disabled={!districts.length}
-                    >
-                      <option value="">Chọn quận/huyện</option>
-                      {districts.map((district) => (
-                        <option key={district.code} value={district.code}>
-                          {district.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth disabled={!districts.length}>
+                      <InputLabel id="district-label">Quận/Huyện</InputLabel>
+                      <Select
+                        labelId="district-label"
+                        id="district"
+                        onChange={handleDistrictChange}
+                        value={selectedDistrict}
+                      >
+                        <MenuItem value="">
+                          <em>Chọn quận/huyện</em>
+                        </MenuItem>
+                        {districts.map((district) => (
+                          <MenuItem key={district.code} value={district.code}>
+                            {district.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
                   {/* Phường/Xã */}
-                  <div className="form-group col-md-4">
-                    <label htmlFor="ward">Phường/Xã</label>
-                    <select
-                      style={{ width: 200, marginTop: 20 }}
-                      id="ward"
-                      className="form-control"
-                      onChange={handleWardChange}
-                      disabled={!wards.length}
-                    >
-                      <option value="">Chọn phường/xã</option>
-                      {wards.map((ward) => (
-                        <option key={ward.code} value={ward.code}>
-                          {ward.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <FormControl fullWidth disabled={!wards.length}>
+                      <InputLabel id="ward-label">Phường/Xã</InputLabel>
+                      <Select
+                        labelId="ward-label"
+                        id="ward"
+                        onChange={handleWardChange}
+                        value={selectedWard}
+                      >
+                        <MenuItem value="">
+                          <em>Chọn phường/xã</em>
+                        </MenuItem>
+                        {wards.map((ward) => (
+                          <MenuItem key={ward.code} value={ward.code}>
+                            {ward.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
 
                 {/* Địa chỉ */}
                 <div className="form-floating mb-3">
@@ -941,7 +965,7 @@ const CheckoutPage: React.FC = () => {
                 {/* Kiểm tra nếu selectedProducts có sản phẩm */}
                 {selectedProducts.length > 0 && selectedProducts.map((item) => (
                   <div key={item.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
-                    <img src={`http://127.0.0.1:8000/storage/${item.products.image}`} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                    <img src={`http://127.0.0.1:8000/storage/${item.variant.images[0].name_image}`} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
                       <p className="mb-0" style={{ fontSize: 15 }}>{item.products.name}</p>
                       <div>
@@ -963,7 +987,7 @@ const CheckoutPage: React.FC = () => {
                 {/* Kiểm tra nếu cartItem có sản phẩm */}
                 {cartItem && (
                   <div key={cartItem.id} className="d-flex gap-3 mb-3 pb-3 border-bottom">
-                    <img src={`http://127.0.0.1:8000/storage/${cartItem.image}`} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
+                    <img src={`http://127.0.0.1:8000/storage/${cartItem.variant.images[0].name_image}`} className="rounded" style={{ width: '64px', height: '64px', objectFit: 'cover' }} />
                     <div className="flex-grow-1">
                       <p className="mb-0" style={{ fontSize: 15 }}>{cartItem.name}</p>
                       <div>
@@ -999,13 +1023,23 @@ const CheckoutPage: React.FC = () => {
               {selectedVoucher && selectedProducts.length > 0 && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Giảm giá ({selectedVoucher.code})</span>
-                  <span>-{((subtotal * selectedVoucher.discount) / 100).toLocaleString("vi-VN")}đ</span>
+                  <span>
+                    -{Math.min(
+                      (subtotal * selectedVoucher.discount) / 100,
+                      selectedVoucher.max_price ?? Number.MAX_VALUE
+                    ).toLocaleString("vi-VN")}đ
+                  </span>
                 </div>
               )}
               {selectedVoucher && cartItem && (
                 <div className="d-flex justify-content-between mb-3">
                   <span>Giảm giá ({selectedVoucher.code})</span>
-                  <span>-{((subtotalCartItem * selectedVoucher.discount) / 100).toLocaleString("vi-VN")}đ</span>
+                  <span>
+                    -{Math.min(
+                      (subtotalCartItem * selectedVoucher.discount) / 100,
+                      selectedVoucher.max_price ?? Number.MAX_VALUE
+                    ).toLocaleString("vi-VN")}đ
+                  </span>
                 </div>
               )}
 
@@ -1044,14 +1078,17 @@ const CheckoutPage: React.FC = () => {
                         <ListItem
                           key={discount.id}
                           divider
-                          onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value })}
+                          onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value, max_price: discount.max_price })}
                           sx={{ display: 'flex', justifyContent: 'space-between' }}
                         >
                           <img src={logoVoucher} alt="" width={150} />
                           <div style={{ marginLeft: -150 }}>
                             <Typography variant="subtitle1">{discount.discount_code}</Typography>
                             <Typography variant="body2" color="textSecondary">
-                              Giảm {discount.discount_value}% | HSD: {discount.end_day}
+                              Giảm {discount.discount_value}% | Giảm tối đa:{(Number(discount.max_price)).toLocaleString("vi-VN")}đ
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              HSD: {discount.end_day}
                             </Typography>
                           </div>
                           <Button variant="contained" size="small" sx={{ backgroundColor: "#717FE0" }}>

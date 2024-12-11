@@ -22,16 +22,21 @@
             </tr>
         </thead>
         <tbody>
-            <tr style="background-color: #f9f9f9;">
-                <td style="border: 1px solid #ddd; padding: 10px;">{{ $productName }}</td>
-                <td style="border: 1px solid #ddd; padding: 10px;">
-                    {{ $size }} {{ $color }}
-                </td>
-                <td style="border: 1px solid #ddd; padding: 10px;">{{ $orderDetail->quantity }}</td>
-                <td style="border: 1px solid #ddd; padding: 10px;">{{ $orderDetail->price }} VND</td>
-            </tr>
+            @foreach ($orderDetail as $item)
+                <tr style="background-color: #f9f9f9;">
+                    <td style="border: 1px solid #ddd; padding: 10px;">{{ $item->product->name }}</td>
+                    <td style="border: 1px solid #ddd; padding: 10px;">
+                        {{ $item->variant->size->name ?? '' }} {{ $item->variant->color->name ?? ''}}
+                    </td>
+                    <td style="border: 1px solid #ddd; padding: 10px;">{{ $item->quantity }}</td>
+                    <td style="border: 1px solid #ddd; padding: 10px;">{{ $item->price }} VND</td>
+                </tr>
+            @endforeach
             <tr style="background-color: #f9f9f9; border: 1px solid">
-                Tổng tiền: {{ $totalAmount }} VND
+                <td style="border: 1px solid #ddd; padding: 10px;">Tổng tiền: {{ $totalAmount }} VND </td>
+                <td style="border: 1px solid #ddd; padding: 10px;"></td>
+                <td style="border: 1px solid #ddd; padding: 10px;"></td>
+                <td style="border: 1px solid #ddd; padding: 10px;"></td>
             </tr>
         </tbody>
     </table>
