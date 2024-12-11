@@ -33,6 +33,7 @@ import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
 import "./echo.js";
 import ButtonZalo from "./components/Home/ButtonZalo.js";
+import AuthContainer from "./pages/client/LoginNew/AuthContainer.js";
 
 const routeConfig = [
   {
@@ -107,6 +108,10 @@ const routeConfig = [
         path: "payment-failure",
         element: <PaymentFailure />,
       },
+      {
+        path: "loginnew",
+        element: <AuthContainer />,
+      },
     ],
   },
   {
@@ -172,7 +177,6 @@ function App() {
   return (
     <main>
       {routes}
-      {/* Nút Zalo hiển thị trên tất cả các trang */}
       <ButtonZalo
         pageId="YOUR_ZALO_PAGE_ID"
         theme="1"

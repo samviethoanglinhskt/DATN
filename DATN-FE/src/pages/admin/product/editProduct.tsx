@@ -64,6 +64,7 @@ const ProductEdit: React.FC = () => {
   const [isEditingVariant, setIsEditingVariant] = useState(false);
   const [currentVariant, setCurrentVariant] = useState<IVariant | null>(null);
   const [isAddingVariant, setIsAddingVariant] = useState(false);
+  const [variantsToDelete, setVariantsToDelete] = useState<number[]>([]);
   const [newVariant, setNewVariant] = useState<IVariant>({
     id: 0,
     tb_size_id: 0,
@@ -178,8 +179,8 @@ const ProductEdit: React.FC = () => {
         formData.append("image", productImage);
       }
 
-      // Handle variants data
-      variants.forEach((variant: any, index) => {
+      // Xử lý danh sách các biến thể
+      variants.forEach((variant, index) => {
         formData.append(`variants[${index}][id]`, variant.id.toString());
         formData.append(
           `variants[${index}][tb_size_id]`,
@@ -197,7 +198,7 @@ const ProductEdit: React.FC = () => {
         );
         formData.append(`variants[${index}][status]`, variant.status);
 
-        // Handle variant images
+        // Xử lý ảnh biến thể
         if (variant.images) {
           variant.images.forEach((image: any, imgIndex: number) => {
             if (image.originFileObj) {
@@ -208,6 +209,11 @@ const ProductEdit: React.FC = () => {
             }
           });
         }
+      });
+
+      // Thêm danh sách biến thể cần xóa
+      variantsToDelete.forEach((variantId, index) => {
+        formData.append(`variants_to_delete[${index}]`, variantId.toString());
       });
 
       const response = await axiosInstance.post(
@@ -229,6 +235,7 @@ const ProductEdit: React.FC = () => {
       setLoading(false);
     }
   };
+
   const handleVariantEdit = (variant: IVariant) => {
     setCurrentVariant(variant);
 
@@ -251,16 +258,13 @@ const ProductEdit: React.FC = () => {
     setIsEditingVariant(true);
   };
 
-  const handleVariantDelete = async (variantId: number) => {
-    try {
-      await axiosInstance.delete(`/api/variants/${variantId}`);
-      setVariants(variants.filter((v) => v.id !== variantId));
-      message.success("Variant deleted successfully");
-    } catch (error) {
-      console.error("Delete variant error:", error);
-      message.error("Failed to delete variant");
-    }
+  const handleVariantDelete = (variantId: number) => {
+    // Đánh dấu biến thể cần xóa
+    setVariantsToDelete([...variantsToDelete, variantId]);
+    setVariants(variants.filter((variant) => variant.id !== variantId));
+    message.success("Biến thể đã được đánh dấu để xóa");
   };
+
   const handleVariantUpdate = async () => {
     try {
       if (!currentVariant) return;
@@ -416,7 +420,7 @@ const ProductEdit: React.FC = () => {
           style={{ width: "100%" }}
           value={newVariant.quantity ?? 0}
           onChange={(value) =>
-            setNewVariant({ ...newVariant, quantity: value ?? 0})
+            setNewVariant({ ...newVariant, quantity: value ?? 0 })
           }
         />
       </Form.Item>
@@ -654,7 +658,7 @@ const ProductEdit: React.FC = () => {
         <div className="mt-4">
           {!isAddingVariant && (
             <Button
-            style={{ marginBottom: 16 }}
+              style={{ marginBottom: 16 }}
               type="dashed"
               icon={<PlusOutlined />}
               onClick={() => setIsAddingVariant(true)}
