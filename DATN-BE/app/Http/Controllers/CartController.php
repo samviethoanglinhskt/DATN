@@ -542,6 +542,25 @@ class CartController extends Controller
                         ]);
                     }
                 });
+
+                Mail::send('emails.mail_order_guest_buynow', [
+                    'name' => $order->name,
+                    'phone' => $order->phone,
+                    'email' => $order->email,
+                    'address' => $order->address,
+                    'orderCode' => $order->order_code,
+                    'orderStatus' => $order->order_status,
+                    'orderDate' => $order->order_date,
+                    'productName' => optional($oderDetail)->product->name ?? '',
+                    'size' => optional($oderDetail)->variant->size->name ?? '',
+                    'color' => optional($oderDetail)->variant->color->name ?? '',
+                    'orderDetail' => $oderDetail,
+                    'totalAmount' => $order->total_amount,
+                ], function ($message) use ($order) {
+                    $message->to($order->email)
+                        ->subject('Imperial Beauty xin thông báo');
+                });
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
@@ -624,6 +643,23 @@ class CartController extends Controller
                     $order->total_amount = $request->total_amount;
                     $order->save();
                 });
+
+                // Gửi email
+                Mail::send('emails.mail_order_guest_cart', [
+                    'name' => $order->name,
+                    'phone' => $order->phone,
+                    'email' => $order->email,
+                    'address' => $order->address,
+                    'orderCode' => $order->order_code,
+                    'orderStatus' => $order->order_status,
+                    'orderDate' => $order->order_date,
+                    'orderDetail' => $orderDetails,
+                    'totalAmount' => $order->total_amount,
+                ], function ($message) use ($order) {
+                    $message->to($order->email)
+                        ->subject('Imperial Beauty xin thông báo');
+                });
+                
                 return response()->json([
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
