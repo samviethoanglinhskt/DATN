@@ -351,16 +351,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           syncedCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
         );
         localStorage.removeItem("guestCart");
+        alert("Đã đồng bộ giỏ hàng");
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error syncing cart to backend:", error);
-      // Hiển thị thông báo lỗi
-      const errorMessage =
-        error.response?.data?.message;
-      console.log(error.response?.data?.message);
-
-      alert(errorMessage);
     }
   };
 

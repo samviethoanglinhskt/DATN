@@ -659,7 +659,7 @@ class CartController extends Controller
                     $message->to($order->email)
                         ->subject('Imperial Beauty xin thông báo');
                 });
-                
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
@@ -1507,10 +1507,6 @@ class CartController extends Controller
 
         $guestCart = $request->cart_items; // Lấy giỏ hàng từ request của khách vãng lai
 
-        // if (!is_array($guestCart) || empty($guestCart)) {
-        //     return response()->json(['message' => 'Cart is empty or invalid'], 400);
-        // }
-
         foreach ($guestCart as $item) {
             $productId = $item['tb_product_id'];
             $variantId = $item['tb_variant_id'] ?? null; // Kiểm tra xem có variant không
@@ -1557,17 +1553,6 @@ class CartController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-            }
-
-            // Gửi thông báo nếu số lượng yêu cầu vượt tồn kho
-            if ($item['quantity'] > $stockQuantity) {
-                return response()->json([
-                    'message' => "Sản phẩm '{$variant->name}' đã hết hàng trong kho. Chỉ {$stockQuantity} sản phẩm được thêm vào giỏ hàng.",
-                    'product_id' => $productId,
-                    'variant_id' => $variantId,
-                    'available_quantity' => $stockQuantity,
-                    'requested_quantity' => $quantity,
-                ], 200);
             }
         }
 
