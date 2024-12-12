@@ -150,7 +150,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         }
       }
     }
-
   };
 
   const removeFromCart = async (id: number) => {
@@ -353,8 +352,15 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         );
         localStorage.removeItem("guestCart");
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.error("Error syncing cart to backend:", error);
+      // Hiển thị thông báo lỗi
+      const errorMessage =
+        error.response?.data?.message;
+      console.log(error.response?.data?.message);
+
+      alert(errorMessage);
     }
   };
 

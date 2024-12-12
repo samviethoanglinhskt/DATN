@@ -31,7 +31,6 @@ import {
 import { STATUS_CONFIG } from "./orderContant";
 import styles from "./OrderDetails.module.css";
 import axiosInstance from "src/config/axiosInstance";
-import ReorderButton from "./ReorderButton";
 const { TextArea } = Input;
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
@@ -393,6 +392,7 @@ const MyOrder: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleOpenRatingModal = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     product: any,
     orderId: number,
     orderDetailId: number

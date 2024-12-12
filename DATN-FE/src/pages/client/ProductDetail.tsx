@@ -167,7 +167,6 @@ const ProductDetail = () => {
       },  // Thêm thuộc tính variant vào đây
     };
     // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
-    console.log(cartItem);
     addToCart(cartItem);
   }
 
