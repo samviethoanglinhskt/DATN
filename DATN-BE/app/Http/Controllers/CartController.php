@@ -100,7 +100,7 @@ class CartController extends Controller
             if ($newQuantity > $availableStock) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Số lượng sản phẩm vượt quá tồn kho. Số lượng tối đa có thể thêm là ' . ($availableStock - $cart->quantity) . '.',
+                    'message' => 'Số lượng thêm vượt quá số lượng trong kho. Số lượng tối đa có thể thêm là ' . ($availableStock - $cart->quantity) . '.',
                 ], 400);
             }
             $cart->quantity = $newQuantity;

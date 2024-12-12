@@ -74,7 +74,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       } else {
         // Nếu sản phẩm chưa tồn tại, thêm vào
         const newItem = { ...item, id: cartId };
-        console.log("Added new item to cart:", newItem);
+        // console.log("Added new item to cart:", newItem);
         localCart.push(newItem);
       }
 
@@ -143,7 +143,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         // Xử lý lỗi trả về từ backend
         if (error.response && error.response.status === 400) {
           const errorMessage = error.response.data.message || "Đã xảy ra lỗi.";
-          alert(`Không thể thêm sản phẩm: ${errorMessage}`);
+          alert(`${errorMessage}`);
         } else {
           console.error("Error adding item to cart:", error);
           alert("Đã xảy ra lỗi, vui lòng thử lại sau.");
