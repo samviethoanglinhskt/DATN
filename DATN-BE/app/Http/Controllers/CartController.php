@@ -525,11 +525,11 @@ class CartController extends Controller
                             }
                             $variant->save();
 
-                            $totalOrder += $request->quantities * $variant->price;
+                            // $totalOrder += $request->quantities * $variant->price;
 
                             // Cập nhật thông tin đơn hàng
                             $order->order_code = 'ORD-' . $order->id;
-                            $order->total_amount = $totalOrder;
+                            $order->total_amount = $request->total_amount;
                             $order->save();
 
                             // Phát sóng sự kiện thông báo sản phẩm bị khóa sau khi cập nhật thành công
