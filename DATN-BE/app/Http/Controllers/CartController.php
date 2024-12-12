@@ -1471,15 +1471,23 @@ class CartController extends Controller
 
         $guestCart = $request->cart_items; // Lấy giỏ hàng từ request của khách vãng lai
 
-        if (!is_array($guestCart) || empty($guestCart)) {
-            return response()->json(['message' => 'Cart is empty or invalid'], 400);
-        }
+        // if (!is_array($guestCart) || empty($guestCart)) {
+        //     return response()->json(['message' => 'Cart is empty or invalid'], 400);
+        // }
 
         foreach ($guestCart as $item) {
             $productId = $item['tb_product_id'];
             $variantId = $item['tb_variant_id'] ?? null; // Kiểm tra xem có variant không
             $quantity = $item['quantity'];
-            // Log dữ liệu để kiểm tra
+
+            // Lấy thông tin tồn kho của sản phẩm/variant
+            $variant = tb_variant::find($variantId);
+            if (!$variant) {
+                return response()->json([
+                    'message' => "Variant ID {$variantId} not found"
+                ], 404);
+            }
+            $stockQuantity = $variant->quantity; // Số lượng tồn kho hiện tại
 
             // Kiểm tra xem sản phẩm đã có trong giỏ hàng của người dùng chưa
             $existingCartItem = tb_cart::where([
@@ -1492,12 +1500,18 @@ class CartController extends Controller
                 // Cập nhật số lượng chính xác, cộng thêm từ giỏ hàng vãng lai
                 $newQuantity = $existingCartItem->quantity = $item['quantity'];
 
+                // Nếu tổng số lượng vượt quá tồn kho, chỉ cập nhật số lượng tối đa có thể thêm
+                $actualQuantity = min($newQuantity, $stockQuantity);
+
                 // Đảm bảo số lượng không bị cộng dồn sai
                 tb_cart::where('id', $existingCartItem->id)->update([
-                    'quantity' => $newQuantity,
+                    'quantity' => $actualQuantity,
                     'updated_at' => now(),
                 ]);
             } else {
+                // Nếu chưa tồn tại, thêm mới nhưng đảm bảo không vượt tồn kho
+                $actualQuantity = min($quantity, $stockQuantity);
+
                 // Nếu chưa tồn tại, thêm mới
                 tb_cart::insert([
                     'user_id' => $user->id,
@@ -1507,6 +1521,17 @@ class CartController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+            }
+
+            // Gửi thông báo nếu số lượng yêu cầu vượt tồn kho
+            if ($item['quantity'] > $stockQuantity) {
+                return response()->json([
+                    'message' => "Sản phẩm '{$variant->name}' đã hết hàng trong kho. Chỉ {$stockQuantity} sản phẩm được thêm vào giỏ hàng.",
+                    'product_id' => $productId,
+                    'variant_id' => $variantId,
+                    'available_quantity' => $stockQuantity,
+                    'requested_quantity' => $quantity,
+                ], 200);
             }
         }
 

@@ -1,10 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, DatePicker, InputNumber, Card, message, Space, Tooltip, Tag } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, GiftOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import type { Dayjs } from 'dayjs';
-import dayjs from 'dayjs';
-import axiosInstance from 'src/config/axiosInstance';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  InputNumber,
+  Card,
+  message,
+  Space,
+  Tooltip,
+  Tag,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  GiftOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import dayjs from "dayjs";
+import axiosInstance from "src/config/axiosInstance";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const { RangePicker } = DatePicker;
 
@@ -12,6 +31,8 @@ interface Discount {
   id: number;
   discount_code: string;
   discount_value: number;
+  quantity: number;
+  max_price: number;
   name: string;
   start_day: string;
   end_day: string;
@@ -24,17 +45,17 @@ const Discount: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [form] = Form.useForm();
 
   // Fetch discounts
   const fetchDiscounts = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/api/discount');
+      const response = await axiosInstance.get("/api/discount");
       setDiscounts(response.data);
     } catch (error: any) {
-      message.error('Không thể tải danh sách mã giảm giá');
+      message.error("Không thể tải danh sách mã giảm giá");
     } finally {
       setLoading(false);
     }
@@ -49,23 +70,31 @@ const Discount: React.FC = () => {
     try {
       const formData = {
         ...values,
-        start_day: values.dateRange[0].format('YYYY-MM-DD'),
-        end_day: values.dateRange[1].format('YYYY-MM-DD'),
+        start_day: values.dateRange[0].format("YYYY-MM-DD"), // Ensure correct format
+        end_day: values.dateRange[1].format("YYYY-MM-DD"), // Ensure correct format
+        quantity: values.quantity,
+        max_price: values.max_price,
       };
 
+      console.log(formData); // Log form data to check if it's correct
+
       if (editingDiscount) {
-        await axiosInstance.put(`/api/discount/${editingDiscount.id}`, formData);
-        message.success('Cập nhật mã giảm giá thành công');
+        await axiosInstance.put(
+          `/api/discount/${editingDiscount.id}`,
+          formData
+        );
+        message.success("Cập nhật mã giảm giá thành công");
       } else {
-        await axiosInstance.post('/api/discount', formData);
-        message.success('Thêm mã giảm giá thành công');
+        await axiosInstance.post("/api/discount", formData);
+        message.success("Thêm mã giảm giá thành công");
       }
 
       setModalVisible(false);
       form.resetFields();
       fetchDiscounts();
     } catch (error: any) {
-      message.error('Có lỗi xảy ra. Vui lòng thử lại');
+      console.error("Error submitting form:", error); // Log error for debugging
+      message.error("Có lỗi xảy ra. Vui lòng thử lại");
     }
   };
 
@@ -73,10 +102,10 @@ const Discount: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await axiosInstance.delete(`/api/discount/${id}`);
-      message.success('Xóa mã giảm giá thành công');
+      message.success("Xóa mã giảm giá thành công");
       fetchDiscounts();
     } catch (error) {
-      message.error('Không thể xóa mã giảm giá');
+      message.error("Không thể xóa mã giảm giá");
     }
   };
 
@@ -93,16 +122,17 @@ const Discount: React.FC = () => {
     setModalVisible(true);
   };
 
-  const filteredDiscounts = discounts.filter(discount =>
-    discount.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    discount.discount_code.toLowerCase().includes(searchText.toLowerCase())
+  const filteredDiscounts = discounts.filter(
+    (discount) =>
+      discount.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      discount.discount_code.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const columns = [
     {
-      title: 'Mã giảm giá',
-      dataIndex: 'discount_code',
-      key: 'discount_code',
+      title: "Mã giảm giá",
+      dataIndex: "discount_code",
+      key: "discount_code",
       render: (text: string) => (
         <Tag color="blue" icon={<GiftOutlined />} className="px-3 py-1">
           {text.toUpperCase()}
@@ -110,9 +140,9 @@ const Discount: React.FC = () => {
       ),
     },
     {
-      title: 'Giá trị',
-      dataIndex: 'discount_value',
-      key: 'discount_value',
+      title: "Giá trị",
+      dataIndex: "discount_value",
+      key: "discount_value",
       render: (value: number) => (
         <Tag color="green" className="px-3 py-1">
           {value}%
@@ -120,30 +150,45 @@ const Discount: React.FC = () => {
       ),
     },
     {
-      title: 'Tên chương trình',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
     },
     {
-      title: 'Ngày bắt đầu',
-      dataIndex: 'start_day',
-      key: 'start_day',
-      render: (date: string) => dayjs(date).format('DD/MM/YYYY'),
+      title: "Giá trị tối đa",
+      dataIndex: "max_price",
+      key: "max_price",
+      render: (value: string) => (
+        <Tag color="orange" className="px-3 py-1">
+          {value} VND
+        </Tag>
+      ),
     },
     {
-      title: 'Ngày kết thúc',
-      dataIndex: 'end_day',
-      key: 'end_day',
-      render: (date: string) => dayjs(date).format('DD/MM/YYYY'),
+      title: "Tên chương trình",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Trạng thái',
-      key: 'status',
+      title: "Ngày bắt đầu",
+      dataIndex: "start_day",
+      key: "start_day",
+      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
+    },
+    {
+      title: "Ngày kết thúc",
+      dataIndex: "end_day",
+      key: "end_day",
+      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
+    },
+    {
+      title: "Trạng thái",
+      key: "status",
       render: (_: any, record: Discount) => {
         const now = dayjs();
         const start = dayjs(record.start_day);
         const end = dayjs(record.end_day);
-        
+
         if (now.isBefore(start)) {
           return <Tag color="warning">Sắp diễn ra</Tag>;
         } else if (now.isAfter(end)) {
@@ -154,8 +199,8 @@ const Discount: React.FC = () => {
       },
     },
     {
-      title: 'Thao tác',
-      key: 'action',
+      title: "Thao tác",
+      key: "action",
       render: (_: any, record: Discount) => (
         <Space>
           <Tooltip title="Sửa">
@@ -195,7 +240,7 @@ const Discount: React.FC = () => {
             <Button
               icon={<ReloadOutlined />}
               onClick={() => {
-                setSearchText('');
+                setSearchText("");
                 fetchDiscounts();
               }}
             >
@@ -248,7 +293,9 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="discount_code"
                 label="Mã giảm giá"
-                rules={[{ required: true, message: 'Vui lòng nhập mã giảm giá!' }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập mã giảm giá!" },
+                ]}
               >
                 <Input placeholder="Nhập mã giảm giá" />
               </Form.Item>
@@ -257,37 +304,71 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="discount_value"
                 label="Giá trị (%)"
-                rules={[{ required: true, message: 'Vui lòng nhập giá trị giảm giá!' }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập giá trị giảm giá!",
+                  },
+                ]}
               >
                 <InputNumber
-                  min={0}
-                  max={100}
-                  className="w-100"
                   placeholder="Nhập giá trị giảm giá"
+                  style={{ width: "100%" }}
                 />
               </Form.Item>
             </div>
+            <div className="col-md-6">
+              <Form.Item
+                name="quantity"
+                label="Số lượng"
+                rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
+              >
+                <InputNumber
+                  placeholder="Nhập số lượng"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </div>
+            <div className="col-md-6">
+              <Form.Item
+                name="max_price"
+                label="Giá trị tối đa"
+                rules={[
+                  { required: true, message: "Vui lòng nhập giá trị tối đa!" },
+                ]}
+              >
+                <InputNumber
+                  placeholder="Nhập giá trị tối đa"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </div>
+            <div className="col-md-6">
+              <Form.Item
+                name="name"
+                label="Tên chương trình"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên chương trình!",
+                  },
+                ]}
+              >
+                <Input placeholder="Nhập tên chương trình" />
+              </Form.Item>
+            </div>
+            <div className="col-md-6">
+              <Form.Item
+                name="dateRange"
+                label="Ngày áp dụng"
+                rules={[
+                  { required: true, message: "Vui lòng chọn ngày áp dụng!" },
+                ]}
+              >
+                <RangePicker />
+              </Form.Item>
+            </div>
           </div>
-
-          <Form.Item
-            name="name"
-            label="Tên chương trình"
-            rules={[{ required: true, message: 'Vui lòng nhập tên chương trình!' }]}
-          >
-            <Input placeholder="Nhập tên chương trình" />
-          </Form.Item>
-
-          <Form.Item
-            name="dateRange"
-            label="Thời gian áp dụng"
-            rules={[{ required: true, message: 'Vui lòng chọn thời gian áp dụng!' }]}
-          >
-            <RangePicker
-              className="w-100"
-              format="DD/MM/YYYY"
-              placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
-            />
-          </Form.Item>
         </Form>
       </Modal>
     </Card>
