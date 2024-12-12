@@ -525,6 +525,16 @@ class CartController extends Controller
                             }
                             $variant->save();
 
+                            $discount = tb_discount::where('id', $request->tb_discount_id)->first();
+                            if ($discount) {
+                                $discount->quantity -= 1;
+                                if ($discount->quantity <= 0) {
+                                    $discount->status = 'Hết Số Lượng';
+                                }else{
+                                    $discount->status = 'Còn Hàng';
+                                }  
+                            }
+                            $discount->save();
                             // $totalOrder += $request->quantities * $variant->price;
 
                             // Cập nhật thông tin đơn hàng
