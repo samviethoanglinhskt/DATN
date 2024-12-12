@@ -525,16 +525,16 @@ class CartController extends Controller
                             }
                             $variant->save();
 
-                            $discount = tb_discount::where('id', $request->tb_discount_id)->first();
+                            $discount = tb_discount::where( 'id',$order->tb_discount_id)->first();
                             if ($discount) {
-                                $discount->quantity -= 1;
+                                $discount->quantity += 1;
                                 if ($discount->quantity <= 0) {
                                     $discount->status = 'Hết Số Lượng';
                                 }else{
                                     $discount->status = 'Còn Hàng';
-                                }  
+                                }
+                                $discount->save();
                             }
-                            $discount->save();
                             // $totalOrder += $request->quantities * $variant->price;
 
                             // Cập nhật thông tin đơn hàng
@@ -641,6 +641,16 @@ class CartController extends Controller
                                 $variant->status = 'Còn hàng';
                             }
                             $variant->save();
+                            $discount = tb_discount::where( 'id',$order->tb_discount_id)->first();
+                            if ($discount) {
+                                $discount->quantity += 1;
+                                if ($discount->quantity <= 0) {
+                                    $discount->status = 'Hết Số Lượng';
+                                }else{
+                                    $discount->status = 'Còn Hàng';
+                                }
+                                $discount->save();
+                            }
                             // Xóa giỏ hàng khi thêm đơn thành công
                             $item->delete();
                         } else {

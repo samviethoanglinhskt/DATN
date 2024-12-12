@@ -318,9 +318,9 @@ class OderController extends Controller
                     $discount->status = 'Hết Số Lượng';
                 }else{
                     $discount->status = 'Còn Hàng';
-                }  
-            }
-            $discount->save(); 
+                }
+                $discount->save();
+            } 
             $order->order_status = 'Đã hủy đơn hàng';
             $order->save();
             return response()->json([
@@ -391,9 +391,9 @@ class OderController extends Controller
                     $discount->status = 'Hết Số Lượng';
                 }else{
                     $discount->status = 'Còn Hàng';
-                }  
+                }
+                $discount->save();
             }
-            $discount->save(); 
             // Cập nhật trạng thái đơn hàng thành "Đã hủy đơn hàng" 
             $order->order_status = 'Đã hủy đơn hàng'; 
             $order->feedback = $request->feedback; 
