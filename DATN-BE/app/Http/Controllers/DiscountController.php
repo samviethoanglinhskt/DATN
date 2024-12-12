@@ -14,8 +14,8 @@ class DiscountController extends Controller
      */
     public function index()
     {
-        $discount= tb_discount::all(); // lấy mã giảm giá
-        return response()->json($discount);
+        $discounts = tb_discount::where('quantity', '>', 0)->get(); // Thêm điều kiện lọc
+        return response()->json($discounts);
     }
 
     /**
