@@ -1072,36 +1072,44 @@ const CheckoutPage: React.FC = () => {
               <Dialog open={voucherDialogOpen} onClose={() => setVoucherDialogOpen(false)} maxWidth="sm" fullWidth>
                 <DialogTitle>Chọn giảm giá</DialogTitle>
                 <DialogContent>
-                  {sessionStorage.getItem('token') ? (
-                    <List>
-                      {discounts.map((discount) => (
-                        <ListItem
-                          key={discount.id}
-                          divider
-                          onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value, max_price: discount.max_price })}
-                          sx={{ display: 'flex', justifyContent: 'space-between' }}
-                        >
-                          <img src={logoVoucher} alt="" width={150} />
-                          <div style={{ marginLeft: -150 }}>
-                            <Typography variant="subtitle1">{discount.discount_code}</Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              Giảm {discount.discount_value}% | Giảm tối đa:{(Number(discount.max_price)).toLocaleString("vi-VN")}đ
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              HSD: {discount.end_day}
-                            </Typography>
-                          </div>
-                          <Button variant="contained" size="small" sx={{ backgroundColor: "#717FE0" }}>
-                            Áp dụng
-                          </Button>
-                        </ListItem>
-                      ))}
-                    </List>
-                  ) : (
-                    <Typography variant="body1" color="textSecondary" align="center" sx={{ fontSize: "25px" }}>
-                      Hãy đăng nhập để có voucher.
-                    </Typography>
-                  )}
+                  {sessionStorage.getItem('token') ?
+                    (
+                      discounts.length > 0 ?
+                        (
+                          <List>
+                            {discounts.map((discount) => (
+                              <ListItem
+                                key={discount.id}
+                                divider
+                                onClick={() => handleApplyVoucher({ id: discount.id, code: discount.discount_code, discount: discount.discount_value, max_price: discount.max_price })}
+                                sx={{ display: 'flex', justifyContent: 'space-between' }}
+                              >
+                                <img src={logoVoucher} alt="" width={150} />
+                                <div style={{ marginLeft: -150 }}>
+                                  <Typography variant="subtitle1">{discount.discount_code}</Typography>
+                                  <Typography variant="body2" color="textSecondary">
+                                    Giảm {discount.discount_value}% | Giảm tối đa:{(Number(discount.max_price)).toLocaleString("vi-VN")}đ
+                                  </Typography>
+                                  <Typography variant="body2" color="textSecondary">
+                                    HSD: {discount.end_day}
+                                  </Typography>
+                                </div>
+                                <Button variant="contained" size="small" sx={{ backgroundColor: "#717FE0" }}>
+                                  Áp dụng
+                                </Button>
+                              </ListItem>
+                            ))}
+                          </List>
+                        ) : (
+                          <Typography variant="body1" color="textSecondary" align="center" sx={{ fontSize: "25px" }}>
+                            Hiện đang không có mã giảm giá nào
+                          </Typography>
+                        )
+                    ) : (
+                      <Typography variant="body1" color="textSecondary" align="center" sx={{ fontSize: "25px" }}>
+                        Hãy đăng nhập để có voucher.
+                      </Typography>
+                    )}
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => setVoucherDialogOpen(false)} color="primary">
@@ -1115,7 +1123,7 @@ const CheckoutPage: React.FC = () => {
         </div>
 
       </div>
-    </div>
+    </div >
   );
 };
 

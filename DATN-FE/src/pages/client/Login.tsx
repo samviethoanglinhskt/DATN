@@ -55,6 +55,7 @@ const Login = () => {
           duration: 3,
         });
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error({
         content: error.response?.data?.message || "Lỗi kết nối server",
