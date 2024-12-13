@@ -13,9 +13,11 @@ const ShoppingCart: React.FC = () => {
     reduceCartItemQuantity,
     upCartItemQuantity,
     loading,
+    isGuest,
   } = useCart();
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [isAllSelected, setIsAllSelected] = useState(false);
 
   const handleSelectItem = (id: number | undefined) => {
     if (id === undefined) return; // Thêm kiểm tra undefined
@@ -26,15 +28,17 @@ const ShoppingCart: React.FC = () => {
 
   const handleSelectAll = () => {
     const selectableItems = cartItems
-      .filter((item) => item.variant.quantity > 0) // Chỉ chọn sản phẩm còn hàng
+      .filter((item) => (!isGuest && item.variant.quantity > 0) || (isGuest && item.quantity > 0)) // Chỉ chọn sản phẩm còn hàng
       .map((item) => item.id)
       .filter((id) => id !== undefined) as number[]; // Lọc các id hợp lệ
 
-    if (selectedItems.length === selectableItems.length) {
+    if (isAllSelected) {
       setSelectedItems([]); // Bỏ chọn tất cả nếu đã chọn hết
     } else {
       setSelectedItems(selectableItems); // Chọn tất cả các sản phẩm còn hàng
     }
+
+    setIsAllSelected(!isAllSelected); // Cập nhật trạng thái "Chọn tất cả"
   };
 
 
@@ -100,7 +104,7 @@ const ShoppingCart: React.FC = () => {
                           <tr className="table_head">
                             <th style={{ padding: "0 10px" }}>
                               <Checkbox
-                                checked={selectedItems.length === cartItems.length}
+                                checked={isAllSelected}
                                 onChange={handleSelectAll}
                               />
                             </th>
@@ -123,7 +127,7 @@ const ShoppingCart: React.FC = () => {
                                   }}
                                   checked={item.id !== undefined && selectedItems.includes(item.id)}
                                   onChange={() => handleSelectItem(item.id)}
-                                  disabled={item.variant.quantity === 0}
+                                  disabled={(!isGuest && item.variant.quantity === 0) || (isGuest && item.quantity === 0)}
                                 />
                               </td>
 
@@ -150,7 +154,7 @@ const ShoppingCart: React.FC = () => {
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.quantity === 0 ? (
+                                {(!isGuest && item.variant.quantity === 0) || (isGuest && item.quantity === 0) ? (
                                   ""
                                 ) : (
                                   item.variant.price !== undefined && item.variant.price !== null
@@ -160,7 +164,7 @@ const ShoppingCart: React.FC = () => {
                               </td>
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.quantity === 0 ? (
+                                {(!isGuest && item.variant.quantity === 0) || (isGuest && item.quantity === 0) ? (
                                   <span style={{ color: "red", fontWeight: "bold" }}>Sản phẩm đã hết hàng</span>
                                 ) : (
                                   <div className="wrap-num-product flex-w m-l-auto m-r-0">
@@ -196,9 +200,10 @@ const ShoppingCart: React.FC = () => {
                                           item.quantity < item.variant.quantity
                                         ) {
                                           upCartItemQuantity(item.id, item.quantity + 1);
+                                        } else {
+                                          alert(`Số lượng yêu cầu vượt quá tồn kho hiện tại là ${item.variant.quantity}.`)
                                         }
                                       }}
-                                      disabled={item.quantity === undefined || item.quantity >= item.variant.quantity}
                                       className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
                                     >
                                       <i className="fs-16 zmdi zmdi-plus"></i>
@@ -209,7 +214,7 @@ const ShoppingCart: React.FC = () => {
 
 
                               <td style={{ padding: "0 20px" }}>
-                                {item.variant.quantity === 0 ? (
+                                {(item.variant.quantity === 0) || (isGuest && item.quantity === 0) ? (
                                   ""
                                 ) : (
                                   item.variant.price !== undefined && item.quantity !== undefined
@@ -269,21 +274,10 @@ const ShoppingCart: React.FC = () => {
                     <div className="d-grid gap-2 mt-3">
                       <button
                         onClick={handleCheckout}
-                        disabled={selectedItems.length === 0 || loading}
+                        disabled={selectedItems.length === 0}
                         className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
                       >
-                        {loading ? (
-                          <>
-                            <span
-                              className="spinner-border spinner-border-sm me-2"
-                              role="status"
-                              aria-hidden="true"
-                            ></span>
-                            Processing...
-                          </>
-                        ) : (
-                          `Mua hàng`
-                        )}
+                        Mua hàng
                       </button>
                     </div>
                   </div>

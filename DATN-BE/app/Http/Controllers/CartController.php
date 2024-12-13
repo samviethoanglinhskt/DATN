@@ -333,7 +333,7 @@ class CartController extends Controller
                             $order->save();
 
                             // Phát sóng sự kiện thông báo sản phẩm bị khóa sau khi cập nhật thành công
-                            broadcast(new ProductLocked($variant, 1));
+                            // broadcast(new ProductLocked($variant, 1));
                         }
                     } else {
                         return response()->json([
@@ -401,7 +401,7 @@ class CartController extends Controller
                         $variant = tb_variant::where('id', $item->id)->lockForUpdate()->first();
                         if ($variant && $variant->quantity >= $item->quantity) {
                             // Phát sóng sự kiện thông báo sản phẩm bị khóa
-                            broadcast(new ProductLocked($variant, 1));
+                            // broadcast(new ProductLocked($variant, 1));
                             $totalOrder += $item->quantity * $variant->price;
                             // Tạo chi tiết đơn hàng mới
                             $oderDetail = tb_oderdetail::create([
@@ -734,14 +734,14 @@ class CartController extends Controller
                             'quantity' => $detailTemp->quantity,
                             'price' => $detailTemp->price,
                         ]);
-                        $variant = tb_variant::find($detailTemp->tb_variant_id);
-                        $variant->quantity -= $detailTemp->quantity;
-                        if ($variant->quantity <= 0) {
-                            $variant->status = 'Hết hàng';
-                        } else {
-                            $variant->status = 'Còn hàng';
-                        }
-                        $variant->save();
+                        // $variant = tb_variant::find($detailTemp->tb_variant_id);
+                        // $variant->quantity -= $detailTemp->quantity;
+                        // if ($variant->quantity <= 0) {
+                        //     $variant->status = 'Hết hàng';
+                        // } else {
+                        //     $variant->status = 'Còn hàng';
+                        // }
+                        // $variant->save();
                     }
 
                     // Kiểm tra xem là mua ngay hay từ giỏ hàng
@@ -805,14 +805,14 @@ class CartController extends Controller
                             'quantity' => $detailTemp->quantity,
                             'price' => $detailTemp->price,
                         ]);
-                        // $variant = tb_variant::find($detailTemp->tb_variant_id);
-                        // $variant->quantity -= $detailTemp->quantity;
-                        // if ($variant->quantity <= 0) {
-                        //     $variant->status = 'Hết hàng';
-                        // } else {
-                        //     $variant->status = 'Còn hàng';
-                        // }
-                        // $variant->save();
+                        $variant = tb_variant::find($detailTemp->tb_variant_id);
+                        $variant->quantity += $detailTemp->quantity;
+                        if ($variant->quantity <= 0) {
+                            $variant->status = 'Hết hàng';
+                        } else {
+                            $variant->status = 'Còn hàng';
+                        }
+                        $variant->save();
                     }
 
                     // Kiểm tra xem là mua ngay hay từ giỏ hàng
@@ -968,21 +968,51 @@ class CartController extends Controller
                     'email' => $request->email,
 
                 ]);
-                $variant = tb_variant::find($request->tb_variant_id);
-                if ($variant) {
-                    $totalOrder = $request->total_amount;
-                }
-                $oderDetail = TbOderdetailTemp::create([
-                    'tb_oder_temp_id' => $order->id,
-                    'tb_product_id' => $request->tb_product_id,
-                    'tb_variant_id' => $request->tb_variant_id,
-                    'quantity' => $request->quantities,
-                    'price' => $variant->price
-                ]);
 
-                $order->order_code = 'ORD-OL' . $order->id;
-                $order->total_amount = $totalOrder;
-                $order->save();
+                // Sử dụng giao dịch để đảm bảo tính toàn vẹn dữ liệu
+                DB::transaction(function () use ($request, &$order, &$totalOrder, &$oderDetail, $user) {
+                    // Khóa sản phẩm để tránh nhiều người dùng thay đổi số lượng cùng lúc
+                    $variant = tb_variant::where('id', $request->tb_variant_id)->lockForUpdate()->first();
+
+                    if ($variant) {
+                        // Kiểm tra số lượng sản phẩm còn lại
+                        if ($request->quantities > $variant->quantity) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Sản phẩm không đủ số lượng',
+                            ]);
+                        } else {
+                            // Tạo chi tiết đơn hàng
+                            $oderDetail = TbOderdetailTemp::create([
+                                'tb_oder_temp_id' => $order->id,
+                                'tb_product_id' => $request->tb_product_id,
+                                'tb_variant_id' => $request->tb_variant_id,
+                                'quantity' => $request->quantities,
+                                'price' => $variant->price
+                            ]);
+                            $variant->quantity -= $request->quantities;
+
+                            // Kiểm tra lại trạng thái sản phẩm và cập nhật
+                            if ($variant->quantity <= 0) {
+                                $variant->status = 'Hết hàng';
+                            } else {
+                                $variant->status = 'Còn hàng';
+                            }
+                            $variant->save();
+                            $order->order_code = 'ORD-' . $order->id;
+                            $order->total_amount = $request->total_amount;
+                            $order->save();
+
+                            // Phát sóng sự kiện thông báo sản phẩm bị khóa sau khi cập nhật thành công
+                            broadcast(new ProductLocked($variant, $user->id));
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Sản phẩm không tồn tại',
+                        ]);
+                    }
+                });
                 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
                 $vnp_Returnurl = route('vnpay.ipn');
                 $vnp_TmnCode = "KVWATNZH"; //Mã website tại VNPAY
@@ -991,7 +1021,7 @@ class CartController extends Controller
                 $vnp_TxnRef = $order->order_code;
                 $vnp_OrderInfo = "Thanh toán hóa đơn";
                 $vnp_OrderType = "Imperial Beauty";
-                $vnp_Amount = $totalOrder * 100;
+                $vnp_Amount = $order->total_amount * 100;
                 $vnp_Locale = "vn";
                 $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
 
@@ -1560,5 +1590,25 @@ class CartController extends Controller
         $syncedCart = tb_cart::where('user_id', $user->id)->get();
         return response()->json(['message' => 'Cart synced successfully', 'data' => $syncedCart], 200);
     }
+    public function checkCartStock(Request $request)
+    {
+        $cartItems = $request->cart_items; // Danh sách sản phẩm từ giỏ hàng
+        $response = [];
 
+        foreach ($cartItems as $item) {
+            $product = tb_product::find($item['tb_product_id']);
+            $variant = $product->variants()->find($item['tb_variant_id']);
+
+            if ($variant) {
+                $response[] = [
+                    'tb_product_id' => $item['tb_product_id'],
+                    'tb_variant_id' => $item['tb_variant_id'],
+                    'requested_quantity' => $item['quantity'],
+                    'available_quantity' => $variant->quantity, // Số lượng còn lại trong kho
+                ];
+            }
+        }
+
+        return response()->json($response);
+    }
 }
