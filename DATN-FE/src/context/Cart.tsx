@@ -86,7 +86,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     return []; // Trả về mảng rỗng nếu xảy ra lỗi
   };
 
-
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     setIsGuest(!token); // Nếu không có token, là khách vãng lai
@@ -107,10 +106,15 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           );
 
           if (stockInfo) {
-            return {
-              ...item,
-              quantity: Math.min(item.quantity, stockInfo.available_quantity),
-            };
+            const availableQuantity = stockInfo.available_quantity;
+
+            // Chỉ cập nhật nếu tồn kho không đủ
+            if (availableQuantity < item.quantity) {
+              return {
+                ...item,
+                quantity: Math.max(0, availableQuantity),
+              };
+            }
           }
           return item;
         });

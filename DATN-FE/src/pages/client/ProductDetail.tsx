@@ -182,7 +182,7 @@ const ProductDetail = () => {
     addToCart(cartItem);
   }
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!currentVariant) {
       alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
       return;
@@ -201,12 +201,24 @@ const ProductDetail = () => {
       variant: currentVariant,
     };
 
+    try {
+      // Gửi request kiểm tra tồn kho
+      const response = await axiosInstance.post("/api/cart/check-investory", {
+        cart_items: [{ tb_variant_id: currentVariant.id, quantity }],
+      });
 
-    navigate("/checkout", {
-      state: {
-        cartItem
-      },
-    });
+      if (response.data.success) {
+        // Nếu tồn kho đủ, điều hướng đến trang thanh toán
+        navigate("/checkout", {
+          state: {
+            cartItem,
+          },
+        });
+      }
+    } catch {
+      alert("Số lượng sản phẩm trong kho không đủ. Đừng lo chúng tôi sẽ giúp bạn đồng bộ lại số lượng");
+      window.location.reload();
+    }
   }
 
   if (!product) {

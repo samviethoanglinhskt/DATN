@@ -995,10 +995,7 @@ class CartController extends Controller
                     if ($variant) {
                         // Kiểm tra số lượng sản phẩm còn lại
                         if ($request->quantities > $variant->quantity) {
-                            return response()->json([
-                                'success' => false,
-                                'message' => 'Sản phẩm không đủ số lượng',
-                            ]);
+                            throw new \Exception('Sản phẩm không đủ số lượng');
                         } else {
                             // Tạo chi tiết đơn hàng
                             $oderDetail = TbOderdetailTemp::create([
@@ -1735,4 +1732,22 @@ class CartController extends Controller
 
         return response()->json($response);
     }
+
+    public function checkInvestory(Request $request)
+    {
+        $selectedItems = $request->cart_items; // Nhận danh sách sản phẩm từ frontend
+
+        foreach ($selectedItems as $item) {
+            $variant = tb_variant::find($item['tb_variant_id']); // Tìm biến thể theo ID
+            if (!$variant || $item['quantity'] > $variant->quantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Số lượng sản phẩm đã chọn vượt quá tồn kho',
+                    'invalid_item' => $item['tb_variant_id']
+                ], 400);
+            }
+        }
+        return response()->json(['success' => true]);
+    }
+
 }
