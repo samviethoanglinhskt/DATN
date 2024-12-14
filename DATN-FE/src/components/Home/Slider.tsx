@@ -12,27 +12,47 @@ const Slider = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
+  // Cache API response in localStorage
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/logo_banner")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data); // Kiểm tra dữ liệu API
+    const fetchBanners = async () => {
+      const cachedBanners = localStorage.getItem("banners");
+      if (cachedBanners) {
+        setBanners(JSON.parse(cachedBanners));
+        return;
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/logo_banner");
+        const data = await res.json();
         const filteredBanners = data.filter(
           (obj: Banner) => obj.id === 2 || obj.id === 3
         );
         setBanners(filteredBanners);
-      })
-      .catch((error) => {
+        localStorage.setItem("banners", JSON.stringify(filteredBanners));
+      } catch (error) {
         console.error("Lỗi khi gọi API:", error);
-      });
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
+  // Debounce resize event
+  useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setWindowWidth(window.innerWidth);
+      }, 300); // Update only after 300ms of inactivity
     };
 
     window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimeout);
     };
   }, []);
 
