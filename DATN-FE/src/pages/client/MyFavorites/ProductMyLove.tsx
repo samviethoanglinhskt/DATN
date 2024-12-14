@@ -93,7 +93,7 @@ const ProductCard: React.FC<{
 
 // LoadingState Component
 const LoadingState = () => (
-  <div className="row">
+  <div className="row" style={{ marginTop: 100 }}>
     {[1, 2, 3, 4].map((key) => (
       <div key={key} className="col-md-4 col-lg-3 mb-4">
         <div className="product-card h-100">
@@ -171,12 +171,7 @@ const FavoritesPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="favorites-container">
-        <div className="page-header">
-          <h2 className="mb-0">Sản phẩm yêu thích</h2>
-        </div>
-        <LoadingState />
-      </div>
+      <LoadingState />
     );
   }
 
@@ -195,18 +190,6 @@ const FavoritesPage: React.FC = () => {
       </div>
 
       <div className="container favorites">
-        <div className="page-header">
-          <h2 className="mb-0 titlelove">
-            SẢN PHẨM YÊU THÍCH CỦA TÔI: (
-            {hasFavorites ? filteredProducts.length : 0}) Sản phẩm
-          </h2>
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => navigate("/")}
-          >
-            Tiếp tục mua sắm
-          </button>
-        </div>
 
         <div className="favoritesmunu">
           {renderBrandFilter()}
