@@ -377,8 +377,8 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 }
 
 .main-menu>li>a {
-  font-family: Poppins-Medium;
   font-size: 14px;
+  font-weight: 600;
   color: #333;
   padding: 5px 0px;
   transition: all 0.4s;

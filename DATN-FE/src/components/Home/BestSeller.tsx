@@ -78,9 +78,7 @@ const BestSeller = () => {
         throw new Error("Vui lòng đăng nhập trước!");
       }
 
-      console.log("Token:", token);
       const payload = { tb_product_id: productId };
-      console.log("Payload:", payload);
 
       try {
         const response = await axiosInstance.post("/api/favorites", payload, {

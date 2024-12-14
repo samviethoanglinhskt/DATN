@@ -12,6 +12,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { useFavorites } from "src/context/FavoriteProduct";
 // Cache constants
 const CACHE_KEYS = {
   CATEGORIES: "cached_categories",
@@ -55,19 +56,18 @@ const Header: React.FC = () => {
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [favoriteCount, setFavoriteCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFixed, setIsFixed] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
+  const { totalFavorites } = useFavorites();
+
 
   useEffect(() => {
     if (user?.data?.user) {
       setName(user.data.user.name);
     }
   }, [user]); // Chỉ chạy khi `user` thay đổi
-  const handleAddToFavorites = () => {
-    setFavoriteCount((prevCount) => prevCount + 1);
-  };
+
   // Enhanced categories query with caching
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
@@ -397,9 +397,6 @@ const Header: React.FC = () => {
 
             {/* Icon header */}
             <div className="wrap-icon-header flex-w flex-r-m">
-              {/* <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-                <i className="zmdi zmdi-search"></i>
-              </div> */}
               <a
                 href="/cart"
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti "
@@ -410,8 +407,7 @@ const Header: React.FC = () => {
               <a
                 href="/love"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-                data-notify={favoriteCount}
-                onClick={handleAddToFavorites} // Gọi hàm khi nhấn nút
+                data-notify={totalFavorites}
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
               </a>
@@ -435,9 +431,6 @@ const Header: React.FC = () => {
 
         {/* Icon header */}
         <div className="wrap-icon-header flex-w flex-r-m m-r-15">
-          {/* <div className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
-            <i className="zmdi zmdi-search"></i>
-          </div> */}
           <a
             href="/cart"
             className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
@@ -448,7 +441,7 @@ const Header: React.FC = () => {
           <a
             href="/love"
             className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-            data-notify={favoriteCount}
+            data-notify={totalFavorites}
           >
             <i className="zmdi zmdi-favorite-outline"></i>
           </a>
