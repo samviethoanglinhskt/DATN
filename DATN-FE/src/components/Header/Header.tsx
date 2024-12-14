@@ -37,6 +37,7 @@ const getCache = (key: string) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const setCache = (key: string, data: any) => {
   localStorage.setItem(
     key,
@@ -96,7 +97,6 @@ const Header: React.FC = () => {
       }
     },
     staleTime: CACHE_DURATION,
-    cacheTime: CACHE_DURATION,
     retry: 1,
   });
 
@@ -136,7 +136,7 @@ const Header: React.FC = () => {
     setUser(null);
     queryClient.clear();
     navigate("/login");
-    // window.location.reload();
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -381,9 +381,9 @@ const Header: React.FC = () => {
 
             {/* Icon header */}
             <div className="wrap-icon-header flex-w flex-r-m">
-              <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+              {/* <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                 <i className="zmdi zmdi-search"></i>
-              </div>
+              </div> */}
               <a
                 href="/cart"
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti "
@@ -398,9 +398,6 @@ const Header: React.FC = () => {
                 onClick={handleAddToFavorites} // Gọi hàm khi nhấn nút
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
-                {favoriteCount > 0 && (
-                  <span className="notification-count">{favoriteCount}</span> // Hiển thị số lượng yêu thích
-                )}
               </a>
             </div>
           </nav>
@@ -422,9 +419,9 @@ const Header: React.FC = () => {
 
         {/* Icon header */}
         <div className="wrap-icon-header flex-w flex-r-m m-r-15">
-          <div className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+          {/* <div className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
             <i className="zmdi zmdi-search"></i>
-          </div>
+          </div> */}
           <a
             href="/cart"
             className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
@@ -433,9 +430,9 @@ const Header: React.FC = () => {
             <i className="zmdi zmdi-shopping-cart"></i>
           </a>
           <a
-            href="#"
+            href="/love"
             className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-            data-notify="0"
+            data-notify={favoriteCount}
           >
             <i className="zmdi zmdi-favorite-outline"></i>
           </a>
@@ -450,7 +447,7 @@ const Header: React.FC = () => {
       </div>
 
       {/* Menu Mobile */}
-      <div className="menu-mobile">
+      {/* <div className="menu-mobile">
         <ul className="topbar-mobile">
           <li>
             <div className="left-top-bar">
@@ -509,28 +506,7 @@ const Header: React.FC = () => {
             <Link to="/support">Chính sách đổi trả</Link>
           </li>
         </ul>
-      </div>
-
-      {/* Modal Search */}
-      <div className="modal-search-header flex-c-m trans-04 js-hide-modal-search">
-        <div className="container-search-header">
-          <button className="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-            <img src="src/assets/images/icons/icon-close2.png" alt="CLOSE" />
-          </button>
-
-          <form className="wrap-search-header flex-w p-l-15">
-            <button className="flex-c-m trans-04">
-              <i className="zmdi zmdi-search"></i>
-            </button>
-            <input
-              className="plh3"
-              type="text"
-              name="search"
-              placeholder="Tìm kiếm..."
-            />
-          </form>
-        </div>
-      </div>
+      </div> */}
     </header>
   );
 };

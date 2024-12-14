@@ -2,15 +2,36 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
-import instance from "src/config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "src/components/css/NewProduct.css";
 
 // Types
 import { Product } from "src/types/product";
+import axiosInstance from "src/config/axiosInstance";
 
+
+// Hàm lưu dữ liệu vào localStorage
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const saveToLocalStorage = (key: string, data: any) => {
+  localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem(`${key}_updated_at`, Date.now().toString());
+};
+
+// Hàm lấy dữ liệu từ localStorage
+const getFromLocalStorage = (key: string, maxAge: number) => {
+  const cachedData = localStorage.getItem(key);
+  const updatedAt = localStorage.getItem(`${key}_updated_at`);
+
+  if (cachedData && updatedAt) {
+    const age = Date.now() - parseInt(updatedAt, 10);
+    if (age < maxAge) {
+      return JSON.parse(cachedData);
+    }
+  }
+  return null;
+};
 // Product Component
-const NewProduct = () => {
+const BestSeller = () => {
   const INITIAL_VISIBLE_PRODUCTS = 4;
   const [visibleProducts, setVisibleProducts] = useState(
     INITIAL_VISIBLE_PRODUCTS
@@ -25,10 +46,26 @@ const NewProduct = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["products-top"],
     queryFn: async () => {
-      const response = await instance.get("/api/product-top");
-      return response.data;
+      // Kiểm tra dữ liệu cache trước
+      const cachedProducts = getFromLocalStorage("products-top", 1000 * 60 * 60); // 1 giờ
+      if (cachedProducts) {
+        return cachedProducts;
+      }
+
+      // Gọi API nếu không có cache
+      try {
+        const response = await axiosInstance.get("/api/product-top");
+        const data = response.data;
+
+        // Lưu dữ liệu vào localStorage
+        saveToLocalStorage("products-top", data);
+        return data;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     },
   });
 
@@ -46,7 +83,7 @@ const NewProduct = () => {
       console.log("Payload:", payload);
 
       try {
-        const response = await instance.post("/api/favorites", payload, {
+        const response = await axiosInstance.post("/api/favorites", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("Response data:", response.data);
@@ -157,4 +194,4 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default BestSeller;

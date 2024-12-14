@@ -13,6 +13,7 @@ import {
   LoadingOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
+import { useCart } from "src/context/Cart";
 const Login = () => {
   const {
     register,
@@ -21,6 +22,7 @@ const Login = () => {
     formState: { errors, isSubmitting },
   } = useForm<User>();
   const navigate = useNavigate();
+  const { handleLogin } = useCart();
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     try {
@@ -37,6 +39,10 @@ const Login = () => {
           duration: 2,
         });
         sessionStorage.setItem("token", response.data.data.token);
+        // Đồng bộ giỏ hàng
+        if (handleLogin) {
+          await handleLogin();
+        }
         reset();
 
         // Sử dụng Promise để đảm bảo animation hoàn thành
@@ -49,6 +55,7 @@ const Login = () => {
           duration: 3,
         });
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       message.error({
         content: error.response?.data?.message || "Lỗi kết nối server",

@@ -5,6 +5,7 @@ import axiosInstance from "src/config/axiosInstance";
 import { useCart } from "src/context/Cart";
 import { Product, Variant } from "src/types/product";
 import iconUser from "src/assets/images/icons/user.png"
+import { CartItem } from "src/types/cart";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,19 +33,21 @@ const ProductDetail = () => {
         const response = await axiosInstance.get(`/api/product/${id}`);
         const productData = response.data;
         setProduct(productData);
+        const defaultVariant = productData?.variants[0];
 
         // Cài đặt giá trị mặc định cho Size hoặc Color nếu có
         if (productData.sizes && productData.sizes.length > 0) {
           setSelectedOption(String(productData.sizes[0].id));
           updateVariant(String(productData.sizes[0].id), null);
-          // setCurrentVariant(productData.variants[0])
+          setCurrentVariant(defaultVariant);
+          setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         } else if (productData.colors && productData.colors.length > 0) {
           setSelectedOption(String(productData.colors[0].id));
           updateVariant(null, String(productData.colors[0].id));
-          // setCurrentVariant(productData.variants[0])
+          setCurrentVariant(defaultVariant);
+          setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         } else {
           // Nếu không có size và color, hiển thị mặc định
-          const defaultVariant = productData?.variants[0];
           setCurrentVariant(defaultVariant);
           setCurrentImage(defaultVariant?.images?.[0]?.name_image || "");
         }
@@ -138,9 +141,20 @@ const ProductDetail = () => {
       alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
       return;
     }
+
+    // Lấy danh sách giỏ hàng hiện tại (ví dụ lưu trong localStorage hoặc context)
+    const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+
+    // Tính tổng số lượng sản phẩm của biến thể hiện tại đã có trong giỏ hàng
+    const existingQuantity = guestCart
+      .filter((item: CartItem) => item.tb_variant_id === currentVariant.id)
+      .reduce((sum: number, item: CartItem) => sum + item.quantity, 0);
+
+    // Tính tổng số lượng sản phẩm muốn thêm
+    const totalQuantity = existingQuantity + quantity;
     // Kiểm tra số lượng không vượt quá số lượng cho phép
-    if (quantity > currentVariant.quantity) {
-      alert(`Số lượng vượt quá giới hạn. Biến thể này chỉ còn ${currentVariant.quantity} sản phẩm.`);
+    if (totalQuantity > currentVariant.quantity) {
+      alert(`Số lượng thêm vượt quá giới hạn trong kho. Số lượng tối đa có thể thêm là ${currentVariant.quantity - existingQuantity}.`);
       return;
     }
 
@@ -164,12 +178,11 @@ const ProductDetail = () => {
         color: currentVariant.tb_color_id ? product?.colors.find(item => item.id === currentVariant.tb_color_id) : null
       },  // Thêm thuộc tính variant vào đây
     };
-    // Kiểm tra người dùng đã đăng nhập chưa (có thể dùng context hoặc localStorage để kiểm tra)
-    console.log(cartItem);
+    // Thêm vào giỏ hàng và cập nhật localStorage
     addToCart(cartItem);
   }
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!currentVariant) {
       alert("Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.");
       return;
@@ -188,12 +201,24 @@ const ProductDetail = () => {
       variant: currentVariant,
     };
 
+    try {
+      // Gửi request kiểm tra tồn kho
+      const response = await axiosInstance.post("/api/cart/check-investory", {
+        cart_items: [{ tb_variant_id: currentVariant.id, quantity }],
+      });
 
-    navigate("/checkout", {
-      state: {
-        cartItem
-      },
-    });
+      if (response.data.success) {
+        // Nếu tồn kho đủ, điều hướng đến trang thanh toán
+        navigate("/checkout", {
+          state: {
+            cartItem,
+          },
+        });
+      }
+    } catch {
+      alert("Số lượng sản phẩm trong kho không đủ. Đừng lo chúng tôi sẽ giúp bạn đồng bộ lại số lượng");
+      window.location.reload();
+    }
   }
 
   if (!product) {
@@ -230,7 +255,6 @@ const ProductDetail = () => {
                         flexDirection: "column",
                         alignItems: "center",
                         maxWidth: "100px",
-                        // height: "550px",
                         overflowY: "auto",
                         overflowX: "hidden", // Ẩn cuộn ngang
                         '&::-webkit-scrollbar': {
@@ -280,18 +304,18 @@ const ProductDetail = () => {
                         overflow: "hidden",
                         padding: "10px",
                         maxWidth: 550,
-                        // height: 550
                       }}
                     >
-                      <img
-                        src={`http://127.0.0.1:8000/storage/${currentImage}`}
-                        alt="Selected Product"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "4px",
-                        }}
-                      />
+                      {currentImage ?
+                        (<img
+                          src={`http://127.0.0.1:8000/storage/${currentImage}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "4px",
+                          }}
+                        />) : "Hãy chọn ảnh"}
+
                     </Box>
                   </Grid>
                 </Grid>

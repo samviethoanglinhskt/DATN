@@ -34,18 +34,26 @@ const Footer: React.FC = () => {
               </li>
               <li className="p-b-10">
                 <a
-                  href="/category/4"
-                  className="stext-107 cl7 hov-cl1 trans-04"
-                >
-                  Dưỡng ẩm
-                </a>
-              </li>
-              <li className="p-b-10">
-                <a
                   href="/category/5"
                   className="stext-107 cl7 hov-cl1 trans-04"
                 >
                   Tonner
+                </a>
+              </li>
+              <li className="p-b-10">
+                <a
+                  href="/category/17"
+                  className="stext-107 cl7 hov-cl1 trans-04"
+                >
+                  Cusion
+                </a>
+              </li>
+              <li className="p-b-10">
+                <a
+                  href="/category/18"
+                  className="stext-107 cl7 hov-cl1 trans-04"
+                >
+                  Má hồng
                 </a>
               </li>
             </ul>

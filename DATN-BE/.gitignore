@@ -21,3 +21,5 @@ yarn-error.log
 /storage/app/public/products
 /storage/app/public/images
 /storage/app/public/logo_banner
+composer.lock
+/storage/logs/*.log

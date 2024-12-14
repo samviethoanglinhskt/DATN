@@ -40,7 +40,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       width={1200}
       footer={[
         <Button key="close" onClick={onClose} className="px-4">
-          Close
+         Đóng
         </Button>,
       ]}
     >
@@ -209,25 +209,25 @@ const VariantCard: React.FC<{
         <div className="col-md-6">
           <div className="row g-2">
             <InfoItem
-              label="Size"
-              value={sizes.find((s) => s.id === variant.tb_size_id)?.name}
+              label="Kích thước"
+              value={sizes.find((s) => s.id === variant.tb_size_id)?.name|| "Không có kích thước"}
             />
             <InfoItem
-              label="Color"
-              value={colors.find((c) => c.id === variant.tb_color_id)?.name}
+              label="Màu sắc"
+              value={colors.find((c) => c.id === variant.tb_color_id)?.name || "Không có màu sắc"}
             />
-            <InfoItem label="SKU" value={variant.sku} />
+            <InfoItem label="Mô tả" value={variant.sku} />
             <InfoItem
-              label="Price"
+              label="Giá"
               value={
                 <span className="text-primary fw-semibold">
                   ${variant.price.toLocaleString()}
                 </span>
               }
             />
-            <InfoItem label="Quantity" value={variant.quantity} />
+            <InfoItem label="Số lượng" value={variant.quantity} />
             <InfoItem
-              label="Status"
+              label="Trạng thái"
               value={
                 <span
                   className={`badge ${
@@ -245,11 +245,11 @@ const VariantCard: React.FC<{
 
         {variant.images && variant.images.length > 0 && (
           <div className="col-md-6">
-            <p className="fw-semibold text-muted mb-2">Variant Images:</p>
-            <div className="row g-2">
+            <p className="fw-semibold text-muted mb-2">Ảnh biến thể:</p>
+            <div className="row g-2 ">
               {variant.images.map((image: any, imgIndex) => (
                 <div key={imgIndex} className="col-auto">
-                  <ProductImage src={image?.name_image} />
+                  <ProductImage  src={image?.name_image} />
                 </div>
               ))}
             </div>

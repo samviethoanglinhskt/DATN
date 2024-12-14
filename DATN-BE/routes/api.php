@@ -69,6 +69,7 @@ Route::apiResource('image', ImagesController::class);
 Route::get('/product-new', [ProductController::class, 'getLatestProduct'])->name('product_new');
 Route::get('/product-list', [ProductController::class, 'getListProduct'])->name('product_list');
 Route::get('/product-top', [ProductController::class, 'getTopsellingProduct']);
+Route::get('/cart/check-stock', [ProductController::class, 'checkStock']);//check số lượng trong giỏ hàng vãng lai
 
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
@@ -82,13 +83,16 @@ Route::put('/address-default', [AddressUserController::class, 'isDefaultAddress'
 Route::post('/add-cart', [CartController::class, 'addToCart'])->name('add_cart');
 Route::post('/list-to-guest', [CartController::class, 'listToGuest'])->name('list_to_guest');
 Route::get('/cart', [CartController::class, 'listCart'])->name('list_cart');
-
 Route::delete('/cart/del-all-cart', [CartController::class, 'delAllCart'])->name('del_all_cart');
 Route::post('/cart/update-quantity-cart', [CartController::class, 'updateQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/up-quantity-cart', [CartController::class, 'upQuantityCart'])->name('update_quantity_cart');
 Route::post('/cart/del-one-cart', [CartController::class, 'delOneCart'])->name('del_one_cart');
 Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->name('checkout');
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
+Route::post('/cart/sync', [CartController::class, 'syncCart'])->middleware('auth:api');//đồng bộ giỏ hàng vãng lai khi đăng nhập
+Route::post('/cart/check-cart-stock', [CartController::class, 'checkCartStock']);//đồng bộ số lượng giỏ hàng của khách vãng lai với kho
+Route::post('/cart/check-investory', [CartController::class, 'checkInvestory']);
+
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');
 Route::get('/vnpay/ipn/guest', [CartController::class, 'handleVnpayIpnGuest'])->name('vnpay.ipn.guest');
@@ -151,7 +155,6 @@ Route::get('/statistics/monthly', [StatisticsController::class, 'monthlyStatisti
 Route::get('/statistics/user', [StatisticsController::class, 'userStatistics']);
 // tổng đơn hàng,  tỉ lệ thành công,hủy của đơn hàng theo ngày, tuần ,tháng , quý ,năm
 Route::get('/statistics/order', [StatisticsController::class, 'orderStatistics']);
-
 
 // api Realtime
 Route::get('verify-token', function (Request $request) {

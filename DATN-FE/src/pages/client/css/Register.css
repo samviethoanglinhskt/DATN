@@ -1,3 +1,4 @@
+/* General Styles */
 .register-container {
   min-height: 100vh;
   display: flex;
@@ -10,13 +11,16 @@
 .register-content {
   width: 100%;
   max-width: 800px;
+  padding: 0 1rem;
 }
 
 .register-form-container {
-  margin-left: 100px;
+  margin-left: auto;
+  margin-right: auto;
   background: white;
   border-radius: 24px;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   box-shadow: 0 4px 24px rgba(39, 24, 126, 0.08);
   margin-top: 60px;
 }
@@ -154,5 +158,53 @@
 @keyframes spinner-border {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 1rem;
+  }
+
+  .register-form-container {
+    margin-top: 40px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .register-form-box {
+    padding: 1.5rem;
+  }
+
+  .register-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-form-box {
+    padding: 1rem;
+  }
+
+  .register-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .register-input {
+    padding: 0.75rem;
+    height: 3rem;
+  }
+
+  .register-button {
+    padding: 0.75rem;
+    font-size: 0.875rem;
   }
 }

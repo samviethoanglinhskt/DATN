@@ -205,7 +205,8 @@ class ProductController extends Controller
                 'description' => $request->description ?? null,
                 'image' => $imagePr ?? $product->image,
             ]));
-            // return response()->json($product);
+
+
             if ($request->variants && is_array($request->variants)) {
                 foreach ($request->variants as $id => $variantData) {
                     if (isset($product->variants[$id])) {
@@ -238,8 +239,8 @@ class ProductController extends Controller
                     } else {
                         $variant = $product->variants()->create([
                             'tb_product_id' => $product->id,
-                            'tb_size_id' => $variantData['tb_size_id'],
-                            'tb_color_id' => $variantData['tb_color_id'],
+                            'tb_size_id' => $variantData['tb_size_id'] ?? null,
+                            'tb_color_id' => $variantData['tb_color_id'] ?? null,
                             'sku' => $variantData['sku'],
                             'price' => $variantData['price'],
                             'quantity' => $variantData['quantity'],
@@ -262,6 +263,53 @@ class ProductController extends Controller
                     }
                 }
             }
+
+            // **Xử lý xóa biến thể**
+            if ($request->has('variants_to_delete') && is_array($request->variants_to_delete)) {
+                $variantsToDelete = $request->variants_to_delete;
+
+                // Kiểm tra nếu có biến thể cần xóa
+                $variants = $product->variants()->whereIn('id', $variantsToDelete)->get();
+
+                // Kiểm tra nếu có biến thể trong danh sách
+                if ($variants->isEmpty()) {
+                    return response()->json(['error' => 'Không tìm thấy biến thể để xóa'], 404);
+                }
+                // Xóa từng biến thể và ảnh liên quan
+                foreach ($variants as $variant) {
+
+                    // Xóa ảnh liên quan đến biến thể
+                    foreach ($variant->images as $image) {
+                        if ($image->name_image) {
+                            Storage::disk('public')->delete($image->name_image);
+                        }
+                        $image->delete();
+                    }
+                    // Xóa biến thể
+                    $variant->delete();
+
+                }
+            }
+
+            // **Xử lý xóa ảnh biến thể nếu có**
+            if ($request->has('images_to_delete') && is_array($request->images_to_delete)) {
+                $imagesToDelete = $request->images_to_delete;
+
+                // Xóa từng ảnh
+                $images = tb_image::whereIn('id', $imagesToDelete)->get();
+
+                if ($images->isEmpty()) {
+                    return response()->json(['error' => 'Không tìm thấy ảnh để xóa'], 404);
+                }
+
+                $images->each(function ($image) {
+                    if ($image->name_image) {
+                        Storage::disk('public')->delete($image->name_image);
+                    }
+                    $image->delete();
+                });
+            }
+
             // Load lại các quan hệ để trả về đầy đủ dữ liệu mới cập nhật
             $product->load('variants.images');
             return response()->json([
@@ -333,4 +381,26 @@ class ProductController extends Controller
             return response()->json(['error' => 'Lỗi xóa sản phẩm'], 500);
         }
     }
+
+    public function checkStock(Request $request)
+    {
+        // Lấy variant_id từ request
+        $variantId = $request->input('tb_variant_id');
+
+        // Lấy thông tin biến thể từ database
+        $variant = tb_variant::find($variantId);
+
+        if (!$variant) {
+            return response()->json([
+                'error' => 'Variant not found.',
+            ], 404);
+        }
+
+        // Kiểm tra tồn kho
+        return response()->json([
+            'tb_variant_id' => $variant->id,
+            'available_quantity' => $variant->quantity,  // Trả về số lượng tồn kho của biến thể
+        ]);
+    }
+
 }
