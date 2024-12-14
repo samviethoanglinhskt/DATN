@@ -73,7 +73,7 @@ Route::get('/cart/check-stock', [ProductController::class, 'checkStock']);//chec
 
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
-Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
+Route::post('/forgot_password', [UserController::class, 'forgotPass']);
 Route::get('/show-user', [UserController::class, 'showUser'])->name('show_User');
 Route::put('/update-user', [UserController::class, 'updateUser'])->name('update_User');
 Route::put('/change-password', [UserController::class, 'updatePassUser'])->name('update_Pass_User');

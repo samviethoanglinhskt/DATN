@@ -1,30 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Typography, Skeleton, Modal } from "antd";
-import { ClockCircleOutlined, FileTextOutlined } from "@ant-design/icons"; // Cập nhật icon
+import { ClockCircleOutlined, FileTextOutlined } from "@ant-design/icons";
 import axios from "axios";
 import "./Blog.css";
 
 const { Title, Text } = Typography;
 
 const Blog: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [posts, setPosts] = useState<any[]>([]); // Dữ liệu bài viết
   const [loading, setLoading] = useState<boolean>(true); // Trạng thái loading
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false); // Trạng thái hiển thị modal
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedPost, setSelectedPost] = useState<any>(null); // Bài viết được chọn
 
-  // Lấy dữ liệu từ API
-  useEffect(() => {
-    const fetchPosts = async () => {
+  // Hàm lấy dữ liệu từ API hoặc localStorage
+  const fetchPosts = async () => {
+    const cacheKey = "blogPosts"; // Key cache
+    const cacheExpirationKey = "blogPosts_expiration"; // Key cho thời gian hết hạn cache
+    const cacheDuration = 60 * 60 * 1000; // 1 giờ (ms)
+
+    const now = Date.now();
+    const cachedPosts = localStorage.getItem(cacheKey);
+    const cacheExpiration = localStorage.getItem(cacheExpirationKey);
+
+    if (cachedPosts && cacheExpiration && now < parseInt(cacheExpiration, 10)) {
+      // Dùng dữ liệu từ cache
+      setPosts(JSON.parse(cachedPosts));
+      setLoading(false);
+    } else {
+      // Gọi API nếu không có cache hoặc cache đã hết hạn
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/new");
-        setPosts(response.data);
+        const data = response.data;
+
+        // Lưu vào cache
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+        localStorage.setItem(cacheExpirationKey, (now + cacheDuration).toString());
+
+        setPosts(data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
         setLoading(false);
       }
-    };
+    }
+  };
 
+  // Load dữ liệu khi component mount
+  useEffect(() => {
     fetchPosts();
   }, []);
 
@@ -34,6 +58,7 @@ const Blog: React.FC = () => {
   };
 
   // Hàm hiển thị modal với nội dung đầy đủ
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const showModal = (post: any) => {
     setSelectedPost(post);
     setIsModalVisible(true);

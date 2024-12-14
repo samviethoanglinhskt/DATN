@@ -130,8 +130,18 @@ class UserController extends Controller
                 $message->to($account->email)
                     ->subject('Thông tin mật khẩu mới');
             });
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng ký thành công!',
+                'data' => $account
+            ], 201);
         } catch (\Exception $e) {
-            //throw $th;
+            Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

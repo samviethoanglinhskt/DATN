@@ -4,6 +4,7 @@ import { Product } from "src/types/product";
 import axiosInstance from "../../config/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "src/components/css/BestSeller.css";
+import { useFavorites } from "src/context/FavoriteProduct";
 
 // Hàm lưu dữ liệu vào localStorage
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,6 +28,7 @@ const getFromLocalStorage = (key: string, maxAge: number) => {
 };
 
 const NewProduct = () => {
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
   const {
     data: products,
     isLoading,
@@ -64,6 +66,15 @@ const NewProduct = () => {
       </div>
     );
 
+  const isFavorite = (productId: number) => {
+    return favorites.some((fav) => fav.tb_product_id === productId);
+  };
+
+  const getFavoriteId = (productId: number) => {
+    const favorite = favorites.find((fav) => fav.tb_product_id === productId);
+    return favorite?.id; // Lấy id của mục yêu thích
+  };
+
   return (
     <section className="product-section py-5">
       <div className="container">
@@ -76,27 +87,51 @@ const NewProduct = () => {
 
         <div className="slider">
           <div className="slide-track">
-            {products.data.map((product: Product) => (
-              <div key={product.id} className="slide">
-                <div className="product-inner">
-                  <div className="product-image-wrapper">
-                    <img
-                      src={`http://127.0.0.1:8000/storage/${product.image}`}
-                      className="product-image"
-                      alt={product.name}
-                    />
-                  </div>
-                  <div className="product-info">
-                    <Link to={`/product/${product.id}`} className="product-link">
-                      <h5 className="product-title">{product.name}</h5>
-                    </Link>
-                    <p className="product-price">
-                      {product.variants[0]?.price.toLocaleString("vi-VN")}đ
-                    </p>
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+              {products.data.map((product: Product) => (
+                <div key={product.id} className="slide">
+                  <div className="card h-100 product-card border-0">
+                    <div className="position-relative">
+                      <div className="product-image-wrapper">
+                        <img
+                          src={`http://127.0.0.1:8000/storage/${product.image}`}
+                          className="card-img-top product-image"
+                          alt={product.name}
+                        />
+                      </div>
+                      <button
+                        className={`btn wishlist-btn position-absolute top-0 end-0 m-2 ${isFavorite(product.id) ? "text-danger" : ""
+                          }`}
+                        onClick={() => {
+                          if (isFavorite(product.id)) {
+                            const favoriteId = getFavoriteId(product.id);
+                            if (favoriteId) removeFavorite(favoriteId); // Truyền ID của mục yêu thích
+                          } else {
+                            addFavorite(product.id);
+                          }
+                        }}
+                      >
+                        <i
+                          className={
+                            isFavorite(product.id)
+                              ? "zmdi zmdi-favorite"
+                              : "zmdi zmdi-favorite-outline"
+                          }
+                        ></i>
+                      </button>
+                    </div>
+                    <div className="card-body text-center">
+                      <Link to={`/product/${product.id}`} className="product-link">
+                        <h5 className="product-title">{product.name}</h5>
+                      </Link>
+                      <p className="product-price fw-bold">
+                        {product.variants[0]?.price.toLocaleString("vi-VN")}đ
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ export const FavoriteProvider = ({ children }: FavoriteProviderProps) => {
             const response = await axiosInstance.get('/api/favorites');
             setFavorites(response.data);
             setTotalFavorites(response.data.length);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || 'Có lỗi xảy ra khi tải danh sách yêu thích.');
         } finally {
@@ -40,20 +41,22 @@ export const FavoriteProvider = ({ children }: FavoriteProviderProps) => {
                 setTotalFavorites(updatedFavorites.length);
                 return updatedFavorites;
             });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || 'Không thể thêm sản phẩm vào danh sách yêu thích.');
         }
     };
 
     // Xóa sản phẩm khỏi danh sách yêu thích
-    const removeFavorite = async (id: number) => {
+    const removeFavorite = async (productId: number) => {
         try {
-            await axiosInstance.delete(`/api/favorites/${id}`);
+            await axiosInstance.delete(`/api/favorites/${productId}`);
             setFavorites((prev) => {
-                const updatedFavorites = prev.filter((fav) => fav.id !== id);
+                const updatedFavorites = prev.filter((fav) => fav.id !== productId);
                 setTotalFavorites(updatedFavorites.length);
                 return updatedFavorites;
             });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || 'Không thể xóa sản phẩm khỏi danh sách yêu thích.');
         }
