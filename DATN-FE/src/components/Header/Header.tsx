@@ -154,8 +154,9 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
-          }`}
+        className={`container-menu-desktop ${
+          isFixed ? "fix-menu-desktop" : ""
+        }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -197,36 +198,62 @@ const Header: React.FC = () => {
                         },
                       }}
                     >
-                      {(user?.data?.user?.tb_role_id === 1 ||
-                        user?.data?.user?.tb_role_id === 3) && (
-                          <MenuItem
-                            onClick={() => navigate("/admin")}
-                            sx={{
-                              padding: "10px 16px",
-                              borderRadius: "8px",
-                              gap: "12px",
-                              transition: "all 0.3s ease",
-                              "&:hover": {
-                                background:
-                                  "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                      {user?.data?.user?.tb_role_id === 1 && (
+                        <MenuItem
+                          onClick={() => navigate("/admin")}
+                          sx={{
+                            padding: "10px 16px",
+                            borderRadius: "8px",
+                            gap: "12px",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              background:
+                                "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                              color: "#717FE0",
+                              "& .menu-icon": {
+                                transform: "scale(1.1)",
                                 color: "#717FE0",
-                                "& .menu-icon": {
-                                  transform: "scale(1.1)",
-                                  color: "#717FE0",
-                                },
                               },
+                            },
+                          }}
+                        >
+                          <AdminPanelSettingsIcon
+                            style={{
+                              fontSize: "18px",
+                              transition: "all 0.3s ease",
                             }}
-                          >
-                            <AdminPanelSettingsIcon
-                              style={{
-                                fontSize: "18px",
-                                transition: "all 0.3s ease",
-                              }}
-                            />
-                            Admin
-                          </MenuItem>
-                        )}
-
+                          />
+                          Admin
+                        </MenuItem>
+                      )}
+                      {user?.data?.user?.tb_role_id === 3 && (
+                        <MenuItem
+                          onClick={() => navigate("/adminnt")}
+                          sx={{
+                            padding: "10px 16px",
+                            borderRadius: "8px",
+                            gap: "12px",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              background:
+                                "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                              color: "#717FE0",
+                              "& .menu-icon": {
+                                transform: "scale(1.1)",
+                                color: "#717FE0",
+                              },
+                            },
+                          }}
+                        >
+                          <AdminPanelSettingsIcon
+                            style={{
+                              fontSize: "18px",
+                              transition: "all 0.3s ease",
+                            }}
+                          />
+                          Admin NT
+                        </MenuItem>
+                      )}
                       <MenuItem
                         onClick={() => navigate("/myinfo")}
                         sx={{

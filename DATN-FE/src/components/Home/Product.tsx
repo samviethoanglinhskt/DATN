@@ -12,6 +12,7 @@ import {
   Slider,
   Skeleton,
   Tooltip,
+  Button,
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -19,7 +20,7 @@ import {
   FilterOutlined,
 } from "@ant-design/icons";
 import instance from "../../config/axiosInstance";
-import { Product } from "src/types/product";
+import { Category, Product } from "src/types/product";
 import "./Productlist.css";
 import { FavoriteButton } from "./FavoriteButton";
 
@@ -35,12 +36,22 @@ const ProductList = () => {
   const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000]);
   const itemsPerPage = 8; // Tăng số sản phẩm mỗi trang
+  const handleClearFilters = () => {
+    navigate("/product");
+  };
 
   // Giữ nguyên các query
   const { data: brands, isLoading: loadingBrands } = useQuery({
     queryKey: ["brands"],
     queryFn: async () => {
       const response = await instance.get("http://127.0.0.1:8000/api/brand");
+      return response.data;
+    },
+  });
+  const { data: category, isLoading: loadingCategory } = useQuery({
+    queryKey: ["category"],
+    queryFn: async () => {
+      const response = await instance.get("http://127.0.0.1:8000/api/category");
       return response.data;
     },
   });
@@ -58,15 +69,15 @@ const ProductList = () => {
   // Giữ nguyên logic lọc
   const filteredProductsByCategory = Array.isArray(allProducts)
     ? allProducts.filter(
-      (product: Product) => product.tb_category_id === Number(id)
-    )
+        (product: Product) => product.tb_category_id === Number(id)
+      )
     : [];
 
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? filteredProductsByCategory.filter((product: Product) =>
-        selectedBrands.includes(product.tb_brand_id)
-      )
+          selectedBrands.includes(product.tb_brand_id)
+        )
       : filteredProductsByCategory;
 
   const filteredByPrice = filteredProductsByBrand.filter((product: Product) => {
@@ -100,7 +111,7 @@ const ProductList = () => {
     </Col>
   );
 
-  if (loadingProducts || loadingBrands) {
+  if (loadingProducts || loadingBrands || loadingCategory) {
     return (
       <div className="products-container">
         <Row gutter={[24, 24]}>
@@ -128,7 +139,25 @@ const ProductList = () => {
                 aria-hidden="true"
               ></i>
             </button>
-            <span className="stext-109 cl4">Danh mục</span>
+            <button
+              onClick={() => navigate("/product")}
+              className="stext-109 cl8 hov-cl1 trans-04"
+            >
+              Danh mục
+              <i
+                className="fa fa-angle-right m-l-9 m-r-10"
+                aria-hidden="true"
+              ></i>
+            </button>
+            {id && category && (
+              <span className="stext-109 cl4">
+                {
+                  category.find(
+                    (cat: Category) => cat.id.toString() === id // Sử dụng id thay vì categoryId
+                  )?.name
+                }
+              </span>
+            )}
           </div>
         </div>
 
@@ -151,6 +180,14 @@ const ProductList = () => {
               <h4>
                 <FilterOutlined /> Bộ lọc
               </h4>
+              <Button
+                style={{ width: "120px" }}
+                type="primary"
+                danger
+                onClick={handleClearFilters}
+              >
+                Xóa Bộ Lọc
+              </Button>
 
               <div className="filter-group">
                 <h5>Sắp xếp giá</h5>
@@ -216,7 +253,7 @@ const ProductList = () => {
                           alt={product.name}
                           className="product-image"
                         />
-                        <div className="product-overlay">
+                        {/* <div className="product-overlay">
                           <div className="product-actions">
                             <Tooltip title="Thêm vào giỏ hàng">
                               <button className="action-button">
@@ -225,18 +262,20 @@ const ProductList = () => {
                             </Tooltip>
                             <Tooltip title="Thêm vào yêu thích">
                               <button className="action-button">
-                                <FavoriteButton
-                                  productId={product.id}
-
-                                />
+                                <FavoriteButton productId={product.id} />
                               </button>
                             </Tooltip>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     }
                     actions={[
-                      <button className="buy-now-button">Mua ngay</button>,
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="product-link"
+                      >
+                        <button className="buy-now-button">Xem thêm</button>
+                      </Link>,
                     ]}
                   >
                     <Link

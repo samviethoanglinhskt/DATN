@@ -25,11 +25,11 @@ export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
     bgColor: "bg-purple-50",
     textColor: "text-purple-600",
   },
-  "Chưa thanh toán": {
-    color: "error",
-    icon: <ClockCircleOutlined />,
-    bgColor: "bg-orange-50",
-    textColor: "text-orange-600",
+  "Đã giao hàng": {
+    color: "success",
+    icon: <CheckCircleOutlined />,
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
   },
   "Đã thanh toán": {
     color: "success",
@@ -37,11 +37,11 @@ export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
     bgColor: "bg-emerald-50",
     textColor: "text-emerald-600",
   },
-  "Đã hoàn thành": {
-    color: "success",
-    icon: <CheckCircleOutlined />,
-    bgColor: "bg-emerald-50",
-    textColor: "text-emerald-600",
+  "Chưa thanh toán": {
+    color: "error",
+    icon: <ClockCircleOutlined />,
+    bgColor: "bg-orange-50",
+    textColor: "text-orange-600",
   },
   "Giao hàng thất bại": {
     color: "warning",
@@ -49,17 +49,17 @@ export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
     bgColor: "bg-red-50",
     textColor: "text-red-600",
   },
-  "Đã giao hàng": {
-    color: "success",
-    icon: <CheckCircleOutlined />,
-    bgColor: "bg-emerald-50",
-    textColor: "text-emerald-600",
-  },
   "Đã hủy đơn hàng": {
     color: "error",
     icon: <CloseCircleOutlined />,
     bgColor: "bg-red-50",
     textColor: "text-red-600",
+  },
+  "Đã hoàn thành": {
+    color: "success",
+    icon: <CheckCircleOutlined />,
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
   },
 };
 

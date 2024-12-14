@@ -957,6 +957,9 @@ class CartController extends Controller
                     }
                     $variant->save();
                 }
+                 // Xóa dữ liệu bảng tạm
+                 TbOderdetailTemp::where('tb_oder_temp_id', $orderTemp->id)->delete();
+                 $orderTemp->delete();
                 return redirect('http://localhost:5173/payment-failure');
             }
         } else {
@@ -1458,6 +1461,9 @@ class CartController extends Controller
                 ]);
                 $variant = tb_variant::find($request->tb_variant_id);
                 if ($variant) {
+                    if($variant->quantity < $request->quantities) {
+                        throw new \Exception('Sản phẩm không đủ số lượng');
+                    }
                     $totalOrder = $request->total_amount;
                 }
                 $oderDetail = TbOderdetailTemp::create([
@@ -1567,6 +1573,9 @@ class CartController extends Controller
                     $item = (object) $item;
                     $variant = tb_variant::find($item->id);
                     if ($variant) {
+                        if($variant->quantity < $item->quantity) {
+                            throw new \Exception(message: 'Sản phẩm không đủ số lượng');
+                        }
                         $totalOrder = $request->total_amount;
                     }
                     $oderDetail = TbOderdetailTemp::create([

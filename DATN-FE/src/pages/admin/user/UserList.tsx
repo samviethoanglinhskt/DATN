@@ -128,8 +128,16 @@ const UserList: React.FC = () => {
       key: "tb_role_id",
       width: 120,
       render: (roleId: number) => (
-        <span className={`badge ${roleId === 1 ? "bg-success" : "bg-info"}`}>
-          {roleId === 1 ? "Admin" : "User"}
+        <span
+          className={`badge ${
+            roleId === 1
+              ? "bg-success"
+              : roleId === 3
+              ? "bg-warning"
+              : "bg-info"
+          }`}
+        >
+          {roleId === 1 ? "Admin" : roleId === 3 ? "Nhân viên" : "User"}
         </span>
       ),
     },
