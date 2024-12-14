@@ -1,53 +1,83 @@
-import banner1 from "src/assets/images/banner/6.svg"
-import banner2 from "src/assets/images/banner/5.svg"
+import { useEffect, useState } from "react";
+
+interface Banner {
+  id: number;
+  name: string;
+  image: string;
+  created_at: string;
+  updated_at: string | null;
+}
 
 const Slider = () => {
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/logo_banner")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data); // Kiểm tra dữ liệu API
+        const filteredBanners = data.filter(
+          (obj: Banner) => obj.id === 2 || obj.id === 3
+        );
+        setBanners(filteredBanners);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi gọi API:", error);
+      });
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const bannerId2 = banners.find((banner) => banner.id === 2);
+  const bannerId3 = banners.find((banner) => banner.id === 3);
+
+  const getImageHeight = () => {
+    if (windowWidth <= 768) {
+      return "50vh"; // Mobile
+    } else if (windowWidth <= 1024) {
+      return "60vh"; // Tablet
+    } else {
+      return "100vh"; // Desktop
+    }
+  };
+
   return (
-    <section className="section-slide">
-      <div className="wrap-slick1">
-        <div className="slick1">
-          <div className="item-slick1" style={{ backgroundImage: `url(${banner1})` }}>
-            {/* <div className="container h-full">
-              <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
-                <div className="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay={0}>
-                  <span className="ltext-101 cl2 respon2">
-                    Chào Mừng Bạn Đã Đến Với Chúng Tôi
-                  </span>
-                </div>
-                <div className="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay={800}>
-                  <h2 className="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                    Imperial Beauty
-                  </h2>
-                </div>
-                <div className="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay={1600}>
-                  <a href="product.html" className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                    Mua ngay
-                  </a>
-                </div>
-              </div>
-            </div> */}
-          </div>
-          <div className="item-slick1" style={{ backgroundImage: `url(${banner2})` }}>
-            {/* <div className="container h-full">
-              <div className="flex-col-l-m h-full p-t-100 p-b-30 respon5">
-                <div className="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay={0}>
-                  <span className="ltext-101 cl2 respon2">
-                    Thương Hiệu Tạo Nên Tên tuổi
-                  </span>
-                </div>
-                <div className="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay={800}>
-                  <h2 className="ltext-201 cl2 p-t-19 p-b-43 respon1">
-                    New arrivals
-                  </h2>
-                </div>
-                <div className="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay={1600}>
-                  <a href="product.html" className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                    Shop Now
-                  </a>
-                </div>
-              </div>
-            </div> */}
-          </div>
+    <section
+      className="section-slide"
+      style={{ width: "100%", height: "100vh" }}
+    >
+      <div className="wrap-slick1" style={{ width: "100%", height: "100%" }}>
+        <div className="slick1" style={{ width: "100%", height: "100%" }}>
+          <img
+            src={bannerId2?.image || "https://via.placeholder.com/150"}
+            className="item-slick1"
+            style={{
+              width: "100%",
+              height: getImageHeight(),
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+            alt="Banner 2"
+          />
+          <img
+            src={bannerId3?.image || "https://via.placeholder.com/150"}
+            className="item-slick1"
+            style={{
+              width: "100%",
+              height: getImageHeight(),
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+            alt="Banner 3"
+          />
         </div>
       </div>
     </section>

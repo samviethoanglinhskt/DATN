@@ -1,75 +1,181 @@
+import React, { useState, useEffect } from "react";
+
 const Banner = () => {
+  const items = [
+    {
+      id: 1,
+      image: "src/assets/images/logo/1.png",
+      title: "Thương Hiệu",
+      subtitle: "Loreal",
+      link: "/product/brand/1",
+    },
+    {
+      id: 2,
+      image: "src/assets/images/logo/2.png",
+      title: "Mĩ Phẩm Làm Đẹp",
+      subtitle: "Lemonade",
+      link: "/product/brand/2",
+    },
+    {
+      id: 3,
+      image: "src/assets/images/logo/3.png",
+      title: "Dưỡng Da",
+      subtitle: "Cocoon",
+      link: "/product/brand/3",
+    },
+    {
+      id: 4,
+      image: "src/assets/images/logo/4.jpg",
+      title: "Mĩ Phẩm Làm Đẹp",
+      subtitle: "Peripera",
+      link: "/product/brand/4",
+    },
+    {
+      id: 5,
+      image: "src/assets/images/logo/5.png",
+      title: "Mĩ Phẩm Làm Đẹp",
+      subtitle: "Garnier",
+      link: "/product/brand/6",
+    },
+    {
+      id: 6,
+      image: "src/assets/images/logo/6.png",
+      title: "Dưỡng Da",
+      subtitle: "La Roche-Posay",
+      link: "/product/brand/7",
+    },
+    {
+      id: 7,
+      image: "src/assets/images/logo/7.png",
+      title: "Mĩ Phẩm Làm Đẹp",
+      subtitle: "CLUB CLIO",
+      link: "/product/brand/8",
+    },
+    {
+      id: 8,
+      image: "src/assets/images/logo/8.png",
+      title: "Dưỡng Da",
+      subtitle: "OHUI",
+      link: "/product/brand/9",
+    },
+  ];
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 3;
+
+  const handleNext = () => {
+    setCurrentPage((prevPage) =>
+      (prevPage + 1) * itemsPerPage < items.length ? prevPage + 1 : 0
+    );
+  };
+
+  const handlePrev = () => {
+    setCurrentPage((prevPage) =>
+      prevPage === 0 ? Math.ceil(items.length / itemsPerPage) - 1 : prevPage - 1
+    );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // handleNext();
+    }, 500); // Chuyển slide sau mỗi 5 giây
+
+    return () => clearInterval(interval);
+  }, [items.length, itemsPerPage]);
+
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleItems = items.slice(startIndex, endIndex);
+
   return (
     <div className="sec-banner bg0 p-t-80 p-b-50">
-      <div className="container">
+      <div className="container position-relative">
+        {/* Nút chuyển hướng */}
+        <button
+          className="btn-prev"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "10px",
+            transform: "translateY(-50%)",
+            zIndex: 10,
+            background: "rgba(0,0,0,0.5)",
+            color: "white",
+            border: "none",
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            cursor: "pointer",
+          }}
+          onClick={handlePrev}
+        >
+          &#8249;
+        </button>
+        <button
+          className="btn-next"
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: "10px",
+            transform: "translateY(-50%)",
+            zIndex: 10,
+            background: "rgba(0,0,0,0.5)",
+            color: "white",
+            border: "none",
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            cursor: "pointer",
+          }}
+          onClick={handleNext}
+        >
+          &#8250;
+        </button>
+
         <div className="row">
-          <div className="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-            {/* Block1 */}
-            <div className="block1 wrap-pic-w">
-              <img src="https://media.istockphoto.com/id/1331637318/vi/anh/ch%C3%A2n-dung-ng%C6%B0%E1%BB%9Di-ph%E1%BB%A5-n%E1%BB%AF-tr%E1%BA%BB-afro-v%E1%BB%9Bi-trang-%C4%91i%E1%BB%83m-s%C3%A1ng.jpg?s=2048x2048&w=is&k=20&c=vRq5rLfgHYaUk4nwdjhLgKkeGXbGtH17VLr13felTb4=" alt="IMG-BANNER" />
-              <a href="#" className="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                <div className="block1-txt-child1 flex-col-l">
-                  <span className="block1-name ltext-102 trans-04 p-b-8 text-white">
-                    Trang Điểm
-                  </span>
-                  <span className="block1-info stext-102 trans-04  text-white">
-                    Mới Nhất 2024
-                  </span>
-                </div>
-                <div className="block1-txt-child2 p-b-4 trans-05">
-                  <div className="block1-link stext-101 cl0 trans-09">
-                    Shop Now
+          {visibleItems.map((item) => (
+            <div className="col-md-6 col-xl-4 p-b-30 m-lr-auto" key={item.id}>
+              <div className="block1 wrap-pic-w">
+                <img
+                  src={item.image}
+                  alt="IMG-BANNER"
+                  style={{
+                    width: "100%",
+                    height: "300px",
+                    objectFit: "cover",
+                    margin: "0 auto",
+                  }}
+                />
+                <a
+                  href={item.link}
+                  className="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3"
+                >
+                  <div className="block1-txt-child1 flex-col-l">
+                    <span
+                      style={{ fontSize: 29 }}
+                      className="block1-name  trans-04 p-b-8 text-white"
+                    >
+                      {item.title}
+                    </span>
+                    <span
+                      style={{ fontSize: 25 }}
+                      className="block1-info stext-104 trans-04 text-white"
+                    >
+                      {item.subtitle}
+                    </span>
                   </div>
-                </div>
-              </a>
-            </div>
-          </div>
-          <div className="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-            {/* Block1 */}
-            <div className="block1 wrap-pic-w">
-              <img src="https://media.istockphoto.com/id/925960984/vi/anh/n%E1%BB%A5-h%C3%B4n-tr%C3%AAn-kh%C3%B4ng-cho-anh-c%E1%BA%ADn-c%E1%BA%A3nh-b%E1%BB%A9c-%E1%BA%A3nh-c%E1%BA%AFt-x%C3%A9n-c%E1%BB%A7a-ng%C6%B0%E1%BB%9Di-ph%E1%BB%A5-n%E1%BB%AF-%C4%91%C3%A1ng-y%C3%AAu-quy%E1%BA%BFn-r%C5%A9-tuy%E1%BB%87t-%C4%91%E1%BA%B9p.jpg?s=1024x1024&w=is&k=20&c=llyNxvNY81U_k7rMmQp8q7WyDrAqe5f3UUZrd-_bN7M=" alt="IMG-BANNER" />
-              <a href="#" className="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                <div className="block1-txt-child1 flex-col-l">
-                  <span className="block1-name ltext-102 trans-04 p-b-8 text-white">
-                    Mĩ Phẩm Làm Đẹp
-                  </span>
-                  <span className="block1-info stext-102 trans-04 text-white">
-                    Mới Nhất 2024
-                  </span>
-                </div>
-                <div className="block1-txt-child2 p-b-4 trans-05">
-                  <div className="block1-link stext-101 cl0 trans-09">
-                    Shop Now
+                  <div className="block1-txt-child2 p-b-4 trans-05">
+                    <div className="block1-link stext-101 cl0 trans-09">
+                      Shop Now
+                    </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              </div>
             </div>
-          </div>
-          <div className="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-            {/* Block1 */}
-            <div className="block1 wrap-pic-w">
-              <img src="https://media.istockphoto.com/id/1440458053/vi/anh/ch%C3%A2n-dung-v%E1%BA%BB-%C4%91%E1%BA%B9p-c%E1%BB%A7a-c%C3%B4-g%C3%A1i-tr%E1%BA%BB.jpg?s=2048x2048&w=is&k=20&c=0Em9k6PspU9g0XwbAMo3Nortf1rmzgI-LcNrSscBt-E=" alt="IMG-BANNER" />
-              <a href="#" className="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-                <div className="block1-txt-child1 flex-col-l">
-                  <span className="block1-name ltext-102 trans-04 p-b-8 text-white">
-                    Dưỡng Da
-                  </span>
-                  <span className="block1-info stext-102 trans-04 text-white">
-                    Mới Nhất 2024
-                  </span>
-                </div>
-                <div className="block1-txt-child2 p-b-4 trans-05 ">
-                  <div className="block1-link stext-101 cl0 trans-09">
-                    Shop Now
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
-
   );
 };
 
