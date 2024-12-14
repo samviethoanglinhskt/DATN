@@ -10,6 +10,7 @@ import {
   Badge,
   Space,
   Alert,
+  Button,
 } from "antd";
 import {
   UserOutlined,
@@ -34,6 +35,7 @@ import TopBrandComponent from "./TopBrand";
 import TopSellingProductsComponent from "./TopProduct";
 import "./style.css";
 import TopRatedProducts from "./TopRate";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -44,6 +46,10 @@ const Dashboard: React.FC = () => {
     queryFn: () => fetchDashboardData(timeType),
     refetchOnWindowFocus: false,
   });
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/admin/detaildashboard"); 
+  };
   const statistics = data?.statistics ?? {
     totalRevenue: 0,
     totalUsers: 0,
@@ -63,6 +69,16 @@ const Dashboard: React.FC = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Title level={2}>Dashboard - Thống kê</Title>
       </div>
+      <div>
+        <Button
+          type="primary"
+          style={{ fontSize: "16px", marginBottom: "20px" }}
+          onClick={handleClick}
+        >
+          Xem chi tiết tổng
+        </Button>
+      </div>
+
       {error ? (
         <Alert
           message="Error"

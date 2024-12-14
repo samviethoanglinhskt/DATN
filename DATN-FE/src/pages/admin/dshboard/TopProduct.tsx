@@ -20,6 +20,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  AreaChart,
+  Area,
 } from "recharts";
 
 const { Title } = Typography;
@@ -60,7 +62,9 @@ const TopSellingProductsComponent: React.FC = () => {
       const result = await response.json();
       setData(result.data);
       setFilteredData(
-        Object.values(result.data || {}).flat().map((item) => item as ProductStats)
+        Object.values(result.data || {})
+          .flat()
+          .map((item) => item as ProductStats)
       );
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -125,7 +129,7 @@ const TopSellingProductsComponent: React.FC = () => {
     } else if (timeRange === "month") {
       return `Tháng ${month}-${year}`;
     } else if (timeRange === "week") {
-      return `Tuần ${week_in_month}-${month}/${year}`;  // Week in month
+      return `Tuần ${week_in_month}-${month}/${year}`; // Week in month
     } else if (timeRange === "quarter") {
       return `Quý ${quarter}, ${year}`;
     }
@@ -167,7 +171,6 @@ const TopSellingProductsComponent: React.FC = () => {
   return (
     <div style={{ padding: "24px" }}>
       <Title level={4}>Thống kê sản phẩm bán chạy</Title>
-
       {/* Time range selection */}
       <Row justify="start" style={{ marginBottom: 16 }}>
         <Space>
@@ -209,14 +212,21 @@ const TopSellingProductsComponent: React.FC = () => {
             }}
           >
             <ResponsiveContainer width="100%" height={500}>
-              <BarChart data={columnData}>
+              <AreaChart data={columnData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="value" fill="#60A5FA" radius={[8, 8, 0, 0]} />
-              </BarChart>
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#60A5FA"
+                  fill="#60A5FA"
+                  fillOpacity={0.4}
+                  strokeWidth={2}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </Col>
@@ -231,7 +241,7 @@ const TopSellingProductsComponent: React.FC = () => {
               current: currentPage,
               pageSize: pageSize,
               total: filteredData.length,
-              onChange: handlePageChange, 
+              onChange: handlePageChange,
             }}
             style={{
               boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",

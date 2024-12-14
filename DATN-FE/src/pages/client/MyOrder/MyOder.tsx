@@ -31,7 +31,6 @@ import {
 import { STATUS_CONFIG } from "./orderContant";
 import styles from "./OrderDetails.module.css";
 import axiosInstance from "src/config/axiosInstance";
-import ReorderButton from "./ReorderButton";
 const { TextArea } = Input;
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
