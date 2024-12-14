@@ -32,6 +32,7 @@ import MyInfo from "./pages/client/MyInfo";
 import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
 import "./echo.js";
+import AllProductBrand from "./components/Home/AllProductBrand";
 
 const routeConfig = [
   {
@@ -81,6 +82,10 @@ const routeConfig = [
       {
         path: "product",
         element: <AllProduct />,
+      },
+      {
+        path: "product/brand/:id",
+        element: <AllProductBrand />,
       },
       {
         path: "cart",
@@ -168,11 +173,7 @@ const routeConfig = [
 function App() {
   const routes = useRoutes(routeConfig);
 
-  return (
-    <main>
-      {routes}
-    </main>
-  );
+  return <main>{routes}</main>;
 }
 
 export default App;
