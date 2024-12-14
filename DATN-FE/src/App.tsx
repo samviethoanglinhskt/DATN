@@ -33,6 +33,7 @@ import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
 import "./echo.js";
 import ButtonZalo from "./components/Home/ButtonZalo.js";
+import AllProductBrand from "./components/Home/AllProductBrand";
 
 const routeConfig = [
   {
@@ -82,6 +83,10 @@ const routeConfig = [
       {
         path: "product",
         element: <AllProduct />,
+      },
+      {
+        path: "product/brand/:id",
+        element: <AllProductBrand />,
       },
       {
         path: "cart",

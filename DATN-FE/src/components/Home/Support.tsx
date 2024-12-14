@@ -103,6 +103,15 @@ const Support = () => {
           <p style={{ fontSize: "16px", color: "#555" }}>
             Bạn cần gửi sản phẩm trong vòng 15 ngày kể từ ngày nhận hàng.
           </p>
+          <h2
+            style={{
+              fontSize: "24px",
+              color: "#6c4f37",
+              marginBottom: "15px",
+            }}
+          >
+            Hãy liên hệ với chúng tôi qua zalo để chúng tôi có thể hỗ trợ.
+          </h2>
         </div>
       </div>
     </div>

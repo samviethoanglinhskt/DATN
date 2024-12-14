@@ -12,6 +12,7 @@ import {
   Slider,
   Skeleton,
   Tooltip,
+  Button,
 } from "antd";
 import {
   HeartOutlined,
@@ -211,7 +212,7 @@ const AllProduct = () => {
                           alt={product.name}
                           className="product-image"
                         />
-                        <div className="product-overlay">
+                        {/* <div className="product-overlay">
                           <div className="product-actions">
                             <Tooltip title="Thêm vào giỏ hàng">
                               <button className="action-button">
@@ -224,11 +225,16 @@ const AllProduct = () => {
                               </button>
                             </Tooltip>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     }
                     actions={[
-                      <button className="buy-now-button">Mua ngay</button>,
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="product-link"
+                      >
+                        <button className="buy-now-button">Xem thêm</button>
+                      </Link>,
                     ]}
                   >
                     <Link

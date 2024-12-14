@@ -32,7 +32,6 @@ const NewProduct = () => {
     },
   });
 
-
   // Add to favorites mutation
   const addToFavoriteMutation = useMutation({
     mutationFn: async (productId: number) => {
@@ -144,8 +143,9 @@ const NewProduct = () => {
         {products.data.length > INITIAL_VISIBLE_PRODUCTS && (
           <div className="text-center mt-5">
             <button
-              className={`btn ${isExpanded ? "btn-outline-danger" : "btn-outline-dark"
-                } px-4 py-2`}
+              className={`btn ${
+                isExpanded ? "btn-outline-danger" : "btn-outline-dark"
+              } px-4 py-2`}
               onClick={handleToggleProducts}
             >
               {isExpanded ? "Thu gọn" : "Xem thêm"}

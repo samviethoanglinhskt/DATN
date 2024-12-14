@@ -63,7 +63,7 @@ const About = () => {
               <div className="how-bor1">
                 <div className="hov-img0">
                   <img
-                    src="http://127.0.0.1:8000/storage/images/uk1SLXbqSr1fN3dGoW3MdrT1WaAEViQiY97yZuRK.png"
+                    src="src/assets/images/logo/8.png"
                     alt="Giới thiệu"
                     style={{
                       width: "100%",
@@ -119,7 +119,7 @@ const About = () => {
               <div className="how-bor2">
                 <div className="hov-img0">
                   <img
-                    src="http://127.0.0.1:8000/storage/images/uk1SLXbqSr1fN3dGoW3MdrT1WaAEViQiY97yZuRK.png"
+                    src="src/assets/images/logo/2.png"
                     alt="Sứ mệnh"
                     style={{
                       width: "100%",
