@@ -6,6 +6,7 @@ import { useCart } from "src/context/Cart";
 import { Product, Variant } from "src/types/product";
 import iconUser from "src/assets/images/icons/user.png"
 import { CartItem } from "src/types/cart";
+import { useFavorites } from "src/context/FavoriteProduct";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +20,7 @@ const ProductDetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const reviewsPerPage = 3; // Số đánh giá mỗi trang
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
 
   const navigate = useNavigate();
 
@@ -220,6 +222,15 @@ const ProductDetail = () => {
       window.location.reload();
     }
   }
+
+  const isFavorite = (productId: number) => {
+    return favorites.some((fav) => fav.tb_product_id === productId);
+  };
+
+  const getFavoriteId = (productId: number) => {
+    const favorite = favorites.find((fav) => fav.tb_product_id === productId);
+    return favorite?.id; // Lấy id của mục yêu thích
+  };
 
   if (!product) {
     return <div>Loading...</div>; // Hiển thị Loading nếu chưa có dữ liệu
@@ -513,11 +524,26 @@ const ProductDetail = () => {
                 </div>
                 {/*  */}
                 <div className="flex-w flex-m p-l-100 p-t-40 respon7">
-                  <div className="flex-m bor9 p-r-10 m-r-11">
-                    <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
-                      <i className="zmdi zmdi-favorite" />
-                    </a>
-                  </div>
+                  <button
+                    className={`btn wishlist-btn m-2 ${isFavorite(product.id) ? "text-danger" : ""
+                      }`}
+                    onClick={() => {
+                      if (isFavorite(product.id)) {
+                        const favoriteId = getFavoriteId(product.id);
+                        if (favoriteId) removeFavorite(favoriteId); // Truyền ID của mục yêu thích
+                      } else {
+                        addFavorite(product.id);
+                      }
+                    }}
+                  >
+                    <i
+                      className={
+                        isFavorite(product.id)
+                          ? "zmdi zmdi-favorite"
+                          : "zmdi zmdi-favorite-outline"
+                      }
+                    ></i>
+                  </button>
                   <a href="#" className="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
                     <i className="fa fa-facebook" />
                   </a>

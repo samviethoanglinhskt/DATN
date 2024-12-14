@@ -1,4 +1,4 @@
-import { Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
+import { Grid, IconButton, Menu, MenuItem, styled, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -18,6 +18,24 @@ const CACHE_KEYS = {
   CATEGORIES: "cached_categories",
   FAVORITE_COUNT: "cached_favorite_count",
 };
+
+const MenuItemStyled = styled(MenuItem)(() => ({
+  position: "relative",
+  overflow: "hidden",
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    bottom: 0,
+    left: "-100%",
+    width: "100%",
+    height: "2px",
+    backgroundColor: "#717FE0",
+    transition: "left 0.3s ease-out",
+  },
+  "&:hover::after": {
+    left: 0,
+  },
+}));
 
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
@@ -154,9 +172,8 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${
-          isFixed ? "fix-menu-desktop" : ""
-        }`}
+        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
+          }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -372,11 +389,11 @@ const Header: React.FC = () => {
                   <a href="/product">Sản phẩm</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
-                      <li key={category.id}>
+                      <MenuItemStyled key={category.id}>
                         <Link to={`/category/${category.id}`}>
                           {category.name}
                         </Link>
-                      </li>
+                      </MenuItemStyled>
                     ))}
                   </ul>
                 </li>

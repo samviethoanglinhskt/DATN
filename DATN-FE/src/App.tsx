@@ -3,7 +3,7 @@ import "./App.css";
 import About from "./components/Home/About";
 import Blog from "./components/Home/Blog";
 import Contact from "./components/Home/Contact";
-import ProductList from "./components/Home/Product";
+import ProductList from "./components/Home/Category";
 import AdminLayout from "./layouts/AdminLayout";
 import ClientLayout from "./layouts/ClientLayout";
 import AppCategoryyy from "./pages/admin/category/Category";
