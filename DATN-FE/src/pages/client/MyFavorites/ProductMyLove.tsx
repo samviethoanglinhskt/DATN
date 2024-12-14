@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, message, Skeleton } from "antd";
-import { useUser } from "src/context/User";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "src/config/axiosInstance";
-import "./style.css";
 import { DeleteOutlined, RemoveRedEyeOutlined } from "@mui/icons-material";
+import "./style.css";
+import { useFavorites } from "src/context/FavoriteProduct";
+import { Favorite } from "src/types/favorite";
+
 
 // Interfaces
 interface Brand {
@@ -13,19 +15,10 @@ interface Brand {
   name: string;
 }
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  variants: { price: number }[];
-  favoriteId?: number | undefined;
-  brand_id?: number;
-}
 
 // ProductCard Component
 const ProductCard: React.FC<{
-  product: Product;
+  product: Favorite;
   onRemove: (id: number) => void;
   onClick: (id: number) => void;
 }> = React.memo(({ product, onRemove, onClick }) => {
@@ -49,14 +42,11 @@ const ProductCard: React.FC<{
             </div>
           )}
           <img
-            src={`http://127.0.0.1:8000/storage/${product.image}`}
+            src={`http://127.0.0.1:8000/storage/${product.product.image}`}
             className={`product-img ${imageLoaded ? "loaded" : ""}`}
-            alt={product.name}
+            alt={product.product.name}
             onClick={() => onClick(product.id)}
             onLoad={() => setImageLoaded(true)}
-            // onError={(e) => {
-            //   // Handle image error
-            // }}
             loading="lazy"
           />
           {isHovered && imageLoaded && (
@@ -71,22 +61,22 @@ const ProductCard: React.FC<{
           )}
         </div>
         <div className="product-info">
-          <h5 className="product-title" onClick={() => onClick(product.id)}>
-            {product.name}
+          <h5 className="product-title" onClick={() => onClick(product.tb_product_id)}>
+            {product.product.name}
           </h5>
           <p className="product-description">
-            {product.description || "Không có mô tả"}
+            {product.product.description || "Không có mô tả"}
           </p>
           <div className="price-action">
             <span className="price">
-              {product.variants[0]?.price?.toLocaleString()}đ
+              {product.product.variants[0]?.price?.toLocaleString()}đ
             </span>
             <button
               className="btn action-btn remove-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                if (product.favoriteId !== undefined) {
-                  onRemove(product.favoriteId);
+                if (product.id !== undefined) {
+                  onRemove(product.id);
                 } else {
                   console.error("favoriteId is undefined");
                 }
@@ -119,9 +109,8 @@ const LoadingState = () => (
 
 // Main FavoritesPage Component
 const FavoritesPage: React.FC = () => {
-  const { user } = useUser();
+  const { favorites, removeFavorite, loading } = useFavorites();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState<number | "all">("all");
 
@@ -140,94 +129,23 @@ const FavoritesPage: React.FC = () => {
     },
   });
 
-  // Fetch favorites
-  const { data: favoriteProducts, isLoading } = useQuery({
-    queryKey: ["favorites"],
-    queryFn: async () => {
-      if (!user) return [];
-      try {
-        const favoritesResponse = await axiosInstance.get("/api/favorites", {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-        });
-
-        const favoriteIds = favoritesResponse.data.map(
-          (fav: any) => fav.tb_product_id
-        );
-
-        const products = await Promise.all(
-          favoriteIds.map(async (id: number) => {
-            try {
-              const { data } = await axiosInstance.get(`/api/product/${id}`, {
-                headers: {
-                  Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-                },
-              });
-              return {
-                ...data,
-                brand_id: data.brand_id ?? null, // Đảm bảo có brand_id
-                favoriteId: favoritesResponse.data.find(
-                  (fav: any) => fav.tb_product_id === id
-                )?.id,
-                isFavorite: true,
-              };
-            } catch (error) {
-              console.error(`Error fetching product ${id}:`, error);
-              return null;
-            }
-          })
-        );
-
-        return products.filter(Boolean);
-      } catch (error) {
-        console.error("Error in favorites query:", error);
-        message.error("Không thể tải danh sách yêu thích");
-        return [];
-      }
-    },
-    enabled: !!user,
-    refetchOnWindowFocus: false,
-    staleTime: 30000,
-  });
-
-  // Remove from favorites mutation
-  const removeFromFavorites = useMutation({
-    mutationFn: async (favoriteId: number) => {
-      return await axiosInstance.delete(`/api/favorites/${favoriteId}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      });
-    },
-    onSuccess: () => {
-      message.success("Đã xóa khỏi danh sách yêu thích!");
-      queryClient.invalidateQueries({ queryKey: ["favorites"] });
-    },
-    onError: (error) => {
-      console.error("Error removing favorite:", error);
-      message.error("Không thể xóa khỏi yêu thích. Vui lòng thử lại!");
-    },
-  });
-
   // Filter products
   const filteredProducts = React.useMemo(() => {
-    if (!favoriteProducts) return [];
+    if (!favorites) return [];
 
-    console.log("Favorite Products:", favoriteProducts); // Log tất cả sản phẩm
-
-    return favoriteProducts.filter((product) => {
-      console.log("Product TB Brand ID:", product.tb_brand_id); // Log từng product.tb_brand_id
-
-      const matchesSearch = product.name
+    return favorites.filter((product) => {
+      const matchesSearch = product.product.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-
-      // Sử dụng tb_brand_id thay vì brand_id
       const matchesBrand =
-        selectedBrand === "all" || product.tb_brand_id === selectedBrand;
+        selectedBrand === "all" || product.product.tb_brand_id === selectedBrand;
 
       return matchesSearch && matchesBrand;
     });
-  }, [favoriteProducts, searchTerm, selectedBrand]);
+  }, [favorites, searchTerm, selectedBrand]);
 
-  console.log("Filtered Products:", filteredProducts);
+  console.log(filteredProducts);
+
   // Brand filter component
   const renderBrandFilter = () => (
     <div className="flex mb-2 ml-2 mt-2 btnn gap-2">
@@ -251,15 +169,7 @@ const FavoritesPage: React.FC = () => {
     </div>
   );
 
-  if (!user) {
-    return (
-      <div className="auth-container" style={{ margin: 200 }}>
-        <h2>Vui lòng đăng nhập để xem danh sách yêu thích</h2>
-      </div>
-    );
-  }
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="favorites-container">
         <div className="page-header">
@@ -280,9 +190,7 @@ const FavoritesPage: React.FC = () => {
             Trang chủ
             <i className="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true" />
           </a>
-          <span className="stext-109 cl4">
-            Sản phẩm yêu thích
-          </span>
+          <span className="stext-109 cl4">Sản phẩm yêu thích</span>
         </div>
       </div>
 
@@ -307,7 +215,9 @@ const FavoritesPage: React.FC = () => {
             <Input.Search
               size="large"
               placeholder="Tìm kiếm sản phẩm yêu thích"
-              onSearch={(value) => setSearchTerm(value)}
+              onSearch={(value) => {
+                setSearchTerm(value);
+              }}
               enterButton
             />
           </div>
@@ -319,7 +229,9 @@ const FavoritesPage: React.FC = () => {
                 src="./images/notfound.webp"
                 alt="No favorites"
               />
-              <p style={{ marginTop: 10, fontWeight: "bold", color: "#FF1493" }}>
+              <p
+                style={{ marginTop: 10, fontWeight: "bold", color: "#FF1493" }}
+              >
                 {searchTerm || selectedBrand !== "all"
                   ? "Không tìm thấy sản phẩm phù hợp!"
                   : "Chưa có sản phẩm yêu thích!"}
@@ -338,11 +250,11 @@ const FavoritesPage: React.FC = () => {
             </div>
           ) : (
             <div className="row">
-              {filteredProducts.map((product: Product) => (
+              {filteredProducts.map((product: Favorite) => (
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onRemove={removeFromFavorites.mutate}
+                  onRemove={(id) => removeFavorite(id)}
                   onClick={(id) => navigate(`/product/${id}`)}
                 />
               ))}

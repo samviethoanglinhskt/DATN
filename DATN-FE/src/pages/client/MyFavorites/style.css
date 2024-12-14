@@ -59,9 +59,9 @@
 }
 
 /* Style cho icon trong input */
-.search-container .anticon-search {
+/* .search-container .anticon-search {
     color: #87ceeb !important;
-}
+} */
 
 .btnn {
     display: flex;

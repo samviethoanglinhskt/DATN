@@ -8,6 +8,7 @@ import axios from 'axios'
 import { UserProvider } from './context/User.tsx'
 import { CartProvider } from './context/Cart.tsx'
 import './echo.js'
+import { FavoriteProvider } from './context/FavoriteProduct.tsx'
 axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 const queryClient = new QueryClient();
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <UserProvider>
           <CartProvider>
-            <App />
+            <FavoriteProvider>
+              <App />
+            </FavoriteProvider>
           </CartProvider>
         </UserProvider>
       </QueryClientProvider>
