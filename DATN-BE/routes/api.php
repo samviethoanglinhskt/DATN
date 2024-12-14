@@ -91,6 +91,7 @@ Route::post('/cart/check-out-cart', [CartController::class, 'checkoutCart'])->na
 Route::post('/cart/check-out-guest', [CartController::class, 'checkoutGuest'])->name('checkout_guest');
 Route::post('/cart/sync', [CartController::class, 'syncCart'])->middleware('auth:api');//đồng bộ giỏ hàng vãng lai khi đăng nhập
 Route::post('/cart/check-cart-stock', [CartController::class, 'checkCartStock']);//đồng bộ số lượng giỏ hàng của khách vãng lai với kho
+Route::post('/cart/check-investory', [CartController::class, 'checkInvestory']);
 
 //vnpay
 Route::get('/vnpay/ipn', [CartController::class, 'handleVnpayIpn'])->name('vnpay.ipn');

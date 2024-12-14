@@ -41,7 +41,7 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 
 @font-face {
   font-family: Poppins-Regular;
-  src: url('../fonts/Poppins/Poppins-Regular.ttf');
+  src: url('../fonts/Montserrat/Montserrat-Regular.ttf');
 }
 
 @font-face {
@@ -56,7 +56,7 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 
 @font-face {
   font-family: Poppins-Medium;
-  src: url('../fonts/Poppins/Poppins-Medium.ttf');
+  src: url('../fonts/Montserrat/Montserrat-Bold.ttf');
 }
 
 @font-face {
@@ -66,7 +66,7 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
 
 @font-face {
   font-family: Poppins-Bold;
-  src: url('../fonts/Poppins/Poppins-Bold.ttf');
+  src: url('../fonts/Montserrat/Montserrat-Bold.ttf');
 }
 
 @font-face {

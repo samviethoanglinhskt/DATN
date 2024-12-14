@@ -4,6 +4,7 @@ import { useCart } from "src/context/Cart";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { Box, Checkbox, IconButton } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
+import axiosInstance from "src/config/axiosInstance";
 
 const ShoppingCart: React.FC = () => {
   const {
@@ -48,22 +49,36 @@ const ShoppingCart: React.FC = () => {
       .reduce((total, item) => total + (item.variant.price || 0) * (item.quantity || 0), 0);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (selectedItems.length === 0) return;
     // Lọc các sản phẩm đã chọn
     const selectedProducts = cartItems.filter(
       (item) => item.id !== undefined && selectedItems.includes(item.id)
     );
-    const subtotal = calculateSelectedTotal();
+
     // Tạo danh sách số lượng từ các sản phẩm được chọn
     const quantities = selectedProducts.map((item) => ({
       id: item.id,
       quantity: item.quantity,
     }));
 
-    navigate("/checkout", {
-      state: { selectedProducts, subtotal, cartId: selectedItems, quantities },
-    });
+    try {
+      // Gửi request kiểm tra tồn kho lên backend qua axiosInstance
+      const response = await axiosInstance.post("/api/cart/check-investory", {
+        cart_items: selectedProducts,
+      });
+
+      if (response.data.success) {
+        // Nếu kiểm tra thành công, điều hướng đến trang thanh toán
+        const subtotal = calculateSelectedTotal();
+        navigate("/checkout", {
+          state: { selectedProducts, subtotal, cartId: selectedItems, quantities },
+        });
+      }
+    } catch {
+      alert("Sản phẩm đã chọn vượt quá số lượng tồn kho. Đừng lo chúng tôi sẽ đồng bộ lại giúp bạn!")
+      window.location.reload();
+    }
   };
 
   useEffect(() => {
@@ -273,6 +288,7 @@ const ShoppingCart: React.FC = () => {
 
                     <div className="d-grid gap-2 mt-3">
                       <button
+                        type="button"
                         onClick={handleCheckout}
                         disabled={selectedItems.length === 0}
                         className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
