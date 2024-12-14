@@ -260,6 +260,44 @@ class UserController extends Controller
         }
     }
 
+    public function updatePassUser(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            $account = User::where('email', $user->email)->first();
+
+            // Kiểm tra xem tài khoản có tồn tại và mật khẩu có khớp không
+            if (!$account || !Hash::check($request->current_password, $account->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thông tin tài khoản không chính xác.',
+                ], 401); // 401 Unauthorized
+            }
+            $account->password = $request->new_password;
+            $account->save();
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $user
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
+        } catch (Exception $e) {
+            Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function update(RuleUpdateTaiKhoan $request, string $id)
     {
         try {
