@@ -10,6 +10,7 @@ use App\Models\tb_variant;
 use App\Events\OrderStatusUpdated;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Models\tb_discount;
 class OderController extends Controller
 {
     /**
@@ -310,6 +311,16 @@ class OderController extends Controller
                     $variant->save();
                 }
             }
+            $discount = tb_discount::where( 'id',$order->tb_discount_id)->first();
+            if ($discount) {
+                $discount->quantity += 1;
+                if ($discount->quantity <= 0) {
+                    $discount->status = 'Hết Số Lượng';
+                }else{
+                    $discount->status = 'Còn Hàng';
+                }
+                $discount->save();
+            } 
             $order->order_status = 'Đã hủy đơn hàng';
             $order->save();
             return response()->json([
@@ -372,7 +383,17 @@ class OderController extends Controller
                     } 
                     $variant->save(); 
                 } 
-            } 
+            }
+            $discount = tb_discount::where( 'id',$order->tb_discount_id)->first();
+            if ($discount) {
+                $discount->quantity += 1;
+                if ($discount->quantity <= 0) {
+                    $discount->status = 'Hết Số Lượng';
+                }else{
+                    $discount->status = 'Còn Hàng';
+                }
+                $discount->save();
+            }
             // Cập nhật trạng thái đơn hàng thành "Đã hủy đơn hàng" 
             $order->order_status = 'Đã hủy đơn hàng'; 
             $order->feedback = $request->feedback; 

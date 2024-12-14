@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -274,7 +275,8 @@ class StatisticsController extends Controller
     public function brandStatistics(Request $request)
     {
         $type = $request->input('type', 'month'); // Mặc định là thống kê theo tháng
-
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         // Query dữ liệu hiện tại
         $query = DB::table('tb__oderdetail')
             ->join('tb_products', 'tb__oderdetail.tb_product_id', '=', 'tb_products.id')
@@ -286,7 +288,30 @@ class StatisticsController extends Controller
                 DB::raw('YEAR(tb__oderdetail.created_at) as year'),
                 DB::raw('SUM(tb__oderdetail.price * tb__oderdetail.quantity) as total_revenue')
             );
+        if ($startDate && $endDate) {
+            switch ($type) {
+                case 'week':
+                    // Tìm theo tuần: Năm, tháng, tuần trong tháng
+                    $endDate2 = Carbon::parse($endDate)->endOfWeek();
+                    $query->whereRaw('YEARWEEK(tb__oderdetail.created_at, 1) BETWEEN YEARWEEK(?, 1) AND YEARWEEK(?, 1)', [$startDate, $endDate2]);
+                    break;
 
+                case 'quarter':
+                    // Tìm theo quý (y-q)
+                    $query->whereRaw('CONCAT(YEAR(tb__oderdetail.created_at), "-Q", QUARTER(tb__oderdetail.created_at)) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                case 'year':
+                    // Tìm theo năm (y)
+                    $query->whereRaw('YEAR(tb__oderdetail.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                default:
+                    // Mặc định xử lý theo tháng
+                    $query->whereRaw('DATE_FORMAT(tb__oderdetail.created_at, "%Y-%m") BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+            }
+        }
         // Xử lý query theo loại thống kê
         if ($type == 'week') {
             $query->addSelect(
@@ -371,7 +396,6 @@ class StatisticsController extends Controller
                 return $b['total_sales'] <=> $a['total_sales']; // Sắp xếp giảm dần theo `total_sales`
             });
             $brands = array_slice($brands, 0, 3);
-        
         }
 
         return response()->json([
@@ -391,12 +415,12 @@ class StatisticsController extends Controller
         return round(($currentValue / $totalValue) * 100, 2) . ' %';
     }
 
-
     // top sản phẩm bán chạy
     public function topSellingProducts(Request $request)
     {
         $type = $request->input('type', 'month'); // Mặc định là 'month'
-
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         // Khởi tạo query chung
         $query = DB::table('tb__oderdetail')
             ->join('tb_products', 'tb__oderdetail.tb_product_id', '=', 'tb_products.id')
@@ -409,6 +433,30 @@ class StatisticsController extends Controller
                 DB::raw('SUM(tb__oderdetail.quantity * tb__oderdetail.price) as total_revenue')
             )
             ->where('tb_oders.order_status', 'Đã Hoàn Thành');
+        if ($startDate && $endDate) {
+            switch ($type) {
+                case 'week':
+                    // Tìm theo tuần: Năm, tháng, tuần trong tháng
+                    $endDate2 = Carbon::parse($endDate)->endOfWeek();
+                    $query->whereRaw('YEARWEEK(tb_oders.created_at, 1) BETWEEN YEARWEEK(?, 1) AND YEARWEEK(?, 1)', [$startDate, $endDate2]);
+                    break;
+
+                case 'quarter':
+                    // Tìm theo quý (y-q)
+                    $query->whereRaw('CONCAT(YEAR(tb_oders.created_at), "-Q", QUARTER(tb_oders.created_at)) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                case 'year':
+                    // Tìm theo năm (y)
+                    $query->whereRaw('YEAR(tb_oders.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                default:
+                    // Mặc định xử lý theo tháng
+                    $query->whereRaw('DATE_FORMAT(tb_oders.created_at, "%Y-%m") BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+            }
+        }
 
         // Điều kiện thống kê theo loại
         switch ($type) {
@@ -453,28 +501,35 @@ class StatisticsController extends Controller
         $groupedData = $groupedData->sortKeysDesc();
         // Tính tỷ lệ tăng trưởng
         $result = [];
-        $previousData = []; // Dữ liệu của nhóm trước để tính tăng trưởng
+        $result = [];
 
         foreach ($groupedData as $group => $products) {
-            $currentData = $products->pluck('total_quantity', 'id')->toArray();
-
-            // Tính tăng trưởng cho từng sản phẩm
-            $productsWithGrowth = $products->map(function ($product) use ($previousData) {
-                $lastQuantity = $previousData[$product->id] ?? 0;
-                $growthRate = $lastQuantity > 0
-                    ? (($product->total_quantity - $lastQuantity) / $lastQuantity) * 100
-                    : ($product->total_quantity > 0 ? 100 : 0);
-
+            // Tính tỷ lệ tăng trưởng cho từng sản phẩm
+            $productsWithGrowth = $products->map(function ($product) use ($group, $groupedData) {
+                $previousGroup = $groupedData->get($this->getPreviousPeriod($group));
+    
+                $previousProductQuantity = 0;
+                if ($previousGroup) {
+                    $previousProduct = $previousGroup->firstWhere('id', $product->id);
+                    $previousProductQuantity = $previousProduct->total_quantity ?? 0;
+                }
+    
+                // Tính tỷ lệ tăng trưởng
+                if ($previousProductQuantity == 0) {
+                    $growthRate = 100; // Nếu kỳ trước không có dữ liệu, mặc định là 100%
+                } else {
+                    $growthRate = (($product->total_quantity - $previousProductQuantity) / $previousProductQuantity) * 100;
+                }
+    
                 $product->growth_rate = round($growthRate, 2) . ' %';
                 return $product;
             });
+    
             // Lấy top 10 sản phẩm trong nhóm hiện tại
             $topProducts = $productsWithGrowth->sortByDesc('total_quantity')->take(10);
+    
             // Lưu kết quả vào mảng
             $result[$group] = $topProducts;
-
-            // Cập nhật dữ liệu hiện tại để dùng cho lần lặp tiếp theo
-            $previousData = $currentData;
         }
 
         return response()->json([
@@ -482,26 +537,263 @@ class StatisticsController extends Controller
             'data' => $result
         ]);
     }
-    // thống kê sản phẩm đánh giá cao
+    private function getPreviousPeriod($currentPeriod)
+    {
+        $date = Carbon::parse($currentPeriod);
+        return $date->subMonth()->format('Y-m'); // Giảm 1 tháng để lấy kỳ trước
+    }
+    // top sản phẩm đánh giá cao nhất
     public function topRatedProducts(Request $request)
     {
         $type = $request->input('type', 'month'); // Mặc định thống kê theo tháng
-        $year = date('Y'); // Lấy năm hiện tại hoặc có thể lấy từ request nếu cần
-
-        // Mảng chứa kết quả top 5 của mỗi tháng/tuần/quý/năm
+        $startDate = $request->input('start_date'); // Ngày bắt đầu
+        $endDate = $request->input('end_date'); // Ngày kết thúc
+        $year = date('Y');
         $result = [];
 
-        if ($type === 'month') {
-            // Lấy tất cả các tháng có đánh giá trong năm hiện tại
-            $months = DB::table('tb_reviews')
-                ->selectRaw('MONTH(created_at) as month')
-                ->whereRaw('YEAR(created_at) = ?', [$year])
-                ->groupBy(DB::raw('MONTH(created_at)'))
-                ->orderByDesc('month')
-                ->pluck('month'); // Lấy các tháng có dữ liệu
+        if ($startDate && $endDate) {
+            // Nếu có khoảng thời gian được cung cấp
+            if ($type === 'month') {
+                $startDate .= '-01';
+                $endDate = date("Y-m-t", strtotime($endDate));
 
-            // Lặp qua các tháng có đánh giá
-            foreach ($months as $month) {
+                $months = DB::table('tb_reviews')
+                    ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month')
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
+                    ->orderBy('year')
+                    ->orderBy('month')
+                    ->get();
+
+                foreach ($months as $monthData) {
+                    $year = $monthData->year;
+                    $month = $monthData->month;
+
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('MONTH(tb_reviews.created_at) as month'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year')
+                        )
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->whereRaw('MONTH(tb_reviews.created_at) = ?', [$month])
+                        ->groupBy('year', 'month', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+
+                    $formattedMonth = sprintf('%04d-%02d', $year, $month);
+                    $result[$formattedMonth] = $query->get();
+                }
+            } elseif ($type === 'week') {
+                $endDate2 = Carbon::parse($endDate)->endOfWeek();
+                $weeks = DB::table('tb_reviews')
+                    ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, FLOOR((DAY(created_at) - 1) / 7) + 1 as week_in_month')
+                    ->whereBetween('created_at', [$startDate, $endDate2])
+                    ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at), FLOOR((DAY(created_at) - 1) / 7) + 1'))
+                    ->orderBy('year')
+                    ->orderBy('month')
+                    ->orderBy('week_in_month')
+                    ->get();
+
+                foreach ($weeks as $weekData) {
+                    $year = $weekData->year;
+                    $month = $weekData->month;
+                    $week = $weekData->week_in_month;
+
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('MONTH(tb_reviews.created_at) as month'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year'),
+                            DB::raw('FLOOR((DAY(tb_reviews.created_at) - 1) / 7) + 1 as week_in_month')
+                        )
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->whereRaw('MONTH(tb_reviews.created_at) = ?', [$month])
+                        ->whereRaw('FLOOR((DAY(tb_reviews.created_at) - 1) / 7) + 1 = ?', [$week])
+                        ->groupBy('year', 'month', 'week_in_month', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+
+                    $formattedWeek = sprintf('%04d-%02d-%d', $year, $month, $week);
+                    $result[$formattedWeek] = $query->get();
+                }
+            } elseif ($type === 'quarter') {
+                $quarters = DB::table('tb_reviews')
+                    ->selectRaw('YEAR(created_at) as year, QUARTER(created_at) as quarter')
+                    ->whereRaw('CONCAT(YEAR(created_at), "-Q", QUARTER(created_at)) BETWEEN ? AND ?', [$startDate, $endDate])
+                    ->groupBy(DB::raw('YEAR(created_at), QUARTER(created_at)'))
+                    ->orderBy('year')
+                    ->orderBy('quarter')
+                    ->get();
+
+                foreach ($quarters as $quarterData) {
+                    $year = $quarterData->year;
+                    $quarter = $quarterData->quarter;
+
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('QUARTER(tb_reviews.created_at) as quarter'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year')
+                        )
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->whereRaw('QUARTER(tb_reviews.created_at) = ?', [$quarter])
+                        ->groupBy('year', 'quarter', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+
+                    $formattedQuarter = sprintf('%04d-Q%d', $year, $quarter);
+                    $result[$formattedQuarter] = $query->get();
+                }
+            } elseif ($type === 'year') {
+                $years = DB::table('tb_reviews')
+                    ->selectRaw('YEAR(created_at) as year')
+                    ->whereRaw('YEAR(created_at) BETWEEN ? AND ?', [$startDate, $endDate])
+                    ->groupBy(DB::raw('YEAR(created_at)'))
+                    ->orderBy('year')
+                    ->pluck('year');
+
+                foreach ($years as $year) {
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year')
+                        )
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->groupBy('year', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+
+                    $result[$year] = $query->get();
+                }
+            }
+        } else {
+            if ($type === 'month') {
+                $startDate = $request->input('start_date');
+                $endDate = $request->input('end_date');
+                // Lấy tất cả các tháng có đánh giá trong năm hiện tại
+                $months = DB::table('tb_reviews')
+                    ->selectRaw('MONTH(created_at) as month')
+                    ->whereRaw('YEAR(created_at) = ?', [$year])
+                    ->groupBy(DB::raw('MONTH(created_at)'))
+                    ->orderByDesc('month')
+                    ->pluck('month'); // Lấy các tháng có dữ liệu
+
+                // Lặp qua các tháng có đánh giá
+                foreach ($months as $month) {
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('MONTH(tb_reviews.created_at) as month'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year')
+                        )
+                        ->whereRaw('MONTH(tb_reviews.created_at) = ?', [$month])
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->groupBy('year', 'month', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+                    $formattedMonth = sprintf('%04d-%02d', $year, $month);
+                    $result[$formattedMonth] = $query->get();
+                }
+            } elseif ($type === 'week') {
+                // Lấy tất cả các tuần có đánh giá trong năm hiện tại
+                $weeks = DB::table('tb_reviews')
+                    ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, FLOOR((DAY(created_at) - 1) / 7) + 1 as week_in_month')
+                    ->whereRaw('YEAR(created_at) = ?', [$year])
+                    ->groupBy(DB::raw('MONTH(created_at), YEAR(created_at), FLOOR((DAY(created_at) - 1) / 7) + 1'))
+                    ->orderByDesc('month')
+                    ->orderByDesc('week_in_month')
+                    ->get(); // Lấy tất cả dữ liệu cần thiết từ cơ sở dữ liệu
+
+                // Lặp qua các tuần có đánh giá
+                foreach ($weeks as $weekData) {
+                    $month = $weekData->month;
+                    $week = $weekData->week_in_month;
+
+                    // Truy vấn để lấy top 5 sản phẩm theo tuần
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('MONTH(tb_reviews.created_at) as month'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year'),
+                            DB::raw('FLOOR((DAY(tb_reviews.created_at) - 1) / 7) + 1 as week_in_month')
+                        )
+                        ->whereRaw('MONTH(tb_reviews.created_at) = ?', [$month])
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->whereRaw('FLOOR((DAY(tb_reviews.created_at) - 1) / 7) + 1 = ?', [$week])
+                        ->groupBy('year', 'month', 'week_in_month', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+
+                    $topProducts = $query->get();
+
+                    // Chuyển đổi thành định dạng 'YYYY-MM-W' cho tuần
+                    $formattedWeek = sprintf('%04d-%02d-%d', $year, $month, $week);
+                    $result[$formattedWeek] = $topProducts;
+                }
+            } elseif ($type === 'quarter') {
+                // Lấy tất cả các quý có đánh giá trong năm hiện tại
+                $quarters = DB::table('tb_reviews')
+                    ->selectRaw('YEAR(created_at) as year, QUARTER(created_at) as quarter')
+                    ->whereRaw('YEAR(created_at) = ?', [$year])
+                    ->groupBy(DB::raw('YEAR(created_at), QUARTER(created_at)'))
+                    ->pluck('quarter'); // Lấy các quý có dữ liệu
+
+                foreach ($quarters as $quarter) {
+                    // Truy vấn để lấy top 5 sản phẩm trong từng quý
+                    $query = DB::table('tb_reviews')
+                        ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
+                        ->select(
+                            'tb_reviews.tb_product_id',
+                            'tb_products.name as product_name',
+                            DB::raw('COUNT(tb_reviews.id) as total_reviews'),
+                            DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
+                            DB::raw('QUARTER(tb_reviews.created_at) as quarter'),
+                            DB::raw('YEAR(tb_reviews.created_at) as year')
+                        )
+                        ->whereRaw('QUARTER(tb_reviews.created_at) = ?', [$quarter])
+                        ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
+                        ->groupBy('year', 'quarter', 'tb_reviews.tb_product_id')
+                        ->orderByDesc('total_reviews')
+                        ->orderByDesc('average_rating')
+                        ->limit(5);
+
+                    // Tạo kết quả theo quý
+                    $formattedQuarter = sprintf('%04d-Q%d', $year, $quarter);
+                    $result[$formattedQuarter] = $query->get();
+                }
+            } elseif ($type === 'year') {
+                // Lấy top 5 sản phẩm của năm
                 $query = DB::table('tb_reviews')
                     ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
                     ->select(
@@ -509,110 +801,17 @@ class StatisticsController extends Controller
                         'tb_products.name as product_name',
                         DB::raw('COUNT(tb_reviews.id) as total_reviews'),
                         DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
-                        DB::raw('MONTH(tb_reviews.created_at) as month'),
                         DB::raw('YEAR(tb_reviews.created_at) as year')
                     )
-                    ->whereRaw('MONTH(tb_reviews.created_at) = ?', [$month])
                     ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
-                    ->groupBy('year', 'month', 'tb_reviews.tb_product_id')
-                    ->orderByDesc('total_reviews')
-                    ->orderByDesc('average_rating')
-                    ->limit(5);
-                $formattedMonth = sprintf('%04d-%02d', $year, $month);
-                $result[$formattedMonth] = $query->get();
-            }
-        } elseif ($type === 'week') {
-            // Lấy tất cả các tuần có đánh giá trong năm hiện tại
-            $weeks = DB::table('tb_reviews')
-                ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, FLOOR((DAY(created_at) - 1) / 7) + 1 as week_in_month')
-                ->whereRaw('YEAR(created_at) = ?', [$year])
-                ->groupBy(DB::raw('MONTH(created_at), YEAR(created_at), FLOOR((DAY(created_at) - 1) / 7) + 1'))
-                ->orderByDesc('month')
-                ->orderByDesc('week_in_month')
-                ->get(); // Lấy tất cả dữ liệu cần thiết từ cơ sở dữ liệu
-
-            // Lặp qua các tuần có đánh giá
-            foreach ($weeks as $weekData) {
-                $month = $weekData->month;
-                $week = $weekData->week_in_month;
-
-                // Truy vấn để lấy top 5 sản phẩm theo tuần
-                $query = DB::table('tb_reviews')
-                    ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
-                    ->select(
-                        'tb_reviews.tb_product_id',
-                        'tb_products.name as product_name',
-                        DB::raw('COUNT(tb_reviews.id) as total_reviews'),
-                        DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
-                        DB::raw('MONTH(tb_reviews.created_at) as month'),
-                        DB::raw('YEAR(tb_reviews.created_at) as year'),
-                        DB::raw('FLOOR((DAY(tb_reviews.created_at) - 1) / 7) + 1 as week_in_month')
-                    )
-                    ->whereRaw('MONTH(tb_reviews.created_at) = ?', [$month])
-                    ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
-                    ->whereRaw('FLOOR((DAY(tb_reviews.created_at) - 1) / 7) + 1 = ?', [$week])
-                    ->groupBy('year', 'month', 'week_in_month', 'tb_reviews.tb_product_id')
+                    ->groupBy('year', 'tb_reviews.tb_product_id')
                     ->orderByDesc('total_reviews')
                     ->orderByDesc('average_rating')
                     ->limit(5);
 
-                $topProducts = $query->get();
-
-                // Chuyển đổi thành định dạng 'YYYY-MM-W' cho tuần
-                $formattedWeek = sprintf('%04d-%02d-%d', $year, $month, $week);
-                $result[$formattedWeek] = $topProducts;
+                $result[$year] = $query->get();
             }
-        } elseif ($type === 'quarter') {
-            // Lấy tất cả các quý có đánh giá trong năm hiện tại
-            $quarters = DB::table('tb_reviews')
-                ->selectRaw('YEAR(created_at) as year, QUARTER(created_at) as quarter')
-                ->whereRaw('YEAR(created_at) = ?', [$year])
-                ->groupBy(DB::raw('YEAR(created_at), QUARTER(created_at)'))
-                ->pluck('quarter'); // Lấy các quý có dữ liệu
-
-            foreach ($quarters as $quarter) {
-                // Truy vấn để lấy top 5 sản phẩm trong từng quý
-                $query = DB::table('tb_reviews')
-                    ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
-                    ->select(
-                        'tb_reviews.tb_product_id',
-                        'tb_products.name as product_name',
-                        DB::raw('COUNT(tb_reviews.id) as total_reviews'),
-                        DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
-                        DB::raw('QUARTER(tb_reviews.created_at) as quarter'),
-                        DB::raw('YEAR(tb_reviews.created_at) as year')
-                    )
-                    ->whereRaw('QUARTER(tb_reviews.created_at) = ?', [$quarter])
-                    ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
-                    ->groupBy('year', 'quarter', 'tb_reviews.tb_product_id')
-                    ->orderByDesc('total_reviews')
-                    ->orderByDesc('average_rating')
-                    ->limit(5);
-
-                // Tạo kết quả theo quý
-                $formattedQuarter = sprintf('%04d-Q%d', $year, $quarter);
-                $result[$formattedQuarter] = $query->get();
-            }
-        } elseif ($type === 'year') {
-            // Lấy top 5 sản phẩm của năm
-            $query = DB::table('tb_reviews')
-                ->join('tb_products', 'tb_reviews.tb_product_id', '=', 'tb_products.id')
-                ->select(
-                    'tb_reviews.tb_product_id',
-                    'tb_products.name as product_name',
-                    DB::raw('COUNT(tb_reviews.id) as total_reviews'),
-                    DB::raw('ROUND(AVG(tb_reviews.rating) * 2) / 2 as average_rating'),
-                    DB::raw('YEAR(tb_reviews.created_at) as year')
-                )
-                ->whereRaw('YEAR(tb_reviews.created_at) = ?', [$year])
-                ->groupBy('year', 'tb_reviews.tb_product_id')
-                ->orderByDesc('total_reviews')
-                ->orderByDesc('average_rating')
-                ->limit(5);
-
-            $result[$year] = $query->get();
         }
-
         return response()->json([
             'message' => 'Top 5 sản phẩm có lượt đánh giá cao nhất.',
             'data' => $result
@@ -762,13 +961,43 @@ class StatisticsController extends Controller
     public function userStatistics(Request $request)
     {
         $type = $request->input('type', 'month'); // Mặc định là thống kê theo tháng
-
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         // Xử lý query dựa trên loại thống kê
         $query = DB::table('users')
             ->select(
                 DB::raw('COUNT(*) as total_users'),
                 DB::raw('YEAR(created_at) as year'),
             );
+
+        if ($startDate && $endDate) {
+            switch ($type) {
+
+                case 'week':
+                    // Tìm theo tuần: Năm, tháng, tuần trong tháng
+                    $endDate2 = Carbon::parse($endDate)->endOfWeek(); // Lấy ngày cuối tuần của $endDate
+
+                    $query->whereRaw('YEARWEEK(created_at, 1) BETWEEN YEARWEEK(?, 1) AND YEARWEEK(?, 1)', [$startDate, $endDate])
+                        ->whereRaw('created_at <= ?', [$endDate2]); // Lọc thêm điều kiện <= $endDate2
+
+                    break;
+
+                case 'quarter':
+                    // Tìm theo quý (y-q)
+                    $query->whereRaw('CONCAT(YEAR(created_at), "-Q", QUARTER(created_at)) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                case 'year':
+                    // Tìm theo năm (y)
+                    $query->whereRaw('YEAR(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                default:
+                    // Mặc định xử lý theo tháng
+                    $query->whereRaw('DATE_FORMAT(created_at, "%Y-%m") BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+            }
+        }
         if ($type == 'week') {
             // Thống kê theo tuần
             $query->addSelect(DB::raw('MONTH(created_at) as month'), DB::raw('FLOOR((DAY(created_at) - 1) / 7) + 1 as week_in_month'))
@@ -800,25 +1029,26 @@ class StatisticsController extends Controller
         $totalUser = [];
         $grandTotalUsers = 0;
 
-        foreach ($listuser as $index => $data) {
-            // Cộng dồn số người dùng
+        for ($index = 0; $index < count($listuser); $index++) {
+            $data = $listuser[$index];
             $currentUser = $data->total_users;
             $grandTotalUsers += $currentUser;
-
+    
             // Thêm tỷ lệ tăng trưởng nếu không phải là ngày đầu tiên
-            if ($index > 0) {
-                $previousUser = $listuser[$index - 1]->total_users;
-
+            if ($index < count($listuser) - 1) {
+                // Sử dụng dữ liệu của nhóm sau (do đã sắp xếp DESC)
+                $nextUser = $listuser[$index + 1]->total_users;
+    
                 $growthPercentage = 0;
-                if ($previousUser > 0) {
-                    $growthPercentage = (($currentUser - $previousUser) / $previousUser) * 100;
+                if ($nextUser > 0) {
+                    $growthPercentage = (($currentUser - $nextUser) / $nextUser) * 100;
                 }
-
+    
                 $data->growth_percentage = round($growthPercentage, 2) . ' %';
             } else {
                 $data->growth_percentage = '0 %';
             }
-
+    
             // Thêm dữ liệu vào mảng kết quả
             $totalUser[] = $data;
         }
@@ -833,6 +1063,9 @@ class StatisticsController extends Controller
     {
         $type = $request->input('type', 'month'); // Mặc định là thống kê theo tháng
 
+        // lọc theo khoảng
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         // Xử lý query dựa trên loại thống kê
         $query = DB::table('tb_oders')
             ->select(
@@ -842,9 +1075,41 @@ class StatisticsController extends Controller
                 DB::raw('SUM(CASE WHEN order_status = "Chờ xử lý" THEN 1 ELSE 0 END) as pending_orders'),
                 DB::raw('SUM(CASE WHEN order_status = "Giao hàng thất bại" THEN 1 ELSE 0 END) as failed_delivery_orders'),
                 DB::raw('SUM(CASE WHEN order_status = "Đã hủy đơn hàng" THEN 1 ELSE 0 END) as cancelled_orders'),
+                DB::raw('SUM(CASE WHEN order_status = "Chưa thanh toán" THEN 1 ELSE 0 END) as not_payment'),
+                DB::raw('SUM(CASE WHEN order_status = "Đã thanh toán" THEN 1 ELSE 0 END) as payment'),
                 DB::raw('SUM(CASE WHEN order_status = "Đã Hoàn Thành" THEN total_amount ELSE 0 END) as total_revenue')
             );
 
+        if ($startDate && $endDate) {
+            switch ($type) {
+                case 'day':
+                    // Tìm theo ngày (y-m-d)
+                    $endDate2 = Carbon::createFromFormat('Y-m-d', time: $endDate)->endOfWeek();
+                    $query->whereBetween('created_at', [$startDate, $endDate2]);
+                    break;
+
+                case 'week':
+                    // Tìm theo tuần: Năm, tháng, tuần trong tháng
+                    $endDate2 = Carbon::parse($endDate)->endOfWeek();
+                    $query->whereRaw('YEARWEEK(created_at, 1) BETWEEN YEARWEEK(?, 1) AND YEARWEEK(?, 1)', [$startDate, $endDate2]);
+                    break;
+
+                case 'quarter':
+                    // Tìm theo quý (y-q)
+                    $query->whereRaw('CONCAT(YEAR(created_at), "-Q", QUARTER(created_at)) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                case 'year':
+                    // Tìm theo năm (y)
+                    $query->whereRaw('YEAR(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+
+                default:
+                    // Mặc định xử lý theo tháng
+                    $query->whereRaw('DATE_FORMAT(created_at, "%Y-%m") BETWEEN ? AND ?', [$startDate, $endDate]);
+                    break;
+            }
+        }
         if ($type == 'day') {
             // Thống kê theo ngày
             $query->addSelect(DB::raw('MONTH(created_at) as month'), DB::raw('DAY(created_at) as day'))
@@ -886,6 +1151,8 @@ class StatisticsController extends Controller
         $grandTotalComplete = 0;
         $grandTotalCancel = 0;
         $grandTotalRevenue = 0;
+        $grandTotalpayment = 0;
+        $grandTotalNotPayment = 0;
         $grandTotalPending = 0;
         $grandTotalFailedDelivery = 0;
 
@@ -895,6 +1162,8 @@ class StatisticsController extends Controller
             $currentCancel = $order->cancelled_orders;
             $currentRevenue = $order->total_revenue;
             $currentPending = $order->pending_orders;
+            $currentPayment = $order->payment;
+            $currentNotPayment = $order->not_payment;
             $currentFailedDelivery = $order->failed_delivery_orders;
 
             $grandTotalOrder += $currentOrder;
@@ -902,22 +1171,28 @@ class StatisticsController extends Controller
             $grandTotalCancel += $currentCancel;
             $grandTotalRevenue += $currentRevenue;
             $grandTotalPending += $currentPending;
+            $grandTotalpayment += $currentPayment;
+            $grandTotalNotPayment += $currentNotPayment;
             $grandTotalFailedDelivery += $currentFailedDelivery;
 
             // Tính tỷ lệ tăng trưởng
-            if ($index > 0) {
-                $previousOrder = $orderStatistics[$index - 1]->total_orders;
-                $previousComplete = $orderStatistics[$index - 1]->completed_orders;
-                $previousCancel = $orderStatistics[$index - 1]->cancelled_orders;
-                $previousRevenue = $orderStatistics[$index - 1]->total_revenue;
-                $previousPending = $orderStatistics[$index - 1]->pending_orders;
-                $previousFailedDelivery = $orderStatistics[$index - 1]->failed_delivery_orders;
+            if ($index < count($orderStatistics) - 1) {
+                $previousOrder = $orderStatistics[$index + 1]->total_orders;
+                $previousComplete = $orderStatistics[$index + 1]->completed_orders;
+                $previousCancel = $orderStatistics[$index + 1]->cancelled_orders;
+                $previousRevenue = $orderStatistics[$index + 1]->total_revenue;
+                $previousPending = $orderStatistics[$index + 1]->pending_orders;
+                $previousPayment = $orderStatistics[$index + 1]->payment;
+                $previousNotPayment = $orderStatistics[$index + 1]->not_payment;
+                $previousFailedDelivery = $orderStatistics[$index + 1]->failed_delivery_orders;
 
                 $growthPercentageOrder = $previousOrder != 0 ? (($currentOrder - $previousOrder) / $previousOrder) * 100 : 0;
                 $growthPercentageComplete = $previousComplete != 0 ? (($currentComplete - $previousComplete) / $previousComplete) * 100 : 0;
                 $growthPercentageCancel = $previousCancel != 0 ? (($currentCancel - $previousCancel) / $previousCancel) * 100 : 0;
                 $growthPercentageRevenue = $previousRevenue != 0 ? (($currentRevenue - $previousRevenue) / $previousRevenue) * 100 : 0;
                 $growthPercentagePending = $previousPending != 0 ? (($currentPending - $previousPending) / $previousPending) * 100 : 0;
+                $growthPercentagePayment = $previousPayment != 0 ? (($currentPayment - $previousPayment) / $previousPayment) * 100 : 0;
+                $growthPercentageNotPayment = $previousNotPayment != 0 ? (($currentNotPayment - $previousNotPayment) / $previousNotPayment) * 100 : 0;
                 $growthPercentageFailDelivery = $previousFailedDelivery != 0 ? (($currentFailedDelivery - $previousFailedDelivery) / $previousFailedDelivery) * 100 : 0;
 
 
@@ -926,6 +1201,8 @@ class StatisticsController extends Controller
                 $order->growthPercentageCancel = round($growthPercentageCancel, 2) . ' %';
                 $order->growthPercentageRevenue  = round($growthPercentageRevenue, 2) . ' %';
                 $order->growthPercentagePending = round($growthPercentagePending, 2) . ' %';
+                $order->growthPercentagePayment  = round($growthPercentagePayment, 2) . ' %';
+                $order->growthPercentageNotPayment = round($growthPercentageNotPayment, 2) . ' %';
                 $order->growthPercentageFailDelivery  = round($growthPercentageFailDelivery, 2) . ' %';
             } else {
                 $order->growth_percentageOrder = '0 %';
@@ -933,6 +1210,8 @@ class StatisticsController extends Controller
                 $order->growthPercentageCancel = '0 %';
                 $order->growthPercentageRevenue = '0 %';
                 $order->growthPercentagePending = '0 %';
+                $order->growthPercentagePayment = '0 %';
+                $order->growthPercentageNotPayment = '0 %';
                 $order->growthPercentageFailDelivery = '0 %';
             }
 
@@ -952,6 +1231,12 @@ class StatisticsController extends Controller
         $failRate = $grandTotalOrder > 0
             ? round(($grandTotalFailedDelivery / $grandTotalOrder) * 100, 2) . ' %'
             : 'Không có dữ liệu';
+        $paymentRate = $grandTotalOrder > 0
+            ? round(($grandTotalpayment / $grandTotalOrder) * 100, 2) . ' %'
+            : 'Không có dữ liệu';
+        $notPaymentRate = $grandTotalOrder > 0
+            ? round(($grandTotalNotPayment / $grandTotalOrder) * 100, 2) . ' %'
+            : 'Không có dữ liệu';
 
         return response()->json([
             'message' => 'Thống kê đơn hàng',
@@ -961,9 +1246,13 @@ class StatisticsController extends Controller
             'Tổng tất cả đơn hàng hủy' => $grandTotalCancel,
             'Tổng tất cả đơn hàng chờ xử lý' => $grandTotalPending,
             'Tổng tất cả đơn hàng giao hàng thất bại' => $grandTotalFailedDelivery,
+            'Tổng tất cả đơn hàng chưa thanh toán' => $grandTotalNotPayment,
+            'Tổng tất cả đơn hàng đã thanh toán' => $grandTotalpayment,
             'Tổng tỉ lệ hoàn thành đơn hàng' => $completionRate,
             'Tổng tỉ lệ chờ xử lý' => $pendingRate,
             'Tổng tỉ lệ thất bại' => $failRate,
+            'Tổng tỉ lệ đã thanh toán' => $paymentRate,
+            'Tổng tỉ lệ chưa thanh toán' => $notPaymentRate,
             'Tổng tỉ lệ hủy đơn hàng' => $cancellationRate,
             'Tổng doanh thu' => $grandTotalRevenue,
         ], 200);

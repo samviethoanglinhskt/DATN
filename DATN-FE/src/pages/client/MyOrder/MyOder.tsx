@@ -392,6 +392,7 @@ const MyOrder: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleOpenRatingModal = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     product: any,
     orderId: number,
     orderDetailId: number

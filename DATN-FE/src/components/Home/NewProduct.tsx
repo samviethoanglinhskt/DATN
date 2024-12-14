@@ -26,17 +26,17 @@ const getFromLocalStorage = (key: string, maxAge: number) => {
   return null;
 };
 
-const StoreOverView = () => {
+const NewProduct = () => {
   const {
     data: products,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["products-new"],
     queryFn: async () => {
       // Kiểm tra dữ liệu cache trước
-      const cachedProducts = getFromLocalStorage("products", 1000 * 60 * 60); // 1 giờ
+      const cachedProducts = getFromLocalStorage("products-new", 1000 * 60 * 60); // 1 giờ
       if (cachedProducts) {
         return cachedProducts;
       }
@@ -47,7 +47,7 @@ const StoreOverView = () => {
         const data = response.data;
 
         // Lưu dữ liệu vào localStorage
-        saveToLocalStorage("products", data);
+        saveToLocalStorage("products-new", data);
         return data;
       } catch (error) {
         console.log(error);
@@ -104,4 +104,4 @@ const StoreOverView = () => {
   );
 };
 
-export default StoreOverView;
+export default NewProduct;

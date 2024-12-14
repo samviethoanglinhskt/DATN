@@ -20,7 +20,9 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {}
+    public function index()
+    {
+    }
     public function getListProduct()
     {
 
@@ -268,7 +270,7 @@ class ProductController extends Controller
 
                 // Kiểm tra nếu có biến thể cần xóa
                 $variants = $product->variants()->whereIn('id', $variantsToDelete)->get();
-               
+
                 // Kiểm tra nếu có biến thể trong danh sách
                 if ($variants->isEmpty()) {
                     return response()->json(['error' => 'Không tìm thấy biến thể để xóa'], 404);
@@ -281,11 +283,11 @@ class ProductController extends Controller
                         if ($image->name_image) {
                             Storage::disk('public')->delete($image->name_image);
                         }
-                         $image->delete();
+                        $image->delete();
                     }
                     // Xóa biến thể
                     $variant->delete();
-                  
+
                 }
             }
 
@@ -379,4 +381,26 @@ class ProductController extends Controller
             return response()->json(['error' => 'Lỗi xóa sản phẩm'], 500);
         }
     }
+
+    public function checkStock(Request $request)
+    {
+        // Lấy variant_id từ request
+        $variantId = $request->input('tb_variant_id');
+
+        // Lấy thông tin biến thể từ database
+        $variant = tb_variant::find($variantId);
+
+        if (!$variant) {
+            return response()->json([
+                'error' => 'Variant not found.',
+            ], 404);
+        }
+
+        // Kiểm tra tồn kho
+        return response()->json([
+            'tb_variant_id' => $variant->id,
+            'available_quantity' => $variant->quantity,  // Trả về số lượng tồn kho của biến thể
+        ]);
+    }
+
 }
