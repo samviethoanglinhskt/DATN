@@ -217,7 +217,7 @@ const OrderMain: React.FC = () => {
     try {
       await axios.put("http://127.0.0.1:8000/api/fail-order-admin", {
         id: selectedOrderForFailure,
-        feedback: feedback, 
+        feedback: feedback,
       });
 
       setOrders((prevOrders) =>
@@ -282,6 +282,17 @@ const OrderMain: React.FC = () => {
         </span>
       ),
     })),
+  ];
+  const STATUS_ORDER = [
+    "Chờ xử lý",
+    "Đã xử lý",
+    "Đang giao hàng",
+    "Đã giao hàng",
+    "Đã thanh toán",
+    "Chưa thanh toán",
+    "Giao hàng thất bại",
+    "Đã hủy đơn hàng",
+    "Đã hoàn thành",
   ];
 
   const columns: ColumnsType<Order> = [
@@ -385,11 +396,12 @@ const OrderMain: React.FC = () => {
             onChange={(value: OrderStatus) =>
               handleStatusChange(record.id, value)
             }
-            options={statusOptions}
-            disabled={
-              record.order_status === "Đã hoàn thành" ||
-              record.order_status === "Đã hủy đơn hàng"
-            }
+            options={statusOptions.map((option) => ({
+              ...option,
+              disabled:
+                STATUS_ORDER.indexOf(option.value) <
+                STATUS_ORDER.indexOf(record.order_status), // Disable nếu trạng thái nằm trên trạng thái hiện tại
+            }))}
           />
         </Space>
       ),

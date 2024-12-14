@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "src/config/axiosInstance";
 import { useUser } from "src/context/User";
 import { Category } from "src/types/product";
+import logo from "src/assets/images/logo/logo.svg";
 import { useCart } from "src/context/Cart";
 import { LogoutOutlined } from "@mui/icons-material";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -58,17 +59,6 @@ const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFixed, setIsFixed] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
-  const [logo, setLogo] = useState("");
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/logo_banner")
-      .then((res) => res.json())
-      .then((data) => {
-        const item = data.find((obj: any) => obj.id === 1);
-        if (item) setLogo(item.image);
-      })
-      .catch(console.error);
-  }, []);
 
   useEffect(() => {
     if (user?.data?.user) {
@@ -208,8 +198,7 @@ const Header: React.FC = () => {
                         },
                       }}
                     >
-                      {(user?.data?.user?.tb_role_id === 1 ||
-                        user?.data?.user?.tb_role_id === 3) && (
+                      {user?.data?.user?.tb_role_id === 1 && (
                         <MenuItem
                           onClick={() => navigate("/admin")}
                           sx={{
@@ -237,7 +226,34 @@ const Header: React.FC = () => {
                           Admin
                         </MenuItem>
                       )}
-
+                      {user?.data?.user?.tb_role_id === 3 && (
+                        <MenuItem
+                          onClick={() => navigate("/adminnt")}
+                          sx={{
+                            padding: "10px 16px",
+                            borderRadius: "8px",
+                            gap: "12px",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              background:
+                                "linear-gradient(120deg, #fff5f7 0%, #fff 100%)",
+                              color: "#717FE0",
+                              "& .menu-icon": {
+                                transform: "scale(1.1)",
+                                color: "#717FE0",
+                              },
+                            },
+                          }}
+                        >
+                          <AdminPanelSettingsIcon
+                            style={{
+                              fontSize: "18px",
+                              transition: "all 0.3s ease",
+                            }}
+                          />
+                          Admin NT
+                        </MenuItem>
+                      )}
                       <MenuItem
                         onClick={() => navigate("/myinfo")}
                         sx={{
