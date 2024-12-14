@@ -33,6 +33,7 @@ import Support from "./components/Home/Support";
 import AllProduct from "./components/Home/AllProduct";
 import "./echo.js";
 import AllProductBrand from "./components/Home/AllProductBrand";
+import ForgotPassword from "./pages/client/ForgotPass.js";
 
 const routeConfig = [
   {
@@ -66,6 +67,10 @@ const routeConfig = [
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "forgot_password",
+        element: <ForgotPassword />,
       },
       {
         path: "myinfo",
