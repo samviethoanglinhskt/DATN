@@ -137,7 +137,8 @@ Route::middleware('auth:api')->group(function () {
 
 // review
 Route::get('/reviews/product/{product_id}', [ReviewController::class, 'index']);
-
+Route::get('/reviews-list', [ReviewController::class, 'listAll']);
+Route::delete('/reviews-delete/{id}', [ReviewController::class, 'destroy']);
 Route::post('/reviews', [ReviewController::class, 'store']);
 // thống kê
 // doanh thu  theo ngày, tháng , năm

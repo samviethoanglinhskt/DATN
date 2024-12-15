@@ -14,7 +14,7 @@ class SizeController extends Controller
     public function index()
     {
         //
-        $size = tb_size::all();
+        $size = tb_size::orderBy('id', 'desc')->get();
         return response()->json($size);
     }
 

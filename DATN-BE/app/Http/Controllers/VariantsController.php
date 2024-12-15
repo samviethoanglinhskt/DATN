@@ -17,7 +17,7 @@ class VariantsController extends Controller
     public function index() // lấy danh sách biến thể
     {
         try {
-            $variants = tb_variant::with('images')->get();
+            $variants = tb_variant::with('images')->orderBy('id', 'desc')->get();
 
             return response()->json([
                 'success' => true,
