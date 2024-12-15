@@ -133,7 +133,7 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(String $id)
+    public function update(String $id, Request $request)
     {
         try {
             // Tìm form liên hệ theo ID
@@ -141,7 +141,7 @@ class ContactController extends Controller
 
             // Cập nhật chỉ trường 'status'
             $contact->update([
-                'status' => 'Đã xử lý',
+                'status' => $request->status,
             ]);
 
             return response()->json([
