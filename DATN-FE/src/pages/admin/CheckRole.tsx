@@ -4,27 +4,30 @@ import { useUser } from "src/context/User";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  adminRoute?: boolean; 
+  adminRoute?: boolean;  // Nếu route này là route admin thì truyền adminRoute = true
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminRoute }) => {
-  const { user } = useUser(); 
-  const [loading, setLoading] = useState(true); 
+  const { user } = useUser(); // Lấy thông tin user từ context
+  const [loading, setLoading] = useState(true); // Track loading state
 
+  // Kiểm tra ngay khi bắt đầu để tránh việc treo trong trạng thái loading
   useEffect(() => {
     if (user?.data?.user) {
-      setLoading(false);
+      setLoading(false); // Nếu đã có user, cập nhật loading state
+    } else {
+      setLoading(false); // Nếu không có user, cập nhật loading state
     }
-  }, [user]); 
+  }, [user]); // Chạy effect khi trạng thái user thay đổi
+
+  // Nếu người dùng chưa đăng nhập, chuyển hướng về trang chủ ngay lập tức
+  if (!user?.data?.user) {
+    return <Navigate to="/" />; // Nếu không có user, chuyển hướng về trang chính
+  }
 
   // Nếu đang trong trạng thái loading, hiển thị loading spinner hoặc một cái gì đó
   if (loading) {
     return <div>Loading...</div>;
-  }
-
-  // Kiểm tra xem người dùng có login hay không
-  if (!user?.data?.user) {
-    return <Navigate to="/" />; // Nếu không có user, chuyển hướng về trang chính
   }
 
   const userRole = user.data.user.tb_role_id;
@@ -44,7 +47,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminRoute })
     return <Navigate to="/adminnt" />; // Chuyển hướng người dùng có tb_role_id === 3 sang trang adminnt
   }
 
-  return children; 
+  return children; // Nếu quyền hợp lệ, trả về các children (component của route)
 };
 
 export default ProtectedRoute;
