@@ -141,6 +141,15 @@ const LayoutAdmin: React.FC = () => {
         </NavLink>
       ),
     },
+    {
+      key: "8",
+      icon: <SkinOutlined />,
+      label: (
+        <NavLink to="post" className="text-decoration-none">
+          Bài viết
+        </NavLink>
+      ),
+    },
   ];
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
