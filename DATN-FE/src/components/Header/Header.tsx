@@ -217,7 +217,7 @@ const Header: React.FC = () => {
                     >
                       {user?.data?.user?.tb_role_id === 1 && (
                         <MenuItem
-                          onClick={() => navigate("/admin")}
+                          onClick={() => navigate("/admin/dashboard")}
                           sx={{
                             padding: "10px 16px",
                             borderRadius: "8px",
@@ -245,7 +245,7 @@ const Header: React.FC = () => {
                       )}
                       {user?.data?.user?.tb_role_id === 3 && (
                         <MenuItem
-                          onClick={() => navigate("/adminnt")}
+                          onClick={() => navigate("/adminnt/product")}
                           sx={{
                             padding: "10px 16px",
                             borderRadius: "8px",

@@ -308,12 +308,12 @@ class UserController extends Controller
         }
     }
 
-    public function update(RuleUpdateTaiKhoan $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $user = User::query()->findOrFail($id);
             $user->update([
-                'tb_role_id' => $request->id,
+                'tb_role_id' => $request->tb_role_id,
             ]);
 
             return response()->json([
