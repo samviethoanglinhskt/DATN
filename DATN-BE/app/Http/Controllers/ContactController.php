@@ -18,7 +18,7 @@ class ContactController extends Controller
     public function index()
     {
         //
-        $contact = tb_contact::all();
+        $contact = tb_contact::orderBy('id', 'desc')->get();
         return response()->json($contact);
     }
 
@@ -35,45 +35,41 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-         // Validation
-         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'email' => 'required|email|max:255',
-            'content' => 'required|string',
-            'status' => 'required|string|in:new,chờ xử lý,đã đọc', // Đảm bảo status hợp lệ
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
-
         try {
-            // Kiểm tra xem người dùng đã đăng nhập không (sử dụng JWT)
-            $user = JWTAuth::parseToken()->authenticate();
-            
-            // Nếu người dùng không đăng nhập, tạo liên hệ mà không cần user_id
-            if (!$user) {
-                $contact = tb_contact::create([
-                    'name' => $request->name,
-                    'phone' => $request->phone,
-                    'email' => $request->email,
-                    'content' => $request->content,
-                    'status' => $request->status
-                ]);
-            } else {
-                // Nếu người dùng đã đăng nhập, lấy user_id
-                $user_id = $user->id;
 
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if ($user) {
                 $contact = tb_contact::create([
-                    'user_id' => $user_id,
+                    'user_id' => $user->id,
                     'name' => $request->name,
                     'phone' => $request->phone,
                     'email' => $request->email,
                     'content' => $request->content,
-                    'status' => $request->status
+                    'status' => 'Chưa xử lý'
                 ]);
             }
+            return response()->json([
+                'message' => 'Tạo form liên hệ thành công',
+                'data' => $contact
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function storeGuest(Request $request)
+    {
+        try {
+            $contact = tb_contact::create([
+                'user_id' => 1,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'content' => $request->content,
+                'status' => 'Chưa xử lý'
+            ]);
 
             return response()->json([
                 'message' => 'Tạo form liên hệ thành công',
@@ -86,8 +82,7 @@ class ContactController extends Controller
         }
     }
 
-
-    public function getByUser(Request $request)
+    public function getByUser()
     {
         try {
             // Kiểm tra nếu người dùng đã đăng nhập (sử dụng JWT)
@@ -97,15 +92,10 @@ class ContactController extends Controller
             }
 
             // Lấy các liên hệ của người dùng
-            $contacts = tb_contact::where('user_id', $user->id)->get();
+            $contacts = tb_contact::where('user_id', $user->id)->orderBy('id', 'desc')->get();
 
             return response()->json([
                 'message' => 'Lấy dữ liệu thành công',
-                'user' => [
-                    'name' => $user->name,
-                    'phone' => $user->phone,
-                    'email' => $user->email
-                ],
                 'data' => $contacts
             ]);
         } catch (Exception $e) {
@@ -143,26 +133,17 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(String $id)
     {
-        //
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:new,chờ xử lý, đã đọc',  // chỉ kiểm tra trạng thái
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
-    
         try {
             // Tìm form liên hệ theo ID
             $contact = tb_contact::findOrFail($id);
-    
+
             // Cập nhật chỉ trường 'status'
             $contact->update([
-                'status' => $request->status,
+                'status' => 'Đã xử lý',
             ]);
-    
+
             return response()->json([
                 'message' => 'Cập nhật trạng thái form liên hệ thành công',
                 'data' => $contact

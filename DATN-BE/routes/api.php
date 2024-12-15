@@ -115,8 +115,12 @@ Route::put('/destroy-order-admin', [OderController::class, 'destroyAdminOrder'])
 Route::put('/fail-order-admin', [OderController::class, 'failAdminOrder'])->name('fail_order_admin');
 
 //contact
+Route::get('/list-all', [ContactController::class, 'index']);
 Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');
-
+Route::post('/add-contact', [ContactController::class, 'store']);
+Route::post('/add-contact-guest', [ContactController::class, 'storeGuest']);
+Route::post('/update-contact/{id}', [ContactController::class, 'update']);
+Route::delete('/delete-contact/{id}', [ContactController::class, 'destroy']);
 // product favorite
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
