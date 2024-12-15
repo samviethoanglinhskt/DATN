@@ -1,17 +1,22 @@
+
 import { useRoutes } from "react-router-dom";
 import "./App.css";
 import About from "./components/Home/About";
+import AllProduct from "./components/Home/AllProduct";
 import Blog from "./components/Home/Blog";
 import Contact from "./components/Home/Contact";
-import ProductList from "./components/Home/Category";
+import Support from "./components/Home/Support";
 import AdminLayout from "./layouts/AdminLayout";
 import ClientLayout from "./layouts/ClientLayout";
+import LayoutAdminNT from "./pages/admin/LayoutAdminNt.js";
 import AppCategoryyy from "./pages/admin/category/Category";
 import LogoBannerManagement from "./pages/admin/color-size-brand-banner/Banner";
 import BrandManagement from "./pages/admin/color-size-brand-banner/Brand";
 import ColorManagement from "./pages/admin/color-size-brand-banner/Color";
 import SizeManagement from "./pages/admin/color-size-brand-banner/Size";
 import Discount from "./pages/admin/discount/Discount";
+import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
+import ToggleDashboard from "./pages/admin/dshboard/dashboarddetail/ToggleDashboard.js";
 import OrderMain from "./pages/admin/orderadmin/Order";
 import ProductEdit from "./pages/admin/product/editProduct";
 import ProductSteps from "./pages/admin/product/formProduct";
@@ -22,18 +27,17 @@ import CheckoutPage from "./pages/client/Checkout";
 import HomePage from "./pages/client/HomePage";
 import Login from "./pages/client/Login";
 import FavoritesPage from "./pages/client/MyFavorites/ProductMyLove";
+import MyInfo from "./pages/client/MyInfo";
 import MyOrders from "./pages/client/MyOrder/MyOder";
 import PaymentFailure from "./pages/client/PaymentFailure";
 import PaymentSuccess from "./pages/client/PaymentSuccess";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
-import Dashboard from "./pages/admin/dshboard/DashBoard.Main";
-import MyInfo from "./pages/client/MyInfo";
-import Support from "./components/Home/Support";
-import AllProduct from "./components/Home/AllProduct";
+
 import "./echo.js";
 import ProtectedRoute from "./pages/admin/CheckRole.js";
 import ArticleManager from "./pages/admin/post/Post.js";
+import ProductList from "./components/Home/Category.js";
 
 function App() {
   const routeConfig = [
@@ -106,7 +110,6 @@ function App() {
     },
   ];
 
-function App() {
   const routes = useRoutes(routeConfig);
 
   return (
