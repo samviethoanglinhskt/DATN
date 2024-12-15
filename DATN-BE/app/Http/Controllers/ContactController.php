@@ -18,7 +18,7 @@ class ContactController extends Controller
     public function index()
     {
         //
-        $contact = tb_contact::orderBy('id', 'desc')->get();
+        $contact = tb_contact::with('user')->orderBy('id', 'desc')->get();
         return response()->json($contact);
     }
 
