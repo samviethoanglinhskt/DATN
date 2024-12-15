@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUser } from "src/context/User"; // Import useUser hook
 import { notification } from "antd"; // Import Ant Design notification
+import moment from "moment-timezone"; // Import moment-timezone for date manipulation
 
 const Contact: React.FC = () => {
   const { user } = useUser(); // Get user data from UserContext
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,22 +13,54 @@ const Contact: React.FC = () => {
     message: "",
   });
 
+  const [contacts, setContacts] = useState<any[]>([]); // Initialize as empty array
   const [loadingUser, setLoadingUser] = useState(true);
 
   // Set form data based on the user data
   useEffect(() => {
     if (user?.data) {
       setFormData({
-        name: user.data.name || "",
-        email: user.data.email || "",
-        phone: user.data.phone || "",
+        name: user.data.user.name || "",
+        email: user.data.user.email || "",
+        phone: user.data.user.phone || "",
         message: "", // Initialize with an empty message
       });
-      setLoadingUser(false);
-    } else {
-      setLoadingUser(false); // Set loadingUser to false even if there's no user data
     }
+    setLoadingUser(false);
   }, [user]);
+
+  // Fetch contact list from API for the logged-in user
+  const fetchContacts = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const url = token ? "http://127.0.0.1:8000/api/getByUser" : "";
+
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+
+      if (url) {
+        const response = await axios.get(url, { headers });
+
+        // Convert timestamps to Vietnam timezone (UTC+7) for each contact
+        const updatedContacts = response.data.data.map((contact: any) => ({
+          ...contact,
+          created_at: moment(contact.created_at)
+            .tz("Asia/Ho_Chi_Minh")
+            .format("YYYY-MM-DD HH:mm:ss"),
+        }));
+
+        setContacts(updatedContacts); // Set the contacts with formatted timestamps
+      } else {
+        setContacts([]); // If no token, do not fetch contacts
+      }
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      setContacts([]); // In case of error, ensure contacts is still an array
+    }
+  };
+
+  useEffect(() => {
+    fetchContacts();
+  }, []); // Run once on mount
 
   // Handle input changes
   const handleChange = (
@@ -45,62 +77,52 @@ const Contact: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Lấy token từ localStorage
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
+    const url = token
+      ? "http://127.0.0.1:8000/api/add-contact"
+      : "http://127.0.0.1:8000/api/add-contact-guest";
 
-    // Kiểm tra token có tồn tại và có định dạng hợp lệ không
-    if (!token) {
-      console.error("Token không tồn tại.");
-      return;
-    }
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
-    // Kiểm tra xem token có phải là JWT hợp lệ (3 phần phân cách bằng dấu chấm)
-    if (token.split(".").length !== 3) {
-      console.error("Token không hợp lệ, vui lòng kiểm tra lại.");
-      return;
-    }
-
-    // Kiểm tra nếu dữ liệu form không hợp lệ
     if (
       !formData.name ||
       !formData.email ||
       !formData.phone ||
       !formData.message
     ) {
-      console.error("Tất cả các trường thông tin là bắt buộc.");
+      console.error("All fields are required.");
       return;
     }
 
     try {
-      // Gửi dữ liệu form lên API
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/contact",
+      await axios.post(
+        url,
         {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          content: formData.message, // API yêu cầu content thay vì message
-          status: "new", // Dữ liệu mặc định cho status
+          content: formData.message,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Thêm token vào header
-          },
-        }
+        { headers }
       );
 
-      // Show success notification
       notification.success({
         message: "Success",
-        description: "Your message has been sent successfully!",
-        onClose: () => {
-          window.location.reload(); // Refresh the page after closing the notification
-        },
+        description: "Bạn đã gửi yêu cầu thành công!",
       });
 
-      console.log("Data submitted successfully:", response.data);
+      // If the user is a guest, show additional notification to login
+      if (!token) {
+        notification.info({
+          message: "Notice",
+          description: "Vui lòng đăng nhập để xem yêu cầu hỗ trợ của bạn.",
+        });
+      }
+
+      setFormData({ name: "", email: "", phone: "", message: "" }); // Reset form
+      fetchContacts();
     } catch (error: any) {
-      console.error("Lỗi khi gửi dữ liệu:", error.response?.data || error);
+      console.error("Error submitting form:", error.response?.data || error);
       notification.error({
         message: "Error",
         description:
@@ -110,7 +132,7 @@ const Contact: React.FC = () => {
   };
 
   if (loadingUser) {
-    return <div>Đang tải thông tin người dùng...</div>;
+    return <div>Loading user information...</div>;
   }
 
   return (
@@ -142,7 +164,7 @@ const Contact: React.FC = () => {
                   className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
                   type="email"
                   name="email"
-                  placeholder="Nhập email của bạn"
+                  placeholder="Nhập email"
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -165,7 +187,7 @@ const Contact: React.FC = () => {
                 <textarea
                   className="stext-111 cl2 plh3 size-120 p-lr-28 p-tb-25"
                   name="message"
-                  placeholder="Chúng tôi có thể giúp gì?"
+                  placeholder="Chúng tôi có thể giúp gì cho bạn?"
                   value={formData.message}
                   onChange={handleChange}
                 />
@@ -181,37 +203,39 @@ const Contact: React.FC = () => {
             </form>
           </div>
 
-          {/* Contact Information Section */}
+          {/* Contact List Section */}
           <div className="size-210 bor10 flex-w flex-col-m p-lr-93 p-tb-30 p-lr-15-lg w-full-md">
-            <div className="flex-w w-full p-b-42">
-              <span className="fs-18 cl5 txt-center size-211">
-                <span className="lnr lnr-map-marker" />
-              </span>
-              <div className="size-212 p-t-2">
-                <span className="mtext-110 cl2">Địa chỉ của chúng tôi</span>
-                <p className="stext-115 cl6 size-213 p-t-18">
-                  Trịnh Văn Bô - Nam Từ Liêm
-                </p>
-              </div>
-            </div>
-            <div className="flex-w w-full p-b-42">
-              <span className="fs-18 cl5 txt-center size-211">
-                <span className="lnr lnr-phone-handset" />
-              </span>
-              <div className="size-212 p-t-2">
-                <span className="mtext-110 cl2">Số điện thoại</span>
-                <p className="stext-115 cl1 size-213 p-t-18">0352169486</p>
-              </div>
-            </div>
-            <div className="flex-w w-full">
-              <span className="fs-18 cl5 txt-center size-211">
-                <span className="lnr lnr-envelope" />
-              </span>
-              <div className="size-212 p-t-2">
-                <span className="mtext-110 cl2">Hỗ Trợ</span>
-                <p className="stext-115 cl1 size-213 p-t-18">linh@gmail.com</p>
-              </div>
-            </div>
+            <h4 className="mtext-105 cl2 txt-center p-b-30">
+              Yêu cầu hỗ trợ của bạn
+            </h4>
+
+            {/* Check if contacts is not empty */}
+            {contacts.length === 0 ? (
+              <p>Không có yêu cầu nào.</p>
+            ) : (
+              contacts.map((contact: any) => (
+                <div key={contact.id} className="contact-card">
+                  <p>
+                    <strong>Tên:</strong> {contact.name}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {contact.email}
+                  </p>
+                  <p>
+                    <strong>Số điện thoại:</strong> {contact.phone}
+                  </p>
+                  <p>
+                    <strong>Yêu cầu hỗ trợ :</strong> {contact.content}
+                  </p>
+                  <p>
+                    <strong>Trạng thái:</strong> {contact.status}
+                  </p>
+                  <p>
+                    <strong>Ngày yêu cầu hỗ trợ:</strong> {contact.created_at}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
