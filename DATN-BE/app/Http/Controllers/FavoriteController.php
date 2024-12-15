@@ -12,7 +12,7 @@ class FavoriteController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
         $favorites = Favorite::with('product', 'product.variants', 'product.variants.images')
-            ->where('user_id', $user->id)->get();
+            ->where('user_id', $user->id)->orderBy('id', 'desc')->get();
 
         return response()->json($favorites);
     }

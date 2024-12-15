@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function index() // list tài khoản
     {
-        $user = User::all();
+        $user = User::orderBy('id', 'desc')->get();
         return response()->json($user);
     }
 
@@ -313,12 +313,7 @@ class UserController extends Controller
         try {
             $user = User::query()->findOrFail($id);
             $user->update([
-                'name' => $request->name,
                 'tb_role_id' => $request->id,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
             ]);
 
             return response()->json([

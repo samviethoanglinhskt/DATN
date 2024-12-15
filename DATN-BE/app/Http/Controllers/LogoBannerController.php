@@ -14,7 +14,7 @@ class LogoBannerController extends Controller
      */
     public function index()
     {
-        $logo_banner= tb_logo_banner::all(); // lấy logo_banner
+        $logo_banner= tb_logo_banner::orderBy('id', direction: 'desc')->get(); // lấy logo_banner
         return response()->json($logo_banner);
     }
 

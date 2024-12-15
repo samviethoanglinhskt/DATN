@@ -38,6 +38,7 @@ import "./echo.js";
 import ProtectedRoute from "./pages/admin/CheckRole.js";
 import ArticleManager from "./pages/admin/post/Post.js";
 import ProductList from "./components/Home/Category.js";
+import ReviewList from "./pages/admin/Comment/Comment.js";
 
 function App() {
   const routeConfig = [
@@ -85,7 +86,8 @@ function App() {
         { path: "discount", element: <Discount /> },
         { path: "dashboard", element: <Dashboard /> },
         { path: "detaildashboard", element: <ToggleDashboard /> },
-        { path: "post", element: <ArticleManager /> },      ],
+        { path: "post", element: <ArticleManager /> },
+        { path: "review", element: <ReviewList /> },      ],
     },
     {
       path: "adminnt",
@@ -100,12 +102,13 @@ function App() {
         { path: "product/edit/:id", element: <ProductEdit /> },
         { path: "/adminnt/product", element: <ProductListMain /> },
         { path: "order", element: <OrderMain /> },
-        { path: "user", element: <UserList /> },
         { path: "color", element: <ColorManagement /> },
         { path: "banner", element: <LogoBannerManagement /> },
         { path: "size", element: <SizeManagement /> },
         { path: "brand", element: <BrandManagement /> },
         { path: "discount", element: <Discount /> },
+        { path: "post", element: <ArticleManager /> },
+        { path: "review", element: <ReviewList /> },
       ],
     },
   ];

@@ -10,16 +10,17 @@ import {
   SettingOutlined,
   LogoutOutlined,
   BellOutlined,
+  FileTextOutlined,
+  MessageOutlined,
+  AppstoreAddOutlined,
+  TagOutlined,
 } from "@ant-design/icons";
 import {
   Button,
   Layout,
   Menu,
   theme,
-  Avatar,
-  Space,
-  Badge,
-  Dropdown,
+
 } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
 import type { MenuProps } from "antd";
@@ -31,21 +32,6 @@ const LayoutAdminNT: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
-  const userMenuItems: MenuProps["items"] = [
-    {
-      key: "settings",
-      label: "Cài đặt tài khoản",
-      icon: <SettingOutlined />,
-    },
-    {
-      key: "logout",
-      label: "Đăng xuất",
-      icon: <LogoutOutlined />,
-      danger: true,
-    },
-  ];
-
   const menuItems = [
     {
       key: "1",
@@ -71,15 +57,6 @@ const LayoutAdminNT: React.FC = () => {
       label: (
         <NavLink to="order" className="text-decoration-none">
           Quản Lý Đơn Hàng
-        </NavLink>
-      ),
-    },
-    {
-      key: "4",
-      icon: <UserOutlined />,
-      label: (
-        <NavLink to="user" className="text-decoration-none">
-          Quản Lý Tài Khoản
         </NavLink>
       ),
     },
@@ -116,7 +93,7 @@ const LayoutAdminNT: React.FC = () => {
     },
     {
       key: "6",
-      icon: <SkinOutlined />,
+      icon: <TagOutlined />,
       label: (
         <NavLink to="discount" className="text-decoration-none">
           Mã Giảm Giá
@@ -125,10 +102,28 @@ const LayoutAdminNT: React.FC = () => {
     },
     {
       key: "7",
-      icon: <SkinOutlined />,
+      icon: <AppstoreAddOutlined />,
       label: (
         <NavLink to="banner" className="text-decoration-none">
           Quản Lý Banner
+        </NavLink>
+      ),
+    },
+    {
+      key: "8",
+      icon: <FileTextOutlined />,
+      label: (
+        <NavLink to="post" className="text-decoration-none">
+          Bài viết
+        </NavLink>
+      ),
+    },
+    {
+      key: "9",
+      icon: <MessageOutlined />,
+      label: (
+        <NavLink to="review" className="text-decoration-none">
+         Bình luận
         </NavLink>
       ),
     },
@@ -141,13 +136,13 @@ const LayoutAdminNT: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh",backgroundColor: "#fff" }}>
+    <Layout style={{ minHeight: "100vh", backgroundColor: "#f0f2f5" }}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         style={{
-          backgroundColor:"white",
+          backgroundColor: "#fff",
           overflow: "auto",
           height: "100vh",
           position: "fixed",
@@ -155,6 +150,7 @@ const LayoutAdminNT: React.FC = () => {
           top: 0,
           bottom: 0,
           boxShadow: "2px 0 8px 0 rgba(29,35,41,.05)",
+          transition: "width 0.2s",
         }}
       >
         <div
@@ -177,9 +173,12 @@ const LayoutAdminNT: React.FC = () => {
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={["0"]}
+          defaultSelectedKeys={["1"]}
           items={menuItems}
-          style={{ borderRight: 0 }}
+          style={{
+            borderRight: 0,
+            padding: "0 16px",
+          }}
         />
       </Sider>
 
@@ -208,9 +207,10 @@ const LayoutAdminNT: React.FC = () => {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
             style={{
-              fontSize: "16px",
+              fontSize: "18px",
               width: 64,
               height: 64,
+              padding: 0,
             }}
           />
           <div
@@ -228,22 +228,6 @@ const LayoutAdminNT: React.FC = () => {
               style={{ height: "60px", width: "80px" }}
             />
           </div>
-          <Space size="large">
-            <Badge count={5} dot>
-              <BellOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-            </Badge>
-            <Dropdown
-              menu={{ items: userMenuItems, onClick: handleMenuClick }}
-              placement="bottomRight"
-            >
-              <Space style={{ cursor: "pointer" }}>
-                <Avatar icon={<UserOutlined />} />
-                <span style={{ display: collapsed ? "none" : "inline" }}>
-                  Admin
-                </span>
-              </Space>
-            </Dropdown>
-          </Space>
         </Header>
 
         <Content
@@ -254,6 +238,7 @@ const LayoutAdminNT: React.FC = () => {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
             overflow: "auto",
+            boxShadow: "0px 2px 12px rgba(0,0,0,0.1)",
           }}
         >
           <Outlet />

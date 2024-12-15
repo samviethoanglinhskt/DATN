@@ -16,7 +16,7 @@ class ImagesController extends Controller
     public function index() // hiển thị list ảnh sản phẩm
     {
         try {
-            $image = tb_image::query()->get();
+            $image = tb_image::orderBy('id', 'desc')->get();
 
             return response()->json([
                 'success' => true,

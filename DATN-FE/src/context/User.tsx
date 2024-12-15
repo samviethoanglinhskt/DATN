@@ -9,12 +9,13 @@ import axiosInstance from "src/config/axiosInstance";
 import { Address, User } from "src/types/user";
 
 interface ResetPasswordData {
-  current_password: string; // Mật khẩu hiện tại
-  new_password: string;     // Mật khẩu mới
+  current_password: string;
+  new_password: string;
 }
 
 interface UserContextProps {
   user: User | null;
+  loading: boolean; // Trạng thái đang tải dữ liệu
   setUser: (user: User | null) => void;
   updateUser: (updatedData: Partial<User>) => Promise<void>;
   addresses: Address[];
@@ -42,9 +43,11 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUser = async () => {
+      setLoading(true);
       try {
         const token = sessionStorage.getItem("token");
         if (token) {
@@ -63,10 +66,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         setUser(null);
         setAddresses([]);
       }
+      finally {
+        setLoading(false); // Kết thúc trạng thái loading
+      }
     };
     fetchUser();
   }, []);
-  // console.log(user);
+  console.log(user);
 
   // Hàm resetPassword để đổi mật khẩu
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -183,7 +189,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       updateAddress,
       deleteAddress,
       setDefaultAddress,
-      resetPassword
+      resetPassword,
+      loading
     }}>
       {children}
     </UserContext.Provider>

@@ -7,19 +7,16 @@ import {
   ShoppingCartOutlined,
   UserOutlined,
   SkinOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  BellOutlined,
+  MessageOutlined,
+  AppstoreAddOutlined,
+  FileTextOutlined,
+  TagOutlined,
 } from "@ant-design/icons";
 import {
   Button,
   Layout,
   Menu,
   theme,
-  Avatar,
-  Space,
-  Badge,
-  Dropdown,
 } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
 import type { MenuProps } from "antd";
@@ -31,20 +28,6 @@ const LayoutAdmin: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
-  const userMenuItems: MenuProps["items"] = [
-    {
-      key: "settings",
-      label: "Cài đặt tài khoản",
-      icon: <SettingOutlined />,
-    },
-    {
-      key: "logout",
-      label: "Đăng xuất",
-      icon: <LogoutOutlined />,
-      danger: true,
-    },
-  ];
 
   const menuItems = [
     {
@@ -125,7 +108,7 @@ const LayoutAdmin: React.FC = () => {
     },
     {
       key: "6",
-      icon: <SkinOutlined />,
+      icon: <TagOutlined />,
       label: (
         <NavLink to="discount" className="text-decoration-none">
           Mã Giảm Giá
@@ -134,7 +117,7 @@ const LayoutAdmin: React.FC = () => {
     },
     {
       key: "7",
-      icon: <SkinOutlined />,
+      icon: <AppstoreAddOutlined />,
       label: (
         <NavLink to="banner" className="text-decoration-none">
           Quản Lý Banner
@@ -143,10 +126,19 @@ const LayoutAdmin: React.FC = () => {
     },
     {
       key: "8",
-      icon: <SkinOutlined />,
+      icon: <FileTextOutlined />,
       label: (
         <NavLink to="post" className="text-decoration-none">
           Bài viết
+        </NavLink>
+      ),
+    },
+    {
+      key: "9",
+      icon: <MessageOutlined />,
+      label: (
+        <NavLink to="review" className="text-decoration-none">
+         Bình luận
         </NavLink>
       ),
     },
@@ -246,22 +238,6 @@ const LayoutAdmin: React.FC = () => {
               style={{ height: "60px", width: "80px" }}
             />
           </div>
-          <Space size="large">
-            <Badge count={5} dot>
-              <BellOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-            </Badge>
-            <Dropdown
-              menu={{ items: userMenuItems, onClick: handleMenuClick }}
-              placement="bottomRight"
-            >
-              <Space style={{ cursor: "pointer" }}>
-                <Avatar icon={<UserOutlined />} />
-                <span style={{ display: collapsed ? "none" : "inline" }}>
-                  Admin
-                </span>
-              </Space>
-            </Dropdown>
-          </Space>
         </Header>
 
         <Content
