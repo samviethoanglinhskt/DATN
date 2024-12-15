@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function index() // list tài khoản
     {
-        $user = User::all();
+        $user = User::orderBy('id', 'desc')->get();
         return response()->json($user);
     }
 

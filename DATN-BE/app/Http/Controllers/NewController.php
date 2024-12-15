@@ -16,7 +16,7 @@ class NewController extends Controller
     public function index()
     {
         //
-        $new = tb_new::all();
+        $new = tb_new::orderBy('id', 'desc')->get();
         return response()->json($new);
     }
 

@@ -6,6 +6,8 @@ use App\Models\tb_oder;
 use App\Models\tb_oderdetail;
 use App\Models\tb_product;
 use App\Models\tb_review;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -39,7 +41,11 @@ class ReviewController extends Controller
 
         return response()->json($reviews, 200); // Trả về danh sách các đánh giá (bao gồm thông tin phân trang)
     }
-
+    public function listAll()
+    {
+        $logo_banner= tb_review::with('product','user')->orderBy('id', 'desc')->get();
+        return response()->json($logo_banner);
+    }
     // thêm đánh giá
     public function store(Request $request)
     {
@@ -89,5 +95,19 @@ class ReviewController extends Controller
         ]);
 
         return response()->json($review, 201); // Trả về review mới
+    }
+    public function destroy(string $id) // xóa ảnh biến thể sản phẩm
+    {
+        try {
+            $review = tb_review::findOrFail($id);
+
+            $review->delete();
+
+            return response()->json(['message' => 'xóa thành công'], 204);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'không tồn tại'], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Lỗi xóa'], 500);
+        }
     }
 }
