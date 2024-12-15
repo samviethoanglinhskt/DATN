@@ -33,11 +33,11 @@ import PaymentFailure from "./pages/client/PaymentFailure";
 import PaymentSuccess from "./pages/client/PaymentSuccess";
 import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
-
 import "./echo.js";
 import ProtectedRoute from "./pages/admin/CheckRole.js";
 import ArticleManager from "./pages/admin/post/Post.js";
 import ProductList from "./components/Home/Category.js";
+import LoadingOverlay from "./components/Loading/Loading.js";
 
 function App() {
   const routeConfig = [
@@ -85,7 +85,7 @@ function App() {
         { path: "discount", element: <Discount /> },
         { path: "dashboard", element: <Dashboard /> },
         { path: "detaildashboard", element: <ToggleDashboard /> },
-        { path: "post", element: <ArticleManager /> },      ],
+        { path: "post", element: <ArticleManager /> },],
     },
     {
       path: "adminnt",
@@ -114,6 +114,7 @@ function App() {
 
   return (
     <main>
+      <LoadingOverlay />
       {routes}
     </main>
   );

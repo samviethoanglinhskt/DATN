@@ -16,13 +16,16 @@ class tb_discount extends Model
         'discount_value',
         'name',
         'start_day',
-        'end_day'
+        'end_day',
+        'status'
     ];
 
-    public function oder(){
+    public function oder()
+    {
         return $this->hasOne(tb_oder::class);
     }
-    public function oderTemp(){
+    public function oderTemp()
+    {
         return $this->hasOne(TbOderTemp::class);
     }
 }
