@@ -198,7 +198,7 @@ const ArticleManager: React.FC = () => {
             style={{ width: 100, height: 100, objectFit: "cover" }}
           />
         ) : (
-          "Không có ảnh"
+          <span>Không có ảnh</span>
         ),
     },
     {
@@ -226,9 +226,6 @@ const ArticleManager: React.FC = () => {
       width: "20%",
       render: (_: any, record: Article) => (
         <Space>
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Sửa
-          </Button>
           <Button danger onClick={() => handleDelete(record.id)}>
             Xóa
           </Button>

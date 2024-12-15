@@ -142,14 +142,16 @@ const LayoutAdmin: React.FC = () => {
         </NavLink>
       ),
     },
+    {
+      key: "10",
+      icon: <MessageOutlined />,
+      label: (
+        <NavLink to="contact" className="text-decoration-none">
+         Liên hệ
+        </NavLink>
+      ),
+    },
   ];
-
-  const handleMenuClick: MenuProps["onClick"] = (e) => {
-    if (e.key === "logout") {
-      console.log("Logout clicked");
-    }
-  };
-
   return (
     <Layout style={{ minHeight: "100vh",backgroundColor: "#fff" }}>
       <Sider

@@ -86,7 +86,7 @@ const UserList: React.FC = () => {
 
   const handleEdit = (user: User) => {
     setEditingUser(user);
-    form.setFieldsValue(user);
+    form.setFieldsValue({ tb_role_id: user.tb_role_id });
     setEditModalVisible(true);
   };
 
@@ -94,12 +94,24 @@ const UserList: React.FC = () => {
     try {
       const values = await form.validateFields();
       if (editingUser) {
-        updateMutation.mutate({ ...values, id: editingUser.id });
+        // Log lại dữ liệu gửi đi
+        console.log('Updating user with:', {
+          id: editingUser.id,
+          tb_role_id: values.tb_role_id,
+        });
+  
+        // Cập nhật dữ liệu
+        const updatedValues = {
+          id: editingUser.id,
+          tb_role_id: values.tb_role_id,
+        };
+        updateMutation.mutate(updatedValues);
       }
     } catch (error) {
-      // Form validation error handled by antd
     }
   };
+  
+  
 
   const filteredUsers = users.filter(
     (user: User) =>
@@ -227,13 +239,6 @@ const UserList: React.FC = () => {
                 style={{ width: 300 }}
                 value={searchText}
               />
-              {/* <Button
-                type="primary"
-                className="btn btn-primary"
-                icon={<PlusOutlined />}
-              >
-              Thêm người dùng
-              </Button> */}
             </div>
           </div>
         </div>
@@ -293,67 +298,18 @@ const UserList: React.FC = () => {
           <div className="row">
             <div className="col-md-6">
               <Form.Item
-                name="name"
-                label="Tên người dùng"
-                rules={[{ required: true, message: "Please input the name!" }]}
-              >
-                <Input className="form-control" placeholder="Enter name" />
-              </Form.Item>
-            </div>
-            <div className="col-md-6">
-              <Form.Item
                 name="tb_role_id"
                 label="Vai trò"
                 rules={[{ required: true, message: "Please select the role!" }]}
               >
                 <select className="form-select">
                   <option value={1}>Admin</option>
-                  <option value={2}>User</option>
+                  <option value={2}>Người dùng</option>
+                  <option value={3}>Nhân viên</option>
                 </select>
               </Form.Item>
             </div>
           </div>
-
-          <div className="row">
-            <div className="col-md-6">
-              <Form.Item
-                name="phone"
-                label="Số điện thoại"
-                rules={[
-                  { required: true, message: "Please input the phone number!" },
-                ]}
-              >
-                <Input
-                  className="form-control"
-                  placeholder="Enter phone number"
-                />
-              </Form.Item>
-            </div>
-            <div className="col-md-6">
-              <Form.Item
-                name="email"
-                label="Email"
-                rules={[
-                  { required: true, message: "Please input the email!" },
-                  { type: "email", message: "Please enter a valid email!" },
-                ]}
-              >
-                <Input className="form-control" placeholder="Enter email" />
-              </Form.Item>
-            </div>
-          </div>
-
-          <Form.Item
-            name="address"
-            label="Địa chỉ"
-            rules={[{ required: true, message: "Please input the address!" }]}
-          >
-            <Input.TextArea
-              className="form-control"
-              rows={3}
-              placeholder="Enter address"
-            />
-          </Form.Item>
         </Form>
       </Modal>
     </div>
@@ -361,3 +317,4 @@ const UserList: React.FC = () => {
 };
 
 export default UserList;
+

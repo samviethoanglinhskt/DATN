@@ -39,6 +39,7 @@ import ProtectedRoute from "./pages/admin/CheckRole.js";
 import ArticleManager from "./pages/admin/post/Post.js";
 import ProductList from "./components/Home/Category.js";
 import ReviewList from "./pages/admin/Comment/Comment.js";
+import ContactsList from "./pages/admin/Contact/Contact.js";
 
 function App() {
   const routeConfig = [
@@ -87,7 +88,9 @@ function App() {
         { path: "dashboard", element: <Dashboard /> },
         { path: "detaildashboard", element: <ToggleDashboard /> },
         { path: "post", element: <ArticleManager /> },
-        { path: "review", element: <ReviewList /> },      ],
+        { path: "review", element: <ReviewList /> },  
+        { path: "contact", element: <ContactsList /> },  
+      ],
     },
     {
       path: "adminnt",

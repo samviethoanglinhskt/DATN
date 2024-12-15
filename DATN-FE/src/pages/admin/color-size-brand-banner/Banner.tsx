@@ -13,7 +13,13 @@ import {
   Image,
   Upload,
 } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import axiosInstance from "src/config/axiosInstance";
 
 interface LogoBanner {
@@ -24,122 +30,120 @@ interface LogoBanner {
   updated_at: string | null;
 }
 
-  const LogoBannerManagement: React.FC = () => {
-    const [logos, setLogos] = useState<LogoBanner[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [addModal, setAddModal] = useState(false);
-    const [searchText, setSearchText] = useState("");
-    const [form] = Form.useForm();
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [previewImage, setPreviewImage] = useState<string | null>(null);
+const LogoBannerManagement: React.FC = () => {
+  const [logos, setLogos] = useState<LogoBanner[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [addModal, setAddModal] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [form] = Form.useForm();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-    const fetchLogos = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get("/api/logo_banner");
-        console.log(response.data); 
-        setLogos(response.data);
-      } catch (error: any) {
-        message.error("Không thể tải danh sách logo & banner");
-      } finally {
-        setLoading(false);
+  const fetchLogos = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/api/logo_banner");
+      console.log(response.data);
+      setLogos(response.data);
+    } catch (error: any) {
+      message.error("Không thể tải danh sách logo & banner");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLogos();
+  }, []);
+
+  // Hàm xử lý upload ảnh
+  const handleImageSelect = async (file: File) => {
+    setSelectedFile(file);
+    // Tạo preview URL cho ảnh đã chọn
+    const previewURL = URL.createObjectURL(file);
+    setPreviewImage(previewURL);
+    return false; // Ngăn upload tự động
+  };
+
+  // Xử lý thêm mới
+  const handleAdd = async (values: any) => {
+    try {
+      setLoading(true);
+
+      if (!selectedFile) {
+        message.error("Vui lòng chọn hình ảnh");
+        return;
       }
-    };
-
-    useEffect(() => {
-      fetchLogos();
-    }, []);
-
-    // Hàm xử lý upload ảnh
-    const handleImageSelect = async (file: File) => {
-      setSelectedFile(file);
-      // Tạo preview URL cho ảnh đã chọn
-      const previewURL = URL.createObjectURL(file);
-      setPreviewImage(previewURL);
-      return false; // Ngăn upload tự động
-    };
-
-    // Xử lý thêm mới
-    const handleAdd = async (values: any) => {
+      let imageUrl = "";
       try {
-        setLoading(true);
-
-        if (!selectedFile) {
-          message.error("Vui lòng chọn hình ảnh");
-          return;
-        }
-        let imageUrl = "";
-        try {
-          const formData = new FormData();
-          formData.append("name", values.name.trim());
-          formData.append("image", selectedFile);
-          const uploadResponse = await axiosInstance.post(
-            "/api/upload-image",
-            formData
-          );
-          imageUrl = uploadResponse.data.url;
-        } catch (error) {
-          message.error("Không thể tải lên hình ảnh");
-          return;
-        }
-
         const formData = new FormData();
         formData.append("name", values.name.trim());
-        formData.append("image", selectedFile); 
-        // Show success message
-        message.success("Thêm logo/banner thành công");
-
-        // Close the modal and reset the form
-        setAddModal(false);
-        form.resetFields();
-        setSelectedFile(null);
-        setPreviewImage(null);
-
-        // Refresh the logo/banner list
-        fetchLogos();
-      } catch (error: any) {
-        console.error("Lỗi:", error);
-        message.error(error.message || "Không thể thêm logo/banner");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Xử lý xóa banner
-    const handleDelete = async (id: number) => {
-      try {
-        await axiosInstance.delete(`/api/logo_banner/${id}`);
-        message.success("Xóa logo/banner thành công");
-        fetchLogos();
+        formData.append("image", selectedFile);
+        const uploadResponse = await axiosInstance.post(
+          "/api/upload-image",
+          formData
+        );
+        imageUrl = uploadResponse.data.url;
       } catch (error) {
-        message.error("Không thể xóa logo/banner");
+        message.error("Không thể tải lên hình ảnh");
+        return;
       }
-    };
 
-    const resetModal = () => {
+      const formData = new FormData();
+      formData.append("name", values.name.trim());
+      formData.append("image", selectedFile);
+      // Show success message
+      message.success("Thêm logo/banner thành công");
+
+      // Close the modal and reset the form
+      setAddModal(false);
       form.resetFields();
       setSelectedFile(null);
       setPreviewImage(null);
-    };
 
-    const columns = [
-      {
-        title: "Hình ảnh",
-        dataIndex: "image",
-        key: "image",
-        width: 120,
-        render: (image: string) => (
-          <Image
-          src={`http://localhost:8000/storage/${image}`}
+      // Refresh the logo/banner list
+      fetchLogos();
+    } catch (error: any) {
+      console.error("Lỗi:", error);
+      message.error(error.message || "Không thể thêm logo/banner");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Xử lý xóa banner
+  const handleDelete = async (id: number) => {
+    try {
+      await axiosInstance.delete(`/api/logo_banner/${id}`);
+      message.success("Xóa logo/banner thành công");
+      fetchLogos();
+    } catch (error) {
+      message.error("Không thể xóa logo/banner");
+    }
+  };
+
+  const resetModal = () => {
+    form.resetFields();
+    setSelectedFile(null);
+    setPreviewImage(null);
+  };
+
+  const columns = [
+    {
+      title: "Hình ảnh",
+      dataIndex: "image",
+      key: "image",
+      width: 120,
+      render: (image: string) => (
+        <Image
+          src={`  /${image}`}
           alt="Logo"
           width={80}
           height={80}
           style={{ objectFit: "cover" }}
-          fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADA..."
         />
-        
-        ),
-      },
+      ),
+    },
     {
       title: "Tên",
       dataIndex: "name",
@@ -251,7 +255,9 @@ interface LogoBanner {
           <Form.Item
             name="name"
             label="Tên Logo/Banner"
-            rules={[{ required: true, message: "Vui lòng nhập tên logo/banner" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập tên logo/banner" },
+            ]}
           >
             <Input placeholder="Nhập tên logo/banner" />
           </Form.Item>

@@ -15,13 +15,7 @@ import {
   AppstoreAddOutlined,
   TagOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  Layout,
-  Menu,
-  theme,
-
-} from "antd";
+import { Button, Layout, Menu, theme } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
 import type { MenuProps } from "antd";
 
@@ -123,7 +117,16 @@ const LayoutAdminNT: React.FC = () => {
       icon: <MessageOutlined />,
       label: (
         <NavLink to="review" className="text-decoration-none">
-         Bình luận
+          Bình luận
+        </NavLink>
+      ),
+    },
+    {
+      key: "10",
+      icon: <MessageOutlined />,
+      label: (
+        <NavLink to="contact" className="text-decoration-none">
+          Liên hệ
         </NavLink>
       ),
     },
