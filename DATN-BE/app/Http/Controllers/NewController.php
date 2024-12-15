@@ -6,6 +6,7 @@ use App\Models\tb_new;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Storage;
 
 class NewController extends Controller
 {
@@ -32,32 +33,37 @@ class NewController extends Controller
      */
     public function store(Request $request)
     {
-        //
         try {
-            // Kiểm tra và xử lý ảnh chính (nếu có)
-            if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $imagePath = $request->file('image')->store('news', 'public'); 
-            } else {
-                return response()->json(['error' => 'Lỗi ảnh bài viết'], 400);
-            }
+            // Validate dữ liệu đầu vào
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+                'image' => 'required|image|max:2048',
+            ]);
+
+            // Xử lý ảnh
+            $path = $request->file('image')->store('public/news');
+            $imagePath = str_replace('public/', '', $path);
 
             // Tạo bài viết mới
-            $new = tb_new::query()->create([
+            $new = tb_new::create([
                 'title' => $request->title,
                 'content' => $request->content,
-                'status' => $request->status,
+                'create_day' => now(),
                 'image' => $imagePath,
             ]);
 
-            // Trả về phản hồi thành công
             return response()->json([
-                'message' => 'Tạo bài viết thành công',
-                'news' => $new,
+                'success' => true,
+                'message' => 'Tạo bài viết thành công!',
+                'data' => $new,
             ], 201);
-
         } catch (Exception $e) {
-            // Trả về lỗi nếu có ngoại lệ
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại sau!',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -95,21 +101,55 @@ class NewController extends Controller
     {
         //
         try {
-            $news = tb_new::query()->findOrFail($id);
-            $news->update([
-                'title' => $request->title,
-                'content' => $request->content,
-                'create_day' => $request->create_day,
+            // Validate dữ liệu đầu vào
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+                'image' => 'nullable|image|max:2048',
             ]);
 
+            // Tìm bài viết cần cập nhật
+            $news = tb_new::findOrFail($id);
+
+            // Cập nhật tiêu đề và nội dung
+            $news->title = $request->title;
+            $news->content = $request->content;
+
+            // Xử lý cập nhật ảnh (nếu có)
+            if ($request->hasFile('image')) {
+                if ($news->image) {
+                    // Xóa ảnh cũ nếu có
+                    $oldImagePath = 'public/' . $news->image;
+                    if (Storage::exists($oldImagePath)) {
+                        Storage::delete($oldImagePath);
+                    }
+                }
+
+                // Lưu ảnh mới
+                $path = $request->file('image')->store('public/news');
+                $imagePath = str_replace('public/', '', $path);
+                $news->image = $imagePath;
+            }
+
+            // Lưu thay đổi
+            $news->save();
+
             return response()->json([
-                'message' => 'Cập nhật thành công',
-                'data' => $news
-            ]);
+                'success' => true,
+                'message' => 'Cập nhật bài viết thành công!',
+                'data' => $news,
+            ], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Bài viết không tồn tại!',
+            ], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể cập nhật bài viết'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại sau!',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -118,19 +158,36 @@ class NewController extends Controller
      */
     public function destroy(string $id)
     {
-        //
         try {
-            $news = tb_new::query()->findOrFail($id);
+            $news = tb_new::findOrFail($id);
+
+            // Xóa ảnh nếu có
+            if ($news->image) {
+                $oldImagePath = 'public/' . $news->image;
+                if (Storage::exists($oldImagePath)) {
+                    Storage::delete($oldImagePath);
+                }
+            }
+
+            // Xóa bài viết
             $news->delete();
 
             return response()->json([
-                'message' => 'Xóa thành công',
-                'data' => null
-            ]);
+                'success' => true,
+                'message' => 'Xóa bài viết thành công!',
+                'data' => null,
+            ], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Bài viết không tồn tại!',
+            ], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Không thể xóa bài viết'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể xóa bài viết, vui lòng thử lại sau!',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }
