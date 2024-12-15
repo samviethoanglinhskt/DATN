@@ -251,7 +251,7 @@ const Header: React.FC = () => {
                               transition: "all 0.3s ease",
                             }}
                           />
-                          Admin NT
+                          Admin 
                         </MenuItem>
                       )}
                       <MenuItem

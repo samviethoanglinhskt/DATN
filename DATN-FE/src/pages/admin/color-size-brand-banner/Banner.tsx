@@ -94,15 +94,15 @@ const LogoBannerManagement: React.FC = () => {
 
       // Upload ảnh trước
       let imageUrl = "";
-            // Log dữ liệu trước khi tạo logo/banner mới
-    console.log("Dữ liệu logo/banner cần thêm:", {
-      name: values.name.trim(),
-      image: imageUrl,
-    });
+      // Log dữ liệu trước khi tạo logo/banner mới
+      console.log("Dữ liệu logo/banner cần thêm:", {
+        name: values.name.trim(),
+        image: imageUrl,
+      });
 
       try {
         const formData = new FormData();
-      formData.append('name', values.name.trim());
+        formData.append("name", values.name.trim());
         formData.append("image", selectedFile);
         const uploadResponse = await axiosInstance.post(
           "/api/upload-image",
@@ -112,15 +112,14 @@ const LogoBannerManagement: React.FC = () => {
       } catch (error) {
         message.error("Không thể tải lên hình ảnh");
         return;
-      } 
+      }
 
-     
       const formData = new FormData();
-      formData.append('name', values.name.trim());
-      formData.append('image', selectedFile); // selectedFile là file ảnh
-      
-      fetch('http://localhost:8000/api/upload-image', {
-        method: 'POST',
+      formData.append("name", values.name.trim());
+      formData.append("image", selectedFile); // selectedFile là file ảnh
+
+      fetch("http://localhost:8000/api/upload-image", {
+        method: "POST",
         body: formData,
       }).then((response) => console.log(response));
     } catch (error: any) {
@@ -185,7 +184,7 @@ const LogoBannerManagement: React.FC = () => {
       width: 120,
       render: (image: string) => (
         <Image
-        src={`http://localhost:8000/storage/${image}`} 
+          src={`http://localhost:8000/storage/${image}`}
           alt="Logo"
           width={80}
           height={80}

@@ -38,18 +38,10 @@ import ProductDetail from "./pages/client/ProductDetail";
 import Register from "./pages/client/Register";
 
 import "./echo.js";
-
-
+import ProtectedRoute from "./pages/admin/CheckRole.js";
+import ArticleManager from "./pages/admin/post/Post.js";
 
 function App() {
-  const { user, setUser } = useUser();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (user?.data?.user?.tb_role_id !== 1 && user?.data?.user?.tb_role_id !== 3) {
-      navigate("/");
-    }
-  }, [user, navigate]);
-
   const routeConfig = [
     {
       path: "/",
@@ -76,7 +68,11 @@ function App() {
     },
     {
       path: "admin",
-      element: user?.data?.user?.tb_role_id === 1 || user?.data?.user?.tb_role_id === 3 ? <AdminLayout /> : <Navigate to="/" />,
+      element: (
+        <ProtectedRoute adminRoute={true}>
+          <AdminLayout />
+        </ProtectedRoute>
+      ),
       children: [
         { path: "category", element: <AppCategoryyy /> },
         { path: "product/create", element: <ProductSteps /> },
@@ -91,11 +87,15 @@ function App() {
         { path: "discount", element: <Discount /> },
         { path: "dashboard", element: <Dashboard /> },
         { path: "detaildashboard", element: <ToggleDashboard /> },
-      ],
+        { path: "post", element: <ArticleManager /> },      ],
     },
     {
       path: "adminnt",
-      element: user?.data?.user?.tb_role_id === 1 || user?.data?.user?.tb_role_id === 3 ? <LayoutAdminNT /> : <Navigate to="/" />,
+      element: (
+        <ProtectedRoute>
+          <LayoutAdminNT />
+        </ProtectedRoute>
+      ),
       children: [
         { path: "category", element: <AppCategoryyy /> },
         { path: "product/create", element: <ProductSteps /> },
@@ -117,7 +117,6 @@ function App() {
   return (
     <main>
       {routes}
-      <ButtonZalo pageId="YOUR_ZALO_PAGE_ID" theme="1" width="400" height="600" />
     </main>
   );
 }

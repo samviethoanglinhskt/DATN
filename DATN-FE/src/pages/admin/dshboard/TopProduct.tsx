@@ -20,8 +20,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
-  Area,
 } from "recharts";
 
 const { Title } = Typography;
@@ -131,7 +129,12 @@ const TopSellingProductsComponent: React.FC = () => {
     } else if (timeRange === "week") {
       return `Tuần ${week_in_month}-${month}/${year}`; // Week in month
     } else if (timeRange === "quarter") {
-      return `Quý ${quarter}, ${year}`;
+      // Ensure quarter exists and handle it properly
+      if (quarter !== undefined) {
+        return `Quý ${quarter}, ${year}`;
+      } else {
+        return "Quý không xác định"; // Return a default message if quarter is undefined
+      }
     }
     return "";
   };
@@ -212,21 +215,14 @@ const TopSellingProductsComponent: React.FC = () => {
             }}
           >
             <ResponsiveContainer width="100%" height={500}>
-              <AreaChart data={columnData}>
+              <BarChart data={columnData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#60A5FA"
-                  fill="#60A5FA"
-                  fillOpacity={0.4}
-                  strokeWidth={2}
-                />
-              </AreaChart>
+                <Bar dataKey="value" fill="#60A5FA" radius={[8, 8, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </Col>

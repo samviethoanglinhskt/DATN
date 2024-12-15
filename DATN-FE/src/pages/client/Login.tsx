@@ -12,6 +12,8 @@ import {
   UserAddOutlined,
   LoadingOutlined,
   LoginOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import { useCart } from "src/context/Cart";
 const Login = () => {
@@ -33,9 +35,7 @@ const Login = () => {
       if (response.data.success) {
         message.success({
           content: "Đăng nhập thành công!",
-          icon: (
-            <i className="fas fa-check-circle" style={{ color: "#52c41a" }} />
-          ),
+          icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
           duration: 2,
         });
         sessionStorage.setItem("token", response.data.data.token);
@@ -52,6 +52,7 @@ const Login = () => {
       } else {
         message.error({
           content: response.data.message || "Đăng nhập thất bại",
+          icon: <CloseCircleOutlined style={{ color: "#f5222d" }} />,
           duration: 3,
         });
       }

@@ -111,13 +111,16 @@ const ProductEdit: React.FC = () => {
         description: productRes.data.description,
       });
 
-      if (productRes.data.image) {
+      if (productRes && productRes.data && productRes.data.image) {
+        const imageUrl = `http://127.0.0.1:8000/storage/${productRes.data.image}`;
+       console.log(imageUrl)
         setFileList([
           {
             uid: "-1",
             name: "Product Image",
             status: "done",
-            url: `http://127.0.0.1:8000/${productRes.data.image}`,
+            url: imageUrl,
+            thumbUrl: imageUrl,
           },
         ]);
       }
