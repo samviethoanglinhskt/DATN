@@ -15,7 +15,7 @@ class ColorController extends Controller
     public function index()
     {
         //
-        $color = tb_color::all(); 
+        $color = tb_color::orderBy('id', 'desc')->get(); 
         return response()->json($color);
     }
 

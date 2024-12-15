@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function index() // list tài khoản
     {
-        $user = User::all();
+        $user = User::orderBy('id', 'desc')->get();
         return response()->json($user);
     }
 
@@ -308,17 +308,12 @@ class UserController extends Controller
         }
     }
 
-    public function update(RuleUpdateTaiKhoan $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $user = User::query()->findOrFail($id);
             $user->update([
-                'name' => $request->name,
-                'tb_role_id' => $request->id,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'tb_role_id' => $request->tb_role_id,
             ]);
 
             return response()->json([

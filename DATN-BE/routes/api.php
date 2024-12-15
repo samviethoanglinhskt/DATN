@@ -115,8 +115,12 @@ Route::put('/destroy-order-admin', [OderController::class, 'destroyAdminOrder'])
 Route::put('/fail-order-admin', [OderController::class, 'failAdminOrder'])->name('fail_order_admin');
 
 //contact
+Route::get('/list-all', [ContactController::class, 'index']);
 Route::get('/getByUser', [ContactController::class, 'getByUser'])->name('getByUser');
-
+Route::post('/add-contact', [ContactController::class, 'store']);
+Route::post('/add-contact-guest', [ContactController::class, 'storeGuest']);
+Route::post('/update-contact/{id}', [ContactController::class, 'update']);
+Route::delete('/delete-contact/{id}', [ContactController::class, 'destroy']);
 // product favorite
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
@@ -138,7 +142,8 @@ Route::middleware('auth:api')->group(function () {
 
 // review
 Route::get('/reviews/product/{product_id}', [ReviewController::class, 'index']);
-
+Route::get('/reviews-list', [ReviewController::class, 'listAll']);
+Route::delete('/reviews-delete/{id}', [ReviewController::class, 'destroy']);
 Route::post('/reviews', [ReviewController::class, 'store']);
 // thống kê
 // doanh thu  theo ngày, tháng , năm

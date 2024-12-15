@@ -488,7 +488,7 @@ class StatisticsController extends Controller
                 case 'week':
                     return $item->year . '-' . $item->month . '-' . $item->week_in_month;
                 case 'quarter':
-                    return $item->year . '-Q' . $item->quarter;
+                    return $item->year . '-' . $item->quarter;
                 case 'year':
                     return $item->year;
                 default: // Tháng

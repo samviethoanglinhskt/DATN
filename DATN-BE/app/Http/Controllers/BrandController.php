@@ -14,7 +14,7 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brand = tb_brand::all(); //lấy thương hiệu
+        $brand = tb_brand::orderBy('id', 'desc')->get(); //lấy thương hiệu
         return response()->json($brand);
     }
 

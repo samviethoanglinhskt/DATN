@@ -1,232 +1,338 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, message, Form, Input, Upload } from "antd";
-import axios from "axios";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Button,
+  Modal,
+  message,
+  Form,
+  Input,
+  Upload,
+  Space,
+} from "antd";
+import { UploadOutlined, ReloadOutlined } from "@ant-design/icons";
+import type { UploadFile } from "antd/es/upload/interface";
+import type { RcFile, UploadProps } from "antd/es/upload";
 
-// API functions
-const API_URL = "http://127.0.0.1:8000/api/new";
-const API_UPLOAD_URL = "http://127.0.0.1:8000/api/upload"; // Giả sử đây là URL cho API tải ảnh lên
+interface Article {
+  id: number;
+  title: string;
+  content: string;
+  image: string;
+}
 
-const fetchArticles = async () => {
-  const response = await axios.get(API_URL);
-  return response.data;
-};
+interface ArticleFormValues {
+  title: string;
+  content: string;
+  image?: UploadFile[];
+}
 
-const createArticle = async (article: any) => {
-  const response = await axios.post(API_URL, article);
-  return response.data;
-};
-
-const updateArticle = async (id: number, article: any) => {
-  const response = await axios.put(`${API_URL}/${id}`, article);
-  return response.data;
-};
-
-const deleteArticle = async (id: number) => {
-  const response = await axios.delete(`${API_URL}/${id}`);
-  return response.data;
-};
-
-// Main component
 const ArticleManager: React.FC = () => {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingArticle, setEditingArticle] = useState<any>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  // Fetch articles
+  const fetchArticles = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://127.0.0.1:8000/api/new");
+      if (!response.ok) throw new Error("Failed to fetch articles");
+      const data = await response.json();
+      setArticles(data);
+    } catch (error) {
+      message.error("Không thể tải danh sách bài viết");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getArticles = async () => {
-      const data = await fetchArticles();
-      setArticles(data);
-    };
-    getArticles();
+    fetchArticles();
   }, []);
 
+  // Handle delete article
   const handleDelete = async (id: number) => {
     try {
-      await deleteArticle(id);
+      const response = await fetch(`http://127.0.0.1:8000/api/new/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Delete failed");
+
       message.success("Xóa bài viết thành công");
-      setArticles(articles.filter((article) => article.id !== id));
+      fetchArticles();
     } catch (error) {
       message.error("Xóa bài viết thất bại");
     }
   };
 
-  const handleEdit = (article: any) => {
+  // Handle edit article
+  const handleEdit = (article: Article) => {
     setEditingArticle(article);
-    form.setFieldsValue(article);
-    setFileList(article.image ? [{ url: article.image }] : []); // Set file list for editing
+    form.setFieldsValue({
+      title: article.title,
+      content: article.content,
+    });
+    // Set fileList với ảnh hiện tại
+    if (article.image) {
+      setFileList([
+        {
+          uid: "-1",
+          name: article.image.split("/").pop() || "current-image.png",
+          status: "done",
+          url: article.image,
+        },
+      ]);
+    } else {
+      setFileList([]);
+    }
     setIsModalVisible(true);
   };
 
-  const handleCreateNew = () => {
-    setEditingArticle(null); // Reset editing article
-    form.resetFields(); // Reset form fields for new article
-    setFileList([]); // Reset file list for new article
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
+  // Handle modal close
+  const handleModalClose = () => {
     setIsModalVisible(false);
     setEditingArticle(null);
+    form.resetFields();
+    setFileList([]);
   };
 
-  // Function to upload image when user selects it
-  const uploadImage = async (file: any) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
+  // Handle form submission
+  // Handle form submission
+  const handleSubmit = async (values: ArticleFormValues) => {
     try {
-      const response = await axios.post(API_UPLOAD_URL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data.url; // Assume the API returns the URL of the uploaded image
-    } catch (error) {
-      message.error("Tải ảnh lên thất bại");
-      throw error;
-    }
-  };
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("content", values.content);
 
-  // Handle image upload directly when file is selected
-  const handleImageChange = async (info: any) => {
-    setFileList(info.fileList);
-    if (info.file.status === "done") {
-      // When image is uploaded successfully, update the image URL
-      const imageUrl = info.file.response.url;
-      form.setFieldsValue({ image: imageUrl });
-    }
-  };
-
-  const handleSubmit = async (values: any) => {
-    try {
-      let data;
-      // If editing an existing article
-      if (editingArticle) {
-        data = await updateArticle(editingArticle.id, values);
-      } else {
-        // Otherwise create a new article
-        data = await createArticle(values);
+      // Xử lý ảnh cho cả thêm mới và cập nhật
+      if (values.image?.[0]?.originFileObj) {
+        // Có file ảnh mới được chọn
+        formData.append("image", values.image[0].originFileObj);
+      } else if (editingArticle) {
+        // Đang cập nhật và không có ảnh mới -> gửi ảnh cũ
+        formData.append("image", editingArticle.image);
       }
-      message.success("Lưu thành công");
-      setArticles((prevArticles) => {
-        if (editingArticle) {
-          return prevArticles.map((article) =>
-            article.id === editingArticle.id ? data : article
-          );
-        } else {
-          return [...prevArticles, data];
-        }
+
+      // Log data trước khi gửi
+      for (let pair of formData.entries()) {
+        console.log("FormData:", pair[0], pair[1]);
+      }
+
+      const url = editingArticle
+        ? `http://127.0.0.1:8000/api/new/${editingArticle.id}`
+        : "http://127.0.0.1:8000/api/new";
+
+      const response = await fetch(url, {
+        method: editingArticle ? "PUT" : "POST",
+        body: formData,
       });
-      handleCancel();
+
+      const responseData = await response.json();
+      console.log("Response:", responseData);
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Operation failed");
+      }
+
+      message.success(
+        `Bài viết đã ${editingArticle ? "cập nhật" : "thêm"} thành công`
+      );
+      handleModalClose();
+      fetchArticles();
     } catch (error) {
-      message.error("Lưu thất bại");
+      console.error("Error:", error);
+      message.error(
+        `${editingArticle ? "Cập nhật" : "Thêm"} bài viết thất bại: `
+      );
     }
   };
+  console.log("fileList", fileList);
 
+  // Upload props
+  const uploadProps: UploadProps = {
+    beforeUpload: (file: RcFile) => {
+      const isImage = file.type.startsWith("image/");
+      if (!isImage) {
+        message.error("Chỉ có thể tải lên file ảnh!");
+        return Upload.LIST_IGNORE;
+      }
+
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        message.error("Ảnh phải nhỏ hơn 2MB!");
+        return Upload.LIST_IGNORE;
+      }
+
+      return false;
+    },
+    maxCount: 1,
+    fileList: fileList,
+    onChange: ({ fileList }) => {
+      console.log("FileList changed:", fileList);
+      setFileList(fileList);
+    },
+  };
+
+  // Table columns
   const columns = [
     {
       title: "Tiêu đề",
       dataIndex: "title",
       key: "title",
+      width: "25%",
     },
     {
-      title: "Ảnh bài viết",
+      title: "Ảnh",
       dataIndex: "image",
       key: "image",
-      render: (image: string) => <img src={image} alt="Article" style={{ width: 100, height: 100, objectFit: 'cover' }} />,
+      width: "20%",
+      render: (image: string) =>
+        image ? (
+          <img
+            src={`http://127.0.0.1:8000/storage/${image}`}
+            alt="Article"
+            style={{ width: 100, height: 100, objectFit: "cover" }}
+          />
+        ) : (
+          <span>Không có ảnh</span>
+        ),
     },
     {
-      title: "Mô tả",
+      title: "Nội dung",
       dataIndex: "content",
       key: "content",
+      width: "35%",
+      render: (text: string) => (
+        <div
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {text}
+        </div>
+      ),
     },
     {
-      title: "Hành động",
+      title: "Thao tác",
       key: "action",
-      render: (text: any, record: any) => (
-        <>
-          <Button
-            onClick={() => handleEdit(record)}
-            style={{ marginRight: 10 }}
-          >
-            Sửa
-          </Button>
-          <Button onClick={() => handleDelete(record.id)} danger>
+      width: "20%",
+      render: (_: any, record: Article) => (
+        <Space>
+          <Button danger onClick={() => handleDelete(record.id)}>
             Xóa
           </Button>
-        </>
+        </Space>
       ),
     },
   ];
 
   return (
-    <div>
-      <Button
-        type="primary"
-        style={{ marginBottom: 16 }}
-        onClick={handleCreateNew}  // Button to open modal for creating new article
+    <div style={{ padding: 24 }}>
+      <div
+        style={{
+          marginBottom: 16,
+          display: "flex",
+          justifyContent: "space-between",
+        }}
       >
-        Thêm bài viết mới
-      </Button>
+        <Space>
+          <Button type="primary" onClick={() => setIsModalVisible(true)}>
+            Thêm bài viết
+          </Button>
+          <Button icon={<ReloadOutlined />} onClick={fetchArticles}>
+            Làm mới
+          </Button>
+        </Space>
+      </div>
+
       <Table
         columns={columns}
         dataSource={articles}
         rowKey="id"
-        pagination={false}
+        loading={loading}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showTotal: (total) => `Tổng số ${total} bài viết`,
+        }}
       />
+
       <Modal
-        title={editingArticle ? "Sửa bài viết" : "Tạo mới bài viết"}
-        visible={isModalVisible}
-        onCancel={handleCancel}
+        title={editingArticle ? "Sửa bài viết" : "Thêm bài viết mới"}
+        open={isModalVisible}
+        onCancel={handleModalClose}
         footer={null}
+        width={800}
       >
-        <Form form={form} onFinish={handleSubmit}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{ title: "", content: "" }}
+        >
           <Form.Item
-            label="Tiêu đề"
             name="title"
+            label="Tiêu đề"
             rules={[{ required: true, message: "Vui lòng nhập tiêu đề!" }]}
           >
-            <Input />
+            <Input placeholder="Nhập tiêu đề bài viết" />
           </Form.Item>
+
           <Form.Item
-            label="Ảnh bài viết"
             name="image"
-            rules={[{ required: true, message: "Vui lòng tải ảnh bài viết!" }]}
+            label="Ảnh bài viết"
+            rules={[
+              {
+                required: !editingArticle,
+                message: "Vui lòng chọn ảnh!",
+              },
+            ]}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e?.fileList;
+            }}
           >
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onChange={handleImageChange}
-              maxCount={1} // Limit the number of files to 1
-              customRequest={({ file, onSuccess }) => {
-                // Handle the image upload here when the file is selected
-                uploadImage(file).then((url) => {
-                  onSuccess();
-                  setFileList([{ url }]);
-                  form.setFieldsValue({ image: url });
-                });
-              }}
-            >
-              {fileList.length < 1 && <div><UploadOutlined /> Chọn ảnh</div>}
+            <Upload {...uploadProps} listType="picture-card" accept="image/*">
+              {fileList.length < 1 && (
+                <div>
+                  <UploadOutlined />
+                  <div style={{ marginTop: 8 }}>Tải ảnh</div>
+                </div>
+              )}
             </Upload>
           </Form.Item>
+
           <Form.Item
-            label="Nội dung"
             name="content"
-            rules={[{ required: true, message: "Vui lòng nhập nội dung bài viết!" }]}
+            label="Nội dung"
+            rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
           >
-            <Input.TextArea />
+            <Input.TextArea
+              rows={4}
+              placeholder="Nhập nội dung bài viết"
+              maxLength={500}
+              showCount
+            />
           </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {editingArticle ? "Cập nhật" : "Tạo mới"}
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={handleCancel}>
-              Hủy
-            </Button>
+
+          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+            <Space>
+              <Button onClick={handleModalClose}>Hủy</Button>
+              <Button type="primary" htmlType="submit">
+                {editingArticle ? "Cập nhật" : "Thêm mới"}
+              </Button>
+            </Space>
           </Form.Item>
         </Form>
       </Modal>
