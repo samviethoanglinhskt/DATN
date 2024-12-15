@@ -11,18 +11,15 @@ import {
   Checkbox,
   Slider,
   Skeleton,
-  Tooltip,
-  Button,
 } from "antd";
 import {
-  HeartOutlined,
-  ShoppingCartOutlined,
   SearchOutlined,
   FilterOutlined,
 } from "@ant-design/icons";
 import instance from "../../config/axiosInstance";
 import { Product } from "src/types/product";
 import "./Productlist.css";
+import { useFavorites } from "src/context/FavoriteProduct";
 
 const { Option } = Select;
 
@@ -35,6 +32,8 @@ const AllProduct = () => {
   const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000]);
   const itemsPerPage = 8; // Tăng số sản phẩm mỗi trang
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+
 
   // Giữ nguyên các query
   const { data: brands, isLoading: loadingBrands } = useQuery({
@@ -59,8 +58,8 @@ const AllProduct = () => {
   const filteredProductsByBrand =
     selectedBrands.length > 0
       ? (allProducts || []).filter((product: Product) =>
-          selectedBrands.includes(product.tb_brand_id)
-        )
+        selectedBrands.includes(product.tb_brand_id)
+      )
       : allProducts || [];
 
   const filteredByPrice = (filteredProductsByBrand || []).filter(
@@ -107,6 +106,15 @@ const AllProduct = () => {
       </div>
     );
   }
+
+  const isFavorite = (productId: number) => {
+    return favorites.some((fav) => fav.tb_product_id === productId);
+  };
+
+  const getFavoriteId = (productId: number) => {
+    const favorite = favorites.find((fav) => fav.tb_product_id === productId);
+    return favorite?.id; // Lấy id của mục yêu thích
+  };
 
   return (
     <div className="products-page">
@@ -203,50 +211,47 @@ const AllProduct = () => {
             {paginatedProducts.length > 0 ? (
               paginatedProducts.map((product: Product) => (
                 <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
-                  <Card
-                    className="product-card"
-                    cover={
-                      <div className="product-image-container">
-                        <img
-                          src={`http://127.0.0.1:8000/storage/${product.image}`}
-                          alt={product.name}
-                          className="product-image"
-                        />
-                        {/* <div className="product-overlay">
-                          <div className="product-actions">
-                            <Tooltip title="Thêm vào giỏ hàng">
-                              <button className="action-button">
-                                <ShoppingCartOutlined />
-                              </button>
-                            </Tooltip>
-                            <Tooltip title="Thêm vào yêu thích">
-                              <button className="action-button">
-                                <HeartOutlined />
-                              </button>
-                            </Tooltip>
-                          </div>
-                        </div> */}
+                  <div className="col product-item">
+                    <div className="card h-100 product-card border-0">
+                      <div className="position-relative">
+                        <div className="product-image-wrapper">
+                          <img
+                            src={`http://127.0.0.1:8000/storage/${product.image}`}
+                            className="card-img-top product-image"
+                            alt={product.name}
+                          />
+                        </div>
+                        <button
+                          className={`btn wishlist-btn position-absolute top-0 end-0 m-2 ${isFavorite(product.id) ? "text-danger" : ""
+                            }`}
+                          onClick={() => {
+                            if (isFavorite(product.id)) {
+                              const favoriteId = getFavoriteId(product.id);
+                              if (favoriteId) removeFavorite(favoriteId); // Truyền ID của mục yêu thích
+                            } else {
+                              addFavorite(product.id);
+                            }
+                          }}
+                        >
+                          <i
+                            className={
+                              isFavorite(product.id)
+                                ? "zmdi zmdi-favorite"
+                                : "zmdi zmdi-favorite-outline"
+                            }
+                          ></i>
+                        </button>
                       </div>
-                    }
-                    actions={[
-                      <Link
-                        to={`/product/${product.id}`}
-                        className="product-link"
-                      >
-                        <button className="buy-now-button">Xem thêm</button>
-                      </Link>,
-                    ]}
-                  >
-                    <Link
-                      to={`/product/${product.id}`}
-                      className="product-link"
-                    >
-                      <h3 className="product-name">{product.name}</h3>
-                      <div className="product-price">
-                        {product.variants[0]?.price?.toLocaleString("vi-VN")}đ
+                      <div className="card-body text-center">
+                        <Link to={`/product/${product.id}`} className="product-link">
+                          <h5 className="product-title">{product.name}</h5>
+                        </Link>
+                        <p className="product-price fw-bold">
+                          {product.variants[0]?.price?.toLocaleString("vi-VN")}đ
+                        </p>
                       </div>
-                    </Link>
-                  </Card>
+                    </div>
+                  </div>
                 </Col>
               ))
             ) : (

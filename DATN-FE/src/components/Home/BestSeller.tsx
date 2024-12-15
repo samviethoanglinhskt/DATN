@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
-import { message } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "src/components/css/NewProduct.css";
 
 // Types
 import { Product } from "src/types/product";
 import axiosInstance from "src/config/axiosInstance";
+import { useFavorites } from "src/context/FavoriteProduct";
 
 
 // Hàm lưu dữ liệu vào localStorage
@@ -32,12 +32,12 @@ const getFromLocalStorage = (key: string, maxAge: number) => {
 };
 // Product Component
 const BestSeller = () => {
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
   const INITIAL_VISIBLE_PRODUCTS = 4;
   const [visibleProducts, setVisibleProducts] = useState(
     INITIAL_VISIBLE_PRODUCTS
   );
   const [isExpanded, setIsExpanded] = useState(false);
-  const navigate = useNavigate();
 
   // Query products
   const {
@@ -69,59 +69,13 @@ const BestSeller = () => {
     },
   });
 
-  // Add to favorites mutation
-  const addToFavoriteMutation = useMutation({
-    mutationFn: async (productId: number) => {
-      const token = sessionStorage.getItem("token");
-      if (!token) {
-        console.error("Token not found!");
-        throw new Error("Vui lòng đăng nhập trước!");
-      }
+  const isFavorite = (productId: number) => {
+    return favorites.some((fav) => fav.tb_product_id === productId);
+  };
 
-      console.log("Token:", token);
-      const payload = { tb_product_id: productId };
-      console.log("Payload:", payload);
-
-      try {
-        const response = await axiosInstance.post("/api/favorites", payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Response data:", response.data);
-        return response.data;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        console.error("Lỗi từ server:", error.response?.data || error.message);
-        throw new Error(
-          error.response?.data?.message || "Thêm vào yêu thích thất bại."
-        );
-      }
-    },
-    onSuccess: () => {
-      message.success("Đã thêm vào danh sách yêu thích!");
-      // queryClient.invalidateQueries(["favorites"]);
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
-      message.error(error.message || "Có lỗi xảy ra!");
-    },
-  });
-
-  const handleFavoriteClick = async (
-    e: React.MouseEvent,
-    productId: number
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      message.warning("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
-      navigate("/login");
-      return;
-    }
-
-    // Gọi mutation thêm sản phẩm vào danh sách yêu thích
-    addToFavoriteMutation.mutate(productId);
+  const getFavoriteId = (productId: number) => {
+    const favorite = favorites.find((fav) => fav.tb_product_id === productId);
+    return favorite?.id; // Lấy id của mục yêu thích
   };
 
   if (isLoading) return <div className="text-center my-5">Loading...</div>;
@@ -159,10 +113,24 @@ const BestSeller = () => {
                     />
                   </div>
                   <button
-                    className="btn wishlist-btn position-absolute top-0 end-0 m-2"
-                    onClick={(e) => handleFavoriteClick(e, product.id)}
+                    className={`btn wishlist-btn position-absolute top-0 end-0 m-2 ${isFavorite(product.id) ? "text-danger" : ""
+                      }`}
+                    onClick={() => {
+                      if (isFavorite(product.id)) {
+                        const favoriteId = getFavoriteId(product.id);
+                        if (favoriteId) removeFavorite(favoriteId); // Truyền ID của mục yêu thích
+                      } else {
+                        addFavorite(product.id);
+                      }
+                    }}
                   >
-                    <i className="zmdi zmdi-favorite-outline"></i>
+                    <i
+                      className={
+                        isFavorite(product.id)
+                          ? "zmdi zmdi-favorite"
+                          : "zmdi zmdi-favorite-outline"
+                      }
+                    ></i>
                   </button>
                 </div>
                 <div className="card-body text-center">
@@ -180,9 +148,8 @@ const BestSeller = () => {
         {products.data.length > INITIAL_VISIBLE_PRODUCTS && (
           <div className="text-center mt-5">
             <button
-              className={`btn ${
-                isExpanded ? "btn-outline-danger" : "btn-outline-dark"
-              } px-4 py-2`}
+              className={`btn ${isExpanded ? "btn-outline-danger" : "btn-outline-dark"
+                } px-4 py-2`}
               onClick={handleToggleProducts}
             >
               {isExpanded ? "Thu gọn" : "Xem thêm"}

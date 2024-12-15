@@ -73,9 +73,10 @@ Route::get('/cart/check-stock', [ProductController::class, 'checkStock']);//chec
 
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::post('/login', [UserController::class, 'login'])->name('login');
-Route::post('/fogot-pass', [UserController::class, 'forgotPass']);
+Route::post('/forgot_password', [UserController::class, 'forgotPass']);
 Route::get('/show-user', [UserController::class, 'showUser'])->name('show_User');
 Route::put('/update-user', [UserController::class, 'updateUser'])->name('update_User');
+Route::put('/change-password', [UserController::class, 'updatePassUser'])->name('update_Pass_User');
 //địa chỉ theo người dùng
 Route::resource('address', AddressUserController::class);
 Route::put('/address-default', [AddressUserController::class, 'isDefaultAddress'])->name('address_default');
@@ -99,7 +100,7 @@ Route::get('/vnpay/ipn/guest', [CartController::class, 'handleVnpayIpnGuest'])->
 Route::post('/payment-online', [CartController::class, 'vnpay'])->name('payment.online');
 Route::post('/payment-guest', [CartController::class, 'vnpay_guest'])->name('payment.guest');
 
-// mua lại bằng vnpay 
+// mua lại bằng vnpay
 Route::post('/payment-reorder', [CartController::class, 'reOrder'])->name('payment.reorder');
 Route::get('/vnpay/ipn/reorder', [CartController::class, 'handleVnpayIpnReOrder'])->name('vnpay.ipn.reorder');
 //oder

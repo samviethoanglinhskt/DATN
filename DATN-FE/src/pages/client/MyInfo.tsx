@@ -146,7 +146,137 @@ const Profile = () => {
     );
 };
 
-// Component danh sách địa chỉ
+const ResetPass = () => {
+    const { user, resetPassword } = useUser(); // Giả sử resetPassword là hàm trong context để gọi API
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const [errors, setErrors] = useState({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+    });
+
+    const validate = () => {
+        const newErrors = {
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+        };
+
+        // Kiểm tra mật khẩu hiện tại
+        if (!currentPassword.trim()) {
+            newErrors.currentPassword = "Vui lòng nhập mật khẩu hiện tại.";
+        }
+
+        // Kiểm tra mật khẩu mới (tối thiểu 6 ký tự)
+        if (!newPassword.trim()) {
+            newErrors.newPassword = "Vui lòng nhập mật khẩu mới.";
+        } else if (newPassword.length < 6) {
+            newErrors.newPassword = "Mật khẩu mới phải có ít nhất 6 ký tự.";
+        }
+
+        // Kiểm tra xác nhận mật khẩu
+        if (!confirmPassword.trim()) {
+            newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu.";
+        } else if (newPassword !== confirmPassword) {
+            newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
+        }
+
+        setErrors(newErrors);
+
+        // Trả về true nếu không có lỗi
+        return Object.values(newErrors).every((error) => error === "");
+    };
+
+
+    const handleSave = async () => {
+        if (!validate()) return;
+        try {
+            await resetPassword({
+                current_password: currentPassword,
+                new_password: newPassword,
+            });
+            alert("Đổi mật khẩu thành công!");
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.error("Đổi mật khẩu thất bại:", error);
+            setErrors((prev) => ({
+                ...prev,
+                currentPassword: error.message || "Mật khẩu hiện tại không đúng.",
+            }));
+        }
+    };
+
+
+    if (!user) {
+        return (
+            <Box p={3} bgcolor="#f9f9f9" borderRadius={2} width={1000}>
+                <Typography variant="h5" color="error">
+                    Bạn cần đăng nhập để đổi mật khẩu.
+                </Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <div>
+            <Box p={3} bgcolor="#f9f9f9" borderRadius={2} width={1000}>
+                <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                    Đổi mật khẩu
+                </h1>
+                <p className="text-gray-600">
+                    Nhập mật khẩu hiện tại và mật khẩu mới để thay đổi.
+                </p>
+                <Box component="form">
+                    <TextField
+                        label="Mật khẩu hiện tại"
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        error={!!errors.currentPassword}
+                        helperText={errors.currentPassword}
+                    />
+                    <TextField
+                        label="Mật khẩu mới"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        error={!!errors.newPassword}
+                        helperText={errors.newPassword}
+                    />
+                    <TextField
+                        label="Xác nhận mật khẩu mới"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        error={!!errors.confirmPassword}
+                        helperText={errors.confirmPassword}
+                    />
+                    <button
+                        type="button"
+                        onClick={handleSave}
+                        className="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+                        style={{ width: 200, marginTop: 20 }}
+                    >
+                        Đổi mật khẩu
+                    </button>
+                </Box>
+            </Box>
+        </div>
+    );
+};
+
 const AddressList = () => {
     const { user, addresses, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useUser();
     const [open, setOpen] = useState(false);
@@ -513,7 +643,7 @@ const MyInfo = () => {
                                 indicatorColor="primary"
                                 sx={{
                                     '& .MuiTabs-indicator': {
-                                        backgroundColor: '#717FE0', // Màu đỏ cho indicator
+                                        backgroundColor: '#717FE0',
                                     },
                                 }}
                             >
@@ -531,7 +661,7 @@ const MyInfo = () => {
                                     }}
                                 />
                                 <Tab
-                                    label="Địa chỉ"
+                                    label="Đổi mật khẩu"
                                     sx={{
                                         borderRadius: 10,
                                         width: 200,
@@ -543,6 +673,19 @@ const MyInfo = () => {
                                         },
                                     }}
                                 />
+                                <Tab
+                                    label="Địa chỉ"
+                                    sx={{
+                                        borderRadius: 10,
+                                        width: 200,
+                                        alignItems: 'flex-start',
+                                        backgroundColor: tab === 2 ? '#D2E2F2' : 'transparent',
+                                        color: tab === 2 ? '#D2E2F2' : 'black',
+                                        '&:hover': {
+                                            backgroundColor: tab === 2 ? '#D2E2F2' : '#D2E2F2',
+                                        },
+                                    }}
+                                />
                             </Tabs>
                         </SidebarContainer>
                     </Paper>
@@ -551,7 +694,8 @@ const MyInfo = () => {
                 {/* Nội dung chính */}
                 <Grid item xs={9}>
                     {tab === 0 && <Profile />}
-                    {tab === 1 && <AddressList />}
+                    {tab === 1 && <ResetPass />}
+                    {tab === 2 && <AddressList />}
                 </Grid>
             </Grid>
         </div>

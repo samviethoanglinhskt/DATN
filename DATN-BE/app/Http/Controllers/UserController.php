@@ -130,8 +130,18 @@ class UserController extends Controller
                 $message->to($account->email)
                     ->subject('Thông tin mật khẩu mới');
             });
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng ký thành công!',
+                'data' => $account
+            ], 201);
         } catch (\Exception $e) {
-            //throw $th;
+            Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -243,6 +253,44 @@ class UserController extends Controller
             $user->phone = $request->phone;
             $user->email = $request->email;
             $user->save();
+
+            return response()->json([
+                'message' => 'Sửa thành công',
+                'data' => $user
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Tài khoản không tồn tại'], 404);
+        } catch (Exception $e) {
+            Log::error('Registration error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updatePassUser(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Người dùng không tồn tại',
+                ], 404);
+            }
+            $account = User::where('email', $user->email)->first();
+
+            // Kiểm tra xem tài khoản có tồn tại và mật khẩu có khớp không
+            if (!$account || !Hash::check($request->current_password, $account->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thông tin tài khoản không chính xác.',
+                ], 401); // 401 Unauthorized
+            }
+            $account->password = $request->new_password;
+            $account->save();
 
             return response()->json([
                 'message' => 'Sửa thành công',

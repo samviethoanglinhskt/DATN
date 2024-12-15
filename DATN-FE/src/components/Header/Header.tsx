@@ -1,4 +1,4 @@
-import { Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
+import { Grid, IconButton, Menu, MenuItem, styled, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -12,11 +12,30 @@ import { LogoutOutlined } from "@mui/icons-material";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { useFavorites } from "src/context/FavoriteProduct";
 // Cache constants
 const CACHE_KEYS = {
   CATEGORIES: "cached_categories",
   FAVORITE_COUNT: "cached_favorite_count",
 };
+
+const MenuItemStyled = styled(MenuItem)(() => ({
+  position: "relative",
+  overflow: "hidden",
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    bottom: 0,
+    left: "-100%",
+    width: "100%",
+    height: "2px",
+    backgroundColor: "#717FE0",
+    transition: "left 0.3s ease-out",
+  },
+  "&:hover::after": {
+    left: 0,
+  },
+}));
 
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
@@ -55,19 +74,18 @@ const Header: React.FC = () => {
   const { totalQuantity } = useCart();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [favoriteCount, setFavoriteCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFixed, setIsFixed] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
+  const { totalFavorites } = useFavorites();
+
 
   useEffect(() => {
     if (user?.data?.user) {
       setName(user.data.user.name);
     }
   }, [user]); // Chỉ chạy khi `user` thay đổi
-  const handleAddToFavorites = () => {
-    setFavoriteCount((prevCount) => prevCount + 1);
-  };
+
   // Enhanced categories query with caching
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["categorys"],
@@ -154,9 +172,8 @@ const Header: React.FC = () => {
     <header>
       {/* Header desktop */}
       <div
-        className={`container-menu-desktop ${
-          isFixed ? "fix-menu-desktop" : ""
-        }`}
+        className={`container-menu-desktop ${isFixed ? "fix-menu-desktop" : ""
+          }`}
         style={{
           top: isFixed ? 0 : `${topOffset - window.scrollY}px`,
         }}
@@ -372,11 +389,11 @@ const Header: React.FC = () => {
                   <a href="/product">Sản phẩm</a>
                   <ul className="sub-menu">
                     {data.map((category: Category) => (
-                      <li key={category.id}>
+                      <MenuItemStyled key={category.id}>
                         <Link to={`/category/${category.id}`}>
                           {category.name}
                         </Link>
-                      </li>
+                      </MenuItemStyled>
                     ))}
                   </ul>
                 </li>
@@ -397,9 +414,6 @@ const Header: React.FC = () => {
 
             {/* Icon header */}
             <div className="wrap-icon-header flex-w flex-r-m">
-              {/* <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-                <i className="zmdi zmdi-search"></i>
-              </div> */}
               <a
                 href="/cart"
                 className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti "
@@ -410,8 +424,7 @@ const Header: React.FC = () => {
               <a
                 href="/love"
                 className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-                data-notify={favoriteCount}
-                onClick={handleAddToFavorites} // Gọi hàm khi nhấn nút
+                data-notify={totalFavorites}
               >
                 <i className="zmdi zmdi-favorite-outline"></i>
               </a>
@@ -435,9 +448,6 @@ const Header: React.FC = () => {
 
         {/* Icon header */}
         <div className="wrap-icon-header flex-w flex-r-m m-r-15">
-          {/* <div className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
-            <i className="zmdi zmdi-search"></i>
-          </div> */}
           <a
             href="/cart"
             className="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
@@ -448,7 +458,7 @@ const Header: React.FC = () => {
           <a
             href="/love"
             className="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
-            data-notify={favoriteCount}
+            data-notify={totalFavorites}
           >
             <i className="zmdi zmdi-favorite-outline"></i>
           </a>
@@ -461,68 +471,6 @@ const Header: React.FC = () => {
           </span>
         </div>
       </div>
-
-      {/* Menu Mobile */}
-      {/* <div className="menu-mobile">
-        <ul className="topbar-mobile">
-          <li>
-            <div className="left-top-bar">
-              Free shipping for standard order over $100
-            </div>
-          </li>
-          <li>
-            <div className="right-top-bar flex-w h-full">
-              <a href="#" className="flex-c-m p-lr-10 trans-04">
-                Help & FAQs
-              </a>
-              // Tiếp tục từ phần Menu Mobile
-              <a href="#" className="flex-c-m p-lr-10 trans-04">
-                My Account
-              </a>
-              <a href="#" className="flex-c-m p-lr-10 trans-04">
-                EN
-              </a>
-              <a href="#" className="flex-c-m p-lr-10 trans-04">
-                USD
-              </a>
-            </div>
-          </li>
-        </ul>
-
-        <ul className="main-menu-m">
-          <li>
-            <a href="/">Trang chủ</a>
-          </li>
-          <li>
-            <a href="#">Sản phẩm</a>
-            <ul className="sub-menu-m">
-              {data.map((category: Category) => (
-                <li key={category.id}>
-                  <Link to={`/category/${category.id}`}>{category.name}</Link>
-                </li>
-              ))}
-            </ul>
-            <span className="arrow-main-menu-m">
-              <i className="fa fa-angle-right" aria-hidden="true"></i>
-            </span>
-          </li>
-          <li>
-            <a href="#">Thương hiệu</a>
-          </li>
-          <li>
-            <Link to="/blog">Bài viết</Link>
-          </li>
-          <li>
-            <Link to="/about">Giới thiệu</Link>
-          </li>
-          <li>
-            <Link to="/contact">Liên hệ</Link>
-          </li>
-          <li>
-            <Link to="/support">Chính sách đổi trả</Link>
-          </li>
-        </ul>
-      </div> */}
     </header>
   );
 };

@@ -8,6 +8,11 @@ import React, {
 import axiosInstance from "src/config/axiosInstance";
 import { Address, User } from "src/types/user";
 
+interface ResetPasswordData {
+  current_password: string; // Mật khẩu hiện tại
+  new_password: string;     // Mật khẩu mới
+}
+
 interface UserContextProps {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -17,6 +22,7 @@ interface UserContextProps {
   updateAddress: (id: number, updatedData: Partial<Address>) => Promise<void>;
   deleteAddress: (id: number) => Promise<void>;
   setDefaultAddress: (id: number) => Promise<void>;
+  resetPassword: (data: ResetPasswordData) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -61,6 +67,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     fetchUser();
   }, []);
   // console.log(user);
+
+  // Hàm resetPassword để đổi mật khẩu
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resetPassword = async (data: any) => {
+    try {
+      const response = await axiosInstance.put("/api/change-password", data);
+      return response.data; // Trả về dữ liệu nếu cần
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw error.response?.data || error.message;
+    }
+  };
 
   // Hàm update thông tin người dùng
   const updateUser = async (updatedData: Partial<User>) => {
@@ -165,6 +183,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       updateAddress,
       deleteAddress,
       setDefaultAddress,
+      resetPassword
     }}>
       {children}
     </UserContext.Provider>
