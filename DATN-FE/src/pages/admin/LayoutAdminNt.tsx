@@ -5,11 +5,7 @@ import {
   AppstoreOutlined,
   ShoppingOutlined,
   ShoppingCartOutlined,
-  UserOutlined,
   SkinOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  BellOutlined,
   FileTextOutlined,
   MessageOutlined,
   AppstoreAddOutlined,
@@ -216,21 +212,6 @@ const LayoutAdminNT: React.FC = () => {
               padding: 0,
             }}
           />
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/logoduan.jpg"
-              alt="Shop Logo"
-              style={{ height: "60px", width: "80px" }}
-            />
-          </div>
         </Header>
 
         <Content

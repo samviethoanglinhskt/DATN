@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Table,
   Button,
-  Tooltip,
   message,
   Modal,
   Form,
@@ -14,7 +13,6 @@ import {
   Upload,
 } from "antd";
 import {
-  EditOutlined,
   DeleteOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -136,7 +134,7 @@ const LogoBannerManagement: React.FC = () => {
       width: 120,
       render: (image: string) => (
         <Image
-          src={`  /${image}`}
+          src={`http://127.0.0.1:8000/storage/${image}`}
           alt="Logo"
           width={80}
           height={80}
