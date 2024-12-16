@@ -4,6 +4,7 @@ import { useCart } from "src/context/Cart";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { Checkbox, IconButton } from "@mui/material";
 import axiosInstance from "src/config/axiosInstance";
+import { useSnackbar } from "notistack";
 
 const ShoppingCart: React.FC = () => {
   const {
@@ -17,6 +18,7 @@ const ShoppingCart: React.FC = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSelectItem = (id: number | undefined) => {
     if (id === undefined) return; // Thêm kiểm tra undefined
@@ -74,7 +76,7 @@ const ShoppingCart: React.FC = () => {
         });
       }
     } catch {
-      alert("Sản phẩm đã chọn vượt quá số lượng tồn kho. Đừng lo chúng tôi sẽ đồng bộ lại giúp bạn!")
+      enqueueSnackbar("Sản phẩm đã chọn vượt quá số lượng tồn kho. Đừng lo chúng tôi sẽ đồng bộ lại giúp bạn!", { variant: "warning" });
       window.location.reload();
     }
   };
@@ -205,7 +207,8 @@ const ShoppingCart: React.FC = () => {
                                         ) {
                                           upCartItemQuantity(item.id, item.quantity + 1);
                                         } else {
-                                          alert(`Số lượng yêu cầu vượt quá tồn kho hiện tại là ${item.variant.quantity}.`)
+                                          // alert(`Số lượng yêu cầu vượt quá tồn kho hiện tại là ${item.variant.quantity}.`)
+                                          enqueueSnackbar(`Số lượng yêu cầu vượt quá tồn kho hiện tại là ${item.variant.quantity}.`, { variant: "warning" });
                                         }
                                       }}
                                       className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
@@ -250,7 +253,6 @@ const ShoppingCart: React.FC = () => {
                       <button
                         type="button"
                         onClick={clearCart}
-                        // disabled={loading}
                         className="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn4 p-lr-15 trans-04 pointer m-tb-10"
                       >
                         Xóa toàn bộ giỏ hàng

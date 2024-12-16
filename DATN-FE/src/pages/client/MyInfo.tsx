@@ -6,6 +6,7 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { Address } from 'src/types/user';
 import { getDistrictsByProvinceCode, getProvinces, getWardsByDistrictCode } from 'vn-provinces';
 import { IDistrict, IProvince, IWard } from 'src/types/address';
+import { enqueueSnackbar, useSnackbar } from "notistack";
 
 const SidebarContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -17,6 +18,7 @@ const SidebarContainer = styled(Box)(({ theme }) => ({
 
 // Component hồ sơ
 const Profile = () => {
+    const { enqueueSnackbar } = useSnackbar();
     const { user, updateUser } = useUser();
     // Khởi tạo state với giá trị mặc định rỗng
     const [name, setName] = useState("");
@@ -79,8 +81,10 @@ const Profile = () => {
         try {
             const response = await updateUser({ name, phone, email });
             console.log(response);
-            alert("Cập nhật thông tin thành công!");
-            window.location.reload();
+            enqueueSnackbar("Cập nhật thông tin thành công!", { variant: "info" });
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } catch (error) {
             console.error("Cập nhật thông tin thất bại:", error);
         }
@@ -198,7 +202,7 @@ const ResetPass = () => {
                 current_password: currentPassword,
                 new_password: newPassword,
             });
-            alert("Đổi mật khẩu thành công!");
+            enqueueSnackbar("Cập nhật mật khẩu thành công", { variant: "success" });
             setCurrentPassword("");
             setNewPassword("");
             setConfirmPassword("");
@@ -289,6 +293,20 @@ const AddressList = () => {
     const [wards, setWards] = useState<IWard[]>([]);
     const [selectedAddress, setSelectedAddress] = useState("");
     const [addressToUpdate, setAddressToUpdate] = useState<Address | null>(null);
+    const [openDialog, setOpenDialog] = useState(false); // Quản lý trạng thái mở Dialog
+    const [addressIdToDelete, setAddressIdToDelete] = useState<number | null>(null); // Lưu id của địa chỉ cần xóa
+
+    // Hàm mở Dialog và lưu id địa chỉ cần xóa
+    const handleOpenDeleteDialog = (id: number) => {
+        setAddressIdToDelete(id);
+        setOpenDialog(true);
+    };
+
+    // Hàm đóng Dialog
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setAddressIdToDelete(null);
+    };
 
     useEffect(() => {
         // Chỉ cập nhật selectedAddress nếu là cập nhật địa chỉ từ user
@@ -399,9 +417,9 @@ const AddressList = () => {
                 address_detail: '',
             });
             handleClose();
+            enqueueSnackbar("Thêm địa chỉ thành công!", { variant: "success" });
         } catch (error) {
             console.error('Lỗi khi thêm địa chỉ:', error);
-            alert('Đã xảy ra lỗi khi thêm địa chỉ');
         }
     };
 
@@ -415,31 +433,32 @@ const AddressList = () => {
                 await updateAddress(addressToUpdate.id, updatedAddressData);
                 setNewAddress({ address: '', address_detail: '' });
                 handleClose();
+                enqueueSnackbar("Cập nhật địa chỉ thành công!", { variant: "success" });
             } catch (error) {
                 console.error('Lỗi khi cập nhật địa chỉ:', error);
-                alert('Đã xảy ra lỗi khi cập nhật địa chỉ');
             }
         }
     };
 
-    const handleDeleteAddress = async (id: number) => {
-        const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa địa chỉ này?");
-        if (!confirmDelete) return;
+    const handleDeleteAddress = async () => {
+        if (!addressIdToDelete) return;
 
         try {
-            await deleteAddress(id);
+            await deleteAddress(addressIdToDelete); // Xóa địa chỉ
+            enqueueSnackbar("Xóa địa chỉ thành công!", { variant: "success" });
+            handleCloseDialog(); // Đóng Dialog sau khi xóa thành công
         } catch (error) {
             console.error("Lỗi khi xóa địa chỉ:", error);
-            alert("Đã xảy ra lỗi khi xóa địa chỉ. Vui lòng thử lại.");
+            handleCloseDialog(); // Đóng Dialog nếu có lỗi
         }
     };
 
     const handleSetDefault = async (id: number) => {
         try {
             await setDefaultAddress(id);
+            enqueueSnackbar("Đặt địa chỉ mặc định thành công!", { variant: "success" });
         } catch (error) {
             console.error('Lỗi khi đặt địa chỉ mặc định:', error);
-            alert('Đã xảy ra lỗi khi cập nhật địa chỉ mặc định.');
         }
     };
 
@@ -486,8 +505,8 @@ const AddressList = () => {
                                     Cập nhật
                                 </Button>
                                 {!address.is_default &&
-                                    <Button variant="text" color="error" onClick={() => handleDeleteAddress(address.id)}>
-                                        Xóa
+                                    <Button onClick={() => handleOpenDeleteDialog(address.id)} color="error">
+                                        Xóa địa chỉ
                                     </Button>
                                 }
 
@@ -602,6 +621,22 @@ const AddressList = () => {
                     </Button>
                     <Button onClick={addressToUpdate ? handleUpdateAddress : handleAddAddress} color="primary">
                         {addressToUpdate ? "Cập nhật" : "Thêm"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Dialog xác nhận xóa */}
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>Xác nhận xóa địa chỉ</DialogTitle>
+                <DialogContent>
+                    Bạn có chắc chắn muốn xóa địa chỉ này?
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="inherit">
+                        Hủy
+                    </Button>
+                    <Button onClick={handleDeleteAddress} color="error" variant="contained">
+                        Xóa
                     </Button>
                 </DialogActions>
             </Dialog>

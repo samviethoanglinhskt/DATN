@@ -45,6 +45,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);

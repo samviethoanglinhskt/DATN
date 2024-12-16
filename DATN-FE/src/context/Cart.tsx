@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "src/config/axiosInstance";
 import { CartItem, CartProviderProps, CartContextType } from "src/types/cart";
 import { useLoading } from "./LoadingContext";
+import { useSnackbar } from "notistack";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -11,6 +13,22 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const [totalQuantity, setTotalQuantity] = useState(0);
   const { setLoading } = useLoading();
   const [isGuest, setIsGuest] = useState<boolean>(true);
+  const { enqueueSnackbar } = useSnackbar();
+  // State để điều khiển Dialog
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogAction, setDialogAction] = useState<(() => void) | null>(null);
+
+  // Mở Dialog xác nhận
+  const openConfirmDialog = (action: () => void) => {
+    setDialogAction(() => action); // Lưu lại hành động cần thực hiện sau khi xác nhận
+    setOpenDialog(true);
+  };
+
+  // Đóng Dialog
+  const closeDialog = () => {
+    setOpenDialog(false);
+    setDialogAction(null);
+  };
 
   const fetchCartItems = async (): Promise<CartItem[]> => {
     const token = sessionStorage.getItem("token");
@@ -187,7 +205,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       );
 
       setTotalQuantity(newTotalQuantity);
-      alert("Thêm sản phẩm thành công");
+      enqueueSnackbar("Thêm sản phẩm thành công", { variant: "success" });
       return;
     } else {
       const token = sessionStorage.getItem("token");
@@ -232,17 +250,19 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             setTotalQuantity(newTotalQuantity);
             return updatedItems;
           });
-          alert("Thêm sản phẩm thành công");
+          enqueueSnackbar("Thêm sản phẩm thành công", { variant: "success" });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         // Xử lý lỗi trả về từ backend
         if (error.response && error.response.status === 400) {
           const errorMessage = error.response.data.message || "Đã xảy ra lỗi.";
-          alert(`${errorMessage}`);
+          enqueueSnackbar(errorMessage, { variant: "error" });
         } else {
           console.error("Error adding item to cart:", error);
-          alert("Đã xảy ra lỗi, vui lòng thử lại sau.");
+          enqueueSnackbar("Đã xảy ra lỗi, vui lòng thử lại sau.", {
+            variant: "error",
+          });
         }
       }
     }
@@ -263,7 +283,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       );
       setTotalQuantity(newTotalQuantity);
 
-      alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
+      enqueueSnackbar("Sản phẩm đã được xóa khỏi giỏ hàng!", { variant: "info" });
       return;
     } else {
       const token = sessionStorage.getItem("token");
@@ -283,7 +303,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
               (cartItems.find((item) => item.id === id)
                 ?.quantity || 0)
           ); // Update total quantity
-          alert("Xóa thành công");
+          enqueueSnackbar("Sản phẩm đã được xóa khỏi giỏ hàng!", { variant: "info" });
         }
       } catch (error) {
         console.error("Error removing product from cart:", error);
@@ -347,7 +367,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
         // Kiểm tra số lượng mới
         if (quantity > availableQuantity) {
-          alert(`Số lượng yêu cầu vượt quá tồn kho hiện tại là ${availableQuantity}.`);
+          enqueueSnackbar(
+            `Số lượng yêu cầu vượt quá tồn kho hiện tại là ${availableQuantity}.`,
+            { variant: "warning" }
+          );
           return;
         }
 
@@ -396,36 +419,34 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const clearCart = async () => {
-    // Hiển thị hộp thoại xác nhận
-    const confirmDelete = window.confirm("Bạn có muốn xóa tất cả sản phẩm trong giỏ hàng không?");
+    const performClearCart = async () => {
+      if (isGuest) {
+        // Nếu là khách vãng lai, xóa giỏ hàng từ localStorage
+        localStorage.removeItem("guestCart");
+        setCartItems([]);
+        setTotalQuantity(0); // Reset tổng số lượng
+        enqueueSnackbar("Giỏ hàng của bạn đã được xóa!", { variant: "info" });
+      } else {
+        try {
+          const token = sessionStorage.getItem("token");
+          const response = await axiosInstance.delete("api/cart/del-all-cart", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-    if (!confirmDelete) {
-      // Nếu người dùng không xác nhận, dừng hành động
-      return;
-    }
-    if (isGuest) {
-      // Nếu là khách vãng lai, xóa giỏ hàng từ localStorage
-      localStorage.removeItem("guestCart");
-      setCartItems([]);
-      setTotalQuantity(0); // Reset tổng số lượng
-      alert("Giỏ hàng của bạn đã được xóa!");
-      return;
-    } else {
-      try {
-        const token = sessionStorage.getItem("token");
-        const response = await axiosInstance.delete("api/cart/del-all-cart", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.status === 200) {
-          setCartItems([]);
-          setTotalQuantity(0); // Reset tổng số lượng
-          alert("Tất cả sản phẩm đã được xóa!");
+          if (response.status === 200) {
+            setCartItems([]);
+            setTotalQuantity(0); // Reset tổng số lượng
+            enqueueSnackbar("Giỏ hàng của bạn đã được xóa!", { variant: "info" });
+          }
+        } catch (error) {
+          console.error("Error clearing cart:", error);
+          enqueueSnackbar("Lỗi khi xóa giỏ hàng, vui lòng thử lại!", { variant: "error" });
         }
-      } catch (error) {
-        console.error("Error clearing cart:", error);
       }
-    }
+    };
+
+    // Mở Dialog xác nhận trước khi thực hiện xóa giỏ hàng
+    openConfirmDialog(performClearCart);
   };
 
   const mergeCarts = (localCart: CartItem[], backendCart: CartItem[]): CartItem[] => {
@@ -447,7 +468,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     return mergedCart;
   };
 
-  const syncCartToBackend = async (mergedCart: CartItem[]) => {
+  const syncCartToBackend = async (localCart: CartItem[], backendCart: CartItem[]) => {
+    if (!localCart.length) return;
+
+    const mergedCart = mergeCarts(localCart, backendCart);
     const token = sessionStorage.getItem("token");
     if (!token) return;
 
@@ -465,7 +489,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           syncedCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
         );
         localStorage.removeItem("guestCart");
-        alert("Đã đồng bộ giỏ hàng");
+        if (localCart.length > 0) {
+          enqueueSnackbar("Đã đồng bộ giỏ hàng", { variant: "info" });
+        }
       }
     } catch (error) {
       console.error("Error syncing cart to backend:", error);
@@ -478,17 +504,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     // Lấy giỏ hàng từ backend
     const backendCart = await fetchCartItems();
 
-    // Hợp nhất hai giỏ hàng
-    const mergedCart = mergeCarts(localCart, backendCart);
+    // Nếu giỏ hàng vãng lai không có sản phẩm, không cần đồng bộ
+    if (localCart.length === 0) {
+      setCartItems(backendCart); // Cập nhật state với giỏ hàng backend
+      setTotalQuantity(
+        backendCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
+      );
+      return;
+    }
 
     // Đồng bộ giỏ hàng hợp nhất lên backend
-    await syncCartToBackend(mergedCart);
-
-    // Cập nhật state
-    setCartItems(mergedCart);
-    setTotalQuantity(
-      mergedCart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
-    );
+    await syncCartToBackend(localCart, backendCart);
   };
 
 
@@ -507,6 +533,30 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       }}
     >
       {children}
+      {/* Dialog xác nhận xóa giỏ hàng */}
+      <Dialog open={openDialog} onClose={closeDialog}>
+        <DialogTitle>Xác nhận xóa giỏ hàng</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng không? Hành động này không thể hoàn tác.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog} color="inherit">
+            Hủy
+          </Button>
+          <Button
+            onClick={() => {
+              if (dialogAction) dialogAction(); // Thực thi hành động đã lưu
+              closeDialog(); // Đóng Dialog
+            }}
+            color="error"
+            variant="contained"
+          >
+            Xóa
+          </Button>
+        </DialogActions>
+      </Dialog>
     </CartContext.Provider>
   );
 };
