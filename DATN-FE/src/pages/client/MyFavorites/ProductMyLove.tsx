@@ -45,7 +45,7 @@ const ProductCard: React.FC<{
             src={`http://127.0.0.1:8000/storage/${product.product.image}`}
             className={`product-img ${imageLoaded ? "loaded" : ""}`}
             alt={product.product.name}
-            onClick={() => onClick(product.id)}
+            onClick={() => onClick(product.tb_product_id)}
             onLoad={() => setImageLoaded(true)}
             loading="lazy"
           />
@@ -53,7 +53,7 @@ const ProductCard: React.FC<{
             <div className="action-buttons-wrapper">
               <button
                 className="btn action-btn view-btn"
-                onClick={() => onClick(product.id)}
+                onClick={() => onClick(product.tb_product_id)}
               >
                 <RemoveRedEyeOutlined /> Xem chi tiết
               </button>
