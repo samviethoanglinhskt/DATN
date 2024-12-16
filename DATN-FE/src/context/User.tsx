@@ -45,6 +45,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -72,7 +73,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
     fetchUser();
   }, []);
-  console.log(user);
+  // console.log(user);
 
   // Hàm resetPassword để đổi mật khẩu
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

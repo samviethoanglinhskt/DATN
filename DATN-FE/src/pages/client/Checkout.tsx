@@ -10,6 +10,7 @@ import { Address } from 'src/types/user';
 import { getDistrictsByProvinceCode, getProvinces, getWardsByDistrictCode } from 'vn-provinces';
 import { IDistrict, IProvince, IWard } from 'src/types/address';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import { useLoading } from 'src/context/LoadingContext';
 
 // interface ở đây
 interface Product {
@@ -465,7 +466,7 @@ const CheckoutPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoading();
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -753,10 +754,6 @@ const CheckoutPage: React.FC = () => {
   if (loadingUser) {
     return <div>Đang tải thông tin người dùng...</div>;
   }
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
 
   return (
     <div className="container py-5 mt-5">
