@@ -1,3 +1,4 @@
+import { enqueueSnackbar } from 'notistack';
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import axiosInstance from 'src/config/axiosInstance';
 import { Favorite, FavoriteContextProps } from 'src/types/favorite';
@@ -41,9 +42,9 @@ export const FavoriteProvider = ({ children }: FavoriteProviderProps) => {
                 setTotalFavorites(updatedFavorites.length);
                 return updatedFavorites;
             });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Không thể thêm sản phẩm vào danh sách yêu thích.');
+            enqueueSnackbar("Đã thêm vào yêu thích", { variant: "success" });
+        } catch {
+            enqueueSnackbar("Đăng nhập để thêm vào yêu thích", { variant: "error" });
         }
     };
 
@@ -56,6 +57,7 @@ export const FavoriteProvider = ({ children }: FavoriteProviderProps) => {
                 setTotalFavorites(updatedFavorites.length);
                 return updatedFavorites;
             });
+            enqueueSnackbar("Đã xóa bỏ yêu thích", { variant: "success" });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || 'Không thể xóa sản phẩm khỏi danh sách yêu thích.');
