@@ -7,10 +7,13 @@ import { Product, Variant } from "src/types/product";
 import iconUser from "src/assets/images/icons/user.png"
 import { CartItem } from "src/types/cart";
 import { useFavorites } from "src/context/FavoriteProduct";
+import { useLoading } from "src/context/LoadingContext";
+import LoadingOverlay from "src/components/Loading/Loading";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { addToCart } = useCart();
+  const { setLoading } = useLoading();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
@@ -32,6 +35,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get(`/api/product/${id}`);
         const productData = response.data;
         setProduct(productData);
@@ -55,10 +59,13 @@ const ProductDetail = () => {
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     const fetchReviews = async (page: number) => {
+      setLoading(true);
       try {
         const response = await axiosInstance.get(`/api/reviews/product/${id}`, {
           params: {
@@ -71,13 +78,15 @@ const ProductDetail = () => {
         setTotalPages(response.data.last_page); // Cập nhật tổng số trang
       } catch (error) {
         console.error("Lỗi khi lấy danh sách đánh giá:", error);
+      } finally {
+        setLoading(false);
       }
     };
     if (id) {
       fetchProduct();
       fetchReviews(currentPage);
     }
-  }, [id, currentPage]);
+  }, [id, currentPage, setLoading]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -233,7 +242,7 @@ const ProductDetail = () => {
   };
 
   if (!product) {
-    return <div>Loading...</div>; // Hiển thị Loading nếu chưa có dữ liệu
+    return <LoadingOverlay />;
   }
 
   return (

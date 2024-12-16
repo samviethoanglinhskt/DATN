@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "src/context/Cart";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { Box, Checkbox, IconButton } from "@mui/material";
-import CircularProgress from '@mui/material/CircularProgress';
+import { Checkbox, IconButton } from "@mui/material";
 import axiosInstance from "src/config/axiosInstance";
 
 const ShoppingCart: React.FC = () => {
@@ -13,7 +12,6 @@ const ShoppingCart: React.FC = () => {
     clearCart,
     reduceCartItemQuantity,
     upCartItemQuantity,
-    loading,
     isGuest,
   } = useCart();
   const navigate = useNavigate();
@@ -84,15 +82,6 @@ const ShoppingCart: React.FC = () => {
   useEffect(() => {
     console.log("Cart Items: ", cartItems);
   }, [cartItems]);
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress /> {/* Spinner */}
-      </Box>
-    );
-  }
-
 
   return (
     <div>
@@ -261,7 +250,7 @@ const ShoppingCart: React.FC = () => {
                       <button
                         type="button"
                         onClick={clearCart}
-                        disabled={loading}
+                        // disabled={loading}
                         className="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn4 p-lr-15 trans-04 pointer m-tb-10"
                       >
                         Xóa toàn bộ giỏ hàng

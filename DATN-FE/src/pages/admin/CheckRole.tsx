@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import LoadingOverlay from "src/components/Loading/Loading";
 import { useUser } from "src/context/User";
 
 interface ProtectedRouteProps {
@@ -12,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminRoute })
 
   // Nếu đang trong trạng thái loading, hiển thị loading spinner hoặc một cái gì đó
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingOverlay />;
   }
 
   // Kiểm tra xem người dùng có login hay không

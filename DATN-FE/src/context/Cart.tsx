@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "src/config/axiosInstance";
 import { CartItem, CartProviderProps, CartContextType } from "src/types/cart";
+import { useLoading } from "./LoadingContext";
 
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -8,7 +9,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { setLoading } = useLoading();
   const [isGuest, setIsGuest] = useState<boolean>(true);
 
   const fetchCartItems = async (): Promise<CartItem[]> => {
@@ -18,6 +19,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
 
     try {
+      setLoading(true);
       const response = await axiosInstance.get("/api/cart", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -94,6 +96,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   useEffect(() => {
     const syncCartWithStock = async (cart_items: CartItem[]) => {
       try {
+        setLoading(true);
         const response = await axiosInstance.post('/api/cart/check-cart-stock', {
           cart_items,
         });
@@ -131,6 +134,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         setLoading(false);
       } catch (error) {
         console.error("Lỗi khi đồng bộ giỏ hàng:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -493,7 +497,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       value={{
         cartItems,
         totalQuantity,
-        loading,
         isGuest,
         addToCart,
         removeFromCart,

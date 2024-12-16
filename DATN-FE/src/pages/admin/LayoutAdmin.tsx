@@ -19,7 +19,6 @@ import {
   theme,
 } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
-import type { MenuProps } from "antd";
 
 const { Header, Sider, Content } = Layout;
 
@@ -138,7 +137,7 @@ const LayoutAdmin: React.FC = () => {
       icon: <MessageOutlined />,
       label: (
         <NavLink to="review" className="text-decoration-none">
-         Bình luận
+          Bình luận
         </NavLink>
       ),
     },
@@ -147,19 +146,19 @@ const LayoutAdmin: React.FC = () => {
       icon: <MessageOutlined />,
       label: (
         <NavLink to="contact" className="text-decoration-none">
-         Liên hệ
+          Liên hệ
         </NavLink>
       ),
     },
   ];
   return (
-    <Layout style={{ minHeight: "100vh",backgroundColor: "#fff" }}>
+    <Layout style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         style={{
-          backgroundColor:"white",
+          backgroundColor: "white",
           overflow: "auto",
           height: "100vh",
           position: "fixed",

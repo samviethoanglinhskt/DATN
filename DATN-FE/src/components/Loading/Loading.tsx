@@ -1,7 +1,5 @@
 // LoadingOverlay.js
 import { useLoading } from "src/context/LoadingContext";
-import 'src/components/Loading/Loading.css'
-
 
 const LoadingOverlay = () => {
     const { loading } = useLoading();
@@ -9,12 +7,9 @@ const LoadingOverlay = () => {
     if (!loading) return null;
 
     return (
-        <div className="three-body">
-            <div className="three-body__dot" />
-            <div className="three-body__dot" />
-            <div className="three-body__dot" />
+        <div className="animsition-loading-1">
+            <div className="loader05" />
         </div>
-
     );
 };
 

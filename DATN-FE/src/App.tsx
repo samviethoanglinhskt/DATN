@@ -37,9 +37,10 @@ import "./echo.js";
 import ProtectedRoute from "./pages/admin/CheckRole.js";
 import ArticleManager from "./pages/admin/post/Post.js";
 import ProductList from "./components/Home/Category.js";
-import LoadingOverlay from "./components/Loading/Loading.js";
 import ReviewList from "./pages/admin/Comment/Comment.js";
 import ContactsList from "./pages/admin/Contact/Contact.js";
+import AllProductBrand from "./components/Home/AllProductBrand.js";
+import ForgotPassword from "./pages/client/ForgotPass.js";
 
 function App() {
   const routeConfig = [
@@ -55,8 +56,10 @@ function App() {
         { path: "register", element: <Register /> },
         { path: "login", element: <Login /> },
         { path: "myinfo", element: <MyInfo /> },
+        { path: "forgot_password", element: <ForgotPassword />, },
         { path: "product/:id", element: <ProductDetail /> },
         { path: "category/:id", element: <ProductList /> },
+        { path: "product/brand/:id", element: <AllProductBrand />, },
         { path: "product", element: <AllProduct /> },
         { path: "cart", element: <Cart /> },
         { path: "checkout", element: <CheckoutPage /> },
@@ -120,7 +123,6 @@ function App() {
 
   return (
     <main>
-      <LoadingOverlay />
       {routes}
     </main>
   );
