@@ -547,8 +547,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           </Button>
           <Button
             onClick={() => {
-              if (dialogAction) dialogAction(); // Thực thi hành động đã lưu
-              closeDialog(); // Đóng Dialog
+              if (dialogAction) dialogAction();
+              closeDialog();
             }}
             color="error"
             variant="contained"

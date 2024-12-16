@@ -11,6 +11,7 @@ import { getDistrictsByProvinceCode, getProvinces, getWardsByDistrictCode } from
 import { IDistrict, IProvince, IWard } from 'src/types/address';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { useLoading } from 'src/context/LoadingContext';
+import { enqueueSnackbar } from 'notistack';
 
 // interface ở đây
 interface Product {
@@ -711,24 +712,28 @@ const CheckoutPage: React.FC = () => {
       if (response.ok) {
         const responseData = await response.json();
 
-        if (paymentMethod === 'vnpay' && responseData.vnpay_url) {
+        if (paymentMethod === 'vnpay' && responseData.vnpay_url && !token) {
           // Chuyển hướng đến VNPay URL
           window.location.href = responseData.vnpay_url;
-        } else {
-          // Nếu là khách vãng lai, xóa sản phẩm đã chọn khỏi giỏ hàng trong sessionStorage
-          if (!token) {
-            const currentCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
-            // Lọc bỏ các sản phẩm đã được chọn
-            const updatedCart = currentCart.filter((item: any) =>
-              !selectedProducts.some((selected: any) => selected.id === item.id)
-            );
-            localStorage.setItem('guestCart', JSON.stringify(updatedCart));
-          }
-          navigate("/payment-success"); // Chuyển hướng về trang thành công
+          const currentCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+          // Lọc bỏ các sản phẩm đã được chọn
+          const updatedCart = currentCart.filter((item: any) =>
+            !selectedProducts.some((selected: any) => selected.id === item.id)
+          );
+          localStorage.setItem('guestCart', JSON.stringify(updatedCart));
         }
+        // Nếu là khách vãng lai, xóa sản phẩm đã chọn khỏi giỏ hàng trong sessionStorage
+        if (!token) {
+          const currentCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+          // Lọc bỏ các sản phẩm đã được chọn
+          const updatedCart = currentCart.filter((item: any) =>
+            !selectedProducts.some((selected: any) => selected.id === item.id)
+          );
+          localStorage.setItem('guestCart', JSON.stringify(updatedCart));
+        }
+        navigate("/payment-success"); // Chuyển hướng về trang thành công
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || "Đặt hàng thất bại. Vui lòng thử lại.");
+        enqueueSnackbar("Sản phẩm đã bị người khác mua mất vui lòng chọn sản phẩm khác", { variant: "error" });
       }
     } catch (error) {
       console.log(error);
