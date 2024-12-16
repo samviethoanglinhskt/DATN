@@ -14,15 +14,15 @@ const Blog: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedPost, setSelectedPost] = useState<any>(null); // Bài viết được chọn
 
-  // Hàm lấy dữ liệu từ API hoặc localStorage
+  // Hàm lấy dữ liệu từ API hoặc sessionStorage
   const fetchPosts = async () => {
     const cacheKey = "blogPosts"; // Key cache
     const cacheExpirationKey = "blogPosts_expiration"; // Key cho thời gian hết hạn cache
     const cacheDuration = 60 * 60 * 1000; // 1 giờ (ms)
 
     const now = Date.now();
-    const cachedPosts = localStorage.getItem(cacheKey);
-    const cacheExpiration = localStorage.getItem(cacheExpirationKey);
+    const cachedPosts = sessionStorage.getItem(cacheKey);
+    const cacheExpiration = sessionStorage.getItem(cacheExpirationKey);
 
     if (cachedPosts && cacheExpiration && now < parseInt(cacheExpiration, 10)) {
       // Dùng dữ liệu từ cache
@@ -33,10 +33,14 @@ const Blog: React.FC = () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/new");
         const data = response.data;
+        console.log(data);
 
         // Lưu vào cache
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-        localStorage.setItem(cacheExpirationKey, (now + cacheDuration).toString());
+        sessionStorage.setItem(cacheKey, JSON.stringify(data));
+        sessionStorage.setItem(
+          cacheExpirationKey,
+          (now + cacheDuration).toString()
+        );
 
         setPosts(data);
         setLoading(false);
@@ -100,7 +104,7 @@ const Blog: React.FC = () => {
                     <div className="post-cover">
                       <img
                         alt="blog-image"
-                        src={post.image || "https://picsum.photos/200/200"}
+                        src={`http://127.0.0.1:8000/storage/${post.image}`}
                         className="post-image"
                       />
                       <div className="post-overlay">
@@ -147,7 +151,11 @@ const Blog: React.FC = () => {
           >
             <img
               alt="blog-image"
-              src={selectedPost.image || "https://picsum.photos/200/200"}
+              src={
+                selectedPost.image
+                  ? `http://127.0.0.1:8000/storage/${selectedPost.image}`
+                  : "default-placeholder.jpg"
+              }
               className="modal-image"
             />
             <Text className="modal-date">
