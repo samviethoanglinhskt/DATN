@@ -38,6 +38,7 @@ interface Discount {
   end_day: string;
   created_at: string | null;
   updated_at: string | null;
+  status?: 'upcoming' | 'active' | 'expired';
 }
 
 const Discount: React.FC = () => {
@@ -53,7 +54,12 @@ const Discount: React.FC = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/api/discount");
-      setDiscounts(response.data);
+      // Add status to each discount
+      const discountsWithStatus = response.data.map((discount: Discount) => ({
+        ...discount,
+        status: getDiscountStatus(discount)
+      }));
+      setDiscounts(discountsWithStatus);
     } catch (error: any) {
       message.error("Không thể tải danh sách mã giảm giá");
     } finally {
@@ -65,18 +71,69 @@ const Discount: React.FC = () => {
     fetchDiscounts();
   }, []);
 
+  // Get discount status
+  const getDiscountStatus = (discount: Discount): 'upcoming' | 'active' | 'expired' => {
+    const now = dayjs();
+    const start = dayjs(discount.start_day);
+    const end = dayjs(discount.end_day);
+
+    if (now.isBefore(start)) return 'upcoming';
+    if (now.isAfter(end)) return 'expired';
+    return 'active';
+  };
+
+  // Custom form validation rules
+  const validateDiscountValue = (_: any, value: number) => {
+    if (value > 100) {
+      return Promise.reject('Giá trị giảm giá không được vượt quá 100%');
+    }
+    return Promise.resolve();
+  };
+
+  const validateMaxPrice = (_: any, value: number) => {
+    if (value > 500000) {
+      return Promise.reject('Giá trị tối đa không được vượt quá 500,000 VND');
+    }
+    return Promise.resolve();
+  };
+
+  const validateDates = (_: any, dates: any) => {
+    if (!dates) return Promise.resolve();
+    const [start, end] = dates;
+    if (start && end) {
+      // Check if dates are in the past
+      if (start.isBefore(dayjs(), 'day')) {
+        return Promise.reject('Ngày bắt đầu không thể trong quá khứ');
+      }
+      // Check if end date is before start date
+      if (end.isBefore(start)) {
+        return Promise.reject('Ngày kết thúc phải sau ngày bắt đầu');
+      }
+    }
+    return Promise.resolve();
+  };
+
   // Handle add/edit discount
   const handleSubmit = async (values: any) => {
     try {
       const formData = {
         ...values,
-        start_day: values.dateRange[0].format("YYYY-MM-DD"), // Ensure correct format
-        end_day: values.dateRange[1].format("YYYY-MM-DD"), // Ensure correct format
+        start_day: values.dateRange[0].format("YYYY-MM-DD"),
+        end_day: values.dateRange[1].format("YYYY-MM-DD"),
         quantity: values.quantity,
         max_price: values.max_price,
       };
 
-      console.log(formData); // Log form data to check if it's correct
+      // Additional validation before submission
+      if (formData.discount_value > 100) {
+        message.error('Giá trị giảm giá không được vượt quá 100%');
+        return;
+      }
+
+      if (formData.max_price > 500000) {
+        message.error('Giá trị tối đa không được vượt quá 500,000 VND');
+        return;
+      }
 
       if (editingDiscount) {
         await axiosInstance.put(
@@ -93,7 +150,7 @@ const Discount: React.FC = () => {
       form.resetFields();
       fetchDiscounts();
     } catch (error: any) {
-      console.error("Error submitting form:", error); // Log error for debugging
+      console.error("Error submitting form:", error);
       message.error("Có lỗi xảy ra. Vui lòng thử lại");
     }
   };
@@ -101,6 +158,12 @@ const Discount: React.FC = () => {
   // Handle delete discount
   const handleDelete = async (id: number) => {
     try {
+      const discountToDelete = discounts.find(d => d.id === id);
+      if (discountToDelete?.status === 'active') {
+        message.error('Không thể xóa mã giảm giá đang diễn ra');
+        return;
+      }
+
       await axiosInstance.delete(`/api/discount/${id}`);
       message.success("Xóa mã giảm giá thành công");
       fetchDiscounts();
@@ -112,6 +175,11 @@ const Discount: React.FC = () => {
   const showModal = (record?: Discount) => {
     setEditingDiscount(record || null);
     if (record) {
+      // Check if discount is active before allowing edit
+      if (record.status === 'active') {
+        message.warning('Không thể chỉnh sửa mã giảm giá đang diễn ra');
+        return;
+      }
       form.setFieldsValue({
         ...record,
         dateRange: [dayjs(record.start_day), dayjs(record.end_day)],
@@ -158,9 +226,12 @@ const Discount: React.FC = () => {
       title: "Giá trị tối đa",
       dataIndex: "max_price",
       key: "max_price",
-      render: (value: string) => (
+      render: (value: number) => (
         <Tag color="orange" className="px-3 py-1">
-          {value} VND
+          {new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+          }).format(value)}
         </Tag>
       ),
     },
@@ -185,17 +256,23 @@ const Discount: React.FC = () => {
       title: "Trạng thái",
       key: "status",
       render: (_: any, record: Discount) => {
-        const now = dayjs();
-        const start = dayjs(record.start_day);
-        const end = dayjs(record.end_day);
+        const statusColors = {
+          upcoming: 'warning',
+          active: 'success',
+          expired: 'error'
+        };
 
-        if (now.isBefore(start)) {
-          return <Tag color="warning">Sắp diễn ra</Tag>;
-        } else if (now.isAfter(end)) {
-          return <Tag color="error">Đã kết thúc</Tag>;
-        } else {
-          return <Tag color="success">Đang diễn ra</Tag>;
-        }
+        const statusText = {
+          upcoming: 'Sắp diễn ra',
+          active: 'Đang diễn ra',
+          expired: 'Đã kết thúc'
+        };
+
+        return (
+          <Tag color={statusColors[record.status || 'expired']}>
+            {statusText[record.status || 'expired']}
+          </Tag>
+        );
       },
     },
     {
@@ -203,20 +280,22 @@ const Discount: React.FC = () => {
       key: "action",
       render: (_: any, record: Discount) => (
         <Space>
-          <Tooltip title="Sửa">
+          <Tooltip title={record.status === 'active' ? 'Không thể sửa mã đang diễn ra' : 'Sửa'}>
             <Button
               type="primary"
               icon={<EditOutlined />}
               onClick={() => showModal(record)}
               size="small"
+              disabled={record.status === 'active'}
             />
           </Tooltip>
-          <Tooltip title="Xóa">
+          <Tooltip title={record.status === 'active' ? 'Không thể xóa mã đang diễn ra' : 'Xóa'}>
             <Button
               danger
               icon={<DeleteOutlined />}
               onClick={() => handleDelete(record.id)}
               size="small"
+              disabled={record.status === 'active'}
             />
           </Tooltip>
         </Space>
@@ -295,6 +374,11 @@ const Discount: React.FC = () => {
                 label="Mã giảm giá"
                 rules={[
                   { required: true, message: "Vui lòng nhập mã giảm giá!" },
+                  { min: 3, message: "Mã giảm giá phải có ít nhất 3 ký tự" },
+                  {
+                    pattern: /^[A-Za-z0-9]+$/,
+                    message: "Mã giảm giá chỉ được chứa chữ và số"
+                  }
                 ]}
               >
                 <Input placeholder="Nhập mã giảm giá" />
@@ -305,15 +389,16 @@ const Discount: React.FC = () => {
                 name="discount_value"
                 label="Giá trị (%)"
                 rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập giá trị giảm giá!",
-                  },
+                  { required: true, message: "Vui lòng nhập giá trị giảm giá!" },
+                  { type: 'number', min: 1, message: "Giá trị giảm giá phải lớn hơn 0" },
+                  { validator: validateDiscountValue }
                 ]}
               >
                 <InputNumber
                   placeholder="Nhập giá trị giảm giá"
                   style={{ width: "100%" }}
+                  min={1}
+                  max={100}
                 />
               </Form.Item>
             </div>
@@ -321,25 +406,37 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="quantity"
                 label="Số lượng"
-                rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập số lượng!" },
+                  { type: 'number', min: 1, message: "Số lượng phải lớn hơn 0" }
+                ]}
               >
                 <InputNumber
                   placeholder="Nhập số lượng"
                   style={{ width: "100%" }}
+                  min={1}
                 />
               </Form.Item>
             </div>
             <div className="col-md-6">
               <Form.Item
                 name="max_price"
-                label="Giá trị tối đa"
+                label="Giá trị tối đa (VND)"
                 rules={[
                   { required: true, message: "Vui lòng nhập giá trị tối đa!" },
+                  { type: 'number', min: 1000, message: "Giá trị tối đa phải lớn hơn 1,000 VND" },
+                  { validator: validateMaxPrice }
                 ]}
               >
                 <InputNumber
                   placeholder="Nhập giá trị tối đa"
                   style={{ width: "100%" }}
+                  min={1000}
+                  max={500000}
+                  formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  }
+                  parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
                 />
               </Form.Item>
             </div>
@@ -352,9 +449,17 @@ const Discount: React.FC = () => {
                     required: true,
                     message: "Vui lòng nhập tên chương trình!",
                   },
+                  {
+                    min: 5,
+                    message: "Tên chương trình phải có ít nhất 5 ký tự"
+                  },
+                  {
+                    max: 100,
+                    message: "Tên chương trình không được vượt quá 100 ký tự"
+                  }
                 ]}
               >
-                <Input placeholder="Nhập tên chương trình" />
+                <Input placeholder="Nhập tên chương trình" maxLength={100} />
               </Form.Item>
             </div>
             <div className="col-md-6">
@@ -362,10 +467,24 @@ const Discount: React.FC = () => {
                 name="dateRange"
                 label="Ngày áp dụng"
                 rules={[
-                  { required: true, message: "Vui lòng chọn ngày áp dụng!" },
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ngày áp dụng!"
+                  },
+                  {
+                    validator: validateDates
+                  }
                 ]}
               >
-                <RangePicker />
+                <RangePicker
+                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
+                  placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+                  disabledDate={(current) => {
+                    // Disable dates before today
+                    return current && current < dayjs().startOf('day');
+                  }}
+                />
               </Form.Item>
             </div>
           </div>
