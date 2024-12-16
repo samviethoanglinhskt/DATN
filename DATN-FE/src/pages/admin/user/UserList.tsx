@@ -3,7 +3,6 @@ import {
   Table,
   Space,
   Button,
-  Tooltip,
   message,
   Popconfirm,
   Modal,
@@ -14,7 +13,6 @@ import {
   EditOutlined,
   DeleteOutlined,
   UserOutlined,
-  PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -57,7 +55,7 @@ const UserList: React.FC = () => {
     onError: (error: any) => {
       message.error(
         "Failed to delete user: " +
-          (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message)
       );
     },
   });
@@ -75,7 +73,7 @@ const UserList: React.FC = () => {
     onError: (error: any) => {
       message.error(
         "Failed to update user: " +
-          (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message)
       );
     },
   });
@@ -99,7 +97,7 @@ const UserList: React.FC = () => {
           id: editingUser.id,
           tb_role_id: values.tb_role_id,
         });
-  
+
         // Cập nhật dữ liệu
         const updatedValues = {
           id: editingUser.id,
@@ -110,8 +108,8 @@ const UserList: React.FC = () => {
     } catch (error) {
     }
   };
-  
-  
+
+
 
   const filteredUsers = users.filter(
     (user: User) =>
@@ -141,13 +139,12 @@ const UserList: React.FC = () => {
       width: 120,
       render: (roleId: number) => (
         <span
-          className={`badge ${
-            roleId === 1
-              ? "bg-success"
-              : roleId === 3
+          className={`badge ${roleId === 1
+            ? "bg-success"
+            : roleId === 3
               ? "bg-warning"
               : "bg-info"
-          }`}
+            }`}
         >
           {roleId === 1 ? "Admin" : roleId === 3 ? "Nhân viên" : "User"}
         </span>
@@ -165,18 +162,7 @@ const UserList: React.FC = () => {
         </span>
       ),
     },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      key: "address",
-      ellipsis: true,
-      render: (text: string) => (
-        <span className="text-muted">
-          <i className="bi bi-geo-alt me-1"></i>
-          {text}
-        </span>
-      ),
-    },
+
     {
       title: "Email",
       dataIndex: "email",
@@ -201,22 +187,6 @@ const UserList: React.FC = () => {
             onClick={() => handleEdit(record)}
             loading={updateMutation.isPending}
           ></Button>
-          <Popconfirm
-            title="Delete User"
-            description="Are you sure to delete this user?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-            okButtonProps={{ className: "btn btn-danger" }}
-            cancelButtonProps={{ className: "btn btn-outline-secondary" }}
-          >
-            <Button
-              className="btn btn-outline-danger btn-sm"
-              loading={deleteMutation.isPending}
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
         </Space>
       ),
     },

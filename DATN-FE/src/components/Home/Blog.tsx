@@ -76,6 +76,22 @@ const Blog: React.FC = () => {
   return (
     <section className="blog-section">
       <div className="container">
+
+        <div style={{ marginTop: 50 }}>
+          <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a
+              href="/"
+              className="stext-109 cl8 hov-cl1 trans-04"
+            >
+              Trang chủ
+              <i
+                className="fa fa-angle-right m-l-9 m-r-10"
+                aria-hidden="true"
+              ></i>
+            </a>
+            <span className="stext-109 cl4">Bài viết</span>
+          </div>
+        </div>
         <div className="section-header">
           <Title level={2} className="text-center">
             Bài Viết Về Chúng Tôi

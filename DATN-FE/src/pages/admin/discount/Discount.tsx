@@ -38,6 +38,7 @@ interface Discount {
   end_day: string;
   created_at: string | null;
   updated_at: string | null;
+  status?: "upcoming" | "active" | "expired";
 }
 
 const Discount: React.FC = () => {
@@ -48,12 +49,15 @@ const Discount: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [form] = Form.useForm();
 
-  // Fetch discounts
   const fetchDiscounts = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/api/discount");
-      setDiscounts(response.data);
+      const discountsWithStatus = response.data.map((discount: Discount) => ({
+        ...discount,
+        status: getDiscountStatus(discount),
+      }));
+      setDiscounts(discountsWithStatus);
     } catch (error: any) {
       message.error("Không thể tải danh sách mã giảm giá");
     } finally {
@@ -65,26 +69,41 @@ const Discount: React.FC = () => {
     fetchDiscounts();
   }, []);
 
-  // Handle add/edit discount
+  const getDiscountStatus = (discount: Discount): "upcoming" | "active" | "expired" => {
+    const now = dayjs();
+    const start = dayjs(discount.start_day);
+    const end = dayjs(discount.end_day);
+
+    if (now.isBefore(start)) return "upcoming";
+    if (now.isAfter(end)) return "expired";
+    return "active";
+  };
+
   const handleSubmit = async (values: any) => {
     try {
       const formData = {
         ...values,
-        start_day: values.dateRange[0].format("YYYY-MM-DD"), // Ensure correct format
-        end_day: values.dateRange[1].format("YYYY-MM-DD"), // Ensure correct format
+        start_day: values.dateRange[0].format("YYYY-MM-DD"),
+        end_day: values.dateRange[1].format("YYYY-MM-DD"),
         quantity: values.quantity,
         max_price: values.max_price,
       };
 
-      console.log(formData); // Log form data to check if it's correct
-
       if (editingDiscount) {
-        await axiosInstance.put(
-          `/api/discount/${editingDiscount.id}`,
-          formData
-        );
+        await axiosInstance.put(`/api/discount/${editingDiscount.id}`, formData);
         message.success("Cập nhật mã giảm giá thành công");
       } else {
+        // Validation only for new discounts
+        if (formData.discount_value > 100) {
+          message.error("Giá trị giảm giá không được vượt quá 100%");
+          return;
+        }
+
+        if (formData.max_price > 500000) {
+          message.error("Giá trị tối đa không được vượt quá 500,000 VND");
+          return;
+        }
+
         await axiosInstance.post("/api/discount", formData);
         message.success("Thêm mã giảm giá thành công");
       }
@@ -93,12 +112,11 @@ const Discount: React.FC = () => {
       form.resetFields();
       fetchDiscounts();
     } catch (error: any) {
-      console.error("Error submitting form:", error); // Log error for debugging
+      console.error("Error submitting form:", error);
       message.error("Có lỗi xảy ra. Vui lòng thử lại");
     }
   };
 
-  // Handle delete discount
   const handleDelete = async (id: number) => {
     try {
       await axiosInstance.delete(`/api/discount/${id}`);
@@ -120,6 +138,43 @@ const Discount: React.FC = () => {
       form.resetFields();
     }
     setModalVisible(true);
+  };
+
+  const getValidationRules = (fieldName: string) => {
+    if (editingDiscount) return []; // No validation for editing
+
+    const rules: any = {
+      discount_code: [
+        { required: true, message: "Vui lòng nhập mã giảm giá!" },
+        { min: 3, message: "Mã giảm giá phải có ít nhất 3 ký tự" },
+        {
+          pattern: /^[A-Za-z0-9]+$/,
+          message: "Mã giảm giá chỉ được chứa chữ và số",
+        },
+      ],
+      discount_value: [
+        { required: true, message: "Vui lòng nhập giá trị giảm giá!" },
+        { type: "number", min: 1, message: "Giá trị giảm giá phải lớn hơn 0" },
+      ],
+      quantity: [
+        { required: true, message: "Vui lòng nhập số lượng!" },
+        { type: "number", min: 1, message: "Số lượng phải lớn hơn 0" },
+      ],
+      max_price: [
+        { required: true, message: "Vui lòng nhập giá trị tối đa!" },
+        { type: "number", min: 1000, message: "Giá trị tối đa phải lớn hơn 1,000 VND" },
+      ],
+      name: [
+        { required: true, message: "Vui lòng nhập tên chương trình!" },
+        { min: 5, message: "Tên chương trình phải có ít nhất 5 ký tự" },
+        { max: 100, message: "Tên chương trình không được vượt quá 100 ký tự" },
+      ],
+      dateRange: [
+        { required: true, message: "Vui lòng chọn ngày áp dụng!" },
+      ],
+    };
+
+    return rules[fieldName] || [];
   };
 
   const filteredDiscounts = discounts.filter(
@@ -158,9 +213,12 @@ const Discount: React.FC = () => {
       title: "Giá trị tối đa",
       dataIndex: "max_price",
       key: "max_price",
-      render: (value: string) => (
+      render: (value: number) => (
         <Tag color="orange" className="px-3 py-1">
-          {value} VND
+          {new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value)}
         </Tag>
       ),
     },
@@ -181,23 +239,29 @@ const Discount: React.FC = () => {
       key: "end_day",
       render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
     },
-    {
-      title: "Trạng thái",
-      key: "status",
-      render: (_: any, record: Discount) => {
-        const now = dayjs();
-        const start = dayjs(record.start_day);
-        const end = dayjs(record.end_day);
+    // {
+    //   title: "Trạng thái",
+    //   key: "status",
+    //   render: (_: any, record: Discount) => {
+    //     const statusColors = {
+    //       upcoming: "warning",
+    //       active: "success",
+    //       expired: "error",
+    //     };
 
-        if (now.isBefore(start)) {
-          return <Tag color="warning">Sắp diễn ra</Tag>;
-        } else if (now.isAfter(end)) {
-          return <Tag color="error">Đã kết thúc</Tag>;
-        } else {
-          return <Tag color="success">Đang diễn ra</Tag>;
-        }
-      },
-    },
+    //     const statusText = {
+    //       upcoming: "Sắp diễn ra",
+    //       active: "Đang diễn ra",
+    //       expired: "Đã kết thúc",
+    //     };
+
+    //     return (
+    //       <Tag color={statusColors[record.status || "expired"]}>
+    //         {statusText[record.status || "expired"]}
+    //       </Tag>
+    //     );
+    //   },
+    // },
     {
       title: "Thao tác",
       key: "action",
@@ -293,9 +357,7 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="discount_code"
                 label="Mã giảm giá"
-                rules={[
-                  { required: true, message: "Vui lòng nhập mã giảm giá!" },
-                ]}
+                rules={getValidationRules("discount_code")}
               >
                 <Input placeholder="Nhập mã giảm giá" />
               </Form.Item>
@@ -304,16 +366,13 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="discount_value"
                 label="Giá trị (%)"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập giá trị giảm giá!",
-                  },
-                ]}
+                rules={getValidationRules("discount_value")}
               >
                 <InputNumber
                   placeholder="Nhập giá trị giảm giá"
                   style={{ width: "100%" }}
+                  min={1}
+                  max={100}
                 />
               </Form.Item>
             </div>
@@ -321,25 +380,30 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="quantity"
                 label="Số lượng"
-                rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
+                rules={getValidationRules("quantity")}
               >
                 <InputNumber
                   placeholder="Nhập số lượng"
                   style={{ width: "100%" }}
+                  min={1}
                 />
               </Form.Item>
             </div>
             <div className="col-md-6">
               <Form.Item
                 name="max_price"
-                label="Giá trị tối đa"
-                rules={[
-                  { required: true, message: "Vui lòng nhập giá trị tối đa!" },
-                ]}
+                label="Giá trị tối đa (VND)"
+                rules={getValidationRules("max_price")}
               >
                 <InputNumber
                   placeholder="Nhập giá trị tối đa"
                   style={{ width: "100%" }}
+                  min={1000}
+                  max={500000}
+                  formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
                 />
               </Form.Item>
             </div>
@@ -347,25 +411,28 @@ const Discount: React.FC = () => {
               <Form.Item
                 name="name"
                 label="Tên chương trình"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập tên chương trình!",
-                  },
-                ]}
+                rules={getValidationRules("name")}
               >
-                <Input placeholder="Nhập tên chương trình" />
+                <Input placeholder="Nhập tên chương trình" maxLength={100} />
               </Form.Item>
             </div>
             <div className="col-md-6">
               <Form.Item
                 name="dateRange"
                 label="Ngày áp dụng"
-                rules={[
-                  { required: true, message: "Vui lòng chọn ngày áp dụng!" },
-                ]}
+                rules={getValidationRules("dateRange")}
               >
-                <RangePicker />
+                <RangePicker
+                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY"
+                  placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+                  disabledDate={(current) => {
+                    if (!editingDiscount) {
+                      return current && current < dayjs().startOf("day");
+                    }
+                    return false;
+                  }}
+                />
               </Form.Item>
             </div>
           </div>

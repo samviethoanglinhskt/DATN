@@ -110,7 +110,7 @@ const ContactsList: React.FC = () => {
       render: (text: string, record: Contact) => (
         <div>
           <Button danger onClick={() => deleteContact(record.id)}>
-            Delete
+            Xóa
           </Button>
         </div>
       ),
@@ -142,9 +142,9 @@ const ContactsList: React.FC = () => {
             rules={[{ required: true, message: 'Please select a status!' }]}
           >
             <Select>
-              <Option value="new">New</Option>
-              <Option value="in-progress">In Progress</Option>
-              <Option value="resolved">Resolved</Option>
+              <Option value="new">Liên hệ mới</Option>
+              <Option value="in-progress">Đang tiến hành</Option>
+              <Option value="resolved">Đã giải quyết</Option>
             </Select>
           </Form.Item>
           <Form.Item>

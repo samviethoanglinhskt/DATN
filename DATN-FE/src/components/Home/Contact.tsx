@@ -1,107 +1,96 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useUser } from "src/context/User"; // Import useUser hook
-import { notification } from "antd"; // Import Ant Design notification
-import moment from "moment-timezone"; // Import moment-timezone for date manipulation
+import { useUser } from "src/context/User";
+import {
+  Form,
+  Input,
+  Button,
+  notification,
+  Card,
+  Timeline,
+  Spin,
+  Empty,
+  Typography,
+  Badge,
+  Divider,
+  Space
+} from "antd";
+import {
+  UserOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  MessageOutlined,
+  SendOutlined,
+  HistoryOutlined
+} from "@ant-design/icons";
+import moment from "moment-timezone";
+
+const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const Contact: React.FC = () => {
-  const { user } = useUser(); // Get user data from UserContext
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-
-  const [contacts, setContacts] = useState<any[]>([]); // Initialize as empty array
+  const { user } = useUser();
+  const [form] = Form.useForm();
+  const [contacts, setContacts] = useState<any[]>([]);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Set form data based on the user data
   useEffect(() => {
     if (user?.data) {
-      setFormData({
+      form.setFieldsValue({
         name: user.data.user.name || "",
         email: user.data.user.email || "",
         phone: user.data.user.phone || "",
-        message: "", // Initialize with an empty message
+        message: "",
       });
     }
     setLoadingUser(false);
-  }, [user]);
+  }, [user, form]);
 
-  // Fetch contact list from API for the logged-in user
   const fetchContacts = async () => {
     try {
       const token = sessionStorage.getItem("token");
       const url = token ? "http://127.0.0.1:8000/api/getByUser" : "";
-
       const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
       if (url) {
         const response = await axios.get(url, { headers });
-
-        // Convert timestamps to Vietnam timezone (UTC+7) for each contact
         const updatedContacts = response.data.data.map((contact: any) => ({
           ...contact,
           created_at: moment(contact.created_at)
             .tz("Asia/Ho_Chi_Minh")
             .format("YYYY-MM-DD HH:mm:ss"),
         }));
-
-        setContacts(updatedContacts); // Set the contacts with formatted timestamps
+        setContacts(updatedContacts);
       } else {
-        setContacts([]); // If no token, do not fetch contacts
+        setContacts([]);
       }
     } catch (error) {
       console.error("Error fetching contacts:", error);
-      setContacts([]); // In case of error, ensure contacts is still an array
+      setContacts([]);
     }
   };
 
   useEffect(() => {
     fetchContacts();
-  }, []); // Run once on mount
+  }, []);
 
-  // Handle input changes
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values: any) => {
+    setSubmitting(true);
     const token = sessionStorage.getItem("token");
     const url = token
       ? "http://127.0.0.1:8000/api/add-contact"
       : "http://127.0.0.1:8000/api/add-contact-guest";
-
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
-
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.message
-    ) {
-      console.error("All fields are required.");
-      return;
-    }
 
     try {
       await axios.post(
         url,
         {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          content: formData.message,
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          content: values.message,
         },
         { headers }
       );
@@ -111,7 +100,6 @@ const Contact: React.FC = () => {
         description: "Bạn đã gửi yêu cầu thành công!",
       });
 
-      // If the user is a guest, show additional notification to login
       if (!token) {
         notification.info({
           message: "Notice",
@@ -119,127 +107,174 @@ const Contact: React.FC = () => {
         });
       }
 
-      setFormData({ name: "", email: "", phone: "", message: "" }); // Reset form
+      form.resetFields();
       fetchContacts();
     } catch (error: any) {
-      console.error("Error submitting form:", error.response?.data || error);
       notification.error({
         message: "Error",
-        description:
-          "There was an error sending your message. Please try again.",
+        description: "There was an error sending your message. Please try again.",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   if (loadingUser) {
-    return <div>Loading user information...</div>;
+    return (
+      <div className="text-center p-5">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   return (
-    <section className="bg0 p-t-104 p-b-116">
-      <div className="container">
-        <div className="flex-w flex-tr">
-          {/* Form Section */}
-          <div className="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
-            <form onSubmit={handleSubmit}>
-              <h4 className="mtext-105 cl2 txt-center p-b-30">
-                Gửi tin nhắn cho chúng tôi
-              </h4>
-
-              {/* Name Field */}
-              <div className="bor8 m-b-20">
-                <input
-                  className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
-                  type="text"
-                  name="name"
-                  placeholder="Nhập tên"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* Email Field */}
-              <div className="bor8 m-b-20">
-                <input
-                  className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
-                  type="email"
-                  name="email"
-                  placeholder="Nhập email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* Phone Field */}
-              <div className="bor8 m-b-20">
-                <input
-                  className="stext-111 cl2 plh3 size-116 p-lr-28 p-tb-15"
-                  type="text"
-                  name="phone"
-                  placeholder="Nhập số điện thoại"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* Message Field */}
-              <div className="bor8 m-b-30">
-                <textarea
-                  className="stext-111 cl2 plh3 size-120 p-lr-28 p-tb-25"
-                  name="message"
-                  placeholder="Chúng tôi có thể giúp gì cho bạn?"
-                  value={formData.message}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer"
-              >
-                Gửi
-              </button>
-            </form>
-          </div>
-
-          {/* Contact List Section */}
-          <div className="size-210 bor10 flex-w flex-col-m p-lr-93 p-tb-30 p-lr-15-lg w-full-md">
-            <h4 className="mtext-105 cl2 txt-center p-b-30">
-              Yêu cầu hỗ trợ của bạn
-            </h4>
-
-            {/* Check if contacts is not empty */}
-            {contacts.length === 0 ? (
-              <p>Không có yêu cầu nào.</p>
-            ) : (
-              contacts.map((contact: any) => (
-                <div key={contact.id} className="contact-card">
-                  <p>
-                    <strong>Tên:</strong> {contact.name}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {contact.email}
-                  </p>
-                  <p>
-                    <strong>Số điện thoại:</strong> {contact.phone}
-                  </p>
-                  <p>
-                    <strong>Yêu cầu hỗ trợ :</strong> {contact.content}
-                  </p>
-                  <p>
-                    <strong>Trạng thái:</strong> {contact.status}
-                  </p>
-                  <p>
-                    <strong>Ngày yêu cầu hỗ trợ:</strong> {contact.created_at}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
+    <div className="container py-5 mt-5">
+      <div style={{ marginTop: 10 }}>
+        <div className="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+          <a
+            href="/"
+            className="stext-109 cl8 hov-cl1 trans-04"
+          >
+            Trang chủ
+            <i
+              className="fa fa-angle-right m-l-9 m-r-10"
+              aria-hidden="true"
+            ></i>
+          </a>
+          <span className="stext-109 cl4">Liên hệ</span>
         </div>
       </div>
-    </section>
+
+      <div className="row g-4" style={{ marginTop: 50 }}>
+        {/* Contact Form Section */}
+        <div className="col-12 col-lg-6">
+          <Card
+            title={
+              <Title level={4} className="text-center mb-0">
+                <MessageOutlined className="me-2" />
+                Gửi tin nhắn cho chúng tôi
+              </Title>
+            }
+            className="shadow-sm h-100"
+          >
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              className="p-3"
+            >
+              <Form.Item
+                name="name"
+                rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
+              >
+                <Input
+                  prefix={<UserOutlined className="text-secondary" />}
+                  placeholder="Nhập tên"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: "Vui lòng nhập email!" },
+                  { type: "email", message: "Email không hợp lệ!" }
+                ]}
+              >
+                <Input
+                  prefix={<MailOutlined className="text-secondary" />}
+                  placeholder="Nhập email"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="phone"
+                rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+              >
+                <Input
+                  prefix={<PhoneOutlined className="text-secondary" />}
+                  placeholder="Nhập số điện thoại"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="message"
+                rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
+              >
+                <TextArea
+                  placeholder="Chúng tôi có thể giúp gì cho bạn?"
+                  rows={4}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<SendOutlined />}
+                  loading={submitting}
+                  size="large"
+                  block
+                  className="bg-gradient-to-r from-blue-500 to-blue-700"
+                >
+                  Gửi yêu cầu
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </div>
+
+        {/* Contact History Section */}
+        <div className="col-12 col-lg-6">
+          <Card
+            title={
+              <Title level={4} className="text-center mb-0">
+                <HistoryOutlined className="me-2" />
+                Lịch sử yêu cầu hỗ trợ
+              </Title>
+            }
+            className="shadow-sm h-100"
+          >
+            {contacts.length === 0 ? (
+              <Empty
+                description="Không có yêu cầu hỗ trợ nào"
+                className="py-5"
+              />
+            ) : (
+              <Timeline className="p-4">
+                {contacts.map((contact) => (
+                  <Timeline.Item
+                    key={contact.id}
+                    color={contact.status === 'Đã xử lý' ? 'green' : 'blue'}
+                  >
+                    <Card className="shadow-sm mb-3">
+                      <Space direction="vertical" className="w-100">
+                        <Badge
+                          status={contact.status === 'Đã xử lý' ? 'success' : 'processing'}
+                          text={<Text strong>{contact.status}</Text>}
+                        />
+                        <Divider className="my-2" />
+                        <Text><UserOutlined className="me-2" />{contact.name}</Text>
+                        <Text><MailOutlined className="me-2" />{contact.email}</Text>
+                        <Text><PhoneOutlined className="me-2" />{contact.phone}</Text>
+                        <Text strong className="mt-2">Nội dung:</Text>
+                        <Text className="bg-gray-50 p-3 rounded">{contact.content}</Text>
+                        <Text type="secondary" className="mt-2">
+                          Ngày gửi: {contact.created_at}
+                        </Text>
+                      </Space>
+                    </Card>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            )}
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 

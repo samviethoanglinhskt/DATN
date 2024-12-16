@@ -113,7 +113,7 @@ const ProductEdit: React.FC = () => {
 
       if (productRes && productRes.data && productRes.data.image) {
         const imageUrl = `http://127.0.0.1:8000/storage/${productRes.data.image}`;
-       console.log(imageUrl)
+        console.log(imageUrl)
         setFileList([
           {
             uid: "-1",
@@ -429,8 +429,8 @@ const ProductEdit: React.FC = () => {
 
       <Form.Item
         name="sku"
-        label="SKU"
-        rules={[{ required: true, message: "Vui lòng nhập SKU" }]}
+        label="Mã hàng"
+        rules={[{ required: true, message: "Vui lòng nhập mã hàng" }]}
       >
         <Input
           onChange={(e) =>
@@ -502,7 +502,7 @@ const ProductEdit: React.FC = () => {
         </Upload>
       </Form.Item>
 
-      <Space>
+      <Space style={{ marginBottom: 10 }}>
         <Button onClick={() => setIsAddingVariant(false)}>Hủy</Button>
         <Button type="primary" onClick={handleAddVariant}>
           Thêm biến thể
@@ -603,46 +603,29 @@ const ProductEdit: React.FC = () => {
                   <div className="row">
                     {/* Cột ảnh sản phẩm (Bên trái) */}
                     <div className="col-md-4 d-flex justify-content-center align-items-center">
-                      {variant.images?.map((image: any, index: number) => (
-                        <div
-                          key={index}
-                          style={{
-                            position: "relative",
-                            marginRight: 10,
-                            display: "inline-block",
-                          }}
-                        >
-                          {/* Display the image */}
-                          <img
-                            src={`http://127.0.0.1:8000/storage/${image.name_image}`}
-                            alt={`Variant Image ${index}`}
+                      {variant.images?.map((image: any, index: number) => {
+                        return (
+                          <div
+                            key={index}
                             style={{
-                              width: 100,
-                              height: 100,
-                              objectFit: "cover",
-                            }}
-                          />
-
-                          {/* Delete button overlay */}
-                          <button
-                            onClick={() => handleImageDelete(image.id)} // Call handleImageDelete function
-                            style={{
-                              position: "absolute",
-                              top: 5,
-                              right: 5,
-                              background: "rgba(255, 0, 0, 0.8)",
-                              color: "white",
-                              border: "none",
-                              borderRadius: "50%",
-                              width: 24,
-                              height: 24,
-                              cursor: "pointer",
+                              position: "relative",
+                              marginRight: 10,
+                              display: "inline-block",
                             }}
                           >
-                            X
-                          </button>
-                        </div>
-                      ))}
+                            {/* Display the image */}
+                            <img
+                              src={image && image.name_image ? `http://127.0.0.1:8000/storage/${image?.name_image}` : URL.createObjectURL(image?.originFileObj)}
+                              alt={`Sửa ảnh thành công`}
+                              style={{
+                                width: 100,
+                                height: 100,
+                                objectFit: "cover",
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {/* Cột thông tin sản phẩm (Bên phải) */}
@@ -739,7 +722,7 @@ const ProductEdit: React.FC = () => {
           {isAddingVariant && addVariantForm}
         </div>
         <div className="flex justify-between mt-6">
-          <Button onClick={() => navigate("/admin/product")}>
+          <Button onClick={() => navigate("/admin/product")} style={{ marginRight: 10 }}>
             Trang danh sách
           </Button>
           <Space>
@@ -876,7 +859,7 @@ const ProductEdit: React.FC = () => {
               }}
             >
               {(variantForm.getFieldValue("images")?.length || 0) >=
-              4 ? null : (
+                4 ? null : (
                 <div>
                   <PlusOutlined />
                   <div style={{ marginTop: 8 }}>Upload</div>

@@ -115,6 +115,7 @@ function App() {
         { path: "discount", element: <Discount /> },
         { path: "post", element: <ArticleManager /> },
         { path: "review", element: <ReviewList /> },
+        { path: "contact", element: <ContactsList /> },
       ],
     },
   ];

@@ -77,7 +77,9 @@ const Slider = () => {
       <div className="wrap-slick1" style={{ width: "100%", height: "100%" }}>
         <div className="slick1" style={{ width: "100%", height: "100%" }}>
           <img
-            src={bannerId2?.image || "https://www.droppii.com/blog/kinh-nghiem-kinh-doanh-my-pham-online/"}
+            src={bannerId2?.image
+              ? `http://127.0.0.1:8000/storage/${bannerId2.image}`
+              : "https://www.droppii.com/blog/kinh-nghiem-kinh-doanh-my-pham-online/"}
             className="item-slick1"
             style={{
               width: "100%",
@@ -88,7 +90,9 @@ const Slider = () => {
             alt="Banner 2"
           />
           <img
-            src={bannerId3?.image || "https://www.droppii.com/blog/kinh-nghiem-kinh-doanh-my-pham-online/"}
+            src={bannerId3?.image
+              ? `http://127.0.0.1:8000/storage/${bannerId3.image}`
+              : "https://www.droppii.com/blog/kinh-nghiem-kinh-doanh-my-pham-online/"}
             className="item-slick1"
             style={{
               width: "100%",

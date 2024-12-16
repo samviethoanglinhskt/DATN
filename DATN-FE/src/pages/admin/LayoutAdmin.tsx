@@ -137,7 +137,7 @@ const LayoutAdmin: React.FC = () => {
       icon: <MessageOutlined />,
       label: (
         <NavLink to="review" className="text-decoration-none">
-          Bình luận
+          Đánh giá
         </NavLink>
       ),
     },
@@ -224,21 +224,7 @@ const LayoutAdmin: React.FC = () => {
               height: 64,
             }}
           />
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/logoduan.jpg"
-              alt="Shop Logo"
-              style={{ height: "60px", width: "80px" }}
-            />
-          </div>
+
         </Header>
 
         <Content
