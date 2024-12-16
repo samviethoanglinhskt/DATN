@@ -136,7 +136,7 @@ const TopRatedProducts: React.FC = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <Title level={4} className="mb-2">
-          Top 5 sản phẩm đánh giá cao nhất
+          Top sản phẩm đánh giá cao nhất
         </Title>
         <Space>
           <span>Thống kê theo:</span>

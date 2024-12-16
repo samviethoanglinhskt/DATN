@@ -184,7 +184,7 @@ const TopBrandComponent: React.FC = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <Title level={4} className="mb-2">
-          Thống kê Top 3 thương hiệu bán chạy
+          Thống kê Top thương hiệu bán chạy
         </Title>
         <Space>
           <span>Thống kê theo:</span>

@@ -375,7 +375,6 @@ const ProductDetail = () => {
                         SL: {currentVariant?.quantity || product.variants[0].quantity || "N/A"}
                       </span>
                     )}
-
                 </div>
                 <span className="mtext-106 cl2">
                   {currentVariant ? currentVariant.price.toLocaleString("vi-VN") : product.variants[0].price.toLocaleString("vi-VN")}đ
