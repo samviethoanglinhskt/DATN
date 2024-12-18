@@ -114,15 +114,15 @@ const LayoutAdmin: React.FC = () => {
         </NavLink>
       ),
     },
-    {
-      key: "7",
-      icon: <AppstoreAddOutlined />,
-      label: (
-        <NavLink to="banner" className="text-decoration-none">
-          Quản Lý Banner
-        </NavLink>
-      ),
-    },
+    // {
+    //   key: "7",
+    //   icon: <AppstoreAddOutlined />,
+    //   label: (
+    //     <NavLink to="banner" className="text-decoration-none">
+    //       Quản Lý Banner
+    //     </NavLink>
+    //   ),
+    // },
     {
       key: "8",
       icon: <FileTextOutlined />,
