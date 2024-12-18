@@ -731,7 +731,12 @@ const CheckoutPage: React.FC = () => {
           );
           localStorage.setItem('guestCart', JSON.stringify(updatedCart));
         }
-        navigate("/payment-success"); // Chuyển hướng về trang thành công
+        if (paymentMethod === 'vnpay' && responseData.vnpay_url && token) {
+          window.location.href = responseData.vnpay_url;
+        }
+        if(paymentMethod === 'cod') {
+          navigate("/payment-success");
+        }
       } else {
         enqueueSnackbar("Sản phẩm đã bị người khác mua mất vui lòng chọn sản phẩm khác", { variant: "error" });
       }

@@ -31,6 +31,7 @@ import {
 import { STATUS_CONFIG } from "./orderContant";
 import styles from "./OrderDetails.module.css";
 import axiosInstance from "src/config/axiosInstance";
+import { Link } from "react-router-dom";
 const { TextArea } = Input;
 
 const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
@@ -139,9 +140,11 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                   <div className={styles.productInfo}>
                     <div className={styles.productRow}>
                       <div className={styles.productNameCol}>
-                        <h4 className={styles.productName}>
-                          {detail.product.name}
-                        </h4>
+                        <Link to={`/product/${detail.product.id}`} className="product-link">
+                          <h4 className={styles.productName}>
+                            {detail.product.name}
+                          </h4>
+                        </Link>
                         {(detail.variant.size || detail.variant.color) && (
                           <div className={styles.variants}>
                             {detail.variant.size?.name && (
