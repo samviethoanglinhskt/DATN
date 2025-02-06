@@ -41,6 +41,7 @@ import ProductList from "./components/Home/Category.js";
 import ReviewList from "./pages/admin/Comment/Comment.js";
 import ContactsList from "./pages/admin/Contact/Contact.js";
 
+//dự án tootss nghiệp
 function App() {
   const routeConfig = [
     {
